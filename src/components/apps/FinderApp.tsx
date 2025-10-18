@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Folder, File, Search, Grid, List } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useMacOS } from '@/contexts/MacOSContext';
 
 type ViewMode = 'grid' | 'list';
 
@@ -14,19 +15,17 @@ interface FileItem {
 }
 
 export const FinderApp = () => {
+  const { apps, openApp } = useMacOS();
   const [viewMode, setViewMode] = useState<ViewMode>('grid');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const files: FileItem[] = [
-    { id: '1', name: 'About Me', type: 'folder', modified: 'Today' },
-    { id: '2', name: 'Technologies', type: 'folder', modified: 'Today' },
-    { id: '3', name: 'Projects', type: 'folder', modified: 'Today' },
-    { id: '4', name: 'Journey', type: 'folder', modified: 'Today' },
-    { id: '5', name: 'GitHub', type: 'folder', modified: 'Today' },
-    { id: '6', name: 'LinkedIn', type: 'folder', modified: 'Today' },
-    { id: '7', name: 'Contact', type: 'folder', modified: 'Today' },
-    { id: '8', name: 'Settings', type: 'folder', modified: 'Today' },
-  ];
+  // Map apps to file items
+  const files: FileItem[] = apps.map(app => ({
+    id: app.id,
+    name: app.name,
+    type: 'folder' as const,
+    modified: 'Today',
+  }));
 
   const filteredFiles = files.filter(file =>
     file.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -58,7 +57,7 @@ export const FinderApp = () => {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               type="text"
-              placeholder="Search files..."
+              placeholder="Search apps..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"
@@ -73,13 +72,14 @@ export const FinderApp = () => {
       <div className="flex-1 overflow-auto p-4">
         {filteredFiles.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
-            No files found
+            No apps found
           </div>
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-4 gap-4">
             {filteredFiles.map(file => (
               <div
                 key={file.id}
+                onClick={() => openApp(file.id)}
                 className="flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-secondary/50 cursor-pointer transition-colors"
               >
                 <div className="w-16 h-16 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -99,6 +99,7 @@ export const FinderApp = () => {
             {filteredFiles.map(file => (
               <div
                 key={file.id}
+                onClick={() => openApp(file.id)}
                 className="flex items-center gap-3 p-3 rounded-lg hover:bg-secondary/50 cursor-pointer transition-colors"
               >
                 <div className="w-8 h-8 rounded flex items-center justify-center bg-primary/10">

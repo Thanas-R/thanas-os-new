@@ -55,10 +55,8 @@ export const Desktop = () => {
       <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
       
       <div className="pt-7 h-full p-8">
-        {/* Welcome Widget - only show when no windows are open */}
-        <div className={windows.filter(w => !w.isMinimized).length === 0 ? 'animate-slide-in-left' : 'animate-slide-out-right pointer-events-none'}>
-          {windows.filter(w => !w.isMinimized).length === 0 && <WelcomeWidget />}
-        </div>
+        {/* Welcome Widget - always visible */}
+        <WelcomeWidget />
 
         {/* Desktop Widgets */}
         <div className="absolute top-20 right-8 space-y-4">

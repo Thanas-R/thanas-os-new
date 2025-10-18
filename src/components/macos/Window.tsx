@@ -41,9 +41,8 @@ export const Window = ({ window }: WindowProps) => {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
         const newX = Math.max(0, Math.min(globalThis.window.innerWidth - window.size.width, window.position.x + deltaX));
-        // If dock is auto-hide, allow dragging to bottom; otherwise leave space for dock
-        const bottomMargin = settings.dockAutoHide ? 2 : 100;
-        const newY = Math.max(28, Math.min(globalThis.window.innerHeight - window.size.height - bottomMargin, window.position.y + deltaY));
+        // Always allow dragging to bottom
+        const newY = Math.max(28, Math.min(globalThis.window.innerHeight - window.size.height - 2, window.position.y + deltaY));
         updateWindowPosition(window.id, { x: newX, y: newY });
         setDragStart({ x: e.clientX, y: e.clientY });
       } else if (isResizing) {
@@ -68,9 +67,8 @@ export const Window = ({ window }: WindowProps) => {
         }
         if (resizeDirection.includes('s')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height + deltaY);
-          // If dock is auto-hide, allow resizing to bottom; otherwise leave space for dock
-          const bottomMargin = settings.dockAutoHide ? 2 : 100;
-          newHeight = Math.min(newHeight, globalThis.window.innerHeight - resizeStart.posY - bottomMargin);
+          // Always allow resizing to bottom
+          newHeight = Math.min(newHeight, globalThis.window.innerHeight - resizeStart.posY - 2);
         }
         if (resizeDirection.includes('n')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height - deltaY);

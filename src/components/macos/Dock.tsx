@@ -50,8 +50,9 @@ export const Dock = () => {
       {/* Hover trigger for auto-hide dock */}
       {settings.dockAutoHide && (
         <div 
-          className="fixed bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-4 z-40"
+          className="fixed bottom-0 left-0 right-0 w-full h-10 z-40"
           onMouseEnter={() => setHoveredIndex(0)}
+          onMouseMove={() => setHoveredIndex(0)}
         />
       )}
       

@@ -1,21 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { FolderGit2, GitBranch, Star } from 'lucide-react';
 
 export const StatsWidget = () => {
-  const [stats, setStats] = useState({ repos: 0, stars: 0, projects: 0 });
+  const [stats] = useState({ repos: 3, stars: 14, projects: 3 });
 
-  useEffect(() => {
-    fetch('https://api.github.com/users/Thanas-R')
-      .then(res => res.json())
-      .then(data => {
-        setStats({
-          repos: data.public_repos || 0,
-          stars: data.followers || 0,
-          projects: 12, // Static for now
-        });
-      })
-      .catch(() => {});
-  }, []);
 
   return (
     <div className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass w-64"
@@ -38,7 +26,7 @@ export const StatsWidget = () => {
             <GitBranch className="w-4 h-4 text-primary" />
             <span className="text-sm">Projects</span>
           </div>
-          <span className="text-lg font-bold">{stats.projects}</span>
+          <span className="text-lg font-bold">{stats.projects}+</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

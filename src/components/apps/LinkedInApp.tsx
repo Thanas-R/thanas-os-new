@@ -1,6 +1,7 @@
 import { Linkedin, ExternalLink, GraduationCap, MapPin, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import linkedinPhoto from '@/assets/linkedin-profile.jpg';
 
 export const LinkedInApp = () => {
   return (
@@ -18,8 +19,8 @@ export const LinkedInApp = () => {
 
         <Card className="p-8 mb-6">
           <div className="flex items-start gap-6">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#0077B5] to-[#00A0DC] flex items-center justify-center text-4xl">
-              👨‍💻
+            <div className="w-24 h-24 rounded-full overflow-hidden shadow-macos-glass">
+              <img src={linkedinPhoto} alt="Thanas R LinkedIn profile photo" className="w-full h-full object-cover" loading="lazy" />
             </div>
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-1">Thanas R</h2>

@@ -22,9 +22,6 @@ export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
 
-  // Calculate zoom scale from magnification (0-100 -> 0.8-1.5)
-  const zoomScale = 0.8 + (settings.dockMagnification / 100) * 0.7;
-
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -54,33 +51,23 @@ export const Desktop = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      <div
-        style={{
-          transform: `scale(${zoomScale})`,
-          transformOrigin: 'center center',
-          width: '100%',
-          height: '100%',
-          transition: settings.reducedMotion ? 'none' : 'transform 0.3s ease-out',
-        }}
-      >
-        <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
-        
-        <div className="pt-7 h-full p-8">
-          {/* Desktop Widgets */}
-          <div className="absolute top-20 right-8 space-y-4">
-            <ClockWidget />
-            <StatsWidget />
-          </div>
-
-          {/* Windows */}
-          {windows.map(window => (
-            <Window key={window.id} window={window} />
-          ))}
+      <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
+      
+      <div className="pt-7 h-full p-8">
+        {/* Desktop Widgets */}
+        <div className="absolute top-20 right-8 space-y-4">
+          <ClockWidget />
+          <StatsWidget />
         </div>
 
-        <Spotlight isOpen={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
-        <Dock />
+        {/* Windows */}
+        {windows.map(window => (
+          <Window key={window.id} window={window} />
+        ))}
       </div>
+
+      <Spotlight isOpen={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
+      <Dock />
     </div>
   );
 };

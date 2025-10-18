@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
+import finderIcon from '@/assets/finder-icon.png';
 import aboutIcon from '@/assets/about-icon.png';
 import techIcon from '@/assets/tech-icon.png';
 import projectsIcon from '@/assets/projects-icon.png';
@@ -10,6 +11,7 @@ import contactIcon from '@/assets/contact-icon.png';
 import settingsIcon from '@/assets/settings-icon.png';
 
 const iconMap: Record<string, string> = {
+  'finder': finderIcon,
   'about': aboutIcon,
   'technologies': techIcon,
   'projects': projectsIcon,
@@ -44,17 +46,28 @@ export const Dock = () => {
   };
 
   return (
-    <div
-      className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl px-4 py-3 shadow-macos-glass transition-all duration-300 ${
-        settings.dockAutoHide && hoveredIndex === null ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
-      }`}
-      style={{
-        background: 'hsl(var(--macos-dock-bg))',
-        border: '1px solid hsl(var(--macos-glass-border))',
-        boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1) inset',
-      }}
-      onMouseLeave={() => setHoveredIndex(null)}
-    >
+    <>
+      {/* Hover trigger for auto-hide dock */}
+      {settings.dockAutoHide && (
+        <div 
+          className="fixed bottom-0 left-0 right-0 h-4 z-40"
+          onMouseEnter={() => setHoveredIndex(0)}
+        />
+      )}
+      
+      <div
+        className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl px-4 py-3 shadow-macos-glass z-50 ${
+          settings.reducedMotion ? '' : 'transition-all duration-300'
+        } ${
+          settings.dockAutoHide && hoveredIndex === null ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+        }`}
+        style={{
+          background: 'hsl(var(--macos-dock-bg))',
+          border: '1px solid hsl(var(--macos-glass-border))',
+          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1) inset',
+        }}
+        onMouseLeave={() => setHoveredIndex(null)}
+      >
       <div className="flex items-end gap-2">
         {dockItems.map((item, index) => {
           const app = apps.find(a => a.id === item.appId);
@@ -114,7 +127,7 @@ export const Dock = () => {
 
               {/* Tooltip */}
               {hoveredIndex === index && (
-                <div className="absolute -top-12 backdrop-blur-macos-heavy bg-[hsl(var(--macos-glass))] px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap border border-[hsl(var(--macos-glass-border))] animate-fade-in shadow-macos-glass">
+                <div className={`absolute -top-12 backdrop-blur-macos-heavy bg-[hsl(var(--macos-glass))] px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap border border-[hsl(var(--macos-glass-border))] shadow-macos-glass ${settings.reducedMotion ? '' : 'animate-fade-in'}`}>
                   {app.name}
                 </div>
               )}
@@ -122,6 +135,7 @@ export const Dock = () => {
           );
         })}
       </div>
-    </div>
+      </div>
+    </>
   );
 };

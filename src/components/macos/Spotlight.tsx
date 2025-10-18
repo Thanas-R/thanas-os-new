@@ -1,6 +1,27 @@
 import { useState, useEffect, useRef } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Search, X } from 'lucide-react';
+import finderIcon from '@/assets/finder-icon.png';
+import aboutIcon from '@/assets/about-icon.png';
+import techIcon from '@/assets/tech-icon.png';
+import projectsIcon from '@/assets/projects-icon.png';
+import journeyIcon from '@/assets/journey-icon.png';
+import githubIcon from '@/assets/github-icon.png';
+import linkedinIcon from '@/assets/linkedin-icon.png';
+import contactIcon from '@/assets/contact-icon.png';
+import settingsIcon from '@/assets/settings-icon.png';
+
+const iconMap: Record<string, string> = {
+  'finder': finderIcon,
+  'about': aboutIcon,
+  'technologies': techIcon,
+  'projects': projectsIcon,
+  'journey': journeyIcon,
+  'github': githubIcon,
+  'linkedin': linkedinIcon,
+  'contact': contactIcon,
+  'settings': settingsIcon,
+};
 
 interface SpotlightProps {
   isOpen: boolean;
@@ -61,21 +82,30 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
               </div>
             ) : (
               <div className="space-y-1">
-                {filteredApps.map(app => (
-                  <button
-                    key={app.id}
-                    onClick={() => {
-                      openApp(app.id);
-                      onClose();
-                    }}
-                    className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-left"
-                  >
-                    <div className="text-2xl">{app.icon}</div>
-                    <div className="flex-1">
-                      <div className="font-medium">{app.name}</div>
-                    </div>
-                  </button>
-                ))}
+                {filteredApps.map(app => {
+                  const iconSrc = iconMap[app.id];
+                  return (
+                    <button
+                      key={app.id}
+                      onClick={() => {
+                        openApp(app.id);
+                        onClose();
+                      }}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-secondary transition-colors text-left"
+                    >
+                      <div className="w-10 h-10 rounded-lg overflow-hidden flex items-center justify-center">
+                        {iconSrc ? (
+                          <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="text-2xl">{app.icon}</div>
+                        )}
+                      </div>
+                      <div className="flex-1">
+                        <div className="font-medium">{app.name}</div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
             )}
           </div>

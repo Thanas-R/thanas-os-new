@@ -8,10 +8,19 @@ import { ContactApp } from '@/components/apps/ContactApp';
 import { GitHubApp } from '@/components/apps/GitHubApp';
 import { LinkedInApp } from '@/components/apps/LinkedInApp';
 import { SettingsApp } from '@/components/apps/SettingsApp';
+import { FinderApp } from '@/components/apps/FinderApp';
 
 import { AppConfig } from '@/types/macos';
 
 const apps: AppConfig[] = [
+  {
+    id: 'finder',
+    name: 'Finder',
+    icon: '📁',
+    component: FinderApp,
+    defaultSize: { width: 900, height: 650 },
+    minSize: { width: 700, height: 500 },
+  },
   {
     id: 'about',
     name: 'About Me',

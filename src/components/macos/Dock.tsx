@@ -1,13 +1,32 @@
 import { useState } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
+import aboutIcon from '@/assets/about-icon.png';
+import techIcon from '@/assets/tech-icon.png';
+import projectsIcon from '@/assets/projects-icon.png';
+import journeyIcon from '@/assets/journey-icon.png';
+import githubIcon from '@/assets/github-icon.png';
+import linkedinIcon from '@/assets/linkedin-icon.png';
+import contactIcon from '@/assets/contact-icon.png';
+import settingsIcon from '@/assets/settings-icon.png';
+
+const iconMap: Record<string, string> = {
+  'about': aboutIcon,
+  'technologies': techIcon,
+  'projects': projectsIcon,
+  'journey': journeyIcon,
+  'github': githubIcon,
+  'linkedin': linkedinIcon,
+  'contact': contactIcon,
+  'settings': settingsIcon,
+};
 
 export const Dock = () => {
   const { apps, dockItems, openApp, windows, settings } = useMacOS();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const magnification = settings.dockMagnification / 100;
-  const baseSize = 56;
-  const maxScale = 1 + magnification * 0.5;
+  const baseSize = 64;
+  const maxScale = settings.reducedMotion ? 1 : 1 + magnification * 0.5;
 
   const getScale = (index: number) => {
     if (hoveredIndex === null || settings.reducedMotion) return 1;
@@ -44,6 +63,7 @@ export const Dock = () => {
           const isOpen = windows.some(w => w.appId === app.id && !w.isMinimized);
           const scale = getScale(index);
           const translateY = getTranslateY(index);
+          const iconSrc = iconMap[app.id];
 
           return (
             <div
@@ -57,16 +77,24 @@ export const Dock = () => {
               onClick={() => openApp(app.id)}
             >
               <div
-                className="rounded-2xl shadow-lg flex items-center justify-center text-3xl backdrop-blur-sm"
+                className="rounded-2xl shadow-lg flex items-center justify-center overflow-hidden"
                 style={{
                   width: baseSize,
                   height: baseSize,
-                  background: 'linear-gradient(135deg, hsl(var(--primary) / 0.9), hsl(var(--accent) / 0.9))',
-                  border: '1px solid rgba(255, 255, 255, 0.15)',
-                  boxShadow: '0 4px 16px rgba(0, 0, 0, 0.3), 0 0 1px rgba(255, 255, 255, 0.2) inset',
                 }}
               >
-                {app.icon}
+                {iconSrc ? (
+                  <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" />
+                ) : (
+                  <div 
+                    className="w-full h-full flex items-center justify-center text-3xl"
+                    style={{
+                      background: 'linear-gradient(135deg, hsl(var(--primary) / 0.9), hsl(var(--accent) / 0.9))',
+                    }}
+                  >
+                    {app.icon}
+                  </div>
+                )}
               </div>
 
               {/* Active Indicator */}

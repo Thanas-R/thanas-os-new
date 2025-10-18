@@ -8,7 +8,7 @@ import { ContactApp } from '@/components/apps/ContactApp';
 import { GitHubApp } from '@/components/apps/GitHubApp';
 import { LinkedInApp } from '@/components/apps/LinkedInApp';
 import { SettingsApp } from '@/components/apps/SettingsApp';
-import { CalculatorApp } from '@/components/apps/CalculatorApp';
+
 import { AppConfig } from '@/types/macos';
 
 const apps: AppConfig[] = [
@@ -75,14 +75,6 @@ const apps: AppConfig[] = [
     component: SettingsApp,
     defaultSize: { width: 850, height: 800 },
     minSize: { width: 650, height: 600 },
-  },
-  {
-    id: 'calculator',
-    name: 'Calculator',
-    icon: '🔢',
-    component: CalculatorApp,
-    defaultSize: { width: 400, height: 550 },
-    minSize: { width: 350, height: 500 },
   },
 ];
 

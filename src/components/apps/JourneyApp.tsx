@@ -3,38 +3,31 @@ import { Calendar, Award, Code, GraduationCap, Briefcase } from 'lucide-react';
 const milestones = [
   {
     year: '2025',
-    title: 'Starting B.Tech Journey',
-    description: 'Began B.Tech in Computer Science Engineering (AI/ML) at PES University, Bangalore',
+    title: 'Starting B.Tech & Building Projects',
+    description: 'Began B.Tech in CSE (AI/ML) at PES University. Autumn 2025 marked the beginning of building proper production-ready projects.',
     icon: GraduationCap,
     color: 'hsl(211, 100%, 50%)',
   },
   {
-    year: '2023-2025',
-    title: 'Allen Career Institute',
-    description: 'Completed preparation for JEE while building coding skills and personal projects',
-    icon: Award,
-    color: 'hsl(260, 70%, 60%)',
-  },
-  {
     year: '2023',
-    title: 'First Major Project',
-    description: 'Built my first full-stack web application and discovered passion for software development',
+    title: 'Learning C++',
+    description: 'Dove deep into C++ programming, mastering data structures and algorithms.',
     icon: Code,
-    color: 'hsl(142, 51%, 49%)',
-  },
-  {
-    year: '2022',
-    title: 'Started Coding Journey',
-    description: 'Discovered programming through Python and immediately fell in love with problem-solving',
-    icon: Code,
-    color: 'hsl(47, 100%, 50%)',
+    color: 'hsl(220, 70%, 50%)',
   },
   {
     year: '2021',
-    title: 'First Lines of Code',
-    description: 'Wrote my first "Hello World" program and decided to pursue Computer Science',
-    icon: Briefcase,
+    title: 'Java Journey Begins',
+    description: 'Started learning Java, focusing on OOP principles and building applications.',
+    icon: Code,
     color: 'hsl(0, 70%, 50%)',
+  },
+  {
+    year: '2020',
+    title: 'First Steps in Programming',
+    description: 'Learned Python and created my first small applications.',
+    icon: Code,
+    color: 'hsl(205, 100%, 50%)',
   },
 ];
 

@@ -1,30 +1,26 @@
-import { Code2, Database, Brain, Wrench } from 'lucide-react';
+import { Code2, Database, Brain, Wrench, Sparkles } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 const technologies = {
   languages: [
-    { name: 'Python', proficiency: 85, color: 'hsl(205, 100%, 50%)' },
-    { name: 'JavaScript/TypeScript', proficiency: 80, color: 'hsl(47, 100%, 50%)' },
-    { name: 'C/C++', proficiency: 70, color: 'hsl(220, 70%, 50%)' },
-    { name: 'Java', proficiency: 65, color: 'hsl(0, 70%, 50%)' },
+    { name: 'C++', proficiency: 85, color: 'hsl(220, 70%, 50%)' },
+    { name: 'Python', proficiency: 55, color: 'hsl(205, 100%, 50%)' },
+    { name: 'Java', proficiency: 40, color: 'hsl(0, 70%, 50%)' },
+  ],
+  webTech: [
+    { name: 'JavaScript', proficiency: 75, color: 'hsl(47, 100%, 50%)' },
+    { name: 'TypeScript', proficiency: 70, color: 'hsl(211, 100%, 50%)' },
+    { name: 'HTML/CSS', proficiency: 80, color: 'hsl(14, 100%, 53%)' },
   ],
   frameworks: [
     { name: 'React.js', proficiency: 85, color: 'hsl(193, 95%, 68%)' },
-    { name: 'Node.js', proficiency: 75, color: 'hsl(142, 51%, 49%)' },
-    { name: 'TensorFlow', proficiency: 70, color: 'hsl(35, 100%, 50%)' },
-    { name: 'Next.js', proficiency: 75, color: 'hsl(0, 0%, 0%)' },
-  ],
-  tools: [
-    { name: 'Git & GitHub', proficiency: 90, color: 'hsl(0, 0%, 20%)' },
-    { name: 'Docker', proficiency: 65, color: 'hsl(205, 100%, 50%)' },
-    { name: 'VS Code', proficiency: 95, color: 'hsl(205, 100%, 55%)' },
-    { name: 'Figma', proficiency: 70, color: 'hsl(0, 0%, 0%)' },
+    { name: 'Node.js', proficiency: 65, color: 'hsl(142, 51%, 49%)' },
+    { name: 'TensorFlow', proficiency: 60, color: 'hsl(35, 100%, 50%)' },
   ],
   ai: [
-    { name: 'Machine Learning', proficiency: 75, color: 'hsl(280, 70%, 60%)' },
-    { name: 'Deep Learning', proficiency: 70, color: 'hsl(260, 70%, 60%)' },
-    { name: 'NLP', proficiency: 65, color: 'hsl(240, 70%, 60%)' },
-    { name: 'Computer Vision', proficiency: 60, color: 'hsl(220, 70%, 60%)' },
+    { name: 'Prompt Engineering', proficiency: 95, color: 'hsl(280, 70%, 60%)' },
+    { name: 'Machine Learning', proficiency: 65, color: 'hsl(260, 70%, 60%)' },
+    { name: 'NLP', proficiency: 55, color: 'hsl(240, 70%, 60%)' },
   ],
 };
 
@@ -68,15 +64,26 @@ export const TechnologiesApp = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <TechCategory title="Programming Languages" icon={Code2} techs={technologies.languages} />
+        <TechCategory title="Web Technologies" icon={Database} techs={technologies.webTech} />
         <TechCategory title="Frameworks & Libraries" icon={Wrench} techs={technologies.frameworks} />
-        <TechCategory title="Tools & Platforms" icon={Database} techs={technologies.tools} />
-        <TechCategory title="AI & Machine Learning" icon={Brain} techs={technologies.ai} />
+        <TechCategory title="AI & Specializations" icon={Sparkles} techs={technologies.ai} />
       </div>
 
-      <div className="mt-8 p-6 bg-secondary rounded-xl">
+      <div className="mt-8 p-6 bg-primary/10 border-2 border-primary/20 rounded-xl">
+        <h3 className="font-semibold mb-3 flex items-center gap-2">
+          <Sparkles className="w-5 h-5 text-primary" />
+          Expert in UI/UX & Prompt Engineering
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Beyond coding, I specialize in creating beautiful user interfaces and am renowned for my prompt engineering 
+          skills — crafting precise, effective prompts that unlock the full potential of AI systems.
+        </p>
+      </div>
+
+      <div className="mt-6 p-6 bg-secondary rounded-xl">
         <h3 className="font-semibold mb-3">Currently Learning</h3>
         <div className="flex flex-wrap gap-2">
-          {['Rust', 'GraphQL', 'Kubernetes', 'Transformers', 'Three.js'].map(tech => (
+          {['Rust', 'GraphQL', 'Kubernetes', 'Advanced AI', 'Three.js'].map(tech => (
             <span key={tech} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
               {tech}
             </span>

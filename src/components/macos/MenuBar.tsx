@@ -1,18 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Wifi, Battery, Volume2 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
+import turtleIcon from '@/assets/turtle-icon.png';
 
-const TurtleIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="20" height="20" className="text-foreground">
-    <path d="M32 10c-8 0-14 5-14 12 0 0-8 3-8 14s7 16 22 16 22-5 22-16-8-14-8-14c0-7-6-12-14-12z" fill="currentColor"/>
-    <ellipse cx="32" cy="26" rx="16" ry="12" fill="currentColor" opacity="0.7"/>
-    <circle cx="26" cy="24" r="2" fill="white"/>
-    <circle cx="38" cy="24" r="2" fill="white"/>
-    <path d="M28 30c0 2 2 3 4 3s4-1 4-3" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round"/>
-  </svg>
-);
+interface MenuBarProps {
+  onSpotlightClick?: () => void;
+}
 
-export const MenuBar = () => {
+export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [time, setTime] = useState(new Date());
   const { focusedWindowId, apps, windows } = useMacOS();
 
@@ -46,12 +41,21 @@ export const MenuBar = () => {
     >
       {/* Left Section */}
       <div className="flex items-center gap-4">
-        <TurtleIcon />
+        <img src={turtleIcon} alt="Turtle" className="w-5 h-5" />
         <span className="font-semibold">{focusedApp?.name || 'Thanas R'}</span>
       </div>
 
       {/* Right Section */}
       <div className="flex items-center gap-4">
+        <button 
+          onClick={onSpotlightClick}
+          className="p-1 hover:bg-white/10 rounded transition-colors"
+          title="Search (⌘K)"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </button>
         <Battery className="w-4 h-4" />
         <Wifi className="w-4 h-4" />
         <Volume2 className="w-4 h-4" />

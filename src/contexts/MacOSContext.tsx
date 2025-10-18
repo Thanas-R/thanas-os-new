@@ -96,12 +96,28 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     setWindows(prev =>
       prev.map(w => {
         if (w.id !== windowId) return w;
-        return {
-          ...w,
-          isMaximized: !w.isMaximized,
-          position: w.isMaximized ? w.position : { x: 0, y: 28 },
-          size: w.isMaximized ? w.size : { width: window.innerWidth, height: window.innerHeight - 28 - 80 },
-        };
+        
+        if (w.isMaximized) {
+          // Un-maximize: restore previous position and size
+          return {
+            ...w,
+            isMaximized: false,
+            position: w.preMaximizePosition || w.position,
+            size: w.preMaximizeSize || w.size,
+            preMaximizePosition: undefined,
+            preMaximizeSize: undefined,
+          };
+        } else {
+          // Maximize: store current position/size and go fullscreen
+          return {
+            ...w,
+            isMaximized: true,
+            preMaximizePosition: w.position,
+            preMaximizeSize: w.size,
+            position: { x: 0, y: 28 },
+            size: { width: window.innerWidth, height: window.innerHeight - 28 - 80 },
+          };
+        }
       })
     );
   };

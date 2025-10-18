@@ -16,6 +16,8 @@ export interface WindowState {
   isMinimized: boolean;
   isMaximized: boolean;
   zIndex: number;
+  preMaximizePosition?: { x: number; y: number };
+  preMaximizeSize?: { width: number; height: number };
 }
 
 export interface MacOSSettings {

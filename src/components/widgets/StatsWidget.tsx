@@ -26,7 +26,7 @@ export const StatsWidget = () => {
             <GitBranch className="w-4 h-4 text-primary" />
             <span className="text-sm">Projects</span>
           </div>
-          <span className="text-lg font-bold">{stats.projects}+</span>
+          <span className="text-lg font-bold">{stats.projects}</span>
         </div>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">

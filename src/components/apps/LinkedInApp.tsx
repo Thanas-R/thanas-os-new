@@ -25,7 +25,7 @@ export const LinkedInApp = () => {
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-1">Thanas R</h2>
               <p className="text-lg text-muted-foreground mb-3">
-                B.Tech CSE [AIML] Student | PES University
+                B.Tech CSE [AIML] Student | PES University | 4 Projects
               </p>
               
               <div className="space-y-2 mb-4">

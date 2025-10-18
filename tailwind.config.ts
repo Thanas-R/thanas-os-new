@@ -92,6 +92,14 @@ export default {
           "0%, 100%": { opacity: "1" },
           "50%": { opacity: "0.6" },
         },
+        "slide-in-left": {
+          "0%": { opacity: "0", transform: "translateX(-100px)" },
+          "100%": { opacity: "1", transform: "translateX(0)" },
+        },
+        "slide-out-right": {
+          "0%": { opacity: "1", transform: "translateX(0)" },
+          "100%": { opacity: "0", transform: "translateX(100px)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -101,6 +109,8 @@ export default {
         "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
         "dock-bounce": "dock-bounce 0.5s ease-out",
         "pulse-glow": "pulse-glow 2s ease-in-out infinite",
+        "slide-in-left": "slide-in-left 0.4s ease-out",
+        "slide-out-right": "slide-out-right 0.4s ease-out",
       },
       backdropBlur: {
         macos: '80px',

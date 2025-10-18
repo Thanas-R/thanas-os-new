@@ -61,14 +61,24 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     const app = apps.find(a => a.id === appId);
     if (!app) return;
 
+    // Calculate available space (menu bar height = 28px, dock height when visible ≈ 100px)
+    const menuBarHeight = 28;
+    const dockHeight = settings.dockAutoHide ? 0 : 100;
+    const availableHeight = window.innerHeight - menuBarHeight - dockHeight;
+    const defaultHeight = app.defaultSize?.height || 600;
+    const defaultWidth = app.defaultSize?.width || 800;
+    
+    // Center window in available space
+    const centerY = menuBarHeight + (availableHeight - defaultHeight) / 2 + Math.random() * 30;
+    
     const newWindow: WindowState = {
       id: `${appId}-${Date.now()}`,
       appId,
       position: {
-        x: window.innerWidth / 2 - (app.defaultSize?.width || 800) / 2 + Math.random() * 50,
-        y: window.innerHeight / 2 - (app.defaultSize?.height || 600) / 2 + Math.random() * 50,
+        x: window.innerWidth / 2 - defaultWidth / 2 + Math.random() * 50,
+        y: Math.max(menuBarHeight + 10, centerY),
       },
-      size: app.defaultSize || { width: 800, height: 600 },
+      size: { width: defaultWidth, height: defaultHeight },
       isMinimized: false,
       isMaximized: false,
       zIndex: Math.max(...windows.map(w => w.zIndex), 0) + 1,

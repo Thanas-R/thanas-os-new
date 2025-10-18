@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Send, Mail, Github, Linkedin, CheckCircle, Copy, Instagram } from 'lucide-react';
+import { Send, Mail, Github, Linkedin, CheckCircle, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -143,15 +143,6 @@ export const ContactApp = () => {
               </div>
               <Copy className="w-4 h-4 opacity-50" />
             </button>
-            <a
-              href="https://www.instagram.com/thanas007/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-3 p-3 bg-background rounded-lg hover:bg-accent transition-colors"
-            >
-              <Instagram className="w-5 h-5" />
-              <span className="text-sm font-medium">Instagram</span>
-            </a>
           </div>
         </div>
       </div>

@@ -24,6 +24,7 @@ const DEFAULT_SETTINGS: MacOSSettings = {
   theme: 'light',
   dockAutoHide: false,
   dockMagnification: 75,
+  zoom: 100,
   reducedMotion: false,
 };
 

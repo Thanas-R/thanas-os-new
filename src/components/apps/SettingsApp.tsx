@@ -58,6 +58,7 @@ export const SettingsApp = () => {
       theme: 'light',
       dockAutoHide: false,
       dockMagnification: 75,
+      zoom: 100,
       reducedMotion: false,
     });
   };
@@ -168,14 +169,14 @@ export const SettingsApp = () => {
           
           <div>
             <div className="flex items-center justify-between mb-3">
-              <div className="font-medium">Magnification</div>
-              <span className="text-sm text-muted-foreground">{settings.dockMagnification}%</span>
+              <div className="font-medium">Zoom</div>
+              <span className="text-sm text-muted-foreground">{settings.zoom}%</span>
             </div>
             <Slider
-              value={[settings.dockMagnification]}
-              onValueChange={([value]) => updateSettings({ dockMagnification: value })}
-              min={0}
-              max={100}
+              value={[settings.zoom]}
+              onValueChange={([value]) => updateSettings({ zoom: value })}
+              min={50}
+              max={150}
               step={5}
             />
           </div>

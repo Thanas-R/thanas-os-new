@@ -40,10 +40,9 @@ export const Window = ({ window }: WindowProps) => {
       if (isDragging) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
-        updateWindowPosition(window.id, {
-          x: window.position.x + deltaX,
-          y: Math.max(28, window.position.y + deltaY),
-        });
+        const newX = Math.max(0, Math.min(globalThis.window.innerWidth - window.size.width, window.position.x + deltaX));
+        const newY = Math.max(28, Math.min(globalThis.window.innerHeight - 80 - window.size.height, window.position.y + deltaY));
+        updateWindowPosition(window.id, { x: newX, y: newY });
         setDragStart({ x: e.clientX, y: e.clientY });
       } else if (isResizing) {
         const deltaX = e.clientX - resizeStart.x;
@@ -56,20 +55,23 @@ export const Window = ({ window }: WindowProps) => {
 
         if (resizeDirection.includes('e')) {
           newWidth = Math.max(app.minSize?.width || 400, resizeStart.width + deltaX);
+          newWidth = Math.min(newWidth, globalThis.window.innerWidth - resizeStart.posX);
         }
         if (resizeDirection.includes('w')) {
-          newWidth = Math.max(app.minSize?.width || 400, resizeStart.width - deltaX);
+          const maxWidth = Math.min(app.minSize?.width || 400, resizeStart.width - deltaX);
+          newWidth = Math.max(maxWidth, resizeStart.width - deltaX);
           if (newWidth > (app.minSize?.width || 400)) {
-            newX = resizeStart.posX + deltaX;
+            newX = Math.max(0, resizeStart.posX + deltaX);
           }
         }
         if (resizeDirection.includes('s')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height + deltaY);
+          newHeight = Math.min(newHeight, globalThis.window.innerHeight - 80 - resizeStart.posY);
         }
         if (resizeDirection.includes('n')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height - deltaY);
           if (newHeight > (app.minSize?.height || 300)) {
-            newY = Math.max(28, resizeStart.posY + deltaY); // Prevent going above menu bar
+            newY = Math.max(28, resizeStart.posY + deltaY);
           }
         }
 

@@ -69,7 +69,7 @@ export const Window = ({ window }: WindowProps) => {
         if (resizeDirection.includes('n')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height - deltaY);
           if (newHeight > (app.minSize?.height || 300)) {
-            newY = resizeStart.posY + deltaY;
+            newY = Math.max(28, resizeStart.posY + deltaY); // Prevent going above menu bar
           }
         }
 

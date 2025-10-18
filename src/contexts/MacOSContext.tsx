@@ -21,7 +21,7 @@ const MacOSContext = createContext<MacOSContextType | undefined>(undefined);
 
 const DEFAULT_SETTINGS: MacOSSettings = {
   wallpaper: 'wallpaper-1',
-  theme: 'dark',
+  theme: 'light',
   dockAutoHide: false,
   dockMagnification: 75,
   reducedMotion: false,
@@ -44,7 +44,8 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   const openApp = (appId: string) => {
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
-      focusWindow(existingWindow.id);
+      // If window is already open and focused, minimize it
+      minimizeWindow(existingWindow.id);
       return;
     }
 

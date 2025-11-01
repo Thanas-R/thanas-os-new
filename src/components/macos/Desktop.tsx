@@ -21,9 +21,15 @@ export const Desktop = () => {
   const {
     windows,
     settings,
-    closeWindow
+    closeWindow,
+    openApp
   } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+
+  // Auto-open About Me app on mount
+  useEffect(() => {
+    openApp('about');
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -55,7 +61,7 @@ export const Desktop = () => {
         
 
         {/* Desktop Widgets */}
-        <div className="absolute top-20 right-8 space-y-4">
+        <div className="absolute top-20 left-8 space-y-4">
           <ClockWidget />
           <StatsWidget />
         </div>

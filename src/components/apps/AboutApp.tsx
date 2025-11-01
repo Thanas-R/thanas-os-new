@@ -4,6 +4,15 @@ import profilePhoto from '@/assets/profile-photo.jpg';
 export const AboutApp = () => {
   return (
     <div className="p-8 space-y-6">
+      {/* Welcome Section */}
+      <div className="bg-primary/10 border-2 border-primary/20 rounded-xl p-6 text-center">
+        <h2 className="text-2xl font-bold mb-3">Welcome to My Portfolio Website!</h2>
+        <p className="text-base text-muted-foreground">
+          Feel free to navigate around the website to learn more about me, my skills, projects, and journey. 
+          Click on the different apps in the dock below to explore!
+        </p>
+      </div>
+
       <div className="flex items-start gap-6">
         <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg">
           <img src={profilePhoto} alt="Thanas R" className="w-full h-full object-cover" />

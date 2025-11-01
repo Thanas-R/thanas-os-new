@@ -36,8 +36,8 @@ export const Dock = () => {
   const baseSize = 64;
   const minScale = 1.0;
   const magnification = settings.dockMagnification / 100;
-  const maxScale = settings.reducedMotion ? 1 : 1 + magnification * 0.8;
-  const effectWidth = 240;
+  const maxScale = settings.reducedMotion ? 1 : 1 + magnification * 0.5;
+  const effectWidth = 180;
   const baseSpacing = 8;
 
   // Authentic macOS cosine-based magnification algorithm
@@ -92,7 +92,8 @@ export const Dock = () => {
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
-        return currentScale + (diff * lerpFactor);
+        const newScale = currentScale + (diff * lerpFactor);
+        return Math.max(minScale, Math.min(maxScale, newScale));
       });
     });
 
@@ -168,11 +169,14 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate content width
+  // Calculate content width with stable bounds
   const contentWidth = currentPositions.length > 0 
-    ? Math.max(...currentPositions.map((pos, index) => 
-        pos + (baseSize * currentScales[index]) / 2
-      ))
+    ? Math.min(
+        Math.max(...currentPositions.map((pos, index) => 
+          pos + (baseSize * Math.min(currentScales[index], maxScale)) / 2
+        )),
+        (dockItems.length * (baseSize * maxScale + baseSpacing))
+      )
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
   const padding = 16;

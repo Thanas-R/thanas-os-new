@@ -55,11 +55,9 @@ export const Desktop = () => {
       <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
       
       <div className="pt-7 h-full p-8">
-        {/* Welcome Widget - always visible */}
-        <WelcomeWidget />
-
-        {/* Desktop Widgets */}
-        <div className="absolute top-20 right-8 space-y-4">
+        {/* All Widgets Stacked on Left */}
+        <div className="absolute top-20 left-8 space-y-4">
+          <WelcomeWidget />
           <ClockWidget />
           <StatsWidget />
         </div>

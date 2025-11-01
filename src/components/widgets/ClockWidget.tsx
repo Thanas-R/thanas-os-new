@@ -10,7 +10,7 @@ export const ClockWidget = () => {
   }, []);
 
   return (
-    <div className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass w-48"
+    <div className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass w-64"
       style={{
         background: 'hsl(var(--macos-glass))',
         border: '1px solid hsl(var(--macos-glass-border))',

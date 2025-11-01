@@ -1,7 +1,7 @@
 export const WelcomeWidget = () => {
   return (
     <div 
-      className="fixed left-8 top-20 backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass z-[1] max-w-[280px]"
+      className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass w-64"
       style={{
         background: 'hsl(var(--macos-glass))',
         border: '1px solid hsl(var(--macos-glass-border))',

@@ -33,16 +33,59 @@ export const Dock = () => {
   const animationFrameRef = useRef<number | undefined>(undefined);
   const lastMouseMoveTime = useRef<number>(0);
 
-  const baseSize = 64;
+  // Responsive size calculations
+  const getResponsiveConfig = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return { baseSize: 64, maxScale: 1.6, effectWidth: 240 };
+    }
+
+    const smallerDimension = Math.min(window.innerWidth, window.innerHeight);
+    
+    if (smallerDimension < 480) {
+      return {
+        baseSize: Math.max(40, smallerDimension * 0.08),
+        maxScale: 1.4,
+        effectWidth: smallerDimension * 0.4
+      };
+    } else if (smallerDimension < 768) {
+      return {
+        baseSize: Math.max(48, smallerDimension * 0.07),
+        maxScale: 1.5,
+        effectWidth: smallerDimension * 0.35
+      };
+    } else if (smallerDimension < 1024) {
+      return {
+        baseSize: Math.max(56, smallerDimension * 0.06),
+        maxScale: 1.6,
+        effectWidth: smallerDimension * 0.3
+      };
+    } else {
+      return {
+        baseSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
+        maxScale: 1.8,
+        effectWidth: 300
+      };
+    }
+  }, []);
+
+  const [config, setConfig] = useState(getResponsiveConfig);
+  const { baseSize, maxScale, effectWidth } = config;
   const minScale = 1.0;
-  const magnification = settings.dockMagnification / 100;
-  const maxScale = settings.reducedMotion ? 1 : 1 + magnification * 0.5;
-  const effectWidth = 180;
-  const baseSpacing = 8;
+  const baseSpacing = Math.max(4, baseSize * 0.08);
+
+  // Update config on window resize
+  useEffect(() => {
+    const handleResize = () => {
+      setConfig(getResponsiveConfig());
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [getResponsiveConfig]);
 
   // Authentic macOS cosine-based magnification algorithm
   const calculateTargetMagnification = useCallback((mousePosition: number | null) => {
-    if (mousePosition === null || settings.reducedMotion) {
+    if (mousePosition === null) {
       return dockItems.map(() => minScale);
     }
 
@@ -61,7 +104,7 @@ export const Dock = () => {
       
       return minScale + (scaleFactor * (maxScale - minScale));
     });
-  }, [dockItems, baseSize, baseSpacing, effectWidth, maxScale, minScale, settings.reducedMotion]);
+  }, [dockItems, baseSize, baseSpacing, effectWidth, maxScale, minScale]);
 
   // Calculate positions based on current scales
   const calculatePositions = useCallback((scales: number[]) => {
@@ -81,7 +124,7 @@ export const Dock = () => {
     const initialPositions = calculatePositions(initialScales);
     setCurrentScales(initialScales);
     setCurrentPositions(initialPositions);
-  }, [dockItems, calculatePositions, minScale]);
+  }, [dockItems, calculatePositions, minScale, config]);
 
   // Animation loop
   const animateToTarget = useCallback(() => {
@@ -92,8 +135,7 @@ export const Dock = () => {
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
-        const newScale = currentScale + (diff * lerpFactor);
-        return Math.max(minScale, Math.min(maxScale, newScale));
+        return currentScale + (diff * lerpFactor);
       });
     });
 
@@ -154,8 +196,9 @@ export const Dock = () => {
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
+    const bounceHeight = Math.max(-8, -baseSize * 0.15);
     element.style.transition = 'transform 0.2s ease-out';
-    element.style.transform = 'translateY(-12px)';
+    element.style.transform = `translateY(${bounceHeight}px)`;
     
     setTimeout(() => {
       element.style.transform = 'translateY(0px)';
@@ -163,23 +206,35 @@ export const Dock = () => {
   };
 
   const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index] && !settings.reducedMotion) {
-      createBounceAnimation(iconRefs.current[index]!);
+    if (iconRefs.current[index]) {
+      if (typeof window !== 'undefined' && (window as any).gsap) {
+        const gsap = (window as any).gsap;
+        const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
+        
+        gsap.to(iconRefs.current[index], {
+          y: bounceHeight,
+          duration: 0.2,
+          ease: 'power2.out',
+          yoyo: true,
+          repeat: 1,
+          transformOrigin: 'bottom center'
+        });
+      } else {
+        createBounceAnimation(iconRefs.current[index]!);
+      }
     }
+    
     openApp(appId);
   };
 
-  // Calculate content width with stable bounds
+  // Calculate content width
   const contentWidth = currentPositions.length > 0 
-    ? Math.min(
-        Math.max(...currentPositions.map((pos, index) => 
-          pos + (baseSize * Math.min(currentScales[index], maxScale)) / 2
-        )),
-        (dockItems.length * (baseSize * maxScale + baseSpacing))
-      )
+    ? Math.max(...currentPositions.map((pos, index) => 
+        pos + (baseSize * currentScales[index]) / 2
+      ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
-  const padding = 16;
+  const padding = Math.max(8, baseSize * 0.12);
 
   return (
     <>
@@ -200,9 +255,15 @@ export const Dock = () => {
         }`}
         style={{
           width: `${contentWidth + padding * 2}px`,
-          background: 'hsl(var(--macos-dock-bg))',
-          border: '1px solid hsl(var(--macos-glass-border))',
-          boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.4), 0 0 1px rgba(255, 255, 255, 0.1) inset',
+          background: 'rgba(45, 45, 45, 0.75)',
+          borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
+          border: '1px solid rgba(255, 255, 255, 0.15)',
+          boxShadow: `
+            0 ${Math.max(4, baseSize * 0.1)}px ${Math.max(16, baseSize * 0.4)}px rgba(0, 0, 0, 0.4),
+            0 ${Math.max(2, baseSize * 0.05)}px ${Math.max(8, baseSize * 0.2)}px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.15),
+            inset 0 -1px 0 rgba(0, 0, 0, 0.2)
+          `,
           padding: `${padding}px`
         }}
         onMouseMove={handleMouseMove}
@@ -251,7 +312,7 @@ export const Dock = () => {
                   style={{
                     width: scaledSize,
                     height: scaledSize,
-                    filter: `drop-shadow(0 ${scale > 1.2 ? 2 : 1}px ${scale > 1.2 ? 4 : 2}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
+                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
                   }}
                 >
                   {iconSrc ? (

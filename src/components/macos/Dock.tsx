@@ -135,9 +135,7 @@ export const Dock = () => {
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
-        const newScale = currentScale + (diff * lerpFactor);
-        // Clamp scale to prevent overflow
-        return Math.max(minScale, Math.min(maxScale, newScale));
+        return currentScale + (diff * lerpFactor);
       });
     });
 
@@ -148,18 +146,17 @@ export const Dock = () => {
       });
     });
 
-    // Increased threshold to prevent jitter
     const scalesNeedUpdate = currentScales.some((scale, index) => 
-      Math.abs(scale - targetScales[index]) > 0.01
+      Math.abs(scale - targetScales[index]) > 0.002
     );
     const positionsNeedUpdate = currentPositions.some((pos, index) => 
-      Math.abs(pos - targetPositions[index]) > 0.5
+      Math.abs(pos - targetPositions[index]) > 0.1
     );
     
     if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
       animationFrameRef.current = requestAnimationFrame(animateToTarget);
     }
-  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions, minScale, maxScale]);
+  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions]);
 
   // Start/stop animation loop
   useEffect(() => {
@@ -199,8 +196,6 @@ export const Dock = () => {
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
-    if (settings.reducedMotion) return;
-    
     const bounceHeight = Math.max(-8, -baseSize * 0.15);
     element.style.transition = 'transform 0.2s ease-out';
     element.style.transform = `translateY(${bounceHeight}px)`;
@@ -211,7 +206,7 @@ export const Dock = () => {
   };
 
   const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index] && !settings.reducedMotion) {
+    if (iconRefs.current[index]) {
       if (typeof window !== 'undefined' && (window as any).gsap) {
         const gsap = (window as any).gsap;
         const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
@@ -232,10 +227,12 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate content width - use fixed base width plus extra space for magnification
-  const baseContentWidth = (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
-  const maxMagnificationExtra = baseSize * (maxScale - 1) * 2; // Extra space for magnified icons
-  const contentWidth = baseContentWidth + maxMagnificationExtra;
+  // Calculate content width
+  const contentWidth = currentPositions.length > 0 
+    ? Math.max(...currentPositions.map((pos, index) => 
+        pos + (baseSize * currentScales[index]) / 2
+      ))
+    : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
   const padding = Math.max(8, baseSize * 0.12);
 

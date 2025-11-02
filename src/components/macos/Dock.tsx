@@ -83,10 +83,28 @@ export const Dock = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [getResponsiveConfig]);
 
-  // No magnification - keep all icons at normal scale
-  const calculateTargetMagnification = useCallback(() => {
-    return dockItems.map(() => minScale);
-  }, [dockItems, minScale]);
+  // Authentic macOS cosine-based magnification algorithm
+  const calculateTargetMagnification = useCallback((mousePosition: number | null) => {
+    if (mousePosition === null) {
+      return dockItems.map(() => minScale);
+    }
+
+    return dockItems.map((_, index) => {
+      const normalIconCenter = (index * (baseSize + baseSpacing)) + (baseSize / 2);
+      const minX = mousePosition - (effectWidth / 2);
+      const maxX = mousePosition + (effectWidth / 2);
+      
+      if (normalIconCenter < minX || normalIconCenter > maxX) {
+        return minScale;
+      }
+      
+      const theta = ((normalIconCenter - minX) / effectWidth) * 2 * Math.PI;
+      const cappedTheta = Math.min(Math.max(theta, 0), 2 * Math.PI);
+      const scaleFactor = (1 - Math.cos(cappedTheta)) / 2;
+      
+      return minScale + (scaleFactor * (maxScale - minScale));
+    });
+  }, [dockItems, baseSize, baseSpacing, effectWidth, maxScale, minScale]);
 
   // Calculate positions based on current scales
   const calculatePositions = useCallback((scales: number[]) => {
@@ -108,26 +126,76 @@ export const Dock = () => {
     setCurrentPositions(initialPositions);
   }, [dockItems, calculatePositions, minScale, config]);
 
-  // No animation needed - scales and positions are static
+  // Animation loop
+  const animateToTarget = useCallback(() => {
+    const targetScales = calculateTargetMagnification(mouseX);
+    const targetPositions = calculatePositions(targetScales);
+    const lerpFactor = mouseX !== null ? 0.2 : 0.12;
 
-  // No animation loop needed
+    setCurrentScales(prevScales => {
+      return prevScales.map((currentScale, index) => {
+        const diff = targetScales[index] - currentScale;
+        return currentScale + (diff * lerpFactor);
+      });
+    });
 
-  // Mouse handlers for tooltip display only
+    setCurrentPositions(prevPositions => {
+      return prevPositions.map((currentPos, index) => {
+        const diff = targetPositions[index] - currentPos;
+        return currentPos + (diff * lerpFactor);
+      });
+    });
+
+    const scalesNeedUpdate = currentScales.some((scale, index) => 
+      Math.abs(scale - targetScales[index]) > 0.002
+    );
+    const positionsNeedUpdate = currentPositions.some((pos, index) => 
+      Math.abs(pos - targetPositions[index]) > 0.1
+    );
+    
+    if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
+      animationFrameRef.current = requestAnimationFrame(animateToTarget);
+    }
+  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions]);
+
+  // Start/stop animation loop
+  useEffect(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (currentScales.length > 0) {
+      animationFrameRef.current = requestAnimationFrame(animateToTarget);
+    }
+
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+    };
+  }, [animateToTarget, currentScales.length]);
+
+  // Throttled mouse movement handler
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    const now = performance.now();
+    
+    if (now - lastMouseMoveTime.current < 16) {
+      return;
+    }
+    
+    lastMouseMoveTime.current = now;
+    
     if (dockRef.current) {
       const rect = dockRef.current.getBoundingClientRect();
-      const padding = Math.max(8, baseSize * 0.12);
+      const padding = 16;
       setMouseX(e.clientX - rect.left - padding);
     }
-  }, [baseSize]);
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     setMouseX(null);
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
-    if (settings.reducedMotion) return;
-    
     const bounceHeight = Math.max(-8, -baseSize * 0.15);
     element.style.transition = 'transform 0.2s ease-out';
     element.style.transform = `translateY(${bounceHeight}px)`;
@@ -138,10 +206,10 @@ export const Dock = () => {
   };
 
   const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index] && !settings.reducedMotion) {
+    if (iconRefs.current[index]) {
       if (typeof window !== 'undefined' && (window as any).gsap) {
         const gsap = (window as any).gsap;
-        const bounceHeight = -baseSize * 0.15;
+        const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
         
         gsap.to(iconRefs.current[index], {
           y: bounceHeight,
@@ -159,8 +227,13 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate fixed content width
-  const contentWidth = (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+  // Calculate content width
+  const contentWidth = currentPositions.length > 0 
+    ? Math.max(...currentPositions.map((pos, index) => 
+        pos + (baseSize * currentScales[index]) / 2
+      ))
+    : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+
   const padding = Math.max(8, baseSize * 0.12);
 
   return (

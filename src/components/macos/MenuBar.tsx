@@ -46,6 +46,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           src={turtleLogo} 
           alt="Logo" 
           className="h-5 w-auto object-contain"
+          decoding="async"
         />
         <span className="font-semibold">{focusedApp?.name || 'Thanas R'}</span>
       </div>

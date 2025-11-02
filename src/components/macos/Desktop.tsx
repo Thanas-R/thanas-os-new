@@ -42,6 +42,16 @@ export const Desktop = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [windows, closeWindow]);
 
+  // Preload wallpapers to avoid jank
+  useEffect(() => {
+    Object.values(wallpapers).forEach((src) => {
+      const img = new Image();
+      img.src = src as string;
+      // @ts-ignore
+      img.decoding = 'async';
+    });
+  }, []);
+
   return (
     <div
       className="fixed inset-0 overflow-hidden"

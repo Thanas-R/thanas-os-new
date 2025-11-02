@@ -130,14 +130,12 @@ export const Dock = () => {
   const animateToTarget = useCallback(() => {
     const targetScales = calculateTargetMagnification(mouseX);
     const targetPositions = calculatePositions(targetScales);
-    const lerpFactor = settings.reducedMotion ? 1 : (mouseX !== null ? 0.2 : 0.12);
+    const lerpFactor = mouseX !== null ? 0.2 : 0.12;
 
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
-        const next = currentScale + (diff * lerpFactor);
-        // Clamp to avoid overshoot and jitter
-        return Math.max(minScale, Math.min(maxScale, next));
+        return currentScale + (diff * lerpFactor);
       });
     });
 
@@ -149,10 +147,10 @@ export const Dock = () => {
     });
 
     const scalesNeedUpdate = currentScales.some((scale, index) => 
-      Math.abs(scale - targetScales[index]) > 0.005
+      Math.abs(scale - targetScales[index]) > 0.002
     );
     const positionsNeedUpdate = currentPositions.some((pos, index) => 
-      Math.abs(pos - targetPositions[index]) > 0.2
+      Math.abs(pos - targetPositions[index]) > 0.1
     );
     
     if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
@@ -188,17 +186,16 @@ export const Dock = () => {
     
     if (dockRef.current) {
       const rect = dockRef.current.getBoundingClientRect();
-      const dynamicPadding = Math.max(8, baseSize * 0.12);
-      setMouseX(e.clientX - rect.left - dynamicPadding);
+      const padding = 16;
+      setMouseX(e.clientX - rect.left - padding);
     }
-  }, [baseSize]);
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     setMouseX(null);
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
-    if (settings.reducedMotion) return;
     const bounceHeight = Math.max(-8, -baseSize * 0.15);
     element.style.transition = 'transform 0.2s ease-out';
     element.style.transform = `translateY(${bounceHeight}px)`;
@@ -209,7 +206,7 @@ export const Dock = () => {
   };
 
   const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index] && !settings.reducedMotion) {
+    if (iconRefs.current[index]) {
       if (typeof window !== 'undefined' && (window as any).gsap) {
         const gsap = (window as any).gsap;
         const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
@@ -267,9 +264,7 @@ export const Dock = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
-          padding: `${padding}px`,
-          transition: settings.reducedMotion ? undefined : 'opacity 0.5s ease, transform 0.5s ease',
-          contain: 'layout paint'
+          padding: `${padding}px`
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => {
@@ -321,7 +316,7 @@ export const Dock = () => {
                   }}
                 >
                   {iconSrc ? (
-                    <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" decoding="async" loading="eager" />
+                    <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" />
                   ) : (
                     <div 
                       className="w-full h-full flex items-center justify-center text-3xl"

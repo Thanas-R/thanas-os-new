@@ -135,8 +135,7 @@ export const Dock = () => {
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
-        const next = currentScale + (diff * lerpFactor);
-        return Math.min(maxScale, Math.max(minScale, next));
+        return currentScale + (diff * lerpFactor);
       });
     });
 
@@ -187,10 +186,10 @@ export const Dock = () => {
     
     if (dockRef.current) {
       const rect = dockRef.current.getBoundingClientRect();
-      const padding = Math.max(8, baseSize * 0.12);
+      const padding = 16;
       setMouseX(e.clientX - rect.left - padding);
     }
-  }, [baseSize]);
+  }, []);
 
   const handleMouseLeave = useCallback(() => {
     setMouseX(null);
@@ -228,8 +227,12 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate base content width (stable)
-  const baseContentWidth = (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+  // Calculate content width
+  const contentWidth = currentPositions.length > 0 
+    ? Math.max(...currentPositions.map((pos, index) => 
+        pos + (baseSize * currentScales[index]) / 2
+      ))
+    : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
   const padding = Math.max(8, baseSize * 0.12);
 
@@ -251,7 +254,7 @@ export const Dock = () => {
           settings.dockAutoHide && !isDockVisible ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
         }`}
         style={{
-          width: `${baseContentWidth + padding * 2 + Math.ceil(baseSize * (maxScale - 1) * 2)}px`,
+          width: `${contentWidth + padding * 2}px`,
           background: 'rgba(45, 45, 45, 0.75)',
           borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',

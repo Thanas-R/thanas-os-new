@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Wifi, Battery, Volume2 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
-import turtleLogo from '@/assets/turtle-logo-2.png';
+import turtleLogo from '@/assets/turtle-logo.png';
 
 
 interface MenuBarProps {
@@ -44,17 +44,10 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       <div className="flex items-center gap-4">
         <img 
           src={turtleLogo} 
-          alt="Turtle logo" 
-          className="h-7 w-auto object-contain"
+          alt="Logo" 
+          className="h-5 w-auto object-contain"
         />
         <span className="font-semibold">{focusedApp?.name || 'Thanas R'}</span>
-        <nav className="hidden md:flex items-center gap-4 text-[13px] opacity-90">
-          <button className="hover:opacity-80 transition-opacity">File</button>
-          <button className="hover:opacity-80 transition-opacity">Edit</button>
-          <button className="hover:opacity-80 transition-opacity">View</button>
-          <button className="hover:opacity-80 transition-opacity">Window</button>
-          <button className="hover:opacity-80 transition-opacity">Help</button>
-        </nav>
       </div>
 
       {/* Right Section */}

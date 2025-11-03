@@ -128,9 +128,18 @@ export const Dock = () => {
 
   // Animation loop
   const animateToTarget = useCallback(() => {
+    if (settings.reducedMotion) {
+      // In reduced motion mode, snap instantly to target without animation
+      const targetScales = calculateTargetMagnification(mouseX);
+      const targetPositions = calculatePositions(targetScales);
+      setCurrentScales(targetScales);
+      setCurrentPositions(targetPositions);
+      return;
+    }
+
     const targetScales = calculateTargetMagnification(mouseX);
     const targetPositions = calculatePositions(targetScales);
-    const lerpFactor = settings.reducedMotion ? 1 : (mouseX !== null ? 0.2 : 0.12);
+    const lerpFactor = mouseX !== null ? 0.2 : 0.12;
 
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
@@ -158,13 +167,24 @@ export const Dock = () => {
     if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
       animationFrameRef.current = requestAnimationFrame(animateToTarget);
     }
-  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions]);
+  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions, settings.reducedMotion, minScale, maxScale]);
 
   // Start/stop animation loop
   useEffect(() => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
     }
+    
+    // In reduced motion mode, update instantly without animation
+    if (settings.reducedMotion) {
+      const targetScales = calculateTargetMagnification(mouseX);
+      const targetPositions = calculatePositions(targetScales);
+      setCurrentScales(targetScales);
+      setCurrentPositions(targetPositions);
+      return;
+    }
+    
+    // Start animation loop in normal mode
     if (currentScales.length > 0) {
       animationFrameRef.current = requestAnimationFrame(animateToTarget);
     }
@@ -174,7 +194,7 @@ export const Dock = () => {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [animateToTarget, currentScales.length]);
+  }, [animateToTarget, currentScales.length, settings.reducedMotion, mouseX, calculateTargetMagnification, calculatePositions]);
 
   // Throttled mouse movement handler
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -251,7 +271,7 @@ export const Dock = () => {
       
       <div
         ref={dockRef}
-        className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl shadow-macos-glass z-50 ${
+        className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy shadow-macos-glass z-50 ${
           settings.reducedMotion ? '' : 'transition-all duration-500 ease-out'
         } ${
           settings.dockAutoHide && !isDockVisible ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
@@ -259,7 +279,7 @@ export const Dock = () => {
         style={{
           width: `${contentWidth + padding * 2}px`,
           background: 'rgba(45, 45, 45, 0.75)',
-          borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
+          borderRadius: `${Math.max(16, baseSize * 0.28)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: `
             0 ${Math.max(4, baseSize * 0.1)}px ${Math.max(16, baseSize * 0.4)}px rgba(0, 0, 0, 0.4),
@@ -267,9 +287,8 @@ export const Dock = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
-          padding: `${padding}px ${padding}px ${padding}px ${padding}px`,
-          paddingTop: `${padding + baseSize * 0.5}px`,
-          transition: settings.reducedMotion ? undefined : 'opacity 0.5s ease, transform 0.5s ease',
+          padding: `${Math.max(6, padding * 0.6)}px`,
+          transition: settings.reducedMotion ? 'none' : 'opacity 0.5s ease, transform 0.5s ease',
           overflow: 'visible'
         }}
         onMouseMove={handleMouseMove}
@@ -309,9 +328,10 @@ export const Dock = () => {
                   left: `${position - scaledSize / 2}px`,
                   bottom: '0px',
                   width: `${scaledSize}px`,
-                  height: `${scaledSize}px`,
+                  height: `${baseSize}px`,
                   transformOrigin: 'bottom center',
-                  zIndex: Math.round(scale * 10)
+                  zIndex: Math.round(scale * 10),
+                  transition: settings.reducedMotion ? 'none' : undefined
                 }}
               >
                 <div
@@ -319,7 +339,8 @@ export const Dock = () => {
                   style={{
                     width: scaledSize,
                     height: scaledSize,
-                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
+                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`,
+                    transition: settings.reducedMotion ? 'none' : undefined
                   }}
                 >
                   {iconSrc ? (

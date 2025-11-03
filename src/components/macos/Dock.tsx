@@ -250,17 +250,14 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate content width and max height
-  const currentMaxScale = currentScales.length > 0 ? Math.max(...currentScales) : 1;
-  const contentHeight = baseSize * currentMaxScale;
-  
+  // Calculate content width
   const contentWidth = currentPositions.length > 0 
     ? Math.max(...currentPositions.map((pos, index) => 
         pos + (baseSize * currentScales[index]) / 2
       ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
-  const padding = Math.max(6, baseSize * 0.1);
+  const padding = Math.max(8, baseSize * 0.12);
 
   return (
     <>
@@ -281,9 +278,8 @@ export const Dock = () => {
         }`}
         style={{
           width: `${contentWidth + padding * 2}px`,
-          height: `${contentHeight + padding * 2}px`,
           background: 'rgba(45, 45, 45, 0.75)',
-          borderRadius: `${Math.max(16, baseSize * 0.28)}px`,
+          borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: `
             0 ${Math.max(4, baseSize * 0.1)}px ${Math.max(16, baseSize * 0.4)}px rgba(0, 0, 0, 0.4),
@@ -292,7 +288,7 @@ export const Dock = () => {
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
           padding: `${padding}px`,
-          transition: settings.reducedMotion ? 'none' : 'width 0.15s ease-out, height 0.15s ease-out, opacity 0.5s ease, transform 0.5s ease'
+          transition: settings.reducedMotion ? 'none' : 'width 0.15s ease-out, opacity 0.5s ease, transform 0.5s ease'
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => {
@@ -305,7 +301,7 @@ export const Dock = () => {
         <div 
           className="relative"
           style={{
-            height: `${contentHeight}px`,
+            height: `${baseSize}px`,
             width: '100%'
           }}
         >

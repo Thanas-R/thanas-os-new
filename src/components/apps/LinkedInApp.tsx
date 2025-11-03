@@ -1,7 +1,7 @@
 import { Linkedin, ExternalLink, GraduationCap, MapPin, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import linkedinPhoto from '@/assets/linkedin-profile.jpg';
+import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
 
 export const LinkedInApp = () => {
   return (

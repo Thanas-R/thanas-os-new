@@ -267,9 +267,10 @@ export const Dock = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
-          padding: `${padding}px`,
+          padding: `${padding}px ${padding}px ${padding}px ${padding}px`,
+          paddingTop: `${padding + baseSize * 0.5}px`,
           transition: settings.reducedMotion ? undefined : 'opacity 0.5s ease, transform 0.5s ease',
-          contain: 'layout paint'
+          overflow: 'visible'
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => {
@@ -283,7 +284,8 @@ export const Dock = () => {
           className="relative"
           style={{
             height: `${baseSize}px`,
-            width: '100%'
+            width: '100%',
+            overflow: 'visible'
           }}
         >
           {dockItems.map((item, index) => {

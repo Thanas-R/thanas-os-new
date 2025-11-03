@@ -1,5 +1,5 @@
 import { MapPin, GraduationCap, Cake } from 'lucide-react';
-import profilePhoto from '@/assets/profile-photo.jpg';
+import profilePhoto from '@/assets/profile-photo-new.jpg';
 
 export const AboutApp = () => {
   return (

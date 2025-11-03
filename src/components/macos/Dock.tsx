@@ -250,14 +250,17 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate content width
+  // Calculate content width and max height
+  const currentMaxScale = currentScales.length > 0 ? Math.max(...currentScales) : 1;
+  const contentHeight = baseSize * currentMaxScale;
+  
   const contentWidth = currentPositions.length > 0 
     ? Math.max(...currentPositions.map((pos, index) => 
         pos + (baseSize * currentScales[index]) / 2
       ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
-  const padding = Math.max(8, baseSize * 0.12);
+  const padding = Math.max(6, baseSize * 0.1);
 
   return (
     <>
@@ -272,12 +275,13 @@ export const Dock = () => {
       <div
         ref={dockRef}
         className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy shadow-macos-glass z-50 ${
-          settings.reducedMotion ? '' : 'transition-all duration-500 ease-out'
+          settings.reducedMotion ? '' : 'transition-all duration-300 ease-out'
         } ${
           settings.dockAutoHide && !isDockVisible ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
         }`}
         style={{
           width: `${contentWidth + padding * 2}px`,
+          height: `${contentHeight + padding * 2}px`,
           background: 'rgba(45, 45, 45, 0.75)',
           borderRadius: `${Math.max(16, baseSize * 0.28)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -287,9 +291,8 @@ export const Dock = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
-          padding: `${Math.max(6, padding * 0.6)}px`,
-          transition: settings.reducedMotion ? 'none' : 'opacity 0.5s ease, transform 0.5s ease',
-          overflow: 'visible'
+          padding: `${padding}px`,
+          transition: settings.reducedMotion ? 'none' : 'width 0.15s ease-out, height 0.15s ease-out, opacity 0.5s ease, transform 0.5s ease'
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => {
@@ -302,9 +305,8 @@ export const Dock = () => {
         <div 
           className="relative"
           style={{
-            height: `${baseSize}px`,
-            width: '100%',
-            overflow: 'visible'
+            height: `${contentHeight}px`,
+            width: '100%'
           }}
         >
           {dockItems.map((item, index) => {
@@ -328,7 +330,7 @@ export const Dock = () => {
                   left: `${position - scaledSize / 2}px`,
                   bottom: '0px',
                   width: `${scaledSize}px`,
-                  height: `${baseSize}px`,
+                  height: `${scaledSize}px`,
                   transformOrigin: 'bottom center',
                   zIndex: Math.round(scale * 10),
                   transition: settings.reducedMotion ? 'none' : undefined

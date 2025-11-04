@@ -20,11 +20,11 @@ export const ClockWidget = () => {
         <Clock className="w-4 h-4 text-primary" />
         <h3 className="text-sm font-semibold opacity-90">Time</h3>
       </div>
-      <div className="text-3xl font-bold font-mono tabular-nums">
+      <div className="text-3xl font-bold font-mono tabular-nums leading-tight">
         {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' })}
       </div>
-      <div className="text-sm opacity-75 mt-1">
-        {time.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+      <div className="text-sm opacity-75 mt-2">
+        {time.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
       </div>
     </div>
   );

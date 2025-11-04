@@ -6,7 +6,7 @@ export const AboutApp = () => {
     <div className="p-8 space-y-6">
       <div className="flex items-start gap-6">
         <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg">
-          <img src={profilePhoto} alt="Thanas R" className="w-full h-full object-cover" />
+          <img src={profilePhoto} alt="Thanas R" className="w-full h-full object-cover" loading="eager" decoding="async" />
         </div>
         <div className="flex-1">
           <h1 className="text-4xl font-bold mb-2">Thanas R</h1>

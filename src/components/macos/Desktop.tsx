@@ -42,13 +42,13 @@ export const Desktop = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [windows, closeWindow]);
 
-  // Preload wallpapers to avoid jank
+  // Preload wallpapers for smooth transitions
   useEffect(() => {
     Object.values(wallpapers).forEach((src) => {
       const img = new Image();
       img.src = src as string;
-      // @ts-ignore
       img.decoding = 'async';
+      img.loading = 'eager';
     });
   }, []);
 

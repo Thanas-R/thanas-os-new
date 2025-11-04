@@ -178,6 +178,8 @@ export const Dock = () => {
 
   // Throttled mouse movement handler
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
+    if (settings.reducedMotion) return;
+    
     const now = performance.now();
     
     if (now - lastMouseMoveTime.current < 16) {
@@ -191,7 +193,7 @@ export const Dock = () => {
       const dynamicPadding = Math.max(8, baseSize * 0.12);
       setMouseX(e.clientX - rect.left - dynamicPadding);
     }
-  }, [baseSize]);
+  }, [baseSize, settings.reducedMotion]);
 
   const handleMouseLeave = useCallback(() => {
     setMouseX(null);
@@ -200,12 +202,12 @@ export const Dock = () => {
   const createBounceAnimation = (element: HTMLElement) => {
     if (settings.reducedMotion) return;
     const bounceHeight = Math.max(-8, -baseSize * 0.15);
-    element.style.transition = 'transform 0.2s ease-out';
+    element.style.transition = 'transform 0.15s ease-out';
     element.style.transform = `translateY(${bounceHeight}px)`;
     
     setTimeout(() => {
       element.style.transform = 'translateY(0px)';
-    }, 200);
+    }, 150);
   };
 
   const handleAppClick = (appId: string, index: number) => {
@@ -313,12 +315,13 @@ export const Dock = () => {
                   zIndex: Math.round(scale * 10)
                 }}
               >
-                <div
-                  className="rounded-2xl shadow-lg flex items-center justify-center overflow-hidden"
+              <div
+                  className="flex items-center justify-center overflow-hidden"
                   style={{
                     width: scaledSize,
                     height: scaledSize,
-                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
+                    borderRadius: `${Math.max(12, scaledSize * 0.225)}px`,
+                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.3 + (scale - 1) * 0.2}))`
                   }}
                 >
                   {iconSrc ? (

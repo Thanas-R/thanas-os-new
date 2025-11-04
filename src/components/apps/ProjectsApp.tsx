@@ -12,7 +12,7 @@ export const ProjectsApp = () => {
 
       <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
         <div className="flex items-start gap-4">
-          <img src={forgeIcon} alt="PESU-Forge" className="w-16 h-16 object-contain" />
+          <img src={forgeIcon} alt="PESU-Forge" className="w-16 h-16 object-contain" loading="eager" decoding="async" />
           <div className="flex-1">
             <h3 className="text-2xl font-bold mb-2">PESU-Forge</h3>
             <p className="text-muted-foreground mb-4">

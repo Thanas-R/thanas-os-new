@@ -7,6 +7,7 @@ import { Spotlight } from './Spotlight';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { ClockWidget } from '@/components/widgets/ClockWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
@@ -22,6 +23,9 @@ const wallpapers = {
 export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+  
+  // Preload all critical images
+  useImagePreloader();
 
   // Keyboard shortcuts
   useEffect(() => {

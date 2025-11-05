@@ -56,11 +56,19 @@ export const Desktop = () => {
     });
   }, []);
 
+  // Get the background image URL - support both preset wallpapers and custom URLs
+  const getBackgroundImage = () => {
+    if (settings.wallpaper.startsWith('data:')) {
+      return settings.wallpaper;
+    }
+    return wallpapers[settings.wallpaper as keyof typeof wallpapers];
+  };
+
   return (
     <div
       className="fixed inset-0 overflow-hidden"
       style={{
-        backgroundImage: `url(${wallpapers[settings.wallpaper as keyof typeof wallpapers]})`,
+        backgroundImage: `url(${getBackgroundImage()})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',

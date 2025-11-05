@@ -11,7 +11,7 @@ import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
-import wallpaper4 from '@/assets/wallpaper-4.jpg';
+import wallpaper4 from '@/assets/minecraft-valley.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,

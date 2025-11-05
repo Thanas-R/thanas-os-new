@@ -8,7 +8,7 @@ import { useRef, useEffect, useState } from 'react';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
-import wallpaper4 from '@/assets/wallpaper-4.jpg';
+import wallpaper4 from '@/assets/minecraft-valley.jpg';
 import forgeIcon from '@/assets/forge-icon.png';
 const wallpapers = [{
   id: 'wallpaper-1',
@@ -25,7 +25,7 @@ const wallpapers = [{
 }, {
   id: 'wallpaper-4',
   src: wallpaper4,
-  name: 'Canyon Vista'
+  name: 'Minecraft Mountains'
 }];
 export const SettingsApp = () => {
   const {

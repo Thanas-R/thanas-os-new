@@ -13,11 +13,11 @@ export const ProjectsApp = () => {
 
       <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
         <div className="flex items-start gap-4">
-          <img src={forgeIcon} alt="PESU-Forge" className="w-16 h-16 object-contain" loading="eager" decoding="async" />
+          <img src={forgeIcon} alt="Thought-Forge" className="w-16 h-16 object-contain" loading="eager" decoding="async" />
           <div className="flex-1">
-            <h3 className="text-2xl font-bold mb-2">PESU-Forge</h3>
+            <h3 className="text-2xl font-bold mb-2">Thought-Forge</h3>
             <p className="text-muted-foreground mb-4">
-              A comprehensive platform for PES University students, featuring course resources, collaboration tools, and academic management systems.
+              A comprehensive platform for neurodivergent people, providing personalized tools, resources, and community support for enhanced productivity and well-being.
             </p>
             <div className="flex flex-wrap gap-2 mb-4">
               <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">React</span>

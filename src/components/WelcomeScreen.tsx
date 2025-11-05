@@ -14,8 +14,16 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
     setTimeout(() => setIsLoaded(true), 100);
   }, []);
 
-  const handleEnter = () => {
+  const handleEnter = async () => {
     setIsExiting(true);
+    
+    // Request fullscreen
+    try {
+      await document.documentElement.requestFullscreen();
+    } catch (err) {
+      console.log('Fullscreen request failed:', err);
+    }
+    
     setTimeout(onEnter, 600); // Match animation duration
   };
 

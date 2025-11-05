@@ -20,7 +20,7 @@ interface MacOSContextType {
 const MacOSContext = createContext<MacOSContextType | undefined>(undefined);
 
 const DEFAULT_SETTINGS: MacOSSettings = {
-  wallpaper: 'wallpaper-1',
+  wallpaper: 'wallpaper-2',
   theme: 'dark',
   dockAutoHide: false,
   dockMagnification: 75,

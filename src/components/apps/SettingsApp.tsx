@@ -1,13 +1,15 @@
 import { useMacOS } from '@/contexts/MacOSContext';
-import { Monitor, Palette, Layout, Download, Upload, RotateCcw } from 'lucide-react';
+import { Monitor, Palette, Layout, Upload, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
 import { Card } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
+import { useRef, useEffect, useState } from 'react';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
 import wallpaper4 from '@/assets/wallpaper-4.jpg';
+import forgeIcon from '@/assets/forge-icon.png';
 const wallpapers = [{
   id: 'wallpaper-1',
   src: wallpaper1,
@@ -30,6 +32,28 @@ export const SettingsApp = () => {
     settings,
     updateSettings
   } = useMacOS();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isPreloaded, setIsPreloaded] = useState(false);
+
+  // Preload wallpapers and forge icon when Settings opens
+  useEffect(() => {
+    const preloadImages = async () => {
+      const images = [wallpaper1, wallpaper2, wallpaper3, wallpaper4, forgeIcon];
+      const promises = images.map(src => {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = resolve;
+          img.onerror = resolve;
+          img.src = src as string;
+          img.loading = 'eager';
+          img.decoding = 'async';
+        });
+      });
+      await Promise.all(promises);
+      setIsPreloaded(true);
+    };
+    preloadImages();
+  }, []);
   const handleExport = () => {
     const dataStr = JSON.stringify(settings, null, 2);
     const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
@@ -62,12 +86,29 @@ export const SettingsApp = () => {
   };
   const handleReset = () => {
     updateSettings({
-      wallpaper: 'wallpaper-1',
+      wallpaper: 'wallpaper-2',
       theme: 'light',
       dockAutoHide: false,
       dockMagnification: 75,
       reducedMotion: false
     });
+  };
+
+  const handleCustomWallpaper = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && (file.type === 'image/jpeg' || file.type === 'image/jpg' || file.type === 'image/png')) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const result = event.target?.result as string;
+        // Create a temporary wallpaper URL
+        updateSettings({ wallpaper: result });
+      };
+      reader.readAsDataURL(file);
+    }
   };
   return <div className="p-8 space-y-6">
       <div className="text-center mb-6">
@@ -157,7 +198,28 @@ export const SettingsApp = () => {
         </div>
       </Card>
 
-      {/* Import/Export */}
-      
+      {/* Custom Wallpaper Upload */}
+      <Card className="p-6">
+        <div className="flex items-center gap-3 mb-4">
+          <ImagePlus className="w-5 h-5 text-primary" />
+          <h2 className="text-xl font-semibold">Custom Wallpaper</h2>
+        </div>
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Upload your own background image (JPEG, JPG, PNG). Note: Custom wallpapers are temporary and won't be saved.
+          </p>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/jpg,image/png"
+            onChange={handleFileChange}
+            className="hidden"
+          />
+          <Button onClick={handleCustomWallpaper} variant="outline" className="w-full">
+            <Upload className="w-4 h-4 mr-2" />
+            Upload Custom Wallpaper
+          </Button>
+        </div>
+      </Card>
     </div>;
 };

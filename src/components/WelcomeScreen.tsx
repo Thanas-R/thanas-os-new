@@ -68,7 +68,7 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
           {formatDate(new Date())}
         </div>
         <div className="text-xl font-medium text-white/80 mt-6">
-          Welcome to Thanas R's Portfolio Website
+          Welcome to My Portfolio
         </div>
       </div>
       
@@ -81,7 +81,7 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
         }`}
       >
         <p className="text-white/70 text-sm backdrop-blur-md bg-white/10 px-4 py-2 rounded-lg border border-white/20">
-          ⚠️ Best viewed on laptop or desktop<br />Mobile experience not optimized
+          ⚠️ Best viewed on laptop or desktop • Mobile experience not optimized
         </p>
       </div>
 

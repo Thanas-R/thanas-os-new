@@ -45,8 +45,8 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   const openApp = (appId: string) => {
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
-      // If window is already open, just focus it
-      focusWindow(existingWindow.id);
+      // If window is already open and focused, minimize it
+      minimizeWindow(existingWindow.id);
       return;
     }
 
@@ -107,22 +107,10 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   };
 
   const minimizeAllWindows = () => {
-    // Filter only non-minimized windows to animate
-    const nonMinimizedWindows = windows.filter(w => !w.isMinimized);
-    if (nonMinimizedWindows.length === 0) return;
-    
-    // Update windows to trigger animation
     setWindows(prev =>
-      prev.map(w => w.isMinimized ? w : { ...w, isMinimizing: true })
+      prev.map(w => ({ ...w, isMinimized: true }))
     );
-    
-    // After animation completes, actually minimize
-    setTimeout(() => {
-      setWindows(prev =>
-        prev.map(w => ({ ...w, isMinimized: true, isMinimizing: false }))
-      );
-      setFocusedWindowId(null);
-    }, 300);
+    setFocusedWindowId(null);
   };
 
   const maximizeWindow = (windowId: string) => {

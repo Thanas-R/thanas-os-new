@@ -11,29 +11,11 @@ interface MenuBarProps {
 
 export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [time, setTime] = useState(new Date());
-  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
-  const [isCharging, setIsCharging] = useState(false);
-  const [volume, setVolume] = useState(65);
   const { focusedWindowId, apps, windows, minimizeAllWindows } = useMacOS();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(timer);
-  }, []);
-
-  // Get real battery level if available
-  useEffect(() => {
-    if ('getBattery' in navigator) {
-      (navigator as any).getBattery().then((battery: any) => {
-        const updateBattery = () => {
-          setBatteryLevel(Math.round(battery.level * 100));
-          setIsCharging(battery.charging);
-        };
-        updateBattery();
-        battery.addEventListener('levelchange', updateBattery);
-        battery.addEventListener('chargingchange', updateBattery);
-      });
-    }
   }, []);
 
   const focusedWindow = windows.find(w => w.id === focusedWindowId);
@@ -94,21 +76,16 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <Battery className="w-4 h-4" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-48 p-3 z-[200]">
+          <PopoverContent className="w-48 p-3">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Battery</span>
-                <span className="text-sm">{batteryLevel !== null ? `${batteryLevel}%` : '87%'}</span>
+                <span className="text-sm">87%</span>
               </div>
               <div className="w-full bg-secondary rounded-full h-2">
-                <div 
-                  className="bg-primary h-2 rounded-full transition-all" 
-                  style={{ width: `${batteryLevel !== null ? batteryLevel : 87}%` }} 
-                />
+                <div className="bg-primary h-2 rounded-full" style={{ width: '87%' }} />
               </div>
-              <p className="text-xs text-muted-foreground">
-                {isCharging ? 'Power Source: AC Adapter' : 'Power Source: Battery'}
-              </p>
+              <p className="text-xs text-muted-foreground">Power Source: Battery</p>
             </div>
           </PopoverContent>
         </Popover>
@@ -119,7 +96,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <Wifi className="w-4 h-4" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-48 p-3 z-[200]">
+          <PopoverContent className="w-48 p-3">
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium">Wi-Fi</span>
@@ -137,22 +114,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <Volume2 className="w-4 h-4" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-48 p-3 z-[200]">
+          <PopoverContent className="w-48 p-3">
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">Volume</span>
-                <span className="text-xs text-muted-foreground">{volume}%</span>
-              </div>
+              <span className="text-sm font-medium">Volume</span>
               <input 
                 type="range" 
                 min="0" 
                 max="100" 
-                value={volume}
-                onChange={(e) => setVolume(Number(e.target.value))}
+                defaultValue="65" 
                 className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
-                style={{
-                  background: `linear-gradient(to right, hsl(var(--primary)) 0%, hsl(var(--primary)) ${volume}%, hsl(var(--secondary)) ${volume}%, hsl(var(--secondary)) 100%)`
-                }}
               />
               <p className="text-xs text-muted-foreground">Output: Internal Speakers</p>
             </div>
@@ -165,7 +135,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <span className="font-medium">{formatTime(time)}</span>
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-56 p-4 z-[200]">
+          <PopoverContent className="w-56 p-4">
             <div className="space-y-2 text-center">
               <div className="text-3xl font-bold">
                 {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}

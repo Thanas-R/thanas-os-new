@@ -98,14 +98,12 @@ export const Window = ({ window }: WindowProps) => {
     };
   }, [isDragging, isResizing, dragStart, resizeStart, window, app, updateWindowPosition, updateWindowSize]);
 
-  if (window.isMinimized && !window.isMinimizing) return null;
+  if (window.isMinimized) return null;
 
   return (
     <div
       ref={windowRef}
-      className={`absolute backdrop-blur-macos-heavy rounded-2xl shadow-macos-window overflow-hidden ${
-        window.isMinimizing ? 'animate-fade-out' : settings.reducedMotion ? '' : 'animate-fade-in'
-      }`}
+      className={`absolute backdrop-blur-macos-heavy rounded-2xl shadow-macos-window overflow-hidden ${settings.reducedMotion ? '' : 'animate-fade-in'}`}
       style={{
         left: window.isMaximized ? 0 : window.position.x,
         top: window.isMaximized ? 28 : window.position.y,

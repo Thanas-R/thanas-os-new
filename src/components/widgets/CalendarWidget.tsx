@@ -13,12 +13,12 @@ export const CalendarWidget = () => {
     <div 
       className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass w-32 h-32 flex flex-col items-center justify-center"
       style={{
-        background: 'hsl(var(--macos-glass))',
-        border: '1px solid hsl(var(--macos-glass-border))',
+        background: 'rgba(255, 255, 255, 0.15)',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
       }}
     >
-      <Calendar className="w-5 h-5 text-primary mb-2" />
-      <div className="text-center">
+      <Calendar className="w-5 h-5 text-white/80 mb-2" />
+      <div className="text-center text-white">
         <div className="text-sm font-semibold opacity-75">
           {date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
         </div>

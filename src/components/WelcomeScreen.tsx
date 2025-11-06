@@ -55,18 +55,34 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
     >
       {/* Time and Date - macOS Lock Screen Style */}
       <div
-        className={`text-center mb-16 transition-all duration-500 ${
+        className={`text-center mb-8 transition-all duration-500 ${
           isLoaded && !isExiting
             ? 'opacity-100 translate-y-0'
             : 'opacity-0 translate-y-8'
         }`}
       >
-        <div className="text-[120px] font-light text-white leading-none mb-2">
+        <div className="text-[120px] font-bold text-white leading-none mb-2">
           {formatTime(new Date())}
         </div>
         <div className="text-3xl font-medium text-white/90">
           {formatDate(new Date())}
         </div>
+        <div className="text-xl font-medium text-white/80 mt-6">
+          Welcome to My Portfolio
+        </div>
+      </div>
+      
+      {/* Disclaimer */}
+      <div
+        className={`text-center mb-12 transition-all duration-500 max-w-md ${
+          isLoaded && !isExiting
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-8'
+        }`}
+      >
+        <p className="text-white/70 text-sm backdrop-blur-md bg-white/10 px-4 py-2 rounded-lg border border-white/20">
+          ⚠️ Best viewed on laptop or desktop • Mobile experience not optimized
+        </p>
       </div>
 
       {/* Enter Button */}

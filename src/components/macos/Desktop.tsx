@@ -77,14 +77,11 @@ export const Desktop = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Menu Bar - Higher z-index to prevent widget overlap */}
-      <div className="relative z-[100]">
-        <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
-      </div>
+      <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
       
       <div className="pt-7 h-full p-8">
-        {/* All Widgets Stacked on Left - Lower z-index than menu bar */}
-        <div className="absolute top-20 left-8 space-y-4 z-10 pointer-events-auto">
+        {/* All Widgets Stacked on Left */}
+        <div className="absolute top-20 left-8 space-y-4">
           <WelcomeWidget />
           <div className="flex gap-4">
             <TimeWidget />

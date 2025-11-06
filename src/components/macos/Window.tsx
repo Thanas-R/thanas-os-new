@@ -98,7 +98,20 @@ export const Window = ({ window }: WindowProps) => {
     };
   }, [isDragging, isResizing, dragStart, resizeStart, window, app, updateWindowPosition, updateWindowSize]);
 
-  if (window.isMinimized) return null;
+  if (window.isMinimized) {
+    return (
+      <div
+        className="fixed animate-fade-out pointer-events-none"
+        style={{
+          left: window.position.x,
+          top: window.position.y,
+          width: window.size.width,
+          height: window.size.height,
+          zIndex: window.zIndex,
+        }}
+      />
+    );
+  }
 
   return (
     <div

@@ -14,7 +14,6 @@ export interface WindowState {
   position: { x: number; y: number };
   size: { width: number; height: number };
   isMinimized: boolean;
-  isMinimizing?: boolean;
   isMaximized: boolean;
   zIndex: number;
   preMaximizePosition?: { x: number; y: number };

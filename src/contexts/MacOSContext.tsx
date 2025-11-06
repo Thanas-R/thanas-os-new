@@ -9,6 +9,7 @@ interface MacOSContextType {
   openApp: (appId: string) => void;
   closeWindow: (windowId: string) => void;
   minimizeWindow: (windowId: string) => void;
+  minimizeAllWindows: () => void;
   maximizeWindow: (windowId: string) => void;
   focusWindow: (windowId: string) => void;
   updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
@@ -105,6 +106,13 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     );
   };
 
+  const minimizeAllWindows = () => {
+    setWindows(prev =>
+      prev.map(w => ({ ...w, isMinimized: true }))
+    );
+    setFocusedWindowId(null);
+  };
+
   const maximizeWindow = (windowId: string) => {
     setWindows(prev =>
       prev.map(w => {
@@ -174,6 +182,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         openApp,
         closeWindow,
         minimizeWindow,
+        minimizeAllWindows,
         maximizeWindow,
         focusWindow,
         updateWindowPosition,

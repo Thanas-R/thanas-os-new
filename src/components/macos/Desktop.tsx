@@ -5,8 +5,10 @@ import { Dock } from './Dock';
 import { MenuBar } from './MenuBar';
 import { Spotlight } from './Spotlight';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
-import { ClockWidget } from '@/components/widgets/ClockWidget';
+import { TimeWidget } from '@/components/widgets/TimeWidget';
+import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
@@ -23,6 +25,7 @@ const wallpapers = {
 export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const isMobile = useIsMobile();
   
   // Preload all critical images
   useImagePreloader();
@@ -66,7 +69,7 @@ export const Desktop = () => {
 
   return (
     <div
-      className="fixed inset-0 overflow-hidden"
+      className={`fixed inset-0 overflow-hidden ${isMobile ? 'min-w-[1024px]' : ''}`}
       style={{
         backgroundImage: `url(${getBackgroundImage()})`,
         backgroundSize: 'cover',
@@ -80,7 +83,10 @@ export const Desktop = () => {
         {/* All Widgets Stacked on Left */}
         <div className="absolute top-20 left-8 space-y-4">
           <WelcomeWidget />
-          <ClockWidget />
+          <div className="flex gap-4">
+            <TimeWidget />
+            <CalendarWidget />
+          </div>
           <StatsWidget />
         </div>
 

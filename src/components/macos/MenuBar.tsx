@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Wifi, Battery, Volume2 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
 
 
@@ -10,7 +11,7 @@ interface MenuBarProps {
 
 export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [time, setTime] = useState(new Date());
-  const { focusedWindowId, apps, windows } = useMacOS();
+  const { focusedWindowId, apps, windows, minimizeAllWindows } = useMacOS();
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 1000);
@@ -42,12 +43,18 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     >
       {/* Left Section */}
       <div className="flex items-center gap-4">
-        <img 
-          src={turtleLogo} 
-          alt="Logo" 
-          className="h-5 w-auto object-contain"
-          decoding="async"
-        />
+        <button
+          onClick={minimizeAllWindows}
+          className="p-1 hover:bg-white/10 rounded transition-colors"
+          title="Show Desktop"
+        >
+          <img 
+            src={turtleLogo} 
+            alt="Logo" 
+            className="h-5 w-auto object-contain"
+            decoding="async"
+          />
+        </button>
         <span className="font-semibold">{focusedApp?.name || 'Thanas R'}</span>
       </div>
 
@@ -62,10 +69,88 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </button>
-        <Battery className="w-4 h-4" />
-        <Wifi className="w-4 h-4" />
-        <Volume2 className="w-4 h-4" />
-        <span className="font-medium">{formatTime(time)}</span>
+        
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-1 hover:bg-white/10 rounded transition-colors">
+              <Battery className="w-4 h-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-48 p-3">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Battery</span>
+                <span className="text-sm">87%</span>
+              </div>
+              <div className="w-full bg-secondary rounded-full h-2">
+                <div className="bg-primary h-2 rounded-full" style={{ width: '87%' }} />
+              </div>
+              <p className="text-xs text-muted-foreground">Power Source: Battery</p>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-1 hover:bg-white/10 rounded transition-colors">
+              <Wifi className="w-4 h-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-48 p-3">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Wi-Fi</span>
+                <span className="text-xs text-primary">Connected</span>
+              </div>
+              <p className="text-xs text-muted-foreground">Network: Portfolio Network</p>
+              <p className="text-xs text-muted-foreground">Signal: Excellent</p>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-1 hover:bg-white/10 rounded transition-colors">
+              <Volume2 className="w-4 h-4" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-48 p-3">
+            <div className="space-y-3">
+              <span className="text-sm font-medium">Volume</span>
+              <input 
+                type="range" 
+                min="0" 
+                max="100" 
+                defaultValue="65" 
+                className="w-full h-2 bg-secondary rounded-lg appearance-none cursor-pointer"
+              />
+              <p className="text-xs text-muted-foreground">Output: Internal Speakers</p>
+            </div>
+          </PopoverContent>
+        </Popover>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="p-1 hover:bg-white/10 rounded transition-colors">
+              <span className="font-medium">{formatTime(time)}</span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent className="w-56 p-4">
+            <div className="space-y-2 text-center">
+              <div className="text-3xl font-bold">
+                {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
+              </div>
+              <div className="text-sm text-muted-foreground">
+                {time.toLocaleDateString('en-US', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </div>
   );

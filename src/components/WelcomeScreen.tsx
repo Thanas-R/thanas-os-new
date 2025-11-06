@@ -27,9 +27,25 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
     setTimeout(onEnter, 600); // Match animation duration
   };
 
+  const formatTime = (date: Date) => {
+    return date.toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
+
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
+
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-500 ${
+      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-500 ${
         isLoaded && !isExiting ? 'opacity-100' : 'opacity-0'
       }`}
       style={{
@@ -37,41 +53,49 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
         backgroundColor: 'rgba(0, 0, 0, 0.3)',
       }}
     >
+      {/* Time and Date - macOS Lock Screen Style */}
       <div
-        className={`relative max-w-md w-full mx-4 transition-all duration-500 ${
+        className={`text-center mb-16 transition-all duration-500 ${
+          isLoaded && !isExiting
+            ? 'opacity-100 translate-y-0'
+            : 'opacity-0 translate-y-8'
+        }`}
+      >
+        <div className="text-[120px] font-light text-white leading-none mb-2">
+          {formatTime(new Date())}
+        </div>
+        <div className="text-3xl font-medium text-white/90">
+          {formatDate(new Date())}
+        </div>
+      </div>
+
+      {/* Enter Button */}
+      <div
+        className={`transition-all duration-500 ${
           isLoaded && !isExiting
             ? 'opacity-100 translate-y-0 scale-100'
             : 'opacity-0 translate-y-8 scale-95'
         }`}
       >
-        <div
-          className="backdrop-blur-md rounded-3xl p-8 shadow-2xl"
-          style={{
-            background: 'rgba(255, 255, 255, 0.1)',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
-          }}
+        <Button
+          onClick={handleEnter}
+          className="h-14 px-12 text-lg font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-md"
         >
-          <div className="mb-6 flex justify-center">
-            <div className="text-5xl font-mono text-cyan-400 animate-pulse">
-              {'</>'}
-            </div>
-          </div>
+          Enter
+        </Button>
+      </div>
 
-          <h1 className="text-3xl font-bold mb-4 text-center text-white">
-            Hello, I'm Thanas R
-          </h1>
-
-          <p className="text-center text-white/80 mb-8 leading-relaxed">
-            Welcome to my portfolio website. Navigate around to learn more about me, my projects, and my journey.
-          </p>
-
-          <Button
-            onClick={handleEnter}
-            className="w-full h-12 text-base font-semibold bg-white/20 hover:bg-white/30 text-white border border-white/30 transition-all duration-300 hover:scale-105"
-          >
-            Enter
-          </Button>
-        </div>
+      {/* Subtle hint text */}
+      <div
+        className={`absolute bottom-8 text-center transition-all duration-500 ${
+          isLoaded && !isExiting
+            ? 'opacity-60'
+            : 'opacity-0'
+        }`}
+      >
+        <p className="text-white/80 text-sm">
+          Click Enter to explore my portfolio
+        </p>
       </div>
     </div>
   );

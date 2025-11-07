@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 export const ContactApp = () => {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
@@ -15,33 +14,16 @@ export const ContactApp = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        },
-      });
+    // Simulate API call
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
-      if (error) throw error;
+    toast({
+      title: 'Message Sent! ✓',
+      description: "Thanks for reaching out! I'll get back to you soon.",
+    });
 
-      toast({
-        title: 'Message Sent! ✓',
-        description: "Thanks for reaching out! Check your email for confirmation.",
-      });
-
-      setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send message. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
+    setFormData({ name: '', email: '', message: '' });
+    setIsSubmitting(false);
   };
 
   const copyEmail = () => {

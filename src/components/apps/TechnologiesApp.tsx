@@ -3,23 +3,24 @@ import { Progress } from '@/components/ui/progress';
 
 const technologies = {
   languages: [
-    { name: 'C++', proficiency: 75, color: 'hsl(220, 70%, 50%)' },
+    { name: 'C++', proficiency: 85, color: 'hsl(220, 70%, 50%)' },
     { name: 'Python', proficiency: 55, color: 'hsl(205, 100%, 50%)' },
     { name: 'Java', proficiency: 40, color: 'hsl(0, 70%, 50%)' },
   ],
   webTech: [
-    { name: 'JavaScript', proficiency: 10, color: 'hsl(47, 100%, 50%)' },
-    { name: 'TypeScript', proficiency: 45, color: 'hsl(211, 100%, 50%)' },
-    { name: 'HTML/CSS', proficiency: 65, color: 'hsl(14, 100%, 53%)' },
+    { name: 'JavaScript', proficiency: 75, color: 'hsl(47, 100%, 50%)' },
+    { name: 'TypeScript', proficiency: 70, color: 'hsl(211, 100%, 50%)' },
+    { name: 'HTML/CSS', proficiency: 80, color: 'hsl(14, 100%, 53%)' },
   ],
   frameworks: [
-    { name: 'React.js', proficiency: 30, color: 'hsl(193, 95%, 68%)' },
-    { name: 'Node.js', proficiency: 30, color: 'hsl(142, 51%, 49%)' },
-    { name: 'TensorFlow', proficiency: 30, color: 'hsl(35, 100%, 50%)' },
+    { name: 'React.js', proficiency: 85, color: 'hsl(193, 95%, 68%)' },
+    { name: 'Node.js', proficiency: 65, color: 'hsl(142, 51%, 49%)' },
+    { name: 'TensorFlow', proficiency: 60, color: 'hsl(35, 100%, 50%)' },
   ],
   ai: [
     { name: 'Prompt Engineering', proficiency: 95, color: 'hsl(280, 70%, 60%)' },
-    { name: 'Machine Learning', proficiency: 50, color: 'hsl(260, 70%, 60%)' },
+    { name: 'Machine Learning', proficiency: 65, color: 'hsl(260, 70%, 60%)' },
+    { name: 'NLP', proficiency: 55, color: 'hsl(240, 70%, 60%)' },
   ],
 };
 
@@ -82,7 +83,7 @@ export const TechnologiesApp = () => {
       <div className="mt-6 p-6 bg-secondary rounded-xl">
         <h3 className="font-semibold mb-3">Currently Learning</h3>
         <div className="flex flex-wrap gap-2">
-          {['C', 'TypeScript', 'Python', 'JavaScript', 'Swift', 'React'].map(tech => (
+          {['Rust', 'GraphQL', 'Kubernetes', 'Advanced AI', 'Three.js'].map(tech => (
             <span key={tech} className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">
               {tech}
             </span>

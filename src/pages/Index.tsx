@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
 import { MacOSProvider } from '@/contexts/MacOSContext';
 import { Desktop } from '@/components/macos/Desktop';
-import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { AboutApp } from '@/components/apps/AboutApp';
 import { TechnologiesApp } from '@/components/apps/TechnologiesApp';
 import { ProjectsApp } from '@/components/apps/ProjectsApp';
@@ -90,25 +88,9 @@ const apps: AppConfig[] = [
 ];
 
 const Index = () => {
-  const [showWelcome, setShowWelcome] = useState(true);
-
-  useEffect(() => {
-    // Check if user has seen welcome screen before
-    const hasSeenWelcome = sessionStorage.getItem('hasSeenWelcome');
-    if (hasSeenWelcome) {
-      setShowWelcome(false);
-    }
-  }, []);
-
-  const handleEnterSite = () => {
-    sessionStorage.setItem('hasSeenWelcome', 'true');
-    setShowWelcome(false);
-  };
-
   return (
     <MacOSProvider apps={apps}>
       <Desktop />
-      {showWelcome && <WelcomeScreen onEnter={handleEnterSite} />}
     </MacOSProvider>
   );
 };

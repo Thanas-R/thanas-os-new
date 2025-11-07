@@ -9,7 +9,6 @@ interface MacOSContextType {
   openApp: (appId: string) => void;
   closeWindow: (windowId: string) => void;
   minimizeWindow: (windowId: string) => void;
-  minimizeAllWindows: () => void;
   maximizeWindow: (windowId: string) => void;
   focusWindow: (windowId: string) => void;
   updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
@@ -21,7 +20,7 @@ interface MacOSContextType {
 const MacOSContext = createContext<MacOSContextType | undefined>(undefined);
 
 const DEFAULT_SETTINGS: MacOSSettings = {
-  wallpaper: 'wallpaper-2',
+  wallpaper: 'wallpaper-1',
   theme: 'dark',
   dockAutoHide: false,
   dockMagnification: 75,
@@ -106,13 +105,6 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     );
   };
 
-  const minimizeAllWindows = () => {
-    setWindows(prev =>
-      prev.map(w => ({ ...w, isMinimized: true }))
-    );
-    setFocusedWindowId(null);
-  };
-
   const maximizeWindow = (windowId: string) => {
     setWindows(prev =>
       prev.map(w => {
@@ -182,7 +174,6 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         openApp,
         closeWindow,
         minimizeWindow,
-        minimizeAllWindows,
         maximizeWindow,
         focusWindow,
         updateWindowPosition,

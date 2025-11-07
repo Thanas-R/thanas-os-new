@@ -33,9 +33,9 @@ export const GitHubApp = () => {
         const reposData = await reposRes.json();
         
         setStats({
-          repos: 5,
+          repos: 4,
           stars: reposData.reduce((acc: number, repo: Repo) => acc + repo.stargazers_count, 0),
-          followers: userData.followers || 1,
+          followers: 1,
         });
         
         setRepos(reposData);

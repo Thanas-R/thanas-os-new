@@ -130,14 +130,13 @@ export const Dock = () => {
   const animateToTarget = useCallback(() => {
     const targetScales = calculateTargetMagnification(mouseX);
     const targetPositions = calculatePositions(targetScales);
-    const lerpFactor = settings.reducedMotion ? 1 : (mouseX !== null ? 0.2 : 0.12);
+    const lerpFactor = mouseX !== null ? 0.2 : 0.12;
 
     setCurrentScales(prevScales => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
         const next = currentScale + (diff * lerpFactor);
-        // Clamp to avoid overshoot and jitter
-        return Math.max(minScale, Math.min(maxScale, next));
+        return Math.min(maxScale, Math.max(minScale, next));
       });
     });
 
@@ -149,10 +148,10 @@ export const Dock = () => {
     });
 
     const scalesNeedUpdate = currentScales.some((scale, index) => 
-      Math.abs(scale - targetScales[index]) > 0.005
+      Math.abs(scale - targetScales[index]) > 0.002
     );
     const positionsNeedUpdate = currentPositions.some((pos, index) => 
-      Math.abs(pos - targetPositions[index]) > 0.2
+      Math.abs(pos - targetPositions[index]) > 0.1
     );
     
     if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
@@ -178,8 +177,6 @@ export const Dock = () => {
 
   // Throttled mouse movement handler
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (settings.reducedMotion) return;
-    
     const now = performance.now();
     
     if (now - lastMouseMoveTime.current < 16) {
@@ -190,28 +187,27 @@ export const Dock = () => {
     
     if (dockRef.current) {
       const rect = dockRef.current.getBoundingClientRect();
-      const dynamicPadding = Math.max(8, baseSize * 0.12);
-      setMouseX(e.clientX - rect.left - dynamicPadding);
+      const padding = Math.max(8, baseSize * 0.12);
+      setMouseX(e.clientX - rect.left - padding);
     }
-  }, [baseSize, settings.reducedMotion]);
+  }, [baseSize]);
 
   const handleMouseLeave = useCallback(() => {
     setMouseX(null);
   }, []);
 
   const createBounceAnimation = (element: HTMLElement) => {
-    if (settings.reducedMotion) return;
     const bounceHeight = Math.max(-8, -baseSize * 0.15);
-    element.style.transition = 'transform 0.15s ease-out';
+    element.style.transition = 'transform 0.2s ease-out';
     element.style.transform = `translateY(${bounceHeight}px)`;
     
     setTimeout(() => {
       element.style.transform = 'translateY(0px)';
-    }, 150);
+    }, 200);
   };
 
   const handleAppClick = (appId: string, index: number) => {
-    if (iconRefs.current[index] && !settings.reducedMotion) {
+    if (iconRefs.current[index]) {
       if (typeof window !== 'undefined' && (window as any).gsap) {
         const gsap = (window as any).gsap;
         const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
@@ -232,12 +228,8 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  // Calculate content width
-  const contentWidth = currentPositions.length > 0 
-    ? Math.max(...currentPositions.map((pos, index) => 
-        pos + (baseSize * currentScales[index]) / 2
-      ))
-    : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+  // Calculate base content width (stable)
+  const baseContentWidth = (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
   const padding = Math.max(8, baseSize * 0.12);
 
@@ -259,7 +251,7 @@ export const Dock = () => {
           settings.dockAutoHide && !isDockVisible ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
         }`}
         style={{
-          width: `${contentWidth + padding * 2}px`,
+          width: `${baseContentWidth + padding * 2 + Math.ceil(baseSize * (maxScale - 1) * 2)}px`,
           background: 'rgba(45, 45, 45, 0.75)',
           borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -269,9 +261,7 @@ export const Dock = () => {
             inset 0 1px 0 rgba(255, 255, 255, 0.15),
             inset 0 -1px 0 rgba(0, 0, 0, 0.2)
           `,
-          padding: `${padding}px`,
-          transition: settings.reducedMotion ? undefined : 'opacity 0.5s ease, transform 0.5s ease',
-          overflow: 'visible'
+          padding: `${padding}px`
         }}
         onMouseMove={handleMouseMove}
         onMouseLeave={() => {
@@ -285,8 +275,7 @@ export const Dock = () => {
           className="relative"
           style={{
             height: `${baseSize}px`,
-            width: '100%',
-            overflow: 'visible'
+            width: '100%'
           }}
         >
           {dockItems.map((item, index) => {
@@ -315,17 +304,16 @@ export const Dock = () => {
                   zIndex: Math.round(scale * 10)
                 }}
               >
-              <div
-                  className="flex items-center justify-center overflow-hidden"
+                <div
+                  className="rounded-2xl shadow-lg flex items-center justify-center overflow-hidden"
                   style={{
                     width: scaledSize,
                     height: scaledSize,
-                    borderRadius: `${Math.max(12, scaledSize * 0.225)}px`,
-                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.3 + (scale - 1) * 0.2}))`
+                    filter: `drop-shadow(0 ${scale > 1.2 ? Math.max(2, baseSize * 0.05) : Math.max(1, baseSize * 0.03)}px ${scale > 1.2 ? Math.max(4, baseSize * 0.1) : Math.max(2, baseSize * 0.06)}px rgba(0,0,0,${0.2 + (scale - 1) * 0.15}))`
                   }}
                 >
                   {iconSrc ? (
-                    <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" decoding="async" loading="eager" />
+                    <img src={iconSrc} alt={app.name} className="w-full h-full object-cover" />
                   ) : (
                     <div 
                       className="w-full h-full flex items-center justify-center text-3xl"

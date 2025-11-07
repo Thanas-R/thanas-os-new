@@ -5,12 +5,15 @@ import { Dock } from './Dock';
 import { MenuBar } from './MenuBar';
 import { Spotlight } from './Spotlight';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
-import { ClockWidget } from '@/components/widgets/ClockWidget';
+import { TimeWidget } from '@/components/widgets/TimeWidget';
+import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
-import wallpaper4 from '@/assets/wallpaper-4.jpg';
+import wallpaper4 from '@/assets/minecraft-valley.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,
@@ -22,6 +25,10 @@ const wallpapers = {
 export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const isMobile = useIsMobile();
+  
+  // Preload all critical images
+  useImagePreloader();
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -42,11 +49,29 @@ export const Desktop = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [windows, closeWindow]);
 
+  // Preload wallpapers for smooth transitions
+  useEffect(() => {
+    Object.values(wallpapers).forEach((src) => {
+      const img = new Image();
+      img.src = src as string;
+      img.decoding = 'async';
+      img.loading = 'eager';
+    });
+  }, []);
+
+  // Get the background image URL - support both preset wallpapers and custom URLs
+  const getBackgroundImage = () => {
+    if (settings.wallpaper.startsWith('data:')) {
+      return settings.wallpaper;
+    }
+    return wallpapers[settings.wallpaper as keyof typeof wallpapers];
+  };
+
   return (
     <div
-      className="fixed inset-0 overflow-hidden"
+      className={`fixed inset-0 overflow-hidden ${isMobile ? 'min-w-[1024px]' : ''}`}
       style={{
-        backgroundImage: `url(${wallpapers[settings.wallpaper as keyof typeof wallpapers]})`,
+        backgroundImage: `url(${getBackgroundImage()})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -58,7 +83,10 @@ export const Desktop = () => {
         {/* All Widgets Stacked on Left */}
         <div className="absolute top-20 left-8 space-y-4">
           <WelcomeWidget />
-          <ClockWidget />
+          <div className="flex gap-4">
+            <TimeWidget />
+            <CalendarWidget />
+          </div>
           <StatsWidget />
         </div>
 

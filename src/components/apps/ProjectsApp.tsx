@@ -2,6 +2,7 @@ import { ExternalLink, Code, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import forgeIcon from '@/assets/forge-icon.png';
 import pesuMcIcon from '@/assets/pesu-mc-icon.png';
+import smartChefIcon from '@/assets/smart-chef-icon.png';
 
 export const ProjectsApp = () => {
   return (
@@ -55,6 +56,34 @@ export const ProjectsApp = () => {
             <Button asChild>
               <a href="https://pesu-mc.vercel.app/" target="_blank" rel="noopener noreferrer">
                 <ExternalLink className="w-4 h-4 mr-2" />Visit Server
+              </a>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
+        <div className="flex items-start gap-4">
+          <img 
+            src={smartChefIcon} 
+            alt="Smart-Chef" 
+            className="w-16 h-16 object-contain"
+            loading="eager"
+            decoding="async"
+          />
+          <div className="flex-1">
+            <h3 className="text-2xl font-bold mb-2">Smart-Chef</h3>
+            <p className="text-muted-foreground mb-4">
+              A simple and intelligent recipe-matching website. Enter ingredients you have at home, and SmartChef instantly finds relevant recipes using vector-based matching. Shows match percentage, available ingredients, and what's missing.
+            </p>
+            <div className="flex flex-wrap gap-2 mb-4">
+              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Recipe Matching</span>
+              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Vector Search</span>
+              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Food Tech</span>
+            </div>
+            <Button asChild>
+              <a href="https://smart-chef-pesu.vercel.app/" target="_blank" rel="noopener noreferrer">
+                <ExternalLink className="w-4 h-4 mr-2" />Visit Project
               </a>
             </Button>
           </div>

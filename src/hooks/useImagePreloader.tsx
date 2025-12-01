@@ -7,6 +7,7 @@ const imagesToPreload = [
   // App icons
   new URL('../assets/forge-icon.png', import.meta.url).href,
   new URL('../assets/pesu-mc-icon.png', import.meta.url).href,
+  new URL('../assets/smart-chef-icon.png', import.meta.url).href,
   new URL('../assets/about-icon.png', import.meta.url).href,
   new URL('../assets/contact-icon.png', import.meta.url).href,
   new URL('../assets/projects-icon.png', import.meta.url).href,

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { FolderGit2, GitBranch, Star, Loader2 } from 'lucide-react';
+import { FolderGit2, Star, Loader2, Linkedin } from 'lucide-react';
 
 export const StatsWidget = () => {
-  const [stats, setStats] = useState({ repos: 0, stars: 0, followers: 0 });
+  const [stats, setStats] = useState({ repos: 0, stars: 0 });
   const [loading, setLoading] = useState(true);
+  const linkedInFollowers = '26+'; // LinkedIn doesn't have a public API
 
   useEffect(() => {
     const fetchGitHubStats = async () => {
@@ -23,7 +24,6 @@ export const StatsWidget = () => {
         setStats({
           repos: userData.public_repos || 0,
           stars: totalStars,
-          followers: userData.followers || 0,
         });
       } catch (error) {
         console.error('Error fetching GitHub stats:', error);
@@ -65,10 +65,10 @@ export const StatsWidget = () => {
           </div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <GitBranch className="w-4 h-4 text-primary" />
+              <Linkedin className="w-4 h-4 text-primary" />
               <span className="text-sm">Followers</span>
             </div>
-            <span className="text-lg font-bold">{stats.followers}</span>
+            <span className="text-lg font-bold">{linkedInFollowers}</span>
           </div>
         </div>
       )}

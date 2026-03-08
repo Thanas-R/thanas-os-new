@@ -1,118 +1,134 @@
-import { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { AppleHelloEffect } from '@/components/effects/AppleHelloEffect';
 
 interface WelcomeScreenProps {
   onEnter: () => void;
 }
 
 export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isExiting, setIsExiting] = useState(false);
+  const [phase, setPhase] = useState<'hello' | 'info' | 'exiting'>('hello');
 
-  useEffect(() => {
-    // Fade in the welcome screen
-    setTimeout(() => setIsLoaded(true), 100);
+  const handleHelloComplete = useCallback(() => {
+    setTimeout(() => setPhase('info'), 400);
   }, []);
 
   const handleEnter = async () => {
-    setIsExiting(true);
-    
-    // Request fullscreen
+    setPhase('exiting');
     try {
       await document.documentElement.requestFullscreen();
     } catch (err) {
       console.log('Fullscreen request failed:', err);
     }
-    
-    setTimeout(onEnter, 600); // Match animation duration
+    setTimeout(onEnter, 600);
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: false,
-    });
-  };
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: false });
 
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric',
-    });
-  };
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+
+  const [now, setNow] = useState(new Date());
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(t);
+  }, []);
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex flex-col items-center justify-center transition-opacity duration-500 ${
-        isLoaded && !isExiting ? 'opacity-100' : 'opacity-0'
-      }`}
+      className="fixed inset-0 z-[9999] flex flex-col items-center justify-center select-none"
       style={{
-        backdropFilter: 'blur(40px)',
-        backgroundColor: 'rgba(0, 0, 0, 0.3)',
+        backdropFilter: 'blur(50px) saturate(180%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.4)',
       }}
     >
-      {/* Time and Date - macOS Lock Screen Style */}
-      <div
-        className={`text-center mb-8 transition-all duration-500 ${
-          isLoaded && !isExiting
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-8'
-        }`}
-      >
-        <div className="text-[120px] font-bold text-white leading-none mb-2">
-          {formatTime(new Date())}
-        </div>
-        <div className="text-3xl font-medium text-white/90">
-          {formatDate(new Date())}
-        </div>
-        <div className="text-xl font-medium text-white/80 mt-6">
-          Welcome to Thanas R's Portfolio Website
-        </div>
-      </div>
-      
-      {/* Disclaimer */}
-      <div
-        className={`text-center mb-12 transition-all duration-500 max-w-md ${
-          isLoaded && !isExiting
-            ? 'opacity-100 translate-y-0'
-            : 'opacity-0 translate-y-8'
-        }`}
-      >
-        <p className="text-white/70 text-sm backdrop-blur-md bg-white/10 px-4 py-2 rounded-lg border border-white/20">
-          ⚠️ Best viewed on laptop or desktop<br />Mobile experience not optimized
-        </p>
-      </div>
+      <AnimatePresence mode="wait">
+        {phase === 'hello' && (
+          <motion.div
+            key="hello"
+            className="flex items-center justify-center"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.5 }}
+          >
+            <AppleHelloEffect
+              className="h-28 md:h-36 text-white"
+              speed={0.8}
+              onAnimationComplete={handleHelloComplete}
+            />
+          </motion.div>
+        )}
 
-      {/* Enter Button */}
-      <div
-        className={`transition-all duration-500 ${
-          isLoaded && !isExiting
-            ? 'opacity-100 translate-y-0 scale-100'
-            : 'opacity-0 translate-y-8 scale-95'
-        }`}
-      >
-        <Button
-          onClick={handleEnter}
-          className="h-14 px-12 text-lg font-medium bg-white/20 hover:bg-white/30 text-white border border-white/30 rounded-full transition-all duration-300 hover:scale-105 backdrop-blur-md"
-        >
-          Enter
-        </Button>
-      </div>
+        {phase === 'info' && (
+          <motion.div
+            key="info"
+            className="flex flex-col items-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -30, scale: 0.97 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
+            {/* Time */}
+            <div className="text-[100px] md:text-[120px] font-extralight text-white leading-none tracking-tight">
+              {formatTime(now)}
+            </div>
+            <div className="text-xl md:text-2xl font-light text-white/80 mt-1 tracking-wide">
+              {formatDate(now)}
+            </div>
 
-      {/* Subtle hint text */}
-      <div
-        className={`absolute bottom-8 text-center transition-all duration-500 ${
-          isLoaded && !isExiting
-            ? 'opacity-60'
-            : 'opacity-0'
-        }`}
-      >
-        <p className="text-white/80 text-sm">
-          Click Enter to explore my portfolio
-        </p>
-      </div>
+            {/* Subtitle */}
+            <motion.p
+              className="text-white/60 text-sm mt-8 tracking-wide"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+            >
+              Thanas R — Portfolio
+            </motion.p>
+
+            {/* Disclaimer */}
+            <motion.div
+              className="mt-6 px-4 py-2 rounded-xl text-xs text-white/50 backdrop-blur-md"
+              style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.12)' }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
+            >
+              ⚠️ Best viewed on desktop · Mobile not optimized
+            </motion.div>
+
+            {/* Enter */}
+            <motion.button
+              onClick={handleEnter}
+              className="mt-10 h-12 px-10 text-sm font-medium text-white rounded-full cursor-pointer"
+              style={{
+                background: 'rgba(255,255,255,0.15)',
+                border: '1px solid rgba(255,255,255,0.25)',
+                backdropFilter: 'blur(20px)',
+              }}
+              whileHover={{ scale: 1.05, background: 'rgba(255,255,255,0.22)' }}
+              whileTap={{ scale: 0.97 }}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.4 }}
+            >
+              Enter
+            </motion.button>
+
+            {/* Bottom hint */}
+            <motion.p
+              className="absolute bottom-8 text-white/40 text-xs tracking-wider"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+            >
+              Click Enter to explore
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

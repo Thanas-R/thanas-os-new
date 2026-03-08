@@ -32,10 +32,10 @@ export const StatsWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-4 shadow-macos-glass flex items-center gap-5"
+      className="rounded-2xl p-4 shadow-macos-glass flex items-center gap-5 backdrop-blur-macos"
       style={{
         width: 352,
-        background: 'hsl(0 0% 8% / 0.85)',
+        background: 'hsl(var(--macos-window-bg))',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >

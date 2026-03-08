@@ -1,23 +1,48 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from "react";
 
 export const TimeWidget = () => {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 1000);
-    return () => clearInterval(timer);
+    const interval = setInterval(() => setTime(new Date()), 1000);
+    return () => clearInterval(interval);
   }, []);
 
-  const seconds = time.getSeconds();
-  const minutes = time.getMinutes();
-  const hours = time.getHours() % 12;
+  // Convert to Bengaluru time (IST = UTC+5:30)
+  const istOffset = 5.5 * 60 * 60 * 1000;
+  const utc = time.getTime() + time.getTimezoneOffset() * 60000;
+  const istTime = new Date(utc + istOffset);
 
-  const secondDeg = seconds * 6;
-  const minuteDeg = minutes * 6 + seconds * 0.1;
+  const hours = istTime.getHours() % 12;
+  const minutes = istTime.getMinutes();
+  const seconds = istTime.getSeconds();
+
   const hourDeg = hours * 30 + minutes * 0.5;
+  const minuteDeg = minutes * 6 + seconds * 0.1;
+  const secondDeg = seconds * 6;
 
-  const hourMarkers = Array.from({ length: 12 }, (_, i) => i + 1);
-  const minuteMarkers = Array.from({ length: 60 }, (_, i) => i);
+  const numbers = Array.from({ length: 12 }, (_, i) => {
+    const num = i === 0 ? 12 : i;
+    const angle = (i * 30 - 90) * (Math.PI / 180);
+    const radius = 42;
+    const x = 50 + radius * Math.cos(angle);
+    const y = 50 + radius * Math.sin(angle);
+    return { num, x, y };
+  });
+
+  const ticks = Array.from({ length: 60 }, (_, i) => {
+    const angle = (i * 6 - 90) * (Math.PI / 180);
+    const isHour = i % 5 === 0;
+    const outerR = 35;
+    const innerR = isHour ? 32 : 33.5;
+    return {
+      x1: 50 + innerR * Math.cos(angle),
+      y1: 50 + innerR * Math.sin(angle),
+      x2: 50 + outerR * Math.cos(angle),
+      y2: 50 + outerR * Math.sin(angle),
+      isHour,
+    };
+  });
 
   return (
     <div
@@ -27,119 +52,79 @@ export const TimeWidget = () => {
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >
-      <div className="relative w-32 h-32">
+      <svg viewBox="0 0 100 100" className="w-32 h-32">
         {/* Clock face */}
-        <div
-          className="absolute inset-0 rounded-full"
-          style={{
-            background: 'radial-gradient(circle, hsl(0 0% 98%) 0%, hsl(0 0% 92%) 100%)',
-            boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)',
-          }}
-        >
-          {/* City label */}
-          <div
-            className="absolute left-1/2 -translate-x-1/2 text-[7px] tracking-widest font-medium"
-            style={{ top: '30%', color: 'hsl(0 0% 45%)' }}
+        <circle cx="50" cy="50" r="48" fill="hsl(0 0% 96%)" stroke="hsl(0 0% 80%)" strokeWidth="0.5" />
+
+        {/* Tick marks */}
+        {ticks.map((t, i) => (
+          <line
+            key={i}
+            x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2}
+            stroke="hsl(0 0% 20%)"
+            strokeWidth={t.isHour ? 1 : 0.3}
+            strokeLinecap="round"
+          />
+        ))}
+
+        {/* Numbers */}
+        {numbers.map((n) => (
+          <text
+            key={n.num}
+            x={n.x} y={n.y}
+            textAnchor="middle"
+            dominantBaseline="central"
+            fill="hsl(0 0% 10%)"
+            fontSize={[12, 3, 6, 9].includes(n.num) ? "9" : "7"}
+            fontWeight="600"
+            fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
           >
-            BLR
-          </div>
+            {n.num}
+          </text>
+        ))}
 
-          {/* Minute tick marks */}
-          {minuteMarkers.map((i) => {
-            const isHour = i % 5 === 0;
-            if (isHour) return null;
-            return (
-              <div
-                key={`tick-${i}`}
-                className="absolute left-1/2 top-0 -translate-x-1/2 origin-[center_64px]"
-                style={{ transform: `translateX(-50%) rotate(${i * 6}deg)` }}
-              >
-                <div
-                  className="w-[0.5px] h-[2px] bg-foreground/20 mx-auto"
-                />
-              </div>
-            );
-          })}
+        {/* City label */}
+        <text
+          x="50" y="65"
+          textAnchor="middle"
+          fill="hsl(0 0% 50%)"
+          fontSize="5"
+          fontWeight="500"
+          letterSpacing="0.1em"
+          fontFamily="-apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif"
+        >
+          BLR
+        </text>
 
-          {/* Hour numbers */}
-          {hourMarkers.map((num) => {
-            const angle = (num * 30 - 90) * (Math.PI / 180);
-            const radius = 48;
-            const x = 50 + (radius * Math.cos(angle) / 64) * 50;
-            const y = 50 + (radius * Math.sin(angle) / 64) * 50;
-            return (
-              <div
-                key={num}
-                className="absolute font-semibold"
-                style={{
-                  left: `${x}%`,
-                  top: `${y}%`,
-                  transform: 'translate(-50%, -50%)',
-                  fontSize: num === 12 || num === 6 || num === 3 || num === 9 ? '13px' : '10px',
-                  color: 'hsl(0 0% 10%)',
-                }}
-              >
-                {num}
-              </div>
-            );
-          })}
+        {/* Hour hand */}
+        <line
+          x1="50" y1="50"
+          x2={50 + 20 * Math.cos((hourDeg - 90) * Math.PI / 180)}
+          y2={50 + 20 * Math.sin((hourDeg - 90) * Math.PI / 180)}
+          stroke="hsl(0 0% 10%)" strokeWidth="2.5" strokeLinecap="round"
+        />
 
-          {/* Hour hand */}
-          <div
-            className="absolute left-1/2 bottom-1/2 origin-bottom"
-            style={{
-              transform: `translateX(-50%) rotate(${hourDeg}deg)`,
-              width: '3px',
-              height: '28px',
-              background: 'hsl(0 0% 10%)',
-              borderRadius: '2px',
-            }}
-          />
+        {/* Minute hand */}
+        <line
+          x1="50" y1="50"
+          x2={50 + 28 * Math.cos((minuteDeg - 90) * Math.PI / 180)}
+          y2={50 + 28 * Math.sin((minuteDeg - 90) * Math.PI / 180)}
+          stroke="hsl(0 0% 10%)" strokeWidth="1.5" strokeLinecap="round"
+        />
 
-          {/* Minute hand */}
-          <div
-            className="absolute left-1/2 bottom-1/2 origin-bottom"
-            style={{
-              transform: `translateX(-50%) rotate(${minuteDeg}deg)`,
-              width: '2px',
-              height: '38px',
-              background: 'hsl(0 0% 10%)',
-              borderRadius: '2px',
-            }}
-          />
+        {/* Second hand */}
+        <line
+          x1={50 - 8 * Math.cos((secondDeg - 90) * Math.PI / 180)}
+          y1={50 - 8 * Math.sin((secondDeg - 90) * Math.PI / 180)}
+          x2={50 + 32 * Math.cos((secondDeg - 90) * Math.PI / 180)}
+          y2={50 + 32 * Math.sin((secondDeg - 90) * Math.PI / 180)}
+          stroke="hsl(25 100% 55%)" strokeWidth="0.8" strokeLinecap="round"
+        />
 
-          {/* Second hand */}
-          <div
-            className="absolute left-1/2 bottom-1/2 origin-bottom"
-            style={{
-              transform: `translateX(-50%) rotate(${secondDeg}deg)`,
-              width: '1px',
-              height: '42px',
-              background: 'hsl(25 100% 55%)',
-              borderRadius: '1px',
-              transition: 'none',
-            }}
-          />
-          {/* Second hand tail */}
-          <div
-            className="absolute left-1/2 top-1/2 origin-top"
-            style={{
-              transform: `translateX(-50%) rotate(${secondDeg}deg)`,
-              width: '1px',
-              height: '10px',
-              background: 'hsl(25 100% 55%)',
-              borderRadius: '1px',
-              transition: 'none',
-            }}
-          />
-
-          {/* Center dot */}
-          <div
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full"
-            style={{ background: 'hsl(25 100% 55%)' }}
-          />
-        </div>
-      </div>
+        {/* Center dot */}
+        <circle cx="50" cy="50" r="2" fill="hsl(25 100% 55%)" />
+        <circle cx="50" cy="50" r="0.8" fill="hsl(0 0% 96%)" />
+      </svg>
     </div>
   );
 };

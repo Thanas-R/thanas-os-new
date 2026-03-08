@@ -8,6 +8,7 @@ import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { TimeWidget } from '@/components/widgets/TimeWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { WeatherWidget } from '@/components/widgets/WeatherWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
@@ -26,30 +27,24 @@ export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const isMobile = useIsMobile();
-  
-  // Preload all critical images
+
   useImagePreloader();
 
-  // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd+K or Ctrl+K for Spotlight
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
         setSpotlightOpen(true);
       }
-      // Esc to close focused window
       if (e.key === 'Escape' && windows.length > 0) {
         const focused = windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]);
         closeWindow(focused.id);
       }
     };
-
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [windows, closeWindow]);
 
-  // Preload wallpapers for smooth transitions
   useEffect(() => {
     Object.values(wallpapers).forEach((src) => {
       const img = new Image();
@@ -59,11 +54,8 @@ export const Desktop = () => {
     });
   }, []);
 
-  // Get the background image URL - support both preset wallpapers and custom URLs
   const getBackgroundImage = () => {
-    if (settings.wallpaper.startsWith('data:')) {
-      return settings.wallpaper;
-    }
+    if (settings.wallpaper.startsWith('data:')) return settings.wallpaper;
     return wallpapers[settings.wallpaper as keyof typeof wallpapers];
   };
 
@@ -78,14 +70,17 @@ export const Desktop = () => {
       }}
     >
       <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
-      
+
       <div className="pt-7 h-full p-8">
-        {/* All Widgets Stacked on Left */}
-        <div className="absolute top-20 left-8 space-y-4">
+        {/* Widgets - Left column */}
+        <div className="absolute top-12 left-6 space-y-3">
           <WelcomeWidget />
-          <div className="flex gap-4 items-start">
+          <div className="flex gap-3 items-start">
             <TimeWidget />
             <CalendarWidget />
+          </div>
+          <div className="flex gap-3 items-start">
+            <WeatherWidget />
           </div>
           <StatsWidget />
         </div>

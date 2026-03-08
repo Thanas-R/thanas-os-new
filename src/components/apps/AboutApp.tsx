@@ -57,6 +57,19 @@ export const AboutApp = () => {
           <div className="text-sm text-muted-foreground mt-1">Learning Goals</div>
         </div>
       </div>
+
+      <a
+        href="https://thanas.vercel.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 p-4 bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors mt-4"
+      >
+        <ExternalLink className="w-5 h-5 text-primary" />
+        <div>
+          <span className="text-sm font-semibold text-primary">Visit my main portfolio</span>
+          <p className="text-xs text-muted-foreground">thanas.vercel.app — the latest and fully functional version</p>
+        </div>
+      </a>
     </div>
   );
 };

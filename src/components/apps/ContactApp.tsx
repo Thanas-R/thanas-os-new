@@ -1,53 +1,14 @@
-import { useState } from 'react';
-import { Send, Mail, Github, Linkedin, CheckCircle, Copy } from 'lucide-react';
+import { Mail, Github, Linkedin, Copy, ExternalLink, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 
 export const ContactApp = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: {
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-        },
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: 'Message Sent! ✓',
-        description: "Thanks for reaching out! Check your email for confirmation.",
-      });
-
-      setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
-      console.error('Error sending message:', error);
-      toast({
-        title: 'Error',
-        description: 'Failed to send message. Please try again.',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const copyEmail = () => {
     navigator.clipboard.writeText('thanas5.rd@gmail.com');
     toast({
-      title: 'Email Copied! ✓',
+      title: 'Email Copied!',
       description: 'thanas5.rd@gmail.com copied to clipboard',
     });
   };
@@ -62,53 +23,27 @@ export const ContactApp = () => {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 mb-8">
-          <div>
-            <label className="block text-sm font-medium mb-2">Name</label>
-            <Input
-              placeholder="Your name"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
+        <div className="mb-8 p-6 bg-destructive/10 border border-destructive/30 rounded-xl">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="w-5 h-5 text-destructive mt-0.5 shrink-0" />
+            <div>
+              <h3 className="font-semibold text-destructive mb-1">Contact form is no longer active</h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                This version of the portfolio is no longer functional. Please use my main website to get in touch.
+              </p>
+              <a
+                href="https://thanas.vercel.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button variant="outline" size="sm" className="gap-2">
+                  <ExternalLink className="w-4 h-4" />
+                  Visit thanas.vercel.app
+                </Button>
+              </a>
+            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Email</label>
-            <Input
-              type="email"
-              placeholder="your@email.com"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium mb-2">Message</label>
-            <Textarea
-              placeholder="Your message..."
-              rows={6}
-              value={formData.message}
-              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              required
-            />
-          </div>
-
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <CheckCircle className="w-4 h-4 mr-2 animate-pulse-glow" />
-                Sending...
-              </>
-            ) : (
-              <>
-                <Send className="w-4 h-4 mr-2" />
-                Send Message
-              </>
-            )}
-          </Button>
-        </form>
+        </div>
 
         <div className="bg-secondary rounded-xl p-6">
           <h3 className="font-semibold mb-4">Connect with me</h3>
@@ -146,7 +81,7 @@ export const ContactApp = () => {
               onClick={() => {
                 navigator.clipboard.writeText('darkspacepirate');
                 toast({
-                  title: 'Discord Username Copied! ✓',
+                  title: 'Discord Username Copied!',
                   description: 'darkspacepirate copied to clipboard',
                 });
               }}

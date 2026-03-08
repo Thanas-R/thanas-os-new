@@ -85,21 +85,21 @@ export const JourneyApp = () => {
               <div className="font-semibold">PES University</div>
               <div className="text-sm text-muted-foreground">B.Tech CSE (AIML)</div>
             </div>
-            <span className="text-sm text-muted-foreground">2025–2029</span>
+            <span className="text-sm text-muted-foreground">2025 - 2029</span>
           </div>
           <div className="flex justify-between items-center">
             <div>
               <div className="font-semibold">Allen Career Institute</div>
-              <div className="text-sm text-muted-foreground">11th–12th</div>
+              <div className="text-sm text-muted-foreground">11th - 12th</div>
             </div>
-            <span className="text-sm text-muted-foreground">2023–2025</span>
+            <span className="text-sm text-muted-foreground">2023 - 2025</span>
           </div>
           <div className="flex justify-between items-center">
             <div>
               <div className="font-semibold">Sri Vani Education Centre</div>
-              <div className="text-sm text-muted-foreground">1st–10th</div>
+              <div className="text-sm text-muted-foreground">1st - 10th</div>
             </div>
-            <span className="text-sm text-muted-foreground">2013–2023</span>
+            <span className="text-sm text-muted-foreground">2013 - 2023</span>
           </div>
         </div>
       </div>

@@ -8,6 +8,7 @@ import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { TimeWidget } from '@/components/widgets/TimeWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { WeatherWidget } from '@/components/widgets/WeatherWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
@@ -79,6 +80,7 @@ export const Desktop = () => {
             <CalendarWidget />
           </div>
           <StatsWidget />
+          <WeatherWidget />
         </div>
 
         {windows.map(window => (

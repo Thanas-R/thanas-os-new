@@ -89,14 +89,16 @@ export const WeatherWidget = () => {
     const hour = new Date(time).getHours();
     const ampm = hour >= 12 ? "PM" : "AM";
     const h = hour % 12 || 12;
-    return `${h}${ampm}`;
+    return `${h} ${ampm}`;
   };
 
   if (loading) {
     return (
       <div
-        className="rounded-2xl shadow-macos-glass w-[210px] h-[140px] flex items-center justify-center"
+        className="rounded-2xl shadow-macos-glass flex items-center justify-center"
         style={{
+          width: 352,
+          height: 100,
           background: 'linear-gradient(180deg, hsl(210 70% 50%), hsl(210 50% 65%))',
           border: '1px solid hsl(var(--macos-glass-border))',
         }}
@@ -109,8 +111,10 @@ export const WeatherWidget = () => {
   if (!weather) {
     return (
       <div
-        className="rounded-2xl shadow-macos-glass w-[210px] h-[140px] flex items-center justify-center"
+        className="rounded-2xl shadow-macos-glass flex items-center justify-center"
         style={{
+          width: 352,
+          height: 100,
           background: 'hsl(var(--macos-glass))',
           border: '1px solid hsl(var(--macos-glass-border))',
         }}
@@ -122,8 +126,9 @@ export const WeatherWidget = () => {
 
   return (
     <div
-      className="rounded-2xl shadow-macos-glass w-[210px] overflow-hidden text-white"
+      className="rounded-2xl shadow-macos-glass overflow-hidden text-white"
       style={{
+        width: 352,
         background: getGradient(weather.weatherCode),
         border: '1px solid hsla(0, 0%, 100%, 0.15)',
       }}

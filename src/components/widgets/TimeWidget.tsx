@@ -47,13 +47,13 @@ export const TimeWidget = () => {
     <div
       className="rounded-2xl shadow-macos-glass flex items-center justify-center overflow-hidden"
       style={{
-        width: 160,
-        height: 160,
+        width: 172,
+        height: 172,
         background: 'hsl(0 0% 8%)',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >
-      <svg viewBox="0 0 100 100" className="w-[130px] h-[130px]">
+      <svg viewBox="0 0 100 100" className="w-[140px] h-[140px]">
         <circle cx="50" cy="50" r="48" fill="hsl(0 0% 96%)" stroke="hsl(0 0% 80%)" strokeWidth="0.5" />
         {ticks.map((t, i) => (
           <line key={i} x1={t.x1} y1={t.y1} x2={t.x2} y2={t.y2} stroke="hsl(0 0% 20%)" strokeWidth={t.isHour ? 1 : 0.3} strokeLinecap="round" />

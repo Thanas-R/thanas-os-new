@@ -10,7 +10,7 @@ export const WelcomeWidget = () => {
     <div
       className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass"
       style={{
-        width: 210,
+        width: 352,
         background: 'hsl(var(--macos-glass))',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
@@ -22,7 +22,7 @@ export const WelcomeWidget = () => {
         Thanas R
       </h1>
       <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
-        Click any app in the dock to explore my portfolio.
+        Developer & creative problem-solver. Click any app in the dock to explore.
       </p>
     </div>
   );

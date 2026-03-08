@@ -1,31 +1,38 @@
-import { Calendar, Award, Code, GraduationCap, Briefcase } from 'lucide-react';
+import { Calendar, Code, GraduationCap, Sparkles } from 'lucide-react';
 
 const milestones = [
   {
+    year: '2026 (Present)',
+    title: 'Agentic AI & Design Mastery',
+    description: 'Adopted agentic AI tools, refined UI/UX design skills, elevated prompt engineering to new heights.',
+    icon: Sparkles,
+    color: 'hsl(280, 70%, 60%)',
+  },
+  {
     year: '2025',
-    title: 'Starting B.Tech & Building Projects',
-    description: 'Began B.Tech in CSE (AI/ML) at PES University. Autumn 2025 marked the beginning of building proper production-ready projects.',
+    title: 'B.Tech & Production Projects',
+    description: 'Began B.Tech in CSE (AI/ML) at PES University. Started building production-ready projects.',
     icon: GraduationCap,
     color: 'hsl(211, 100%, 50%)',
   },
   {
     year: '2023',
-    title: 'Learning C++',
-    description: 'Dove deep into C++ programming, mastering data structures and algorithms.',
+    title: 'C++ & DSA Mastery',
+    description: 'Focused on C++ and DSA, strengthening core CS fundamentals.',
     icon: Code,
     color: 'hsl(220, 70%, 50%)',
   },
   {
     year: '2021',
     title: 'Java Journey Begins',
-    description: 'Started learning Java, focusing on OOP principles and building applications.',
+    description: 'Started learning Java, focusing on OOP principles.',
     icon: Code,
     color: 'hsl(0, 70%, 50%)',
   },
   {
     year: '2020',
     title: 'First Steps in Programming',
-    description: 'Learned Python and created my first small applications.',
+    description: 'First steps in programming with Python.',
     icon: Code,
     color: 'hsl(205, 100%, 50%)',
   },
@@ -42,16 +49,13 @@ export const JourneyApp = () => {
       </div>
 
       <div className="relative">
-        {/* Timeline Line */}
         <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-accent to-primary" />
 
-        {/* Milestones */}
         <div className="space-y-12">
           {milestones.map((milestone, index) => {
             const Icon = milestone.icon;
             return (
               <div key={index} className="relative pl-20 animate-slide-up" style={{ animationDelay: `${index * 100}ms` }}>
-                {/* Icon */}
                 <div
                   className="absolute left-0 w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg"
                   style={{ background: milestone.color }}
@@ -59,7 +63,6 @@ export const JourneyApp = () => {
                   <Icon className="w-8 h-8 text-white" />
                 </div>
 
-                {/* Content */}
                 <div className="bg-secondary rounded-xl p-6">
                   <div className="flex items-center gap-2 mb-2">
                     <Calendar className="w-4 h-4 text-primary" />
@@ -74,12 +77,31 @@ export const JourneyApp = () => {
         </div>
       </div>
 
-      <div className="mt-12 p-6 bg-gradient-to-r from-primary/10 to-accent/10 rounded-xl border-2 border-primary/20">
-        <h3 className="text-xl font-bold mb-3">What's Next?</h3>
-        <p className="text-muted-foreground">
-          Currently focused on mastering AI/ML technologies, contributing to open source, and building projects 
-          that make a positive impact. Always excited to learn, collaborate, and push the boundaries of what's possible!
-        </p>
+      <div className="mt-12 p-6 bg-secondary rounded-xl">
+        <h3 className="text-lg font-bold mb-3">Education</h3>
+        <div className="space-y-3">
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="font-semibold">PES University</div>
+              <div className="text-sm text-muted-foreground">B.Tech CSE (AIML)</div>
+            </div>
+            <span className="text-sm text-muted-foreground">2025–2029</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="font-semibold">Allen Career Institute</div>
+              <div className="text-sm text-muted-foreground">11th–12th</div>
+            </div>
+            <span className="text-sm text-muted-foreground">2023–2025</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <div>
+              <div className="font-semibold">Sri Vani Education Centre</div>
+              <div className="text-sm text-muted-foreground">1st–10th</div>
+            </div>
+            <span className="text-sm text-muted-foreground">2013–2023</span>
+          </div>
+        </div>
       </div>
     </div>
   );

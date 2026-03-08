@@ -25,7 +25,7 @@ export const LinkedInApp = () => {
             <div className="flex-1">
               <h2 className="text-2xl font-bold mb-1">Thanas R</h2>
               <p className="text-lg text-muted-foreground mb-3">
-                B.Tech CSE [AIML] Student | PES University | 4 Projects
+                B.Tech CSE (AI/ML) Student | PES University | 11 Projects
               </p>
               
               <div className="space-y-2 mb-4">
@@ -39,17 +39,12 @@ export const LinkedInApp = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Users className="w-4 h-4" />
-                  <span>26+ followers</span>
+                  <span>40+ followers</span>
                 </div>
               </div>
 
               <Button asChild className="bg-[#0077B5] hover:bg-[#006399]">
-                <a
-                  href="https://www.linkedin.com/in/thanasr/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2"
-                >
+                <a href="https://www.linkedin.com/in/thanasr/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
                   <ExternalLink className="w-4 h-4" />
                   View LinkedIn Profile
                 </a>
@@ -61,14 +56,9 @@ export const LinkedInApp = () => {
         <Card className="p-6 mb-6">
           <h3 className="font-semibold text-lg mb-3">About</h3>
           <p className="text-muted-foreground leading-relaxed">
-            Hello! I'm Thanas — a passionate learner who believes in growing a little every day. I'm deeply 
-            interested in coding and problem-solving, and I enjoy the challenge of turning complex problems 
-            into simple, effective solutions.
-          </p>
-          <p className="text-muted-foreground leading-relaxed mt-3">
-            While I take my work seriously, I also value creating a positive and cheerful environment. I believe 
-            a good laugh and a positive attitude can make all the difference in overcoming challenges and achieving 
-            great results.
+            I am a passionate learner who believes in growing a little every day. I'm genuinely interested in coding 
+            and problem-solving, and I enjoy turning complex challenges into simple, effective solutions. I strive to 
+            be honest, supportive, and reliable.
           </p>
         </Card>
 
@@ -76,35 +66,31 @@ export const LinkedInApp = () => {
           <h3 className="font-semibold text-lg mb-4">Education</h3>
           <div className="space-y-4">
             <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xl flex-shrink-0">
-                🎓
-              </div>
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xl flex-shrink-0">🎓</div>
               <div>
                 <h4 className="font-semibold">PES University</h4>
-                <p className="text-sm text-muted-foreground">
-                  Bachelor of Technology - BTech, Computer Science and Engineering (AI&ML)
-                </p>
+                <p className="text-sm text-muted-foreground">B.Tech CSE (AI/ML)</p>
                 <p className="text-xs text-muted-foreground mt-1">2025 - 2029</p>
               </div>
             </div>
             <div className="flex gap-4">
-              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-xl flex-shrink-0">
-                📚
-              </div>
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-xl flex-shrink-0">📚</div>
               <div>
                 <h4 className="font-semibold">Allen Career Institute</h4>
-                <p className="text-sm text-muted-foreground">
-                  JEE Preparation
-                </p>
+                <p className="text-sm text-muted-foreground">11th–12th</p>
                 <p className="text-xs text-muted-foreground mt-1">2023 - 2025</p>
+              </div>
+            </div>
+            <div className="flex gap-4">
+              <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-secondary to-muted flex items-center justify-center text-xl flex-shrink-0">🏫</div>
+              <div>
+                <h4 className="font-semibold">Sri Vani Education Centre</h4>
+                <p className="text-sm text-muted-foreground">1st–10th</p>
+                <p className="text-xs text-muted-foreground mt-1">2013 - 2023</p>
               </div>
             </div>
           </div>
         </Card>
-
-        <div className="mt-6 text-center text-sm text-muted-foreground">
-          <p>Want to connect? Send me a message on LinkedIn!</p>
-        </div>
       </div>
     </div>
   );

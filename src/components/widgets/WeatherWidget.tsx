@@ -126,11 +126,11 @@ export const WeatherWidget = () => {
 
   return (
     <div
-      className="rounded-2xl shadow-macos-glass overflow-hidden text-white backdrop-blur-macos"
+      className="rounded-2xl shadow-macos-glass overflow-hidden text-white"
       style={{
         width: 352,
         background: getGradient(weather.weatherCode),
-        border: '1px solid hsl(var(--macos-glass-border))',
+        border: '1px solid hsla(0, 0%, 100%, 0.15)',
       }}
     >
       {/* Top section */}

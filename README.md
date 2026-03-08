@@ -1,4 +1,4 @@
-# ThanasOS — macOS Portfolio
+# ThanasOS (macOS themed Portfolio)
 
 ThanasOS is a browser-based portfolio website designed to recreate the macOS desktop experience. Instead of a traditional portfolio layout, visitors interact with a desktop-like interface where they can open apps, move windows, and explore different sections such as About, Projects, and Journey.
 

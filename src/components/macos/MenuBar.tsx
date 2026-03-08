@@ -52,11 +52,11 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
 
   return (
     <div
-      className="fixed top-0 left-0 right-0 h-7 backdrop-blur-macos-heavy flex items-center justify-between px-4 z-50 text-sm"
+      className="fixed top-0 left-0 right-0 h-7 backdrop-blur-macos flex items-center justify-between px-4 z-50 text-sm"
       style={{
-        background: 'hsl(var(--macos-menubar-bg))',
+        background: 'hsl(var(--macos-window-bg))',
         borderBottom: '1px solid hsl(var(--macos-glass-border))',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
       }}
     >
       {/* Left Section */}

@@ -83,7 +83,7 @@ export const Desktop = () => {
         {/* All Widgets Stacked on Left */}
         <div className="absolute top-20 left-8 space-y-4">
           <WelcomeWidget />
-          <div className="flex gap-4">
+          <div className="flex gap-4 items-start">
             <TimeWidget />
             <CalendarWidget />
           </div>

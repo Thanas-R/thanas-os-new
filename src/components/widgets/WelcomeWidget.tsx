@@ -26,10 +26,13 @@ export const WelcomeWidget = () => {
       <h1 className="text-lg font-bold text-foreground leading-tight">
         Thanas R
       </h1>
-      <div className="flex items-center gap-1.5 mt-1.5">
+      <p className="text-[10px] text-muted-foreground mt-1 leading-snug">
+        Developer & creative problem-solver. Building thoughtful digital experiences with code.
+      </p>
+      <div className="flex items-center gap-1.5 mt-2">
         <ExternalLink className="w-3 h-3 text-primary" />
         <p className="text-[11px] text-primary font-medium">
-          Visit my main portfolio at thanas.vercel.app
+          Visit my portfolio at thanas.vercel.app
         </p>
       </div>
     </a>

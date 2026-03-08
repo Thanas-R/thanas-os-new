@@ -84,8 +84,21 @@ export const ProjectsApp = () => {
               ))}
             </div>
           </div>
-        ))}
+          ))}
       </div>
+
+      <a
+        href="https://thanas.vercel.app/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-3 p-4 bg-primary/10 rounded-xl hover:bg-primary/20 transition-colors"
+      >
+        <ExternalLink className="w-5 h-5 text-primary" />
+        <div>
+          <span className="text-sm font-semibold text-primary">See all projects on my portfolio</span>
+          <p className="text-xs text-muted-foreground">thanas.vercel.app — with full details and live demos</p>
+        </div>
+      </a>
     </div>
   );
 };

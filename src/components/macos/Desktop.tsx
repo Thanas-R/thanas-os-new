@@ -8,7 +8,6 @@ import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { TimeWidget } from '@/components/widgets/TimeWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
-import { WeatherWidget } from '@/components/widgets/WeatherWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
@@ -75,17 +74,13 @@ export const Desktop = () => {
         {/* Widgets - Left column */}
         <div className="absolute top-12 left-6 space-y-3">
           <WelcomeWidget />
-          <div className="flex gap-3 items-start">
+          <div className="flex gap-2 items-start">
             <TimeWidget />
             <CalendarWidget />
-          </div>
-          <div className="flex gap-3 items-start">
-            <WeatherWidget />
           </div>
           <StatsWidget />
         </div>
 
-        {/* Windows */}
         {windows.map(window => (
           <Window key={window.id} window={window} />
         ))}

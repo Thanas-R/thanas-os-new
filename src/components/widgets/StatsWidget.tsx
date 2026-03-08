@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { FolderGit2, Star, Loader2, Linkedin } from 'lucide-react';
 
 export const StatsWidget = () => {
-  const [stats, setStats] = useState({ repos: 0, stars: 0, followers: 0 });
+  const [stats, setStats] = useState({ repos: 0, stars: 0 });
   const [loading, setLoading] = useState(true);
   const linkedInFollowers = '26+';
 
@@ -19,11 +19,7 @@ export const StatsWidget = () => {
         const totalStars = Array.isArray(reposData)
           ? reposData.reduce((acc: number, repo: any) => acc + repo.stargazers_count, 0)
           : 0;
-        setStats({
-          repos: userData.public_repos || 0,
-          stars: totalStars,
-          followers: userData.followers || 0,
-        });
+        setStats({ repos: userData.public_repos || 0, stars: totalStars });
       } catch (error) {
         console.error('Error fetching GitHub stats:', error);
       } finally {
@@ -41,20 +37,19 @@ export const StatsWidget = () => {
 
   return (
     <div
-      className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass"
+      className="backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass flex items-center gap-5"
       style={{
-        width: 210,
+        width: 328,
         background: 'hsl(0 0% 8% / 0.85)',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >
-      <h3 className="text-[11px] font-semibold mb-3 text-white/80 tracking-wide">ACTIVITY</h3>
       {loading ? (
-        <div className="flex items-center justify-center py-6">
+        <div className="flex items-center justify-center w-full py-4">
           <Loader2 className="w-5 h-5 animate-spin" style={{ color: 'hsl(0 100% 60%)' }} />
         </div>
       ) : (
-        <div className="flex items-center gap-4">
+        <>
           {/* Rings */}
           <div className="relative w-20 h-20 flex-shrink-0">
             {rings.map((ring, idx) => {
@@ -64,10 +59,7 @@ export const StatsWidget = () => {
               const progress = Math.min(numVal / ring.max, 1);
               return (
                 <svg key={idx} className="absolute inset-0 w-full h-full" viewBox="0 0 80 80">
-                  <circle
-                    cx="40" cy="40" r={radius}
-                    fill="none" stroke="hsl(0 0% 100% / 0.1)" strokeWidth="5"
-                  />
+                  <circle cx="40" cy="40" r={radius} fill="none" stroke="hsl(0 0% 100% / 0.1)" strokeWidth="5" />
                   <circle
                     cx="40" cy="40" r={radius}
                     fill="none" stroke={ring.color} strokeWidth="5"
@@ -82,23 +74,22 @@ export const StatsWidget = () => {
           </div>
 
           {/* Labels */}
-          <div className="space-y-2">
+          <div className="flex-1 space-y-2">
+            <h3 className="text-[10px] font-semibold text-white/60 tracking-wider uppercase mb-2">Activity</h3>
             {rings.map((ring, idx) => {
               const Icon = ring.icon;
               return (
-                <div key={idx} className="flex items-center gap-2">
-                  <Icon size={12} style={{ color: ring.color }} />
-                  <div>
-                    <div className="text-[10px] text-white/50">{ring.label}</div>
-                    <div className="text-sm font-bold text-white leading-none">
-                      {ring.isStatic ? ring.value : ring.value}
-                    </div>
+                <div key={idx} className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Icon size={12} style={{ color: ring.color }} />
+                    <span className="text-[10px] text-white/50">{ring.label}</span>
                   </div>
+                  <span className="text-sm font-bold text-white">{ring.value}</span>
                 </div>
               );
             })}
           </div>
-        </div>
+        </>
       )}
     </div>
   );

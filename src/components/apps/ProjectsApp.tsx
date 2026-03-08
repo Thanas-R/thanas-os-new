@@ -1,99 +1,90 @@
-import { ExternalLink, Code, Loader2 } from 'lucide-react';
+import { ExternalLink, Code } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import forgeIcon from '@/assets/forge-icon.png';
-import pesuMcIcon from '@/assets/pesu-mc-icon.png';
-import smartChefIcon from '@/assets/smart-chef-icon.png';
+
+const projects = [
+  {
+    name: 'Nautilus',
+    description: 'AI knowledge tool with mindmaps, flowcharts & concept cards for enhanced learning.',
+    tags: ['React', 'Canvas', 'AI', 'TypeScript'],
+    link: 'https://nautilus-app.vercel.app/',
+  },
+  {
+    name: 'Virdis',
+    description: 'AI-powered farm boundary mapping & crop health analysis using satellite imagery.',
+    tags: ['React', 'Mapbox', 'Python', 'Satellite', 'AI'],
+    link: 'https://virdis-app.vercel.app/',
+  },
+  {
+    name: 'Spheal',
+    description: 'Smart AI travel planner with interactive map visualization for trip planning.',
+    tags: ['React', 'Mapbox', 'AI', 'TypeScript'],
+    link: 'https://spheal-app.vercel.app/',
+  },
+  {
+    name: 'PESU Minecraft S2',
+    description: 'Official website for PESU Minecraft Server – Season 2. Community gaming hub.',
+    tags: ['React', 'Tailwind', 'Vercel', 'REST API'],
+    link: 'https://pesu-mc.vercel.app/',
+  },
+  {
+    name: 'AskBookie_',
+    description: 'Production-ready RAG API frontend for document Q&A with AI-powered retrieval.',
+    tags: ['React', 'TypeScript', 'RAG', 'Framer Motion'],
+    link: 'https://askbookie.vercel.app/',
+  },
+  {
+    name: 'Contour Flow Demo',
+    description: 'Interactive animated topographic contour flow visualization using WebGL shaders.',
+    tags: ['WebGL', 'Canvas', 'Shaders', 'Creative Coding'],
+    link: null,
+  },
+  {
+    name: 'Smart Chef',
+    description: 'In-memory Vector Space Model using TF-IDF for intelligent recipe matching.',
+    tags: ['Python', 'TF-IDF', 'NLP', 'VSM'],
+    link: 'https://smart-chef-pesu.vercel.app/',
+  },
+  {
+    name: 'ThanasOS',
+    description: 'macOS-themed interactive portfolio website with window management and dock.',
+    tags: ['React', 'CSS', 'Framer Motion'],
+    link: null,
+  },
+  {
+    name: 'PESU Forge',
+    description: 'Collaborative academic resource platform for PES University students.',
+    tags: ['React', 'Supabase', 'Tailwind', 'TypeScript'],
+    link: 'https://pesu-forge.vercel.app/',
+  },
+];
 
 export const ProjectsApp = () => {
   return (
-    <div className="p-8 space-y-6">
-      <div className="text-center mb-8">
+    <div className="p-8 space-y-4">
+      <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-2">Projects</h1>
-        <p className="text-muted-foreground">Featured work and ongoing developments</p>
+        <p className="text-muted-foreground">11 projects built — here are the highlights</p>
       </div>
 
-      <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
-        <div className="flex items-start gap-4">
-          <img src={forgeIcon} alt="Thought-Forge" className="w-16 h-16 object-contain" loading="eager" decoding="async" />
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold mb-2">Thought-Forge</h3>
-            <p className="text-muted-foreground mb-4">
-              A comprehensive platform for neurodivergent people, providing personalized tools, resources, and community support for enhanced productivity and well-being.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">React</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">TypeScript</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Node.js</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {projects.map((project) => (
+          <div key={project.name} className="bg-secondary rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
+            <div className="flex items-start justify-between mb-2">
+              <h3 className="text-lg font-bold">{project.name}</h3>
+              {project.link && (
+                <a href={project.link} target="_blank" rel="noopener noreferrer" className="p-1 hover:bg-background rounded transition-colors">
+                  <ExternalLink className="w-4 h-4 text-muted-foreground" />
+                </a>
+              )}
             </div>
-            <Button asChild>
-              <a href="https://pesu-forge.vercel.app/" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />Visit Project
-              </a>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
-        <div className="flex items-start gap-4">
-          <img 
-            src={smartChefIcon} 
-            alt="Smart-Chef" 
-            className="w-16 h-16 object-contain"
-            loading="eager"
-            decoding="async"
-          />
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold mb-2">Smart-Chef</h3>
-            <p className="text-muted-foreground mb-4">
-              A simple and intelligent recipe-matching website. Enter ingredients you have at home, and SmartChef instantly finds relevant recipes using vector-based matching. Shows match percentage, available ingredients, and what's missing.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Recipe Matching</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Vector Search</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Food Tech</span>
+            <p className="text-sm text-muted-foreground mb-3 leading-relaxed">{project.description}</p>
+            <div className="flex flex-wrap gap-1.5">
+              {project.tags.map((tag) => (
+                <span key={tag} className="px-2 py-0.5 bg-primary/10 text-primary rounded-full text-xs">{tag}</span>
+              ))}
             </div>
-            <Button asChild>
-              <a href="https://smart-chef-pesu.vercel.app/" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />Visit Project
-              </a>
-            </Button>
           </div>
-        </div>
-      </div>
-
-      <div className="bg-secondary rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
-        <div className="flex items-start gap-4">
-          <img 
-            src={pesuMcIcon} 
-            alt="PESU-MC" 
-            className="w-16 h-16 object-contain rounded-xl"
-            loading="eager"
-            decoding="async"
-          />
-          <div className="flex-1">
-            <h3 className="text-2xl font-bold mb-2">PESU-MC</h3>
-            <p className="text-muted-foreground mb-4">
-              A Minecraft server exclusively for PESU students. Join the community, build together, and explore a dedicated gaming space for campus creativity.
-            </p>
-            <div className="flex flex-wrap gap-2 mb-4">
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Minecraft</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Community</span>
-              <span className="px-3 py-1 bg-primary/10 text-primary rounded-full text-sm">Gaming</span>
-            </div>
-            <Button asChild>
-              <a href="https://pesu-mc.vercel.app/" target="_blank" rel="noopener noreferrer">
-                <ExternalLink className="w-4 h-4 mr-2" />Visit Server
-              </a>
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="border-2 border-dashed border-primary/30 rounded-2xl p-8 text-center">
-        <Loader2 className="w-12 h-12 mx-auto mb-4 text-primary animate-spin" />
-        <h3 className="text-xl font-semibold mb-2">More Projects Coming Soon</h3>
-        <p className="text-muted-foreground">Currently working on multiple exciting projects. Stay tuned!</p>
+        ))}
       </div>
     </div>
   );

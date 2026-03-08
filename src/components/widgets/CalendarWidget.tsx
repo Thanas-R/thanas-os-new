@@ -25,11 +25,10 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="backdrop-blur-macos-heavy rounded-2xl p-2.5 shadow-macos-glass select-none"
+      className="backdrop-blur-macos-heavy rounded-2xl p-2.5 shadow-macos-glass select-none bg-card"
       style={{
-        width: 160,
-        height: 160,
-        background: 'hsl(var(--macos-glass))',
+        width: 172,
+        height: 172,
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >
@@ -50,10 +49,10 @@ export const CalendarWidget = () => {
 
       <div className="grid grid-cols-7 gap-0">
         {calendarDays.map((day, i) => (
-          <div key={i} className="flex items-center justify-center h-[17px]">
+          <div key={i} className="flex items-center justify-center h-[18px]">
             {day !== null && (
               <span
-                className={`w-[15px] h-[15px] flex items-center justify-center rounded-full text-[8px] font-medium ${
+                className={`w-[16px] h-[16px] flex items-center justify-center rounded-full text-[8px] font-medium ${
                   day === todayDate ? 'text-white font-bold' : 'text-foreground/80'
                 }`}
                 style={day === todayDate ? { background: 'hsl(0 84% 60%)' } : undefined}

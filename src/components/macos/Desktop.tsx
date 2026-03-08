@@ -80,6 +80,7 @@ export const Desktop = () => {
             <CalendarWidget />
           </div>
           <StatsWidget />
+          <WeatherWidget />
         </div>
 
         {windows.map(window => (

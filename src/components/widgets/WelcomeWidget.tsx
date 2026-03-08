@@ -13,7 +13,7 @@ export const WelcomeWidget = () => {
       href="https://thanas.vercel.app/"
       target="_blank"
       rel="noopener noreferrer"
-      className="block backdrop-blur-macos-heavy rounded-2xl p-4 shadow-macos-glass hover:scale-[1.02] transition-transform cursor-pointer"
+      className="block rounded-2xl p-4 shadow-macos-glass hover:scale-[1.02] transition-transform cursor-pointer"
       style={{
         width: 352,
         background: 'hsl(var(--macos-glass))',

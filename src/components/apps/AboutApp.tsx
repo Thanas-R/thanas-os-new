@@ -67,7 +67,7 @@ export const AboutApp = () => {
         <ExternalLink className="w-5 h-5 text-primary" />
         <div>
           <span className="text-sm font-semibold text-primary">Visit my main portfolio</span>
-          <p className="text-xs text-muted-foreground">thanas.vercel.app — the latest and fully functional version</p>
+          <p className="text-xs text-muted-foreground">thanas.vercel.app - the latest and fully functional version</p>
         </div>
       </a>
     </div>

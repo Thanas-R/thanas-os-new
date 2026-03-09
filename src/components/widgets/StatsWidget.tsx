@@ -3,41 +3,69 @@ import { cn } from '@/lib/utils';
 
 interface ActivityData {
   label: string;
-  icon: string;
-  value: string;
+  value: number;
   color: string;
-  ringValue: number;
   size: number;
+  current: number;
+  target: number;
+  unit: string;
 }
 
 const activities: ActivityData[] = [
   {
-    label: 'Projects',
-    icon: '📂',
-    value: '11',
+    label: 'LINKEDIN',
+    value: 42,
     color: '#DE0C26',
-    ringValue: 42,
     size: 200,
+    current: 42,
+    target: 100,
+    unit: 'FOLLOWERS',
   },
   {
-    label: 'Stars',
-    icon: '⭐',
-    value: '2',
+    label: 'PROJECTS',
+    value: 80,
     color: '#64DD00',
-    ringValue: 80,
     size: 160,
+    current: 12,
+    target: 15,
+    unit: 'REPOS',
   },
   {
-    label: 'LinkedIn',
-    icon: '👥',
-    value: '40+',
+    label: 'STARS',
+    value: 27,
     color: '#00D3D0',
-    ringValue: 27,
     size: 120,
+    current: 8,
+    target: 30,
+    unit: 'STARS',
   },
 ];
 
+const DetailedActivityInfo = () => {
+  return (
+    <div className="flex flex-col gap-2 w-full">
+      {activities.map((activity) => (
+        <div key={activity.label} className="flex items-center justify-between">
+          <span
+            className="text-[11px] font-bold tracking-wider"
+            style={{ color: activity.color }}
+          >
+            {activity.label}
+          </span>
+          <span className="text-[13px] font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>
+            {activity.current}
+            <span className="text-[10px] ml-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
+              {activity.unit}
+            </span>
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export const StatsWidget = ({
+  title = 'Dev Stats',
   className,
 }: {
   title?: string;
@@ -56,19 +84,16 @@ export const StatsWidget = ({
       }}
     >
       <div className="p-4">
-        <div className="text-[10px] font-bold tracking-widest mb-3" style={{ color: 'rgba(255,255,255,0.5)' }}>
-          ACTIVITY
-        </div>
 
         <div className="flex items-center gap-4">
-          <div className="relative flex-shrink-0" style={{ width: 100, height: 100 }}>
+          <div className="relative flex-shrink-0" style={{ width: 120, height: 120 }}>
             {activities.map((activity, index) => {
-              const scale = 100 / 200;
+              const scale = 120 / 200;
               const scaledSize = activity.size * scale;
-              const strokeWidth = 9;
+              const strokeWidth = 10;
               const radius = (scaledSize - strokeWidth) / 2;
               const circumference = radius * 2 * Math.PI;
-              const progress = ((100 - activity.ringValue) / 100) * circumference;
+              const progress = ((100 - activity.value) / 100) * circumference;
               const gradientId = `gradient-sm-${activity.label.toLowerCase()}`;
 
               return (
@@ -120,21 +145,7 @@ export const StatsWidget = ({
             })}
           </div>
 
-          <div className="flex flex-col gap-2.5 flex-1">
-            {activities.map((activity) => (
-              <div key={activity.label} className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[11px]">{activity.icon}</span>
-                  <span className="text-[11px] font-medium" style={{ color: 'rgba(255,255,255,0.8)' }}>
-                    {activity.label}
-                  </span>
-                </div>
-                <span className="text-[14px] font-bold" style={{ color: 'rgba(255,255,255,0.9)' }}>
-                  {activity.value}
-                </span>
-              </div>
-            ))}
-          </div>
+          <DetailedActivityInfo />
         </div>
       </div>
     </div>

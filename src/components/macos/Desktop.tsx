@@ -79,6 +79,7 @@ export const Desktop = () => {
             <TimeWidget />
             <CalendarWidget />
           </div>
+          <WeatherWidget />
           <StatsWidget />
         </div>
 

@@ -24,7 +24,7 @@ const activities: ActivityData[] = [
   {
     label: 'PROJECTS',
     value: 80,
-    color: '#2E8B57',
+    color: '#A3F900',
     size: 160,
     current: 12,
     target: 15,

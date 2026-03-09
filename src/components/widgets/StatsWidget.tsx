@@ -15,7 +15,7 @@ const activities: ActivityData[] = [
   {
     label: 'LINKEDIN',
     value: 42,
-    color: '#0A66C2',
+    color: '#DE0C26',
     size: 200,
     current: 42,
     target: 100,

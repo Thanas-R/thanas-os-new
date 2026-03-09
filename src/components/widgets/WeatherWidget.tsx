@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getAnimatedWeatherIcon } from "./WeatherIcons";
+import { Cloud, CloudRain, CloudSnow, Sun, CloudLightning, CloudDrizzle, Cloudy } from "lucide-react";
 
 interface WeatherData {
   temperature: number;
@@ -17,6 +17,18 @@ const WMO_CODES: Record<number, string> = {
   71: "Light Snow", 73: "Snow", 75: "Heavy Snow",
   80: "Light Showers", 81: "Showers", 82: "Heavy Showers",
   95: "Thunderstorm", 96: "Thunderstorm", 99: "Severe Storm",
+};
+
+const getWeatherIcon = (code: number, size = 20) => {
+  const props = { size, strokeWidth: 1.5 };
+  if (code <= 1) return <Sun {...props} />;
+  if (code <= 3) return <Cloudy {...props} />;
+  if (code <= 48) return <Cloud {...props} />;
+  if (code <= 55) return <CloudDrizzle {...props} />;
+  if (code <= 65) return <CloudRain {...props} />;
+  if (code <= 75) return <CloudSnow {...props} />;
+  if (code <= 82) return <CloudRain {...props} />;
+  return <CloudLightning {...props} />;
 };
 
 const getGradient = (code: number) => {
@@ -83,12 +95,12 @@ export const WeatherWidget = () => {
   if (loading) {
     return (
       <div
-        className="rounded-2xl shadow-sm flex items-center justify-center"
+        className="rounded-2xl shadow-macos-glass flex items-center justify-center"
         style={{
           width: 352,
           height: 100,
           background: 'linear-gradient(180deg, hsl(210 70% 50%), hsl(210 50% 65%))',
-          border: '1px solid rgba(255,255,255,0.15)',
+          border: '1px solid hsl(var(--macos-glass-border))',
         }}
       >
         <p className="text-white/70 text-xs">Loading weather...</p>
@@ -99,22 +111,22 @@ export const WeatherWidget = () => {
   if (!weather) {
     return (
       <div
-        className="rounded-2xl shadow-sm flex items-center justify-center"
+        className="rounded-2xl shadow-macos-glass flex items-center justify-center"
         style={{
           width: 352,
           height: 100,
-          background: '#1a1a1a',
-          border: '1px solid rgba(255,255,255,0.08)',
+          background: 'hsl(var(--macos-glass))',
+          border: '1px solid hsl(var(--macos-glass-border))',
         }}
       >
-        <p className="text-white/50 text-xs">Unable to load weather</p>
+        <p className="text-muted-foreground text-xs">Unable to load weather</p>
       </div>
     );
   }
 
   return (
     <div
-      className="rounded-2xl shadow-sm overflow-hidden text-white"
+      className="rounded-2xl shadow-macos-glass overflow-hidden text-white"
       style={{
         width: 352,
         background: getGradient(weather.weatherCode),
@@ -134,7 +146,7 @@ export const WeatherWidget = () => {
           </div>
           <div className="text-right">
             <div className="flex items-center gap-1 justify-end opacity-90">
-              {getAnimatedWeatherIcon(weather.weatherCode, 20)}
+              {getWeatherIcon(weather.weatherCode, 16)}
               <span className="text-[10px] font-medium">
                 {weather.condition}
               </span>
@@ -156,7 +168,7 @@ export const WeatherWidget = () => {
             <span className="text-[8px] font-medium opacity-70">
               {formatHour(h.time)}
             </span>
-            {getAnimatedWeatherIcon(h.code, 18)}
+            {getWeatherIcon(h.code, 16)}
             <span className="text-[10px] font-medium">{h.temp}°</span>
           </div>
         ))}

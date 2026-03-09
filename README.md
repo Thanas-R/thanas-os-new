@@ -1,70 +1,48 @@
 # ThanasOS
 
-<p align="center">
-<a href="https://thanas-os.vercel.app">https://thanas-os.vercel.app</a>
-</p>
+![React](https://img.shields.io/badge/React-18-000000?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-Build-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Framework-000000?style=flat-square&logo=tailwindcss)
+![FramerMotion](https://img.shields.io/badge/FramerMotion-Animations-0055FF?style=flat-square)
+![Status](https://img.shields.io/badge/Status-Archived-444444?style=flat-square)
 
-ThanasOS is a macOS themed portfolio website built to recreate the feeling of using a desktop inside the browser. Instead of navigating a traditional webpage, visitors interact with a desktop style interface where they can open apps, drag windows, and explore different parts of the portfolio.
+ThanasOS is a macOS themed portfolio website that recreates the experience of using a desktop inside the browser.  
+Instead of navigating a traditional webpage, visitors interact with a desktop style interface where they can open apps, move windows, and explore different sections of the portfolio.
 
-The goal of the project was to create a portfolio that feels more immersive and memorable than a standard site.
+This project was one of the first websites where I started seriously building interactive interfaces and experimenting with UI design.
 
-<br>
+Live site  
+https://thanas-os.vercel.app
+
+
+
+<img src="src/assets/preview-img.png" alt="ThanasOS preview" width="100%">
+
 
 ## Tech Stack
 
-<p align="center">
-<img src="https://skillicons.dev/icons?i=react,ts,tailwind,vite" />
-</p>
-
 | Layer | Technology |
 |------|------------|
-| Framework | React |
-| Language | TypeScript |
-| Styling | Tailwind CSS |
+| Framework | React + TypeScript |
 | Build Tool | Vite |
+| Styling | Tailwind CSS |
 | Animations | Framer Motion |
+| UI Concept | macOS Desktop Interface |
 
-<br>
 
-## Preview
+## What It Does
 
-<p align="center">
-<img src="src/assets/preview-img.png" alt="ThanasOS preview" width="90%">
-</p>
+- Recreates a macOS style desktop environment in the browser  
+- Allows users to open apps and move windows around the screen  
+- Includes a dock with icon magnification  
+- Provides quick navigation using spotlight style search (Cmd + K)  
+- Supports light and dark themes with multiple wallpapers  
+- Organizes portfolio sections as desktop apps  
 
-<br>
 
-## Features
+## Key Idea
 
-- macOS inspired desktop interface  
-- draggable application windows  
-- dock with icon magnification  
-- spotlight style search using **Cmd + K**  
-- light and dark themes  
-- multiple wallpapers  
-- app style navigation for **About, Projects, Journey, GitHub, and LinkedIn**  
-- frosted glass inspired UI styling  
+Instead of a traditional scrolling portfolio page, ThanasOS presents the portfolio as a **desktop operating system interface**.
 
-<br>
-
-## What I Learned
-
-This project is where I started properly getting into frontend development. Building ThanasOS helped me understand:
-
-- structuring React applications  
-- creating interactive UI components  
-- managing window states and layouts  
-- implementing keyboard shortcuts and UI interactions  
-- designing more immersive portfolio experiences  
-
-It served as the foundation for many of my later projects and experiments with interface design.
-
-<br>
-
-## Run Locally
-
-```bash
-git clone <repo-url>
-cd thanas-os
-npm install
-npm run dev
+Visitors explore projects and information the same way they would interact with applications on a computer.

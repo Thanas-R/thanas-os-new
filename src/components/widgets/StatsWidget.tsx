@@ -84,9 +84,6 @@ export const StatsWidget = ({
       }}
     >
       <div className="p-4">
-        <h3 className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase mb-3">
-          {title}
-        </h3>
 
         <div className="flex items-center gap-4">
           <div className="relative flex-shrink-0" style={{ width: 120, height: 120 }}>

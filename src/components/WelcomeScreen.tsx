@@ -85,7 +85,7 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
             >
-              Thanas R — Portfolio
+              ThanasOS
             </motion.p>
 
             {/* Disclaimer */}

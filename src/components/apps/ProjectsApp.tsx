@@ -63,7 +63,7 @@ export const ProjectsApp = () => {
     <div className="p-8 space-y-4">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-bold mb-2">Projects</h1>
-        <p className="text-muted-foreground">11 projects built — here are the highlights</p>
+        <p className="text-muted-foreground">11 projects built - here are the highlights</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -96,7 +96,7 @@ export const ProjectsApp = () => {
         <ExternalLink className="w-5 h-5 text-primary" />
         <div>
           <span className="text-sm font-semibold text-primary">See all projects on my portfolio</span>
-          <p className="text-xs text-muted-foreground">thanas.vercel.app — with full details and live demos</p>
+          <p className="text-xs text-muted-foreground">thanas.vercel.app - with full details and live demos</p>
         </div>
       </a>
     </div>

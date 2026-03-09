@@ -53,7 +53,7 @@ const DetailedActivityInfo = () => {
             {activity.label}
           </span>
           <span className="text-[13px] font-semibold text-foreground/90">
-            {activity.current}/{activity.target}
+            {activity.current}
             <span className="text-[10px] text-muted-foreground ml-1">
               {activity.unit}
             </span>
@@ -84,9 +84,6 @@ export const StatsWidget = ({
       }}
     >
       <div className="p-4">
-        <h3 className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase mb-3">
-          {title}
-        </h3>
 
         <div className="flex items-center gap-4">
           <div className="relative flex-shrink-0" style={{ width: 120, height: 120 }}>

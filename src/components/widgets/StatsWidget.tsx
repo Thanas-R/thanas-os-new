@@ -15,7 +15,7 @@ const activities: ActivityData[] = [
   {
     label: 'LINKEDIN',
     value: 42,
-    color: '#0A66C2',
+    color: '#DE0C26',
     size: 200,
     current: 42,
     target: 100,
@@ -24,7 +24,7 @@ const activities: ActivityData[] = [
   {
     label: 'PROJECTS',
     value: 80,
-    color: '#A3F900',
+    color: '#64DD00',
     size: 160,
     current: 12,
     target: 15,
@@ -33,7 +33,7 @@ const activities: ActivityData[] = [
   {
     label: 'STARS',
     value: 27,
-    color: '#04C7DD',
+    color: '#00D3D0',
     size: 120,
     current: 8,
     target: 30,

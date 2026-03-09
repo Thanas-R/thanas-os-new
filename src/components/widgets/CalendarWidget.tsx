@@ -25,12 +25,12 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-3 shadow-macos-glass backdrop-blur-macos select-none"
+      className="rounded-2xl p-3 shadow-sm select-none"
       style={{
         width: 172,
         height: 172,
-        background: 'hsl(var(--macos-window-bg))',
-        border: '1px solid hsl(var(--macos-glass-border))',
+        background: "#1a1a1a",
+        border: "1px solid rgba(255,255,255,0.08)",
       }}
     >
       <div
@@ -42,7 +42,7 @@ export const CalendarWidget = () => {
 
       <div className="grid grid-cols-7 gap-0 mb-0.5">
         {weekdays.map((d, i) => (
-          <div key={i} className="text-center text-[9px] font-semibold text-muted-foreground">
+          <div key={i} className="text-center text-[9px] font-semibold" style={{ color: 'rgba(255,255,255,0.4)' }}>
             {d}
           </div>
         ))}
@@ -53,10 +53,12 @@ export const CalendarWidget = () => {
           <div key={i} className="flex items-center justify-center h-[20px]">
             {day !== null && (
               <span
-                className={`w-[18px] h-[18px] flex items-center justify-center rounded-full text-[9px] font-medium ${
-                  day === todayDate ? 'text-white font-bold' : 'text-foreground/80'
-                }`}
-                style={day === todayDate ? { background: 'hsl(0 84% 60%)' } : undefined}
+                className={`w-[18px] h-[18px] flex items-center justify-center rounded-full text-[9px] font-medium`}
+                style={
+                  day === todayDate
+                    ? { background: 'hsl(0 84% 60%)', color: 'white', fontWeight: 700 }
+                    : { color: 'rgba(255,255,255,0.8)' }
+                }
               >
                 {day}
               </span>

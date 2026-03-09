@@ -52,9 +52,9 @@ const DetailedActivityInfo = () => {
           >
             {activity.label}
           </span>
-          <span className="text-[13px] font-semibold text-foreground/90">
+          <span className="text-[13px] font-semibold" style={{ color: 'rgba(255,255,255,0.9)' }}>
             {activity.current}
-            <span className="text-[10px] text-muted-foreground ml-1">
+            <span className="text-[10px] ml-1" style={{ color: 'rgba(255,255,255,0.4)' }}>
               {activity.unit}
             </span>
           </span>
@@ -74,13 +74,13 @@ export const StatsWidget = ({
   return (
     <div
       className={cn(
-        'rounded-2xl shadow-macos-glass backdrop-blur-macos overflow-hidden',
+        'rounded-2xl shadow-sm overflow-hidden',
         className
       )}
       style={{
         width: 352,
-        background: 'hsl(var(--macos-window-bg))',
-        border: '1px solid hsl(var(--macos-glass-border))',
+        background: '#1a1a1a',
+        border: '1px solid rgba(255,255,255,0.08)',
       }}
     >
       <div className="p-4">

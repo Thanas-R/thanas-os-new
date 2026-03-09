@@ -34,7 +34,7 @@ export const CalendarWidget = () => {
       }}
     >
       <div
-        className="text-[10px] font-bold tracking-wider mb-1"
+        className="text-[10px] font-bold tracking-wider mb-2"
         style={{ color: 'hsl(0 84% 60%)' }}
       >
         {monthName}

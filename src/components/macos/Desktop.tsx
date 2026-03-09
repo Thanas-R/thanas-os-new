@@ -72,14 +72,13 @@ export const Desktop = () => {
 
       <div className="pt-7 h-full p-8">
         {/* Widgets - Left column */}
-        <div className="absolute top-12 left-6 space-y-3">
+        <div className="absolute top-12 left-6 space-y-4">
           <WelcomeWidget />
           <div className="flex gap-2 items-start">
             <TimeWidget />
             <CalendarWidget />
           </div>
           <StatsWidget />
-          <WeatherWidget />
         </div>
 
         {windows.map(window => (

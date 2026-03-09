@@ -5,14 +5,13 @@
 ![Vite](https://img.shields.io/badge/Vite-Build-646CFF?style=flat-square&logo=vite&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-Framework-000000?style=flat-square&logo=tailwindcss)
 ![FramerMotion](https://img.shields.io/badge/FramerMotion-Animations-0055FF?style=flat-square)
-![Status](https://img.shields.io/badge/Status-Archived-444444?style=flat-square)
 
 ThanasOS is a macOS themed portfolio website that recreates the experience of using a desktop inside the browser.  
 Instead of navigating a traditional webpage, visitors interact with a desktop style interface where they can open apps, move windows, and explore different sections of the portfolio.
 
 This project was one of the first websites where I started seriously building interactive interfaces and experimenting with UI design.
 
-Live site  
+### Live site  
 https://thanas-os.vercel.app
 
 

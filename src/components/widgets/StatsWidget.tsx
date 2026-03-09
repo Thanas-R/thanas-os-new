@@ -33,7 +33,7 @@ const activities: ActivityData[] = [
   {
     label: 'STARS',
     value: 27,
-    color: '#04C7DD',
+    color: '#00D3D0',
     size: 120,
     current: 8,
     target: 30,

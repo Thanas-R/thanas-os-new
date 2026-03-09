@@ -1,4 +1,4 @@
-import { Code2, Database, Wrench, Sparkles } from 'lucide-react';
+import { Code2, Database, Wrench, Bot } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 const technologies = {

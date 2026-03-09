@@ -45,11 +45,11 @@ export const TimeWidget = () => {
 
   return (
     <div
-      className="rounded-2xl shadow-macos-glass flex items-center justify-center overflow-hidden"
+      className="rounded-2xl shadow-macos-glass backdrop-blur-macos flex items-center justify-center overflow-hidden"
       style={{
         width: 172,
         height: 172,
-        background: 'hsl(0 0% 8%)',
+        background: 'hsl(var(--macos-window-bg))',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >

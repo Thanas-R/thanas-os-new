@@ -11,98 +11,35 @@ interface ActivityData {
   unit: string;
 }
 
-interface CircleProgressProps {
-  data: ActivityData;
-  index: number;
-}
-
 const activities: ActivityData[] = [
   {
-    label: 'MOVE',
-    value: 85,
-    color: '#FF2D55',
+    label: 'LINKEDIN',
+    value: 42,
+    color: '#0A66C2',
     size: 200,
-    current: 479,
-    target: 800,
-    unit: 'CAL',
+    current: 42,
+    target: 100,
+    unit: 'FOLLOWERS',
   },
   {
-    label: 'EXERCISE',
-    value: 60,
+    label: 'PROJECTS',
+    value: 80,
     color: '#A3F900',
     size: 160,
-    current: 24,
-    target: 30,
-    unit: 'MIN',
+    current: 12,
+    target: 15,
+    unit: 'REPOS',
   },
   {
-    label: 'STAND',
-    value: 30,
+    label: 'STARS',
+    value: 27,
     color: '#04C7DD',
     size: 120,
-    current: 6,
-    target: 12,
-    unit: 'HR',
+    current: 8,
+    target: 30,
+    unit: 'STARS',
   },
 ];
-
-const CircleProgress = ({ data, index }: CircleProgressProps) => {
-  const strokeWidth = 16;
-  const radius = (data.size - strokeWidth) / 2;
-  const circumference = radius * 2 * Math.PI;
-  const progress = ((100 - data.value) / 100) * circumference;
-
-  const gradientId = `gradient-${data.label.toLowerCase()}`;
-  const gradientUrl = `url(#${gradientId})`;
-
-  return (
-    <motion.div
-      className="absolute left-1/2 top-1/2"
-      style={{
-        width: data.size,
-        height: data.size,
-        marginLeft: -data.size / 2,
-        marginTop: -data.size / 2,
-      }}
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: index * 0.15, duration: 0.5 }}
-    >
-      <svg width={data.size} height={data.size} className="-rotate-90">
-        <defs>
-          <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="0%">
-            <stop offset="0%" stopColor={data.color} stopOpacity={0.7} />
-            <stop offset="100%" stopColor={data.color} />
-          </linearGradient>
-        </defs>
-
-        <circle
-          cx={data.size / 2}
-          cy={data.size / 2}
-          r={radius}
-          fill="none"
-          stroke={data.color}
-          strokeWidth={strokeWidth}
-          opacity={0.15}
-        />
-
-        <motion.circle
-          cx={data.size / 2}
-          cy={data.size / 2}
-          r={radius}
-          fill="none"
-          stroke={gradientUrl}
-          strokeWidth={strokeWidth}
-          strokeLinecap="round"
-          strokeDasharray={circumference}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: progress }}
-          transition={{ duration: 1.5, delay: index * 0.2, ease: 'easeOut' }}
-        />
-      </svg>
-    </motion.div>
-  );
-};
 
 const DetailedActivityInfo = () => {
   return (
@@ -115,9 +52,9 @@ const DetailedActivityInfo = () => {
           >
             {activity.label}
           </span>
-          <span className="text-[13px] font-semibold text-white/90">
+          <span className="text-[13px] font-semibold text-foreground/90">
             {activity.current}/{activity.target}
-            <span className="text-[10px] text-white/40 ml-1">
+            <span className="text-[10px] text-muted-foreground ml-1">
               {activity.unit}
             </span>
           </span>
@@ -128,7 +65,7 @@ const DetailedActivityInfo = () => {
 };
 
 export const StatsWidget = ({
-  title = 'Activity Rings',
+  title = 'Dev Stats',
   className,
 }: {
   title?: string;
@@ -147,14 +84,13 @@ export const StatsWidget = ({
       }}
     >
       <div className="p-4">
-        <h3 className="text-[10px] font-semibold text-white/50 tracking-wider uppercase mb-3">
+        <h3 className="text-[10px] font-semibold text-muted-foreground tracking-wider uppercase mb-3">
           {title}
         </h3>
 
         <div className="flex items-center gap-4">
           <div className="relative flex-shrink-0" style={{ width: 120, height: 120 }}>
             {activities.map((activity, index) => {
-              // Scale down proportionally to fit in 120px container
               const scale = 120 / 200;
               const scaledSize = activity.size * scale;
               const strokeWidth = 10;

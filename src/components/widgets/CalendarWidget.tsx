@@ -25,10 +25,11 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-3 shadow-macos-glass select-none bg-card"
+      className="rounded-2xl p-3 shadow-macos-glass backdrop-blur-macos select-none"
       style={{
         width: 172,
         height: 172,
+        background: 'hsl(var(--macos-window-bg))',
         border: '1px solid hsl(var(--macos-glass-border))',
       }}
     >

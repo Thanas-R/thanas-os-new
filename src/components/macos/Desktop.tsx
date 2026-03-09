@@ -79,8 +79,8 @@ export const Desktop = () => {
             <TimeWidget />
             <CalendarWidget />
           </div>
-          <WeatherWidget />
           <StatsWidget />
+          <WeatherWidget />
         </div>
 
         {windows.map(window => (

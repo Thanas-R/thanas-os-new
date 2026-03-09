@@ -70,7 +70,7 @@ export const TechnologiesApp = () => {
         <TechCategory title="Programming Languages" icon={Code2} techs={technologies.languages} />
         <TechCategory title="Web Technologies" icon={Database} techs={technologies.webTech} />
         <TechCategory title="Tools & Platforms" icon={Wrench} techs={technologies.tools} />
-        <TechCategory title="AI & Specializations" icon={Sparkles} techs={technologies.ai} />
+        <TechCategory title="AI & Specializations" icon={Bot} techs={technologies.ai} />
       </div>
     </div>
   );

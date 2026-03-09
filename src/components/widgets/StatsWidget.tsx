@@ -53,7 +53,7 @@ const DetailedActivityInfo = () => {
             {activity.label}
           </span>
           <span className="text-[13px] font-semibold text-foreground/90">
-            {activity.current}/{activity.target}
+            {activity.current}
             <span className="text-[10px] text-muted-foreground ml-1">
               {activity.unit}
             </span>

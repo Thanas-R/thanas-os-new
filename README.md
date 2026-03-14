@@ -11,7 +11,7 @@ Instead of navigating a traditional webpage, visitors interact with a desktop st
 
 This project was one of the first websites where I started seriously building interactive interfaces and experimenting with UI design.
 
-### Live site: <a href="https://thanas-os.vercel.app">thanas-os.vercel.app</a>
+> ### Live site: <a href="https://thanas-os.vercel.app">thanas-os.vercel.app</a>
 
 <br>
 

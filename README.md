@@ -11,6 +11,8 @@ Instead of navigating a traditional webpage, visitors interact with a desktop st
 
 This project was one of the first websites where I started seriously building interactive interfaces and experimenting with UI design.
 
+## Preview
+
 ### [![Live Site](https://img.shields.io/badge/Live%20Site-thanas--os.vercel.app-white?style=flat-square)](https://thanas-os.vercel.app)
 
 <br>

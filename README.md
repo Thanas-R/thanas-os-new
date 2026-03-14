@@ -47,3 +47,17 @@ This project was one of the first websites where I started seriously building in
 Instead of a traditional scrolling portfolio page, ThanasOS presents the portfolio as a **desktop operating system interface**.
 
 Visitors explore projects and information the same way they would interact with applications on a computer.
+
+## Clone and Run Locally
+
+```bash
+git clone https://github.com/your-username/thanas-os
+cd thanas-os
+npm install
+npm run dev
+```
+
+## License
+
+MIT License
+

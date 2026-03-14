@@ -15,9 +15,9 @@ This project was one of the first websites where I started seriously building in
 
 <br>
 
-<a href="https://thanas-os.vercel.app">
-  <img src="src/assets/preview-img.png" alt="ThanasOS preview" width="100%">
-</a>
+> <a href="https://thanas-os.vercel.app">
+>  <img src="src/assets/preview-img.png" alt="ThanasOS preview" width="100%">
+> </a>
 
 ## Tech Stack
 

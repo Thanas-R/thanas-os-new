@@ -35,10 +35,13 @@ export const APP_ICONS: Record<string, string> = {
   launchpad: launchpadIcon,
 };
 
+const PAGE_SIZE = 28; // 7 cols x 4 rows
+
 export const LaunchpadApp = () => {
   const { apps, openApp, closeWindow, windows } = useMacOS();
   const installed = useInstalledProjects();
   const [query, setQuery] = useState('');
+  const [page, setPage] = useState(0);
 
   const items = useMemo(() => {
     const core = apps
@@ -53,6 +56,9 @@ export const LaunchpadApp = () => {
     );
   }, [apps, installed, query]);
 
+  const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+  const pageItems = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
   const handleOpen = (item: typeof items[number]) => {
     if (item.kind === 'project') {
       setPendingSafariUrl(item.url);
@@ -60,42 +66,71 @@ export const LaunchpadApp = () => {
     } else {
       openApp(item.id);
     }
-    // close launchpad
+    const lp = windows.find(w => w.appId === 'launchpad');
+    if (lp) closeWindow(lp.id);
+  };
+
+  const dismiss = () => {
     const lp = windows.find(w => w.appId === 'launchpad');
     if (lp) closeWindow(lp.id);
   };
 
   return (
-    <div className="h-full w-full flex flex-col bg-black/30 backdrop-blur-2xl">
-      <div className="pt-8 pb-4 flex justify-center">
+    <div
+      className="h-full w-full flex flex-col"
+      style={{
+        background: 'rgba(0,0,0,0.35)',
+        backdropFilter: 'blur(60px) saturate(160%)',
+        WebkitBackdropFilter: 'blur(60px) saturate(160%)',
+      }}
+      onDoubleClick={dismiss}
+    >
+      <div className="pt-10 pb-6 flex justify-center">
         <input
           autoFocus
           value={query}
-          onChange={e => setQuery(e.target.value)}
-          placeholder="Search"
-          className="w-72 px-4 py-2 rounded-full bg-white/10 backdrop-blur-xl text-white placeholder-white/60 text-center outline-none border border-white/20"
+          onChange={e => { setQuery(e.target.value); setPage(0); }}
+          placeholder="🔍  Search"
+          className="w-80 px-5 py-2 rounded-full liquid-glass-dark text-white placeholder-white/50 text-center outline-none text-sm"
         />
       </div>
-      <div className="flex-1 overflow-auto p-8">
-        <div className="grid grid-cols-6 gap-x-4 gap-y-6 max-w-4xl mx-auto">
-          {items.map(item => (
+
+      <div className="flex-1 px-12 pb-2 overflow-hidden">
+        <div className="grid grid-cols-7 gap-x-4 gap-y-8 max-w-5xl mx-auto">
+          {pageItems.map(item => (
             <button
               key={item.id}
               onClick={() => handleOpen(item)}
               className="flex flex-col items-center gap-2 group focus:outline-none"
             >
-              <div className="w-20 h-20 rounded-2xl overflow-hidden bg-white/5 backdrop-blur-md border border-white/10 group-hover:scale-110 transition-transform shadow-lg">
+              <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-110 group-active:scale-95 transition-transform">
                 {item.icon ? (
                   <img src={item.icon} alt={item.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-3xl">📦</div>
+                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-3xl">📦</div>
                 )}
               </div>
-              <span className="text-white text-xs text-center drop-shadow-md max-w-[6rem] truncate">{item.name}</span>
+              <span className="text-white text-[12px] text-center drop-shadow-lg max-w-[6rem] truncate">
+                {item.name}
+              </span>
             </button>
           ))}
         </div>
       </div>
+
+      {pages > 1 && (
+        <div className="pb-6 flex justify-center gap-2">
+          {Array.from({ length: pages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setPage(i)}
+              className={`w-2 h-2 rounded-full transition-all ${
+                i === page ? 'bg-white scale-110' : 'bg-white/40 hover:bg-white/70'
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -139,3 +139,64 @@ All colors MUST be HSL.
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
 }
+
+/* ===================== Liquid Glass (macOS Tahoe) ===================== */
+@layer utilities {
+  .liquid-glass {
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.18) 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      rgba(255, 255, 255, 0.12) 100%
+    );
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow:
+      0 8px 32px rgba(0, 0, 0, 0.18),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  }
+  .liquid-glass-dark {
+    background: linear-gradient(
+      135deg,
+      rgba(20, 20, 25, 0.55) 0%,
+      rgba(20, 20, 25, 0.35) 50%,
+      rgba(20, 20, 25, 0.5) 100%
+    );
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  }
+  .liquid-glass-card {
+    background: rgba(28, 28, 32, 0.55);
+    backdrop-filter: blur(50px) saturate(190%);
+    -webkit-backdrop-filter: blur(50px) saturate(190%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow:
+      0 10px 30px rgba(0, 0, 0, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  }
+}
+
+/* Boot/restart loader (turtle) */
+@keyframes turtle-load {
+  0%   { width: 0; }
+  10%  { width: 5%; }
+  30%  { width: 25%; }
+  50%  { width: 44%; }
+  70%  { width: 72%; }
+  90%  { width: 92%; }
+  100% { width: 100%; }
+}
+.turtle-progress::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 4px;
+  background: white;
+  animation: turtle-load 3.5s linear forwards;
+}

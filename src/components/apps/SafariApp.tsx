@@ -101,23 +101,25 @@ export const SafariApp = () => {
       </div>
 
       {/* Toolbar */}
-      <div className="flex items-center gap-2 px-3 py-2 bg-neutral-50/80 dark:bg-neutral-900/80 border-b border-black/10 dark:border-white/10">
-        <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/10 rounded text-neutral-600 dark:text-neutral-300"><ArrowLeft className="w-4 h-4" /></button>
-        <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/10 rounded text-neutral-600 dark:text-neutral-300"><ArrowRight className="w-4 h-4" /></button>
-        <button onClick={() => navigate(active.url)} className="p-1.5 hover:bg-black/5 dark:hover:bg-white/10 rounded text-neutral-600 dark:text-neutral-300"><RotateCw className="w-4 h-4" /></button>
+      <div className="flex items-center gap-2 px-3 py-2 bg-neutral-100/90 dark:bg-neutral-900/80 border-b border-black/10 dark:border-white/10 backdrop-blur-xl">
+        <button className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-md text-neutral-500 dark:text-neutral-400" disabled><ArrowLeft className="w-4 h-4" /></button>
+        <button className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-md text-neutral-500 dark:text-neutral-400" disabled><ArrowRight className="w-4 h-4" /></button>
         <form
           onSubmit={(e) => { e.preventDefault(); navigate(addressBar); }}
-          className="flex-1 flex items-center gap-2 bg-neutral-200/70 dark:bg-neutral-800 rounded-md px-3 py-1"
+          className="flex-1 flex items-center gap-2 bg-white dark:bg-neutral-800 rounded-lg px-3 py-1 border border-black/5 dark:border-white/10 max-w-2xl mx-auto"
         >
-          <Lock className="w-3.5 h-3.5 text-neutral-500" />
+          <Lock className="w-3 h-3 text-neutral-500" />
           <input
             value={addressBar}
             onChange={(e) => setAddressBar(e.target.value)}
-            className="flex-1 bg-transparent outline-none text-sm text-neutral-800 dark:text-neutral-200"
-            placeholder="Search or enter website"
+            className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 text-center"
+            placeholder="Search or enter website name"
           />
+          <button type="button" onClick={() => navigate(active.url)} className="p-0.5 hover:bg-black/5 dark:hover:bg-white/10 rounded">
+            <RotateCw className="w-3.5 h-3.5 text-neutral-500" />
+          </button>
         </form>
-        <button className="p-1.5 hover:bg-black/5 dark:hover:bg-white/10 rounded text-neutral-600 dark:text-neutral-300"><Share className="w-4 h-4" /></button>
+        <button className="p-1 hover:bg-black/10 dark:hover:bg-white/10 rounded-md text-neutral-600 dark:text-neutral-300"><Share className="w-4 h-4" /></button>
       </div>
 
       {/* Content */}

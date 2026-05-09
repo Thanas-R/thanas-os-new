@@ -51,7 +51,8 @@ export const Dock = () => {
   const [config, setConfig] = useState(getResponsiveConfig);
   const { baseSize, maxScale, effectWidth } = config;
   const minScale = 1.0;
-  const baseSpacing = Math.max(4, baseSize * 0.08);
+  // More breathing room between dock icons, closer to native macOS
+  const baseSpacing = Math.max(8, baseSize * 0.18);
 
   // Update config on window resize
   useEffect(() => {

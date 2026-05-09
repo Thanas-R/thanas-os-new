@@ -6,8 +6,6 @@ interface MacOSContextType {
   settings: MacOSSettings;
   dockItems: DockItem[];
   focusedWindowId: string | null;
-  launchpadOpen: boolean;
-  setLaunchpadOpen: (open: boolean) => void;
   openApp: (appId: string) => void;
   closeWindow: (windowId: string) => void;
   minimizeWindow: (windowId: string) => void;
@@ -17,9 +15,6 @@ interface MacOSContextType {
   updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
   updateWindowSize: (windowId: string, size: { width: number; height: number }) => void;
   updateSettings: (settings: Partial<MacOSSettings>) => void;
-  reorderDock: (fromIndex: number, toIndex: number) => void;
-  removeFromDock: (appId: string) => void;
-  addToDock: (appId: string) => void;
   apps: AppConfig[];
 }
 
@@ -40,43 +35,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     const saved = localStorage.getItem('macos-settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
-  const DEFAULT_DOCK = apps.map(app => app.id);
-  const [dockOrder, setDockOrder] = useState<string[]>(() => {
-    try {
-      const saved = localStorage.getItem('thanasos-dock-order');
-      if (saved) {
-        const parsed: string[] = JSON.parse(saved);
-        // keep only known apps; append any new apps that aren't yet in saved order
-        const filtered = parsed.filter(id => apps.some(a => a.id === id));
-        const missing = DEFAULT_DOCK.filter(id => !filtered.includes(id));
-        return [...filtered, ...missing];
-      }
-    } catch {}
-    return DEFAULT_DOCK;
-  });
-  const dockItems: DockItem[] = dockOrder.map(id => ({ appId: id }));
-  const [launchpadOpen, setLaunchpadOpen] = useState(false);
-
-  useEffect(() => {
-    localStorage.setItem('thanasos-dock-order', JSON.stringify(dockOrder));
-  }, [dockOrder]);
-
-  const reorderDock = (fromIndex: number, toIndex: number) => {
-    setDockOrder(prev => {
-      const next = [...prev];
-      const [moved] = next.splice(fromIndex, 1);
-      next.splice(toIndex, 0, moved);
-      return next;
-    });
-  };
-
-  const removeFromDock = (appId: string) => {
-    setDockOrder(prev => prev.filter(id => id !== appId));
-  };
-
-  const addToDock = (appId: string) => {
-    setDockOrder(prev => prev.includes(appId) ? prev : [...prev, appId]);
-  };
+  const [dockItems] = useState<DockItem[]>(apps.map(app => ({ appId: app.id })));
 
   useEffect(() => {
     localStorage.setItem('macos-settings', JSON.stringify(settings));
@@ -84,10 +43,6 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   }, [settings]);
 
   const openApp = (appId: string) => {
-    if (appId === 'launchpad') {
-      setLaunchpadOpen(true);
-      return;
-    }
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
       // If window is already open and focused, minimize it
@@ -224,8 +179,6 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         settings,
         dockItems,
         focusedWindowId,
-        launchpadOpen,
-        setLaunchpadOpen,
         openApp,
         closeWindow,
         minimizeWindow,
@@ -235,9 +188,6 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         updateWindowPosition,
         updateWindowSize,
         updateSettings,
-        reorderDock,
-        removeFromDock,
-        addToDock,
         apps,
       }}
     >

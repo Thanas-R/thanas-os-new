@@ -4,7 +4,6 @@ import { Window } from './Window';
 import { Dock } from './Dock';
 import { MenuBar } from './MenuBar';
 import { Spotlight } from './Spotlight';
-import { LaunchpadOverlay } from '@/components/apps/LaunchpadApp';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { TimeWidget } from '@/components/widgets/TimeWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
@@ -90,7 +89,6 @@ export const Desktop = () => {
       </div>
 
       <Spotlight isOpen={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
-      <LaunchpadOverlay />
       <Dock />
     </div>
   );

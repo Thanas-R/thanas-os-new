@@ -1,16 +1,25 @@
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { HOME, getNode, resolvePath, prettyPath } from '@/lib/terminalFs';
+import {
+  HOME,
+  getNode,
+  resolvePath,
+  prettyPath,
+  mkdir,
+  touch,
+  rm,
+  writeFile,
+} from '@/lib/terminalFs';
 
 interface Line {
   type: 'in' | 'out';
   text: string;
 }
 
-const BANNER = `ThanasOS Terminal — type "help" for commands.`;
+const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001\nThanasOS Terminal — type "help" for commands.`;
 
 export const TerminalApp = () => {
-  const { apps, openApp } = useMacOS();
+  const { apps, openApp, windows, closeWindow } = useMacOS();
   const [cwd, setCwd] = useState(HOME);
   const [lines, setLines] = useState<Line[]>([{ type: 'out', text: BANNER }]);
   const [input, setInput] = useState('');
@@ -36,27 +45,61 @@ export const TerminalApp = () => {
       case 'help':
         print([
           'Available commands:',
-          '  ls [path]         list directory contents',
-          '  cd <path>         change directory',
-          '  pwd               print working directory',
-          '  cat <file>        print file contents',
-          '  echo <text>       print text',
-          '  clear             clear the screen',
-          '  history           show command history',
-          '  whoami            print current user',
-          '  date              show current date/time',
-          '  uname             system info',
-          '  open <app>        open an app (e.g. open safari)',
-          '  apps              list installable apps',
-          '  neofetch          system summary',
-          '  exit              close terminal',
+          '  ls [path]              list directory contents',
+          '  cd <path>              change directory',
+          '  pwd                    print working directory',
+          '  cat <file>             print file contents',
+          '  echo <text>            print text (supports > file to write)',
+          '  mkdir <dir>            create directory',
+          '  touch <file>           create empty file',
+          '  rm [-rf] <path>        remove file or directory',
+          '  cp <src> <dst>         copy file',
+          '  mv <src> <dst>         move/rename',
+          '  grep <pat> <file>      search inside a file',
+          '  head [-n N] <file>     first N lines (default 10)',
+          '  tail [-n N] <file>     last N lines (default 10)',
+          '  wc <file>              line/word/char count',
+          '  find <name>            find files by name from cwd',
+          '  tree                   print directory tree',
+          '  env                    print env vars',
+          '  which <cmd>            locate a command',
+          '  whoami / date / uname  identity & system info',
+          '  history                show command history',
+          '  clear                  clear the screen',
+          '  open <app>             open an app (e.g. open safari)',
+          '  apps                   list installable apps',
+          '  neofetch               system summary',
+          '  exit                   close the terminal window',
         ].join('\n'));
         break;
       case 'pwd': print(cwd); break;
       case 'whoami': print('thanas'); break;
       case 'date': print(new Date().toString()); break;
       case 'uname': print('ThanasOS 1.0 liquid-glass x86_64'); break;
-      case 'echo': print(args.join(' ')); break;
+      case 'env': print([
+        'USER=thanas',
+        'HOME=/Users/thanas',
+        'SHELL=/bin/thsh',
+        'TERM=xterm-256color',
+        'PATH=/usr/local/bin:/usr/bin:/bin',
+        'LANG=en_US.UTF-8',
+      ].join('\n')); break;
+      case 'which': {
+        const c = args[0];
+        const builtins = ['ls','cd','pwd','cat','echo','mkdir','touch','rm','cp','mv','grep','head','tail','wc','find','tree','env','which','whoami','date','uname','history','clear','open','apps','neofetch','help','exit'];
+        print(builtins.includes(c) ? `${c}: shell builtin` : `${c} not found`);
+        break;
+      }
+      case 'echo': {
+        const joined = args.join(' ');
+        const m = joined.match(/^(.*?)\s*>\s*(\S+)$/);
+        if (m) {
+          const target = resolvePath(cwd, m[2]);
+          const err = writeFile(target, m[1].replace(/^"|"$/g, '') + '\n');
+          if (err) print(err);
+        } else print(joined);
+        break;
+      }
       case 'clear': setLines([]); break;
       case 'history':
         print(history.map((h, i) => `${i + 1}  ${h}`).join('\n') || '(empty)');
@@ -72,12 +115,22 @@ export const TerminalApp = () => {
         break;
       }
       case 'ls': {
-        const target = resolvePath(cwd, args[0] || '.');
+        const longFormat = args.includes('-l') || args.includes('-la');
+        const showHidden = args.includes('-a') || args.includes('-la');
+        const pathArg = args.find(a => !a.startsWith('-'));
+        const target = resolvePath(cwd, pathArg || '.');
         const node = getNode(target);
         if (!node) { print(`ls: ${args[0] || '.'}: No such file or directory`); break; }
         if (node.type === 'file') { print(target); break; }
-        const entries = Object.entries(node.children);
-        print(entries.map(([n, c]) => c.type === 'dir' ? `\x1b[34m${n}/\x1b[0m` : n).map(s => s.replace(/\x1b\[[0-9;]*m/g, '')).join('  ') || '(empty)');
+        let entries = Object.entries(node.children);
+        if (!showHidden) entries = entries.filter(([n]) => !n.startsWith('.'));
+        if (longFormat) {
+          print(entries.map(([n, c]) =>
+            `${c.type === 'dir' ? 'drwxr-xr-x' : '-rw-r--r--'}  thanas  staff  ${c.type === 'file' ? c.content.length : 128}  ${n}${c.type === 'dir' ? '/' : ''}`
+          ).join('\n') || '(empty)');
+        } else {
+          print(entries.map(([n, c]) => c.type === 'dir' ? `${n}/` : n).join('  ') || '(empty)');
+        }
         break;
       }
       case 'cd': {
@@ -97,19 +150,120 @@ export const TerminalApp = () => {
         print(node.content);
         break;
       }
+      case 'mkdir': {
+        if (!args[0]) { print('mkdir: missing operand'); break; }
+        const err = mkdir(resolvePath(cwd, args[0]));
+        if (err) print(`mkdir: ${args[0]}: ${err}`);
+        break;
+      }
+      case 'touch': {
+        if (!args[0]) { print('touch: missing operand'); break; }
+        const err = touch(resolvePath(cwd, args[0]));
+        if (err) print(`touch: ${args[0]}: ${err}`);
+        break;
+      }
+      case 'rm': {
+        const recursive = args.some(a => a.startsWith('-') && (a.includes('r') || a.includes('R')));
+        const path = args.find(a => !a.startsWith('-'));
+        if (!path) { print('rm: missing operand'); break; }
+        const err = rm(resolvePath(cwd, path), recursive);
+        if (err) print(`rm: ${path}: ${err}`);
+        break;
+      }
+      case 'cp':
+      case 'mv': {
+        if (args.length < 2) { print(`${name}: missing destination`); break; }
+        const src = getNode(resolvePath(cwd, args[0]));
+        if (!src) { print(`${name}: ${args[0]}: No such file or directory`); break; }
+        if (src.type !== 'file') { print(`${name}: directories not supported`); break; }
+        writeFile(resolvePath(cwd, args[1]), src.content);
+        if (name === 'mv') rm(resolvePath(cwd, args[0]));
+        break;
+      }
+      case 'grep': {
+        if (args.length < 2) { print('usage: grep <pattern> <file>'); break; }
+        const node = getNode(resolvePath(cwd, args[1]));
+        if (!node || node.type !== 'file') { print(`grep: ${args[1]}: No such file`); break; }
+        const pat = args[0];
+        const matches = node.content.split('\n').filter(l => l.includes(pat));
+        print(matches.join('\n') || '(no matches)');
+        break;
+      }
+      case 'head':
+      case 'tail': {
+        let n = 10;
+        const ni = args.indexOf('-n');
+        if (ni >= 0) n = parseInt(args[ni + 1], 10) || 10;
+        const path = args.find((a, i) => !a.startsWith('-') && args[i - 1] !== '-n');
+        if (!path) { print(`${name}: missing file`); break; }
+        const node = getNode(resolvePath(cwd, path));
+        if (!node || node.type !== 'file') { print(`${name}: ${path}: No such file`); break; }
+        const lines2 = node.content.split('\n');
+        print((name === 'head' ? lines2.slice(0, n) : lines2.slice(-n)).join('\n'));
+        break;
+      }
+      case 'wc': {
+        if (!args[0]) { print('wc: missing file'); break; }
+        const node = getNode(resolvePath(cwd, args[0]));
+        if (!node || node.type !== 'file') { print(`wc: ${args[0]}: No such file`); break; }
+        const text = node.content;
+        const linesC = text.split('\n').length;
+        const wordsC = text.split(/\s+/).filter(Boolean).length;
+        print(`  ${linesC}  ${wordsC}  ${text.length}  ${args[0]}`);
+        break;
+      }
+      case 'find': {
+        if (!args[0]) { print('find: missing name'); break; }
+        const needle = args[0];
+        const out: string[] = [];
+        const walk = (path: string, node: any) => {
+          if (path.includes(needle)) out.push(path);
+          if (node.type === 'dir') {
+            for (const [n, c] of Object.entries(node.children)) {
+              walk(path === '/' ? `/${n}` : `${path}/${n}`, c);
+            }
+          }
+        };
+        const start = getNode(cwd);
+        if (start) walk(cwd, start);
+        print(out.join('\n') || '(no results)');
+        break;
+      }
+      case 'tree': {
+        const out: string[] = [];
+        const walk = (node: any, prefix: string) => {
+          if (node.type !== 'dir') return;
+          const ks = Object.keys(node.children);
+          ks.forEach((k, i) => {
+            const last = i === ks.length - 1;
+            out.push(prefix + (last ? '└── ' : '├── ') + k + (node.children[k].type === 'dir' ? '/' : ''));
+            walk(node.children[k], prefix + (last ? '    ' : '│   '));
+          });
+        };
+        const start = getNode(cwd);
+        if (start) { out.push(prettyPath(cwd)); walk(start, ''); }
+        print(out.join('\n'));
+        break;
+      }
       case 'neofetch':
         print([
-          '   ___ ',
-          '  /   \\   thanas@thanasos',
-          '  \\___/   ----------------',
-          '          OS:     ThanasOS 1.0 (liquid)',
-          '          Shell:  thsh 0.1',
-          '          WM:     Aqua-React',
-          '          Theme:  Liquid Glass Dark',
-          '          Apps:   ' + apps.length,
+          '       .:\'    thanas@thanasos',
+          '    __ :\'__    ----------------',
+          ' .\'`__`-\'__``.   OS:      ThanasOS 1.0 (liquid)',
+          ":__________.-'   Host:    MacBook Pro (web)",
+          ":-------------:  Kernel:  liquid-glass 1.0",
+          " `\\_____ \\____/  Shell:   thsh 0.2",
+          "    `.__.-\"`     WM:      Aqua-React",
+          "                 Theme:   Liquid Glass Dark",
+          '                 Apps:    ' + apps.length,
         ].join('\n'));
         break;
-      case 'exit': print('(close the window with the red button)'); break;
+      case 'exit': {
+        const win = windows.find(w => w.appId === 'terminal');
+        if (win) closeWindow(win.id);
+        else print('logout');
+        break;
+      }
       default: print(`thsh: command not found: ${name}`);
     }
   };

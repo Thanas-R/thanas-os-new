@@ -39,7 +39,7 @@ export const LinkedInApp = () => {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Users className="w-4 h-4" />
-                  <span>40+ followers</span>
+                  <span>100+ followers</span>
                 </div>
               </div>
 

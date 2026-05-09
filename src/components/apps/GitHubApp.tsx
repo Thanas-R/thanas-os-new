@@ -23,20 +23,21 @@ export const GitHubApp = () => {
     const fetchGitHubData = async () => {
       try {
         const username = 'Thanas-R';
-        const [userRes, reposRes] = await Promise.all([
+        const [userRes, allReposRes] = await Promise.all([
           fetch(`https://api.github.com/users/${username}`),
-          fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=6`),
+          fetch(`https://api.github.com/users/${username}/repos?sort=updated&per_page=100`),
         ]);
         const userData = await userRes.json();
-        const reposData = await reposRes.json();
-        
+        const allRepos = await allReposRes.json();
+        const totalStars = Array.isArray(allRepos)
+          ? allRepos.reduce((acc: number, r: Repo) => acc + (r.stargazers_count || 0), 0)
+          : 0;
         setStats({
-          repos: userData.public_repos || 0,
-          stars: Array.isArray(reposData) ? reposData.reduce((acc: number, repo: Repo) => acc + repo.stargazers_count, 0) : 0,
+          repos: userData.public_repos || (Array.isArray(allRepos) ? allRepos.length : 0),
+          stars: totalStars,
           followers: userData.followers || 0,
         });
-        
-        if (Array.isArray(reposData)) setRepos(reposData);
+        if (Array.isArray(allRepos)) setRepos(allRepos.slice(0, 6));
       } catch (error) {
         console.error('Error fetching GitHub data:', error);
       } finally {

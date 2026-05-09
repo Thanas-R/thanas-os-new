@@ -1,26 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
-import finderIcon from '@/assets/finder-icon.png';
-import aboutIcon from '@/assets/about-icon.png';
-import techIcon from '@/assets/tech-icon.png';
-import projectsIcon from '@/assets/projects-icon.png';
-import journeyIcon from '@/assets/journey-icon.png';
-import githubIcon from '@/assets/github-icon.png';
-import linkedinIcon from '@/assets/linkedin-icon.png';
-import contactIcon from '@/assets/contact-icon.png';
-import settingsIcon from '@/assets/settings-icon.png';
-
-const iconMap: Record<string, string> = {
-  'finder': finderIcon,
-  'about': aboutIcon,
-  'technologies': techIcon,
-  'projects': projectsIcon,
-  'journey': journeyIcon,
-  'github': githubIcon,
-  'linkedin': linkedinIcon,
-  'contact': contactIcon,
-  'settings': settingsIcon,
-};
+import { APP_ICONS as iconMap } from '@/components/apps/LaunchpadApp';
 
 export const Dock = () => {
   const { apps, dockItems, openApp, windows, settings } = useMacOS();

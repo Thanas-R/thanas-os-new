@@ -1,4 +1,5 @@
 /* Utility clock — port of CodePen with WHITE dial / BLACK hands / orange second hand. */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
 .utility-clock-shell {
   position: relative;
   background: #000000;
@@ -59,8 +60,13 @@
   background: #000; width: 6px; height: 35px; border-radius: 10px;
   transform: translate(-50%,-100%) translateY(-85px); opacity: 0.85;
 }
-.utility-clock .hour-text { font: 700 32px "Inter", Helvetica, sans-serif; color: #000; top: -105px; }
-.utility-clock .hour-10 .content { padding-left: 0.4ex; }
+.utility-clock .hour-text {
+  font-family: "Quicksand", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  top: -105px;
+}.utility-clock .hour-10 .content { padding-left: 0.4ex; }
 .utility-clock .hour-11 .content { padding-left: 0.25ex; }
 
 /* === Style toggles applied: ===

@@ -1,73 +1,106 @@
-## Phase 3: Liquid Glass macOS Tahoe Overhaul
+# Phase 4 Plan — Spotlight Pill, Menu Bar Fixes, Widgets Overhaul & Easter Eggs
 
-This is a large, multi-part overhaul. Below is what I'll build, grouped by area, with clear scope boundaries so we don't blow past the budget.
+This is a large multi-part request. I'll execute top-to-bottom, then deliver a status report. Below is the scope and approach.
 
-### 1. Asset intake (icons you uploaded)
-Copy uploads into `src/assets/` and wire them in:
-- `vscode.png` → new VS Code app icon (Technologies app)
-- `user-profile.png` → About Me app icon
-- `cookie.png` → Nautilus icon (the cookie/shell-ish pixel art)
-- `pokemon-yellow.png` → Virdis
-- `pokemon-blue.png` → Spheal
-- `pesu-mc-emblem.png` → PESU MC Season 2
-- `circle-white.png` → AskBookie (placeholder dot)
-- `chef-hat.png` → Smart Chef
-- `topo.png` → Contour Flow
-- Reuse turtle logo for ThanasOS + PESU Forge per your note
-Update `src/lib/projects.ts` `favicon` fields and `APP_ICONS` map.
+## 1. Assets to import
+Copy uploaded user images into `src/assets/`:
+- `image-9.png` → `calendar-screenshot.png` (reference only — for calendar widget styling)
+- `image-10.png` → `odintree-icon.png`
+- `image-11.png` → `thanasos-turtle-icon.png` (replacement for ThanasOS project icon)
+- `image-12.png` → `pesuforge-shield-icon.png`
+- `image-13.png` → `portfolio-icon.png`
+- `image-14.png` → `prank-pichu-icon.png` (domain-expansion easter egg avatar)
+- `image-15.png` → `askpesu-rowlet-icon.png`
 
-### 2. Liquid Glass design system
-Add tokens to `src/index.css`:
-- `--glass-bg`, `--glass-border`, `--glass-highlight`, `--glass-shadow`
-- `.liquid-glass` utility class (backdrop-blur 40px, saturate 180%, inner highlight, soft outer shadow, 1px white-translucent border)
-Apply across MenuBar, Dock, Window chrome, Widgets, Spotlight, Launchpad.
+Update `src/lib/projects.ts` to:
+- Replace ThanasOS + PESU Forge favicons
+- Add `OdinTree` (after PESU Forge) — link `https://odintree.vercel.app/`
+- Add `Portfolio` (after Virdis)
+- Add `AskPESU` (after a few) using Rowlet icon
 
-### 3. MenuBar rebuild (macOS-style)
-- Turtle logo as Apple-menu trigger
-- Real dropdowns: Apple menu (About, System Settings, Sleep, Restart, Shut Down, Lock, Log Out), File/Edit/View/Window/Help that change per focused app
-- Right cluster: Battery / Wi-Fi / Volume / Spotlight / Control Center / Clock — all as proper popovers
-- Restart/Shut Down/Sleep/Lock trigger a fullscreen turtle-loader overlay (your CSS spec, ported to Tailwind/keyframes) then reload/return
+## 2. New Spotlight (pill style)
+Rewrite `src/components/macos/Spotlight.tsx` as a top-floating pill:
+- Single rounded-full pill input with shortcut chips on hover (Apps, Files, Actions, Clipboard)
+- Uses framer-motion layout animations (existing `motion/react`)
+- Search results dropdown below, frosted-glass
+- Wires into menu bar Search button + ⌘K shortcut (existing)
 
-### 4. Dock fix
-- Restore working magnification math (port your old logic; cap scale, fix overflow)
-- Constrain to viewport with proper padding so icons can't escape
-- Keep liquid-glass background
+## 3. Launchpad
+Already a grid; tighten it to single-page macOS-style — show all installed apps in one fluid grid with search and blurred backdrop. Already mostly there; verify.
 
-### 5. Spotlight rebuild
-Port the AppleSpotlight component you provided (pill-shape, shortcut chips, blob SVG filter, search results list). Wire to apps + projects.
+## 4. Finder rebuild
+Rebuild `FinderApp.tsx` with:
+- Left sidebar (Favorites: Recents, Applications, Desktop, Documents, Downloads; Locations: ThanasOS)
+- Toolbar with view switchers (Icons / List / Columns)
+- Column view as default — three-pane drill into the simulated filesystem from `terminalFs.ts`
+- Use shadcn sidebar pattern with collapse toggle
 
-### 6. Launchpad rebuild (real macOS Launchpad)
-- Single-click full-screen grid of all installed apps
-- Blurred wallpaper background
-- Search bar at top, page dots at bottom, drag-anywhere to dismiss
+## 5. MenuBar overhaul
+Rewrite `src/components/macos/MenuBar.tsx`:
+- Per-app menus via `AppConfig.menus` (extend `src/types/macos.ts` with `MenuConfig[]`)
+- Each app registers its own File/Edit/View menu items with real callbacks; fall back to Finder default when no app focused
+- Drop any item that doesn't have a real action (no dead links)
+- Frosted-glass dropdowns matching activity card style (already `liquid-glass-dark`, intensify blur)
+- Help menu → opens KeyboardShortcuts modal (new component) and ThanasOS Help modal with contact info + easter egg
+- Apple menu → working Sleep/Restart/Shutdown/Lock with turtle loader
 
-### 7. App rebuilds
-- **Safari**: real macOS toolbar (traffic lights inline, sidebar toggle, back/fwd, address pill with lock + reload, share/tabs/+), tab strip with rounded chiclets, Favorites start page grid
-- **Notes**: three-pane (Folders sidebar | Notes list | Editor) with collapsible sidebar using the Tabler-style sidebar animation, markdown rendering for blog posts
-- **App Store**: macOS sidebar (Discover / Arcade / Create / Work / Play / Develop / Categories / Updates) collapsible, hero featured card, app rows
-- **Finder**: real Finder layout — sidebar (Favorites/iCloud/Locations/Tags), toolbar (back/fwd, view switcher, group, share, tags, search), column/list/icon views, status bar
-- **Terminal**: expand commands (`cat`, `echo`, `date`, `whoami`, `uname`, `history`, `clear`, `man`, `ssh`, `curl` stub, `node`, `python` stub, `open`), more directories (`~/Developer`, `~/Sites`, `/etc`, `/var/log`, `/usr/local/bin`)
+## 6. Keyboard Shortcuts modal
+New `src/components/macos/ShortcutsModal.tsx`:
+- Frosted card, closes on ✕ / Esc / outside click
+- Lists ⌘K Spotlight, ⌘W Close, ⌘M Minimize, ⌘N New Window, ⌘Q Quit, etc., grouped with icons
 
-### 8. Widgets (Liquid Glass)
-- **Activity Rings**: rebuild with your kokonutui code — Move/Exercise/Stand → repurposed as **GitHub Stars** (live from `https://api.github.com/users/Thanas-R`), **Projects** (target 25), **LinkedIn followers** (100/250). Concentric rings, gradient strokes, detail rows below.
-- **GlassCalendar**: month grid with today highlighted, liquid-glass card
-- Restyle Weather/Time/Welcome to liquid glass
+## 7. ThanasOS Help / About
+Modal with contact links (GitHub, LinkedIn, email) + small fun easter eggs (Konami hint, secret commands).
 
-### 9. Boot prerender
-Move app component imports + GitHub stars fetch + project favicon prefetch into the `AppleHelloEffect` window so they're warm by the time the desktop appears.
+## 8. Widgets
+- **Remove WeatherWidget** from Index
+- **StatsWidget**: remove "Activity" and "live" text; shrink padding/fonts
+- **CalendarWidget**: revert to flat dark `#1a1a1d` (no glass), styled like uploaded screenshot — month label red, today highlighted red dot
+- **New Clock widget** (`UtilityClockWidget.tsx`): port the CodePen utility clock with classes `hour-style-text hour-text-style-small hour-display-style-all minute-style-line minute-display-style-coarse minute-text-style-none hand-style-normal`. Build dynamically with React refs + rAF instead of innerHTML.
+- Replace `TimeWidget` usage with `UtilityClockWidget` in the desktop
+- Increase overall widget sizes proportionally (Welcome, Clock, Calendar, Stats) so contents fit; remove Weather entirely from layout
 
-### 10. GitHub "+ menu" connect
-Lovable's GitHub connection is a platform action, not something I can script from inside the project. I'll add a clear note + button in Settings → "Connect GitHub" that opens the docs/instructions, and I'll document the manual steps. (I can't programmatically clone your repo into this sandbox — that has to be done via the Lovable + menu → GitHub → Connect project flow.)
+## 9. Dock reorder
+Update `Dock.tsx` `dockOrder` to: finder, launchpad, terminal, about, journey, notes, projects, technologies, safari, github, linkedin, contact, appstore, settings.
 
-### Scope I'm explicitly deferring (to keep this shippable in one pass)
-- Drag-to-reorder Dock (keeping existing order)
-- Per-app dynamic File/Edit/View menus that mutate based on focused app (will ship one shared set; per-app deferred)
-- Markdown blog rendering inside Notes (will scaffold the pane; full MD parser pass deferred unless quick)
-- Real `ssh`/`curl` network in Terminal (simulated only)
+## 10. Safari rebuild
+Rewrite `SafariApp.tsx`:
+- Real tab bar (multiple tabs, +, close per tab)
+- Toolbar: back/fwd/reload, address pill with lock icon and Google as default search
+- Typing a non-URL → Google search; typing a URL → load
+- iframe per tab; if URL not in known projects list **AND** matches the prank trigger → render the prank HTML page (DarkSpacePirate "domain expansion") inline using `srcDoc`
+- All project URLs must remain viewable (don't block any) — only show prank for explicit non-project external domains the user lists; safest default: show prank only when user navigates to certain reserved domains (e.g. when URL doesn't match any installed project AND user toggles easter egg). I'll trigger prank for any external domain not in known list — but per request "any non-project link". Will use `srcDoc` with the supplied HTML.
 
-### Final report
-I'll end with: ✅ done, ⚠️ partial, ⛔ deferred + next-step suggestions.
+## 11. Boot preloading
+Update `AppleHelloEffect.tsx` / `useImagePreloader`:
+- During Hello animation, preload ALL `src/assets/*.png` icons via dynamic glob import
+- Prefetch all project favicons + project URLs (link rel=prefetch)
+- Eagerly import all app components so they're in cache when opened
+- Block dismiss of hello until preload promise resolves (with min 2s, max 6s)
 
----
+## 12. Control Panel app
+New `ControlPanelApp.tsx` registered as a system app accessible from MenuBar (Apple menu → Control Center) and dock-less:
+- Toggles: Animations, Reduced Motion, Dock Magnification, Auto-hide Dock, Wallpaper, Theme, Sound, Easter Eggs enabled
+- Persist to `MacOSContext` settings
+- Style like uploaded macOS Control Center mockup: rounded translucent tiles in a grid
 
-Approve and I'll execute top-to-bottom. This will touch ~25–30 files.
+## 13. Memory
+Save core design rules to `mem://index.md`: liquid glass system, calendar widget flat dark, dock order, prank trigger.
+
+## Technical notes
+- All new components use existing `liquid-glass-dark` / `liquid-glass-card` utilities
+- Frosted dropdowns: `backdrop-filter: blur(40px) saturate(180%)`, `bg: rgba(28,28,32,0.6)`, `border: 1px solid rgba(255,255,255,0.12)`
+- New types: extend `AppConfig` with optional `menus?: MenuConfig[]` and `getMenuActions?: () => Record<string, () => void>`
+- Clock widget: avoid innerHTML; build SVG-free DOM via React with `transform: rotate(...)` updated each frame in a `useEffect` rAF loop
+
+## Out of scope / deferred
+- GitHub OAuth clone from inside the app (platform-level only — must use Lovable's + → GitHub)
+- Drag-to-reorder Dock (still pending from earlier phase)
+
+## Final report
+After implementation I'll list:
+- ✅ Done items
+- ⚠️ Half-done items needing iteration
+- ⏭️ Deferred (with reason)
+
+Approve and I'll execute the whole phase in one pass.

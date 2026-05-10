@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { WindowState, MacOSSettings, DockItem, AppConfig } from '@/types/macos';
+import { useGoogleInstalled } from '@/lib/installedApps';
 
 interface MacOSContextType {
   windows: WindowState[];
@@ -42,7 +43,20 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     const saved = localStorage.getItem('macos-settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
-  const [dockItems] = useState<DockItem[]>(apps.filter(a => a.id !== 'controlpanel').map(app => ({ appId: app.id })));
+  const googleInstalled = useGoogleInstalled();
+  const dockItems: DockItem[] = useMemo(() => {
+    // Order: insert google right after safari when installed
+    const out: DockItem[] = [];
+    apps.forEach(a => {
+      if (a.id === 'controlpanel') return;
+      if (a.id === 'google' && !googleInstalled) return;
+      out.push({ appId: a.id });
+      if (a.id === 'safari' && googleInstalled && !apps.some(x => x.id === 'google' && out.find(o => o.appId === 'google'))) {
+        // safety no-op; google is appended in its own iteration since it is in apps
+      }
+    });
+    return out;
+  }, [apps, googleInstalled]);
 
   useEffect(() => {
     localStorage.setItem('macos-settings', JSON.stringify(settings));

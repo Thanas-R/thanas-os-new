@@ -18,6 +18,8 @@ import notesIcon from '@/assets/notes-icon.png';
 import appstoreIcon from '@/assets/appstore-icon.png';
 import launchpadIcon from '@/assets/launchpad-icon.png';
 import controlPanelIcon from '@/assets/settings-icon.png';
+import calculatorNewIcon from '@/assets/calculator-new-icon.png';
+import googleNewIcon from '@/assets/google-icon-new.png';
 
 export const APP_ICONS: Record<string, string> = {
   finder: finderIcon,
@@ -35,6 +37,8 @@ export const APP_ICONS: Record<string, string> = {
   appstore: appstoreIcon,
   launchpad: launchpadIcon,
   controlpanel: controlPanelIcon,
+  calculator: calculatorNewIcon,
+  google: googleNewIcon,
 };
 
 const PAGE_SIZE = 28; // 7 cols x 4 rows

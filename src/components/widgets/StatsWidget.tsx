@@ -77,7 +77,7 @@ export const StatsWidget = ({
   return (
     <div
       className={cn('rounded-3xl overflow-hidden liquid-glass-card', className)}
-      style={{ width: 300 }}
+      style={{ width: 356 }}
     >
       <div className="px-4 py-3">
         <div className="flex items-center gap-5">

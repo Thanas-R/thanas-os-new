@@ -76,8 +76,8 @@ export const UtilityClockWidget = ({ size = 200 }: { size?: number }) => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Native clock is ~ 327 px (295 dial + 32 padding). Scale to chosen size.
-  const NATIVE = 327;
+  // Slightly larger inner dial: scale to a smaller native size so hands fill more.
+  const NATIVE = 300;
   const scale = size / NATIVE;
 
   return (

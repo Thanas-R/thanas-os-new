@@ -57,7 +57,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     { label: 'About This Mac', action: () => { openApp('about'); setAppleOpen(false); } },
     { separator: true },
     { label: 'System Settings…', action: () => { openApp('settings'); setAppleOpen(false); } },
-    { label: 'Control Panel…', action: () => { openApp('controlpanel'); setAppleOpen(false); } },
     { label: 'App Store…', action: () => { openApp('appstore'); setAppleOpen(false); } },
     { separator: true },
     { label: 'Force Quit All', shortcut: '⌥⌘⎋', action: () => { windows.forEach(w => closeWindow(w.id)); setAppleOpen(false); } },

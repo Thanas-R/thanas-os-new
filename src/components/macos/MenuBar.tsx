@@ -1,20 +1,15 @@
-import { useState, useEffect, useRef, useMemo } from 'react';
-import { Wifi, Battery, Volume2, Search } from 'lucide-react';
+import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from 'react';
+import { Wifi, Battery, Volume2, Search, SlidersHorizontal } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
 import { ShortcutsModal } from './ShortcutsModal';
 import { HelpModal } from './HelpModal';
+import { ControlCenter } from './ControlCenter';
+import { getAppMenus, subscribeMenuRegistry, MenuItem, AppMenus } from '@/types/macos';
 
 interface MenuBarProps {
   onSpotlightClick?: () => void;
-}
-
-interface MenuItem {
-  label?: string;
-  shortcut?: string;
-  action?: () => void;
-  separator?: boolean;
 }
 
 interface MenuGroup {
@@ -24,13 +19,17 @@ interface MenuGroup {
 
 export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [time, setTime] = useState(new Date());
-  const [volume, setVolume] = useState(65);
   const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const [appleOpen, setAppleOpen] = useState(false);
+  const [ccOpen, setCcOpen] = useState(false);
   const [loader, setLoader] = useState<null | { label: string }>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const { focusedWindowId, apps, windows, minimizeAllWindows, openApp, closeWindow, focusWindow } = useMacOS();
+  const { focusedWindowId, apps, windows, minimizeAllWindows, openApp, closeWindow, focusWindow, settings } = useMacOS();
   const menuBarRef = useRef<HTMLDivElement>(null);
+
+  // Force re-renders when app menus get registered/unregistered
+  useSyncExternalStore(subscribeMenuRegistry, () => Object.keys(getAppMenus('') ?? {}).length + Math.random(), () => 0);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
@@ -40,9 +39,11 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const focusedWindow = windows.find(w => w.id === focusedWindowId && !w.isMinimized);
   const focusedApp = focusedWindow ? apps.find(a => a.id === focusedWindow.appId) : null;
   const appName = focusedApp?.name || 'Finder';
+  const customMenus: AppMenus | undefined = focusedApp ? getAppMenus(focusedApp.id) : undefined;
 
   const triggerLoader = (label: string) => {
     setLoader({ label });
+    setAppleOpen(false);
     setActiveMenu(null);
     setTimeout(() => {
       if (label === 'Restart…' || label === 'Shut Down…') {
@@ -53,12 +54,13 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   };
 
   const appleMenu: MenuItem[] = [
-    { label: 'About This Mac', action: () => { openApp('about'); setActiveMenu(null); } },
+    { label: 'About This Mac', action: () => { openApp('about'); setAppleOpen(false); } },
     { separator: true },
-    { label: 'System Settings…', action: () => { openApp('settings'); setActiveMenu(null); } },
-    { label: 'App Store…', action: () => { openApp('appstore'); setActiveMenu(null); } },
+    { label: 'System Settings…', action: () => { openApp('settings'); setAppleOpen(false); } },
+    { label: 'Control Panel…', action: () => { openApp('controlpanel'); setAppleOpen(false); } },
+    { label: 'App Store…', action: () => { openApp('appstore'); setAppleOpen(false); } },
     { separator: true },
-    { label: 'Force Quit All', shortcut: '⌥⌘⎋', action: () => { windows.forEach(w => closeWindow(w.id)); setActiveMenu(null); } },
+    { label: 'Force Quit All', shortcut: '⌥⌘⎋', action: () => { windows.forEach(w => closeWindow(w.id)); setAppleOpen(false); } },
     { separator: true },
     { label: 'Sleep', action: () => triggerLoader('Sleep') },
     { label: 'Restart…', action: () => triggerLoader('Restart…') },
@@ -70,7 +72,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const focusActive = focusedWindow;
 
   const menus: MenuGroup[] = useMemo(() => {
-    const fileMenu: MenuItem[] = [
+    const defaultFile: MenuItem[] = [
       { label: 'New Launchpad', shortcut: '⌘N', action: () => openApp('launchpad') },
       { separator: true },
       { label: 'Close Window', shortcut: '⌘W', action: () => focusActive && closeWindow(focusActive.id) },
@@ -78,7 +80,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       { separator: true },
       { label: 'Print…', shortcut: '⌘P', action: () => window.print() },
     ];
-    const editMenu: MenuItem[] = [
+    const defaultEdit: MenuItem[] = [
       { label: 'Undo', shortcut: '⌘Z', action: () => document.execCommand('undo') },
       { label: 'Redo', shortcut: '⇧⌘Z', action: () => document.execCommand('redo') },
       { separator: true },
@@ -87,20 +89,20 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       { label: 'Paste', shortcut: '⌘V', action: () => document.execCommand('paste') },
       { label: 'Select All', shortcut: '⌘A', action: () => document.execCommand('selectAll') },
     ];
-    const viewMenu: MenuItem[] = [
+    const defaultView: MenuItem[] = [
       { label: 'Show Desktop', action: () => minimizeAllWindows() },
       { label: 'Open Spotlight', shortcut: '⌘K', action: () => onSpotlightClick?.() },
     ];
-    const windowMenu: MenuItem[] = windows.length === 0 ? [
-      { label: 'No Windows Open' },
-    ] : [
-      { label: 'Minimize All', shortcut: '⌘M', action: () => minimizeAllWindows() },
-      { separator: true },
-      ...windows.map(w => {
-        const a = apps.find(app => app.id === w.appId);
-        return { label: a?.name || w.appId, action: () => focusWindow(w.id) };
-      }),
-    ];
+    const defaultWindow: MenuItem[] = windows.length === 0
+      ? [{ label: 'No Windows Open' }]
+      : [
+          { label: 'Minimize All', shortcut: '⌘M', action: () => minimizeAllWindows() },
+          { separator: true },
+          ...windows.map(w => {
+            const a = apps.find(app => app.id === w.appId);
+            return { label: a?.name || w.appId, action: () => focusWindow(w.id) };
+          }),
+        ];
     const helpMenu: MenuItem[] = [
       { label: 'ThanasOS Help', action: () => setHelpOpen(true) },
       { label: 'Keyboard Shortcuts', action: () => setShortcutsOpen(true) },
@@ -109,23 +111,32 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     ];
 
     return [
-      { label: appName, items: appleMenu.slice(0, 4) },
-      { label: 'File', items: fileMenu },
-      { label: 'Edit', items: editMenu },
-      { label: 'View', items: viewMenu },
-      { label: 'Window', items: windowMenu },
+      { label: appName, items: [
+        { label: `About ${appName}`, action: () => openApp('about') },
+        { separator: true },
+        { label: `Hide ${appName}`, shortcut: '⌘H', action: () => focusActive && closeWindow(focusActive.id) },
+        { separator: true },
+        { label: `Quit ${appName}`, shortcut: '⌘Q', action: () => focusActive && closeWindow(focusActive.id) },
+      ]},
+      { label: 'File', items: customMenus?.File ?? defaultFile },
+      { label: 'Edit', items: customMenus?.Edit ?? defaultEdit },
+      { label: 'View', items: customMenus?.View ?? defaultView },
+      { label: 'Window', items: customMenus?.Window ?? defaultWindow },
       { label: 'Help', items: helpMenu },
     ];
-  }, [appName, focusActive, windows, apps, openApp, closeWindow, minimizeAllWindows, focusWindow, onSpotlightClick]);
+  }, [appName, focusActive, windows, apps, openApp, closeWindow, minimizeAllWindows, focusWindow, onSpotlightClick, customMenus]);
 
   useEffect(() => {
-    if (!activeMenu) return;
+    if (!activeMenu && !appleOpen) return;
     const onDown = (e: MouseEvent) => {
-      if (!menuBarRef.current?.contains(e.target as Node)) setActiveMenu(null);
+      if (!menuBarRef.current?.contains(e.target as Node)) {
+        setActiveMenu(null);
+        setAppleOpen(false);
+      }
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
-  }, [activeMenu]);
+  }, [activeMenu, appleOpen]);
 
   const formatTime = (d: Date) =>
     d.toLocaleTimeString('en-US', {
@@ -135,7 +146,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
 
   const renderDropdown = (items: MenuItem[]) => (
     <div
-      className="absolute top-7 mt-1 min-w-[240px] rounded-2xl py-1.5 z-[100] liquid-glass-card text-white text-[13px] shadow-2xl"
+      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-2xl py-1.5 z-[100] liquid-glass-card text-white text-[13px] shadow-2xl"
       onClick={(e) => e.stopPropagation()}
     >
       {items.map((it, i) =>
@@ -145,8 +156,8 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <button
             key={i}
             disabled={!it.action}
-            onClick={() => it.action?.()}
-            className={`w-full flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-blue-500/80 hover:text-white' : 'opacity-50 cursor-default'}`}
+            onClick={() => { it.action?.(); setActiveMenu(null); setAppleOpen(false); }}
+            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-blue-500/80 hover:text-white' : 'opacity-50 cursor-default'}`}
             style={{ width: 'calc(100% - 8px)' }}
           >
             <span>{it.label}</span>
@@ -164,18 +175,21 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         className="fixed top-0 left-0 right-0 h-7 liquid-glass-dark flex items-center justify-between px-3 z-50 text-[13px] text-white"
       >
         <div className="flex items-center gap-1 relative">
-          <button
-            onClick={() => setActiveMenu(activeMenu === '__apple' ? null : '__apple')}
-            className="px-2 py-0.5 rounded hover:bg-white/15"
-          >
-            <img src={turtleLogo} alt="Logo" className="h-4 w-auto object-contain" />
-          </button>
-          {activeMenu === '__apple' && <div className="left-0">{renderDropdown(appleMenu)}</div>}
+          {/* Apple/turtle menu — own state, isolated */}
+          <div className="relative">
+            <button
+              onClick={(e) => { e.stopPropagation(); setActiveMenu(null); setAppleOpen(o => !o); }}
+              className={`px-2 py-0.5 rounded hover:bg-white/15 ${appleOpen ? 'bg-white/20' : ''}`}
+            >
+              <img src={turtleLogo} alt="Logo" className="h-4 w-auto object-contain" />
+            </button>
+            {appleOpen && renderDropdown(appleMenu)}
+          </div>
 
           {menus.map((m, idx) => (
             <div key={m.label} className="relative">
               <button
-                onClick={() => setActiveMenu(activeMenu === m.label ? null : m.label)}
+                onClick={(e) => { e.stopPropagation(); setAppleOpen(false); setActiveMenu(activeMenu === m.label ? null : m.label); }}
                 onMouseEnter={() => activeMenu && setActiveMenu(m.label)}
                 className={`px-2.5 py-0.5 rounded hover:bg-white/15 ${
                   idx === 0 ? 'font-semibold' : ''
@@ -188,7 +202,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
               <button className="p-1 hover:bg-white/15 rounded"><Battery className="w-4 h-4" /></button>
@@ -200,26 +214,17 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               </div>
             </PopoverContent>
           </Popover>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="p-1 hover:bg-white/15 rounded"><Wifi className="w-4 h-4" /></button>
-            </PopoverTrigger>
-            <PopoverContent className="w-52 p-3 z-[200]">
-              <div className="text-sm font-medium">Wi-Fi · ThanasOS-Net</div>
-              <p className="text-xs text-muted-foreground mt-1">Excellent signal</p>
-            </PopoverContent>
-          </Popover>
-          <Popover>
-            <PopoverTrigger asChild>
-              <button className="p-1 hover:bg-white/15 rounded"><Volume2 className="w-4 h-4" /></button>
-            </PopoverTrigger>
-            <PopoverContent className="w-52 p-3 z-[200]">
-              <div className="flex justify-between text-xs"><span>Volume</span><span>{volume}%</span></div>
-              <input type="range" min={0} max={100} value={volume} onChange={(e) => setVolume(Number(e.target.value))} className="w-full mt-2" />
-            </PopoverContent>
-          </Popover>
+          <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi ? '' : 'opacity-50'}`}><Wifi className="w-4 h-4" /></button>
+          <button className="p-1 hover:bg-white/15 rounded"><Volume2 className="w-4 h-4" /></button>
           <button onClick={onSpotlightClick} className="p-1 hover:bg-white/15 rounded" title="Spotlight (⌘K)">
             <Search className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => setCcOpen(o => !o)}
+            className={`p-1 hover:bg-white/15 rounded ${ccOpen ? 'bg-white/20' : ''}`}
+            title="Control Center"
+          >
+            <SlidersHorizontal className="w-4 h-4" />
           </button>
           <Popover>
             <PopoverTrigger asChild>
@@ -238,6 +243,8 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           </Popover>
         </div>
       </div>
+
+      <ControlCenter open={ccOpen} onClose={() => setCcOpen(false)} />
 
       {loader && (
         <div className="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center">

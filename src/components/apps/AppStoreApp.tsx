@@ -17,6 +17,11 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
+import chromeIcon from '@/assets/chrome-icon.png';
+
+const COMING_SOON = [
+  { id: 'chrome', name: 'Google Chrome', description: 'Fast, secure browser by Google. Coming soon to ThanasOS.', icon: chromeIcon },
+];
 import {
   useInstalledProjects,
   installProject,

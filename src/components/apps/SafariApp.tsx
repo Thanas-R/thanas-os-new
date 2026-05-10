@@ -166,9 +166,16 @@ export const SafariApp = () => {
     if (proxyHtml[target]) { updateActive({ loading: false }); return; }
     let cancelled = false;
     updateActive({ loading: true });
-    Promise.any(
-      PROXIES(target).map(p => fetch(p, { method: 'GET' }).then(r => r.ok ? r.text() : Promise.reject(r.status)))
-    )
+    const race = new Promise<string>((resolve, reject) => {
+      let pending = PROXIES(target).length;
+      PROXIES(target).forEach(p => {
+        fetch(p, { method: 'GET' })
+          .then(r => r.ok ? r.text() : Promise.reject(r.status))
+          .then(t => resolve(t))
+          .catch(() => { pending -= 1; if (pending === 0) reject(new Error('all proxies failed')); });
+      });
+    });
+    race
       .then(text => {
         if (cancelled) return;
         // Inject base href so relative assets resolve

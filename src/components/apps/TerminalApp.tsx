@@ -17,18 +17,32 @@ interface Line {
 }
 
 const ASCII = String.raw`
-       .:'
-    __ :'__
- .'\`__\`-'__\`\`.
-:__________.-'
-:-------------:
- \\_____ \\____/
-    \`.__.-\`     ThanasOS  v1.0  (liquid-glass)
+                                  #######     
+                               ############   
+                               ###*+++++###   
+                 #########  ###*+++++++++++###
+######      ###################*+++++++++++###
+######     #######*******######*++*##++++++###
+###++*######****************###*+++++++++++###
+###+++######****************###*+++++++++++###
+  ###*+++++*##***********###*++++++++######   
+     ###+--=++*##########*+++++=--+###        
+     ###+--=++*##########*+++++=--*###        
+        ###+==----=----==-----=*###           
+  ######*+++++*##++++++#####*+++++*###        
+  ######*+++++*##*+++++#####*+++++*###        
+###++++++  ####    ######*++++++  ####        
+#########  ###   ###++++++++++++  ###         
+  #######        ###++++++++++++              
+                 ###++++++++*###              
+                 ###********####              
+                   ##########           
 `;
 
 const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
 ${ASCII}
-Welcome to ThanasOS Terminal. Type "help" for a list of commands.`;
+       ThanasOS  v1.0  ·  Liquid Glass Edition
+       Type \`help\` for available commands, \`status\` for system info.`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
@@ -81,6 +95,7 @@ export const TerminalApp = () => {
           '  open <app>             open an app (e.g. open safari)',
           '  apps                   list installable apps',
           '  neofetch               system summary',
+          '  status                 system status (uptime, memory, apps)',
           '  exit                   close the terminal window',
         ].join('\n'));
         break;

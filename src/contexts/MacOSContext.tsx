@@ -35,7 +35,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     const saved = localStorage.getItem('macos-settings');
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
-  const [dockItems] = useState<DockItem[]>(apps.map(app => ({ appId: app.id })));
+  const [dockItems] = useState<DockItem[]>(apps.filter(a => a.id !== 'controlpanel').map(app => ({ appId: app.id })));
 
   useEffect(() => {
     localStorage.setItem('macos-settings', JSON.stringify(settings));

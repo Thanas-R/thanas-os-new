@@ -1,0 +1,33 @@
+/* Utility clock — adapted from CodePen */
+.utility-clock .clock { position: absolute; opacity: 1; left: 50%; top: 50%; }
+.utility-clock .centre { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.utility-clock .expand { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); }
+.utility-clock .anchor { position: absolute; top: 0; left: 0; width: 0; height: 0; }
+.utility-clock .element { position: absolute; top: 0; left: 0; }
+.utility-clock .round { border-radius: 296px; }
+.utility-clock .circle-1 { width: 6px; height: 6px; border: 3px solid white; }
+.utility-clock .circle-2 { width: 4px; height: 4px; border: 2px solid #FA9F22; }
+.utility-clock .second { transform: rotate(180deg); }
+.utility-clock .minute { transform: rotate(54deg); }
+.utility-clock .second-hand-front { width: 2px; height: 137px; background: #FA9F22; transform: translate(-50%,-100%) translateY(-3px); }
+.utility-clock .second-hand-back { width: 2px; height: 21px; background: #FA9F22; opacity: 1; transform: translate(-50%,-100%) translateY(24px); }
+.utility-clock .hour { transform: rotate(304.5deg); }
+.utility-clock .thin-hand { width: 4px; height: 50px; background: white; transform: translate(-50%,-100%) translateY(-5px); }
+.utility-clock .fat-hand { box-sizing: border-box; width: 10px; height: 57px; border-radius: 10px; background: white; transform: translate(-50%,-100%) translateY(-18px); }
+.utility-clock .minute-hand { height: 112px; }
+.utility-clock .minute-line { background: white; width: 1px; height: 9px; transform: translate(-50%,-100%) translateY(-131px); opacity: 0.34; }
+.utility-clock .major.minute-line { opacity: 0.5; }
+.utility-clock .minute-text { font: 12px Avenir Next, Helvetica; color: white; top: -135px; }
+.utility-clock .hour-pill { background: white; width: 6px; height: 35px; border-radius: 10px; transform: translate(-50%,-100%) translateY(-85px); opacity: 0.75; }
+.utility-clock .hour-text { font: 40px Hei, Helvetica; color: white; top: -105px; }
+.utility-clock .hour-10 .content { padding-left: 0.4ex; }
+.utility-clock .hour-11 .content { padding-left: 0.25ex; }
+
+/* hour style: text -> hide pills */
+.utility-clock.hour-style-text .hour-pill { opacity: 0; }
+/* hour text small */
+.utility-clock.hour-text-style-small .hour-text { font-size: 24px; top: -113px; }
+/* minute display coarse -> hide part lines */
+.utility-clock.minute-display-style-coarse .part.minute-line { opacity: 0; }
+/* minute text none */
+.utility-clock.minute-text-style-none .minute-text { opacity: 0; }

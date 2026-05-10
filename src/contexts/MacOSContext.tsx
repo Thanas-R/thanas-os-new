@@ -15,6 +15,7 @@ interface MacOSContextType {
   updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
   updateWindowSize: (windowId: string, size: { width: number; height: number }) => void;
   updateSettings: (settings: Partial<MacOSSettings>) => void;
+  openUrl: (url: string) => void;
   apps: AppConfig[];
 }
 

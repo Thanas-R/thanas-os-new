@@ -27,15 +27,15 @@
 
 /* Centre caps */
 .utility-clock .circle-1 {
-  width: 8px;
-  height: 8px;
-  border: 3px solid #1C1C1E;
+  width: 12px;
+  height: 12px;
+  border: 4px solid #1C1C1E;
   background: #1C1C1E;
 }
 
 .utility-clock .circle-2 {
-  width: 6px;
-  height: 6px;
+  width: 4px;
+  height: 4px;
   border: 2px solid #FA9F22;
   background: #FA9F22;
 }
@@ -117,7 +117,7 @@
   font-weight: 600;
   color: #1C1C1E;
   letter-spacing: -0.02em;
-  top: -108px;
+  top: -106px;
   line-height: 1;
 }
 
@@ -132,13 +132,13 @@
 .utility-clock.hour-text-style-large .hour-text {
   font-size: 32px;
   font-weight: 600;
-  top: -108px;
+  top: -106px;
 }
 
 .utility-clock.hour-text-style-small .hour-text {
   font-size: 28px;
   font-weight: 600;
-  top: -110px;
+  top: -108px;
 }
 
 .utility-clock.minute-display-style-coarse .part.minute-line {

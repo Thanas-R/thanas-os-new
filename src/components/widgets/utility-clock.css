@@ -35,7 +35,7 @@
 .utility-clock .circle-1 {
   width: 17px;
   height: 17px;
-  border: 5px solid #1C1C1E;
+  border: 6px solid #1C1C1E;
   background: transparent;
   box-sizing: border-box;
   border-radius: 50%;
@@ -44,7 +44,7 @@
 .utility-clock .circle-2 {
   width: 10px;
   height: 10px;
-  border: 3px solid #FA9F22;
+  border: 4px solid #FA9F22;
   background: transparent;
   box-sizing: border-box;
   border-radius: 50%;

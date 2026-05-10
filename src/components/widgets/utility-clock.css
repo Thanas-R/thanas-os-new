@@ -35,7 +35,7 @@
 .utility-clock .circle-1 {
   width: 17px;
   height: 17px;
-  border: 6px solid #1C1C1E;
+  border: 6px solid #18181A;
   background: transparent;
   box-sizing: border-box;
   border-radius: 50%;
@@ -75,7 +75,7 @@
 .utility-clock .thin-hand {
   width: 4px;
   height: 62px;
-  background: #1C1C1E;
+  background: #18181A;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-6px);
 }
@@ -84,7 +84,7 @@
 .utility-clock .fat-hand {
   width: 10px;
   height: 61px;
-  background: #1C1C1E;
+  background: #18181A;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-18px);
 }
@@ -101,24 +101,24 @@
 /* Tick marks */
 .utility-clock .minute-line {
   background: #B3B3B3;
-  width: 2.5px;
+  width: 3px;
   height: 10px;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-122px);
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .utility-clock .major.minute-line {
-  width: 2.5px;
+  width: 3px;
   height: 10px;
   border-radius: 999px;
-  background: #1C1C1E;
+  background: #18181A;
   opacity: 1;
 }
 
 /* Hour markers */
 .utility-clock .hour-pill {
-  background: #1C1C1E;
+  background: #18181A;
   width: 4px;
   height: 20px;
   border-radius: 999px;
@@ -131,7 +131,7 @@
   font-family: "Inter", sans-serif;
   font-size: 32px;
   font-weight: 600;
-  color: #1C1C1E;
+  color: #18181A;
   letter-spacing: -0.02em;
   top: -85px;
   line-height: 1;

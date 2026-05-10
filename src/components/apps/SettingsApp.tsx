@@ -11,6 +11,7 @@ import wallpaper3 from '@/assets/wallpaper-3.jpg';
 import wallpaper4 from '@/assets/minecraft-valley.jpg';
 import safariIcon from '@/assets/safari-icon.png';
 import googleIcon from '@/assets/google-icon-new.png';
+import profilePhoto from '@/assets/profile-photo-new.jpg';
 
 const wallpapers = [
   { id: 'wallpaper-1', src: wallpaper1, name: 'Mountain Lake' },
@@ -70,7 +71,18 @@ export const SettingsApp = () => {
     <div className="h-full w-full flex bg-neutral-100 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 text-[13px]">
       {/* Sidebar */}
       <aside className="w-[230px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
-        <div className="px-3 pt-3 pb-2">
+        {/* Profile card */}
+        <button
+          onClick={() => setSection('general')}
+          className="mx-3 mt-3 mb-1 flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60 text-left"
+        >
+          <img src={profilePhoto} alt="Thanas R" className="w-10 h-10 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
+          <div className="min-w-0">
+            <div className="text-[12.5px] font-semibold truncate">Thanas R</div>
+            <div className="text-[10.5px] text-neutral-500 dark:text-neutral-400 truncate">Apple Account</div>
+          </div>
+        </button>
+        <div className="px-3 pt-1 pb-2">
           <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white dark:bg-neutral-800 shadow-inner">
             <Search className="w-3.5 h-3.5 text-neutral-400" />
             <input

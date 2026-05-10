@@ -339,63 +339,79 @@ const [lines, setLines] = useState<Line[]>([
     >
       <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-[1.45]">
         {lines.map((l, i) => {
-  if (l.text === 'BANNER_TOP') {
-    return (
-      <div key={i} className="text-[#e6e6e6]">
-        {/* top login text */}
-        <div
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '13px',
-            marginBottom: '4px'
-          }}
-        >
-          {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
-        </div>
+if (l.text === 'BANNER_TOP') {
+  return (
+    <div key={i} className="text-[#e6e6e6]">
+      
+      {/* login line */}
+      <div
+        style={{
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '13px',
+          marginBottom: '8px'
+        }}
+      >
+        {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
+      </div>
 
-        {/* ASCII + RIGHT SIDE TEXT ROW */}
-        <div
+      {/* MAIN ROW */}
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'nowrap',
+          alignItems: 'center',
+          gap: '28px',
+          marginBottom: '14px',
+          width: '100%'
+        }}
+      >
+
+        {/* ASCII */}
+        <pre
           style={{
-            display: 'flex',
-            alignItems: 'flex-start',
-            paddingTop: '18px',
-            gap: '18px',
-            marginBottom: '10px'
+            fontSize: '12px',
+            lineHeight: '12px',
+            margin: 0,
+            whiteSpace: 'pre',
+            flexShrink: 0,
+            fontFamily: '"SF Mono","JetBrains Mono",monospace'
           }}
         >
-          {/* ASCII ONLY */}
-          <pre
-            className="whitespace-pre leading-none text-[#e6e6e6]"
-            style={{
-              fontSize: '6px',     // increased by one from 5px
-              lineHeight: '6px',
-              margin: 0,
-              fontFamily: '"SF Mono","JetBrains Mono",monospace'
-            }}
-          >
 {ASCII}
-          </pre>
+        </pre>
 
-          {/* RIGHT SIDE TEXT */}
+        {/* RIGHT SIDE CONTENT */}
+        <div
+          style={{
+            minWidth: '260px',
+            fontFamily: 'Inter, sans-serif',
+            fontSize: '14px',
+            lineHeight: '1.65'
+          }}
+        >
           <div
             style={{
-              fontFamily: 'Inter, sans-serif',
-              fontSize: '13px',
-              lineHeight: '1.5'
+              fontSize: '18px',
+              fontWeight: 600,
+              marginBottom: '8px'
             }}
           >
-            <div style={{ fontWeight: 600 }}>
-              ThanasOS - macOS Tahoe Edition
-            </div>
+            ThanasOS - macOS Tahoe Edition
+          </div>
 
-            <div style={{ opacity: 0.8, marginTop: '6px' }}>
-              Type <span style={{ fontWeight: 600 }}>help</span> for commands
-            </div>
+          <div style={{ opacity: 0.82 }}>
+            Type <span style={{ fontWeight: 600 }}>help</span> for commands
+          </div>
+
+          <div style={{ opacity: 0.82 }}>
+            Use <span style={{ fontWeight: 600 }}>status</span> for system info
           </div>
         </div>
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <pre

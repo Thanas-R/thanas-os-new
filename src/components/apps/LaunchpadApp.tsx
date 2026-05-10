@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useInstalledProjects } from '@/lib/installedApps';
 import { getProject } from '@/lib/projects';
@@ -81,6 +81,14 @@ export const LaunchpadApp = () => {
     if (lp) closeWindow(lp.id);
   };
 
+  // ESC to close
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [windows]);
+
   return (
     <div
       className="h-full w-full flex flex-col"
@@ -89,14 +97,14 @@ export const LaunchpadApp = () => {
         backdropFilter: 'blur(60px) saturate(160%)',
         WebkitBackdropFilter: 'blur(60px) saturate(160%)',
       }}
-      onDoubleClick={dismiss}
+      onClick={(e) => { if (e.target === e.currentTarget) dismiss(); }}
     >
       <div className="pt-10 pb-6 flex justify-center">
         <input
           autoFocus
           value={query}
           onChange={e => { setQuery(e.target.value); setPage(0); }}
-          placeholder="🔍  Search"
+          placeholder="Search"
           className="w-80 px-5 py-2 rounded-full liquid-glass-dark text-white placeholder-white/50 text-center outline-none text-sm"
         />
       </div>

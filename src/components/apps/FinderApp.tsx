@@ -1,13 +1,22 @@
 import { useState } from 'react';
-import { Folder, File, ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, PanelLeftClose, PanelLeftOpen, Grid, List, Columns } from 'lucide-react';
+import { ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, PanelLeftClose, PanelLeftOpen, Grid, List, Columns } from 'lucide-react';
 import { ROOT, FsNode, HOME, splitPath, getNode } from '@/lib/terminalFs';
+import folderIcon from '@/assets/folder-icon.png';
+import documentIcon from '@/assets/document-icon.png';
+
+const FolderImg = ({ size = 16 }: { size?: number }) => (
+  <img src={folderIcon} alt="folder" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
+);
+const FileImg = ({ size = 16 }: { size?: number }) => (
+  <img src={documentIcon} alt="file" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
+);
 
 const SIDEBAR = [
   { label: 'Favorites', items: [
     { name: 'thanas', path: HOME, icon: Star },
     { name: 'Documents', path: HOME + '/Documents', icon: FileText },
     { name: 'Downloads', path: HOME + '/Downloads', icon: Download },
-    { name: 'Desktop', path: HOME + '/Desktop', icon: Folder },
+    { name: 'Desktop', path: HOME + '/Desktop', icon: FileText },
     { name: 'Pictures', path: HOME + '/Pictures', icon: ImageIcon },
     { name: 'Music', path: HOME + '/Music', icon: Music },
     { name: 'Movies', path: HOME + '/Movies', icon: Film },
@@ -45,7 +54,7 @@ export const FinderApp = () => {
         onClick={() => { setSelected(dirPath + '/' + name); if (isDir) setPath(dirPath === '/' ? '/' + name : dirPath + '/' + name); }}
         className={`flex items-center gap-2 px-2 py-1 rounded cursor-pointer text-sm ${isSelected ? 'bg-blue-500 text-white' : 'hover:bg-white/10 text-neutral-200'}`}
       >
-        {isDir ? <Folder className="w-4 h-4 text-blue-400" /> : <File className="w-4 h-4 text-neutral-400" />}
+        {isDir ? <FolderImg size={18} /> : <FileImg size={16} />}
         <span className="truncate flex-1">{name}</span>
         {isDir && <ChevronRight className="w-3 h-3 opacity-60" />}
       </div>
@@ -123,7 +132,7 @@ export const FinderApp = () => {
                   onClick={() => { if (c.type === 'dir') setPath(path === '/' ? '/' + n : path + '/' + n); }}
                   className="flex flex-col items-center gap-1 p-2 rounded hover:bg-white/10"
                 >
-                  {c.type === 'dir' ? <Folder className="w-12 h-12 text-blue-400" /> : <File className="w-12 h-12 text-neutral-400" />}
+                  {c.type === 'dir' ? <FolderImg size={56} /> : <FileImg size={48} />}
                   <span className="text-xs text-center truncate w-full">{n}</span>
                 </button>
               ))}

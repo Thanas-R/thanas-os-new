@@ -100,6 +100,20 @@ export const Window = ({ window }: WindowProps) => {
 
   if (window.isMinimized) return null;
 
+  // Launchpad: fullscreen blurred overlay, no chrome
+  if (window.appId === 'launchpad') {
+    return (
+      <div
+        className="fixed inset-0 z-[9000] animate-fade-in"
+        style={{ zIndex: 9000 + window.zIndex }}
+        onMouseDown={() => focusWindow(window.id)}
+        onKeyDown={(e) => { if (e.key === 'Escape') closeWindow(window.id); }}
+      >
+        <AppComponent />
+      </div>
+    );
+  }
+
   return (
     <div
       ref={windowRef}

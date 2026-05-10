@@ -140,7 +140,7 @@ export const StatsWidget = ({
             })}
           </div>
 
-          <div className="flex flex-col gap-2 flex-1">
+          <div className="flex flex-col gap-2 flex-1 pl-3">
             {activities.map((a) => (
               <div key={a.label}>
                 <div

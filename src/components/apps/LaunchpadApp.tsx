@@ -111,11 +111,12 @@ export const LaunchpadApp = () => {
 
       <div className="flex-1 px-12 pb-2 overflow-hidden">
         <div className="grid grid-cols-7 gap-x-4 gap-y-8 max-w-5xl mx-auto">
-          {pageItems.map(item => (
+          {pageItems.map((item, idx) => (
             <button
               key={item.id}
               onClick={() => handleOpen(item)}
               className="flex flex-col items-center gap-2 group focus:outline-none"
+              style={{ animation: `launchpadItemIn 0.35s cubic-bezier(0.2,0.7,0.2,1) both`, animationDelay: `${idx * 18}ms` }}
             >
               <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-110 group-active:scale-95 transition-transform">
                 {item.icon ? (

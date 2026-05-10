@@ -1,76 +1,104 @@
-# Phase 5 — macOS Polish & Functional Pass
+# Phase 6 — Big functional + visual pass
 
-A focused rebuild touching ~15 files. Grouped so each block can be verified independently.
+A focused sweep across ~20 files. Grouped so each block can be verified independently. No emojis, no em dashes, no sparkles/rockets in any user-facing copy.
 
-## 1. Launchpad (macOS-accurate)
-- `LaunchpadApp.tsx`: paginate apps into 7×5 grid pages with dot indicator + horizontal swipe/drag.
-- Click-to-launch wired through `useMacOS().openWindow` (fix current ghost clicks).
-- Drag-to-group: drop one icon onto another to create a folder (in-memory, session only).
-- Search filter at top.
-
-## 2. Per-app Menu Bar (File / Edit / View / Window)
-- Extend `AppConfig` (`src/types/macos.ts`) with `menus?: { File?: Item[]; Edit?: Item[]; View?: Item[]; Window?: Item[] }`.
-- `MenuBar.tsx`: when an app is focused, render its menus instead of generic placeholders. Falls back to defaults for apps without menus.
-- Wire concrete actions for **Safari** (New Tab, Reload, Back/Forward, Show Bookmarks), **Notes** (New Note, Pin), **Finder** (New Folder, Toggle Sidebar, View → Icons/List/Columns), **Terminal** (Clear, Close), **Control Panel** (Reset Settings).
-- **Apple/turtle menu fix**: it currently shares state with the active-app menu — give it its own `openMenu === 'apple'` slot and stopPropagation so it never collides.
-
-## 3. Control Center sliding panel (NEW)
-- New `ControlCenter.tsx` triggered from a menu-bar pill icon (top-right, between Spotlight and clock — see uploaded reference).
-- Frosted floating panel (rounded 24px, glass blur), anchored top-right, slides+fades in.
-- Tiles: Wi-Fi/Bluetooth/AirDrop, Focus, Stage Manager toggle (visual only), Display brightness slider, Sound slider, Now Playing stub, quick action row (Dark Mode, Calculator, Timer, Screenshot).
-- All sliders/toggles read+write `useMacOS().settings` (brightness, volume, theme, focus, dockAutoHide). This makes it the front-end for the existing Control Panel.
-
-## 4. Wallpaper upload persistence
-- `ControlPanelApp.tsx`: add file input → reads as data URL → `updateSettings({ wallpaper: 'custom', customWallpaper: dataUrl })`.
-- `MacOSContext`: extend settings type, persist to `localStorage` (already done for other settings — just extend the schema).
-- `Desktop.tsx`: when `settings.wallpaper === 'custom'`, render `customWallpaper` as background.
-
-## 5. Safari rebuild (CodePen port)
-Full rewrite of `SafariApp.tsx` using the supplied HTML/CSS/JS as the spec:
-- Toolbar: sidebar toggle, back, forward, home, URL pill (centered, focus-expands), reload, +tab, share, bookmarks, menu.
-- Tab strip auto-hides when only 1 tab.
-- Bookmarks popup + main menu popup (New Tab / Theme toggle / History).
-- Start page (`about:home`) with Favorites grid + Privacy card on a plain dark background (no external wallpaper URL — use `--background`).
-- Page loading via the 3 CORS proxies (`allorigins`, `corsproxy.io`, `codetabs`) raced with `Promise.any`.
+## 1. Safari rebuild (CodePen port)
+Full rewrite of `SafariApp.tsx` to match the supplied spec:
+- Toolbar: sidebar toggle, back, forward, reload, home, URL pill (lock icon, spinner, star), bookmarks toggle, menu.
+- Tab strip with favicons, spinner-on-load, close button, and `+` new tab.
+- Bookmarks bar (toggleable), menu popup (New Tab, Bookmarks, History, Theme toggle).
+- Start page (`about:home`) with Favorites grid, Apple-styled (no Google logo) using semantic tokens.
+- Page loading via `Promise.any` race over `allorigins`, `corsproxy.io`, `codetabs`.
 - Per-tab history stack with back/forward enable state.
-- Easter-egg "domain expansion" preserved for non-allow-listed external links.
-- Plain background instead of unsplash wallpaper (per user instruction).
+- Plain `--background` instead of unsplash image.
 
-## 6. Notes — 3-pane macOS layout
-Polish current `NotesApp.tsx`: keep folder sidebar + notes list, **add a third pane** for live Markdown preview when a note is being edited. Layout: `Sidebar (192) | List (288) | Editor (flex, split: textarea top / rendered preview bottom toggleable)`. Add an "Edit/Preview" segmented toggle in the editor toolbar.
+## 2. Google (was Chrome) app — new app on App Store
+- Rename existing "Chrome" listing in `AppStoreApp.tsx` to "Google", swap to uploaded Google `G` icon (`src/assets/google-icon.png`).
+- Create `src/components/apps/GoogleApp.tsx` — a faithful port of the supplied Chrome HTML/CSS/JS (Chrome dark/light theme, tab strip, omnibox, NTP with real Google logo, shortcuts grid, bookmarks bar, menu popup).
+- App not installed by default; clicking "Get" in App Store installs it: persists in `localStorage`, registers app, and adds it to the dock next to Safari.
+- Settings app gains a "Default browser" toggle (Safari / Google) when Google is installed; persists in `MacOSContext`.
+- Any link that currently opens Safari (project links, Spotlight web action) routes through `useMacOS().openUrl(url)` which checks default browser.
 
-## 7. Clock widget — rework to user-supplied spec
-Rewrite `UtilityClockWidget.tsx` + `utility-clock.css` per the new CodePen:
-- Outer chassis `#000000`, **inner dial white** with **black numbers / lines / hands**, orange (`#FA9F22`) second hand only.
-- Apply exact classes: `hour-style-text hour-text-style-small hour-display-style-all minute-style-line minute-display-style-coarse minute-text-style-none hand-style-normal`.
-- Fix hand bug — current rotation ignores 180°/54°/304.5° base offsets; port the JS exactly (`rotate(el, second*6)` with the base CSS rotations preserved on `.hour/.minute/.second`).
-- Add `autoResize` so the dial fills its container at any size.
+## 3. Calculator app
+- Create `src/components/apps/CalculatorApp.tsx` — port supplied calculator HTML/CSS/JS as React (state-based, AC/±/%/÷×−+, sign toggle, decimal, equals, keyboard input).
+- Uploaded calculator icon → `src/assets/calculator-icon.png`.
+- Register in `Index.tsx` so Spotlight chip works and it's launchable from Launchpad.
 
-## 8. Widget sizing pass (`Desktop.tsx`)
-- Shrink **WelcomeWidget**, **TimeWidget/ClockWidget**, **CalendarWidget** to roughly the size of `TimeWidget` (compact tile).
-- **StatsWidget (Activity)** → match WelcomeWidget width.
+## 4. Notes — true 3-pane layout
+Rewrite `NotesApp.tsx`:
+- Sidebar (folders) | Notes list | Editor + live Markdown preview pane (split right column 50/50, vertical).
+- Toolbar in editor: Edit-only / Preview-only / Split toggle.
+- Use `marked` or a tiny inline markdown renderer (no new heavy dep) for live preview.
 
-## 9. Spotlight fixes (`Spotlight.tsx`)
-- Fix entrance animation: spring scale-from-center + fade, no jump. Use `framer-motion` `AnimatePresence` with `initial={{ opacity:0, y:-8, scale:0.96 }}`.
-- Make shortcut chips functional: **Files** → openWindow('finder'), **Apps** → openWindow('launchpad'), **Web** → opens Safari to query, **Calc** → opens Calculator, **Settings** → openWindow('settings').
-- Result rows: Enter launches, ↑/↓ navigates, ⌘K toggles.
+## 5. Control Center — redesign + remove app
+- Delete `ControlPanelApp.tsx` from the registered apps in `Index.tsx`. Remove the dock/launchpad listing. Keep the file unused-but-present? No — delete the file.
+- Rewrite `ControlCenter.tsx` per supplied SCSS+JSX spec:
+  - 500-ish px frosted glass panel, anchored top-right, opens on menu-bar Control Center icon click.
+  - Grid: top half = Connections (Wi-Fi/Bluetooth/AirDrop) tile + Do Not Disturb tile + Keyboard Brightness/Airplay tiles.
+  - Bottom half = Display slider, Sound slider, Now Playing tile.
+  - Real frosted glass: `backdrop-blur-2xl bg-white/40 dark:bg-white/10`, rounded-2xl, sub-tiles `bg-white/40` with `module-bg` semantic.
+  - All toggles/sliders write to `useMacOS().settings`. Wallpaper customization moves to Settings later.
 
-## 10. Finder
-Already mostly done. Confirm sidebar collapse + Icons/List/Columns view switching works against `terminalFs`. Add "New Folder" via menu (in-memory).
+## 6. Per-app menu wiring (`registerAppMenus`)
+Add `useEffect(() => registerAppMenus(id, menus); return () => registerAppMenus(id, null))` to:
+- **Safari**: File (New Tab ⌘T, New Window, Close Tab ⌘W), Edit (Cut/Copy/Paste), View (Reload ⌘R, Show Bookmarks), History (Back ⌘[, Forward ⌘]).
+- **Notes**: File (New Note ⌘N, New Folder), Edit (Cut/Copy/Paste, Find ⌘F), View (Edit/Preview/Split).
+- **Finder**: File (New Folder ⇧⌘N, New Window ⌘N), Edit, View (Icons/List/Columns), Go (Home, Documents).
+- **Terminal**: Shell (New Window, Clear ⌘K), Edit, View.
+- **Calculator**: Edit (Copy/Paste), View (Basic/Scientific stub).
+- **Google** (when present): same skeleton as Safari but Google-flavored.
 
-## 11. Icon swaps + preload
-- Swap **OdinTree** ↔ **PesuForge** icons in `src/lib/projects.ts`.
-- `useImagePreloader` already globs `src/assets/*` — verify both icons are imported there. Add explicit `<link rel="preload" as="image">` injection during the Hello animation for top-15 dock/launchpad icons (faster first-paint).
+## 7. Widget sizing pass
+- Stretch `WelcomeWidget` and `StatsWidget` to span the full row width up to the right edge of the `CalendarWidget` (i.e., col-span across both stat columns). Done in `Desktop.tsx` grid template.
+- Compact vertically so layout stays balanced.
 
-## 12. Lazy app warm-up during Hello
-- `AppleHelloEffect.tsx`: while animation plays (~2s), call `import()` on every app component lazily so React has them cached before the user clicks the dock. Use `Promise.all` of dynamic imports keyed off `installedApps`.
+## 8. Clock widget — fix dial
+Rewrite `UtilityClockWidget.tsx` + `utility-clock.css`:
+- Outer chassis black `#000`, inner white dial enlarged (~92% of chassis), exact classes applied: `hour-style-text hour-text-style-small hour-display-style-all minute-style-line minute-display-style-coarse minute-text-style-none hand-style-normal`.
+- Black hour/minute hands, orange (`#FA9F22`) second hand, black numerals 1-12, minute tick marks at coarse spacing.
+- Fix rotation base offsets (180° hour, 54° minute? port the JS exactly: `rotate(el, second*6)` with the base CSS rotations preserved).
+- ResizeObserver for autoResize.
 
-## 13. Modal scrollbar fix
-- `FrostedModal.tsx` + Help/Shortcuts: add `scrollbar-width: none` + `::-webkit-scrollbar { display: none }` on the scrolling container.
+## 9. Spotlight animation fix
+Port the `AppleSpotlight` motion semantics into existing `Spotlight.tsx`:
+- On open: `initial={{ opacity:0, y:-8, scale:0.96 }} animate={{ opacity:1, y:0, scale:1 }}` with spring.
+- On focus/hover: shortcut chips animate from `x: -64*(i+1)` into place with spring bounce 0.2 stagger 0.05.
+- On typing: chips exit with reverse `x` animation, results pane slides in below the pill.
+- Use `framer-motion` `LayoutGroup` + the SVG `<filter id="blob">` goo filter for the morphing pill effect.
+- Keep existing chip wiring (Files/Apps/Web/Calc/Settings).
 
-## 14. App Store: add Chrome
-- Add Chrome listing in `AppStoreApp.tsx` using uploaded `image-3.png` (copy to `src/assets/chrome-icon.png`). User will wire the app code later.
+## 10. Menu Bar dropdowns — frosted glass
+Update `MenuBar.tsx` dropdown panels: `bg-white/60 dark:bg-black/40 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-xl` instead of current solid/transparent.
+
+## 11. Domain-expansion easter-egg page (`public/prank-pichu.png` host page)
+Currently uses an icon and "Made with coffee" footer. Update the prank HTML page (wherever it lives — likely `SafariApp` easter-egg renderer): remove the icon, remove the "made with coffee" footer, zoom out slightly (smaller font or scale 0.9), use proper dark background, no em dashes, no emojis.
+
+## 12. Cleanup
+- Delete `ControlPanelApp.tsx`.
+- Remove `controlpanel` entry from `Index.tsx` apps array.
+- Drop "Control Panel" from MenuBar Apple/turtle dropdown if present.
+- Verify build is clean.
 
 ## Out of scope this pass
-- GitHub OAuth/clone (requires Lovable Cloud — currently disabled).
-- Real Wi-Fi/Bluetooth — Control Center toggles are visual.
+- Settings app rebuild (user says "we will remake the settings apps soon").
+- Real AirPlay/Bluetooth/keyboard brightness functionality (visual only).
+- GitHub OAuth and live StatsWidget data.
+
+## Files touched (rough)
+- `src/components/apps/SafariApp.tsx` (rewrite)
+- `src/components/apps/GoogleApp.tsx` (new)
+- `src/components/apps/CalculatorApp.tsx` (new)
+- `src/components/apps/NotesApp.tsx` (rewrite)
+- `src/components/apps/AppStoreApp.tsx` (rename Chrome→Google, install flow)
+- `src/components/apps/FinderApp.tsx`, `TerminalApp.tsx` (menu registration)
+- `src/components/macos/ControlCenter.tsx` (rewrite)
+- `src/components/macos/MenuBar.tsx` (frosted dropdowns)
+- `src/components/macos/Spotlight.tsx` (animation port)
+- `src/components/macos/Desktop.tsx` (widget grid)
+- `src/components/widgets/UtilityClockWidget.tsx` + `utility-clock.css` (rewrite)
+- `src/components/widgets/WelcomeWidget.tsx`, `StatsWidget.tsx` (width)
+- `src/contexts/MacOSContext.tsx` (defaultBrowser, openUrl, installedApps)
+- `src/pages/Index.tsx` (register Calculator, drop ControlPanel, dynamic Google)
+- `src/types/macos.ts` (extend settings)
+- `src/assets/google-icon.png`, `src/assets/calculator-icon.png` (new)
+- delete `src/components/apps/ControlPanelApp.tsx`

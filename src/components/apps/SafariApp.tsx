@@ -81,6 +81,26 @@ export const SafariApp = () => {
 
   useEffect(() => { setAddressBar(active.url); }, [active.url, activeId]);
 
+  useEffect(() => {
+    registerAppMenus('safari', {
+      File: [
+        { label: 'New Tab', shortcut: '⌘T', action: () => { const t = newTab(); setTabs(p => [...p, t]); setActiveId(t.id); } },
+        { label: 'Close Tab', shortcut: '⌘W', action: () => closeTab(activeId) },
+      ],
+      Edit: [
+        { label: 'Cut', shortcut: '⌘X', action: () => document.execCommand('cut') },
+        { label: 'Copy', shortcut: '⌘C', action: () => document.execCommand('copy') },
+        { label: 'Paste', shortcut: '⌘V', action: () => document.execCommand('paste') },
+      ],
+      View: [
+        { label: 'Reload', shortcut: '⌘R', action: () => navigate(active.url) },
+        { label: 'Home', action: () => goTo(START_PAGE, 'Favorites') },
+      ],
+    });
+    return () => registerAppMenus('safari', null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeId, active.url]);
+
   const updateActive = (patch: Partial<Tab>) => {
     setTabs(prev => prev.map(t => t.id === activeId ? { ...t, ...patch } : t));
   };

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'motion/react';
 import { cn } from '@/lib/utils';
-import { PROJECTS } from '@/lib/projects';
 
 interface ActivityData {
   label: string;
@@ -13,7 +12,10 @@ interface ActivityData {
   unit: string;
 }
 
-const baseActivities = (stars: number): ActivityData[] => [
+const baseActivities = (
+  stars: number,
+  repoCount: number
+): ActivityData[] => [
   {
     label: 'LINKEDIN',
     color: '#FF2D55',
@@ -27,10 +29,10 @@ const baseActivities = (stars: number): ActivityData[] => [
     label: 'PROJECTS',
     color: '#A3F900',
     size: 160,
-    current: PROJECTS.length,
+    current: repoCount,
     target: 25,
     unit: 'REPOS',
-    value: Math.min(100, (PROJECTS.length / 25) * 100),
+    value: Math.min(100, (repoCount / 25) * 100),
   },
   {
     label: 'STARS',
@@ -49,30 +51,45 @@ export const StatsWidget = ({
   className?: string;
 }) => {
   const [stars, setStars] = useState<number>(8);
+  const [repoCount, setRepoCount] = useState<number>(0);
 
   useEffect(() => {
     let cancelled = false;
+
     (async () => {
       try {
-        const res = await fetch('https://api.github.com/users/Thanas-R/repos?per_page=100');
-        if (!res.ok) return;
-        const repos = await res.json();
-        if (!Array.isArray(repos) || cancelled) return;
-        const total = repos.reduce(
-          (sum: number, r: { stargazers_count?: number }) => sum + (r.stargazers_count || 0),
-          0,
+        const res = await fetch(
+          'https://api.github.com/users/Thanas-R/repos?per_page=100'
         );
-        setStars(total);
+
+        if (!res.ok) return;
+
+        const repos = await res.json();
+
+        if (!Array.isArray(repos) || cancelled) return;
+
+        // Repo count
+        setRepoCount(repos.length);
+
+        // Total stars
+        const totalStars = repos.reduce(
+          (sum: number, repo: { stargazers_count?: number }) =>
+            sum + (repo.stargazers_count || 0),
+          0
+        );
+
+        setStars(totalStars);
       } catch {
-        /* keep fallback */
+        /* fallback values remain */
       }
     })();
+
     return () => {
       cancelled = true;
     };
   }, []);
 
-  const activities = baseActivities(stars);
+  const activities = baseActivities(stars, repoCount);
 
   return (
     <div
@@ -81,14 +98,19 @@ export const StatsWidget = ({
     >
       <div className="px-4 py-3">
         <div className="flex items-center gap-5">
-          <div className="relative flex-shrink-0" style={{ width: 130, height: 130 }}>
+          <div
+            className="relative flex-shrink-0"
+            style={{ width: 130, height: 130 }}
+          >
             {activities.map((activity, index) => {
               const scale = 130 / 200;
               const scaledSize = activity.size * scale;
               const strokeWidth = 11;
               const radius = (scaledSize - strokeWidth) / 2;
               const circumference = radius * 2 * Math.PI;
-              const progress = ((100 - activity.value) / 100) * circumference;
+              const progress =
+                ((100 - activity.value) / 100) * circumference;
+
               const gradientId = `g-stats-${activity.label.toLowerCase()}`;
 
               return (
@@ -103,15 +125,36 @@ export const StatsWidget = ({
                   }}
                   initial={{ opacity: 0, scale: 0.85 }}
                   animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  transition={{
+                    delay: index * 0.1,
+                    duration: 0.5,
+                  }}
                 >
-                  <svg width={scaledSize} height={scaledSize} className="-rotate-90">
+                  <svg
+                    width={scaledSize}
+                    height={scaledSize}
+                    className="-rotate-90"
+                  >
                     <defs>
-                      <linearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stopColor={activity.color} stopOpacity={0.6} />
-                        <stop offset="100%" stopColor={activity.color} />
+                      <linearGradient
+                        id={gradientId}
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor={activity.color}
+                          stopOpacity={0.6}
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor={activity.color}
+                        />
                       </linearGradient>
                     </defs>
+
                     <circle
                       cx={scaledSize / 2}
                       cy={scaledSize / 2}
@@ -121,6 +164,7 @@ export const StatsWidget = ({
                       strokeWidth={strokeWidth}
                       opacity={0.18}
                     />
+
                     <motion.circle
                       cx={scaledSize / 2}
                       cy={scaledSize / 2}
@@ -130,9 +174,17 @@ export const StatsWidget = ({
                       strokeWidth={strokeWidth}
                       strokeLinecap="round"
                       strokeDasharray={circumference}
-                      initial={{ strokeDashoffset: circumference }}
-                      animate={{ strokeDashoffset: progress }}
-                      transition={{ duration: 1.4, delay: index * 0.15, ease: 'easeOut' }}
+                      initial={{
+                        strokeDashoffset: circumference,
+                      }}
+                      animate={{
+                        strokeDashoffset: progress,
+                      }}
+                      transition={{
+                        duration: 1.4,
+                        delay: index * 0.15,
+                        ease: 'easeOut',
+                      }}
                     />
                   </svg>
                 </motion.div>
@@ -140,7 +192,7 @@ export const StatsWidget = ({
             })}
           </div>
 
-          <div className="flex flex-col gap-2 flex-1 pl-3">
+          <div className="flex flex-col gap-2 flex-1 pl-5">
             {activities.map((a) => (
               <div key={a.label}>
                 <div
@@ -149,10 +201,15 @@ export const StatsWidget = ({
                 >
                   {a.label}
                 </div>
+
                 <div className="text-white/95 text-[15px] font-semibold leading-tight">
                   {a.current}
-                  <span className="text-white/40 text-[12px]">/{a.target}</span>
-                  <span className="text-white/40 text-[10px] ml-1">{a.unit}</span>
+                  <span className="text-white/40 text-[12px]">
+                    /{a.target}
+                  </span>
+                  <span className="text-white/40 text-[10px] ml-1">
+                    {a.unit}
+                  </span>
                 </div>
               </div>
             ))}

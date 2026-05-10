@@ -23,30 +23,30 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-4 select-none shadow-xl"
+      className="rounded-2xl p-3 select-none shadow-xl"
       style={{
-        width: 220,
-        height: 220,
+        width: 172,
+        height: 172,
         background: '#1a1a1d',
         border: '1px solid rgba(255,255,255,0.06)',
       }}
     >
-      <div className="text-[12px] font-bold tracking-wider mb-3" style={{ color: '#FF453A' }}>
+      <div className="text-[10px] font-bold tracking-wider mb-2" style={{ color: '#FF453A' }}>
         {monthName}
       </div>
 
       <div className="grid grid-cols-7 gap-0 mb-1">
         {weekdays.map((d, i) => (
-          <div key={i} className="text-center text-[11px] font-semibold text-white/55">{d}</div>
+          <div key={i} className="text-center text-[9px] font-semibold text-white/55">{d}</div>
         ))}
       </div>
 
       <div className="grid grid-cols-7 gap-y-0.5">
         {calendarDays.map((day, i) => (
-          <div key={i} className="flex items-center justify-center h-[22px]">
+          <div key={i} className="flex items-center justify-center h-[16px]">
             {day !== null && (
               <span
-                className="w-[22px] h-[22px] flex items-center justify-center rounded-full text-[11px] font-semibold"
+                className="w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9px] font-semibold"
                 style={
                   day === todayDate
                     ? { background: '#FF453A', color: 'white' }

@@ -6,8 +6,8 @@ import askbookieIcon from '@/assets/askbookie-icon.png';
 import smartChefIcon from '@/assets/smart-chef-new-icon.png';
 import contourFlowIcon from '@/assets/contour-flow-icon.png';
 import thanasosIcon from '@/assets/thanasos-turtle-icon.png';
-import pesuForgeIcon from '@/assets/pesuforge-shield-icon.png';
-import odintreeIcon from '@/assets/odintree-icon.png';
+import pesuForgeIcon from '@/assets/odintree-icon.png';
+import odintreeIcon from '@/assets/pesuforge-shield-icon.png';
 import portfolioIcon from '@/assets/portfolio-icon.png';
 import askpesuIcon from '@/assets/askpesu-rowlet-icon.png';
 

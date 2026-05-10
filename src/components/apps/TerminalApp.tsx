@@ -16,7 +16,19 @@ interface Line {
   text: string;
 }
 
-const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001\nThanasOS Terminal — type "help" for commands.`;
+const ASCII = String.raw`
+       .:'
+    __ :'__
+ .'\`__\`-'__\`\`.
+:__________.-'
+:-------------:
+ \\_____ \\____/
+    \`.__.-\`     ThanasOS  v1.0  (liquid-glass)
+`;
+
+const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
+${ASCII}
+Welcome to ThanasOS Terminal. Type "help" for a list of commands.`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
@@ -290,18 +302,21 @@ export const TerminalApp = () => {
 
   return (
     <div
-      className="h-full w-full bg-[#1e1e1e]/95 text-[#e6e6e6] font-mono text-[13px] flex flex-col"
+      className="h-full w-full bg-[#1d1f21]/95 text-[#e6e6e6] font-mono text-[13px] flex flex-col"
       onClick={() => inputRef.current?.focus()}
+      style={{ fontFamily: '"SF Mono", "JetBrains Mono", Menlo, monospace' }}
     >
-      <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-relaxed">
+      <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-[1.45]">
         {lines.map((l, i) => (
-          <pre key={i} className="whitespace-pre-wrap font-mono">
+          <pre key={i} className="whitespace-pre-wrap font-mono text-[#e6e6e6]">
             {l.text}
           </pre>
         ))}
         <div className="flex items-center">
-          <span className="text-emerald-400">{prettyPath(cwd)}</span>
-          <span className="text-white/70 mx-1">%</span>
+          <span className="text-emerald-400">thanas@thanasos</span>
+          <span className="text-white/40 mx-1">:</span>
+          <span className="text-sky-400">{prettyPath(cwd)}</span>
+          <span className="text-white/70 mx-1">$</span>
           <input
             ref={inputRef}
             autoFocus

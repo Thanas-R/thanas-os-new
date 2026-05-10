@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AppleHelloEffect } from '@/components/effects/AppleHelloEffect';
+import { useImagePreloader } from '@/hooks/useImagePreloader';
 
 interface WelcomeScreenProps {
   onEnter: () => void;
 }
 
 export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
+  // Preload every asset (wallpapers, icons, profile) while the Hello plays.
+  useImagePreloader();
   const [phase, setPhase] = useState<'hello' | 'info' | 'exiting'>('hello');
 
   const handleHelloComplete = useCallback(() => {
@@ -96,7 +99,7 @@ export const WelcomeScreen = ({ onEnter }: WelcomeScreenProps) => {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              ⚠️ Best viewed on desktop · Mobile not optimized
+              Best viewed on desktop · Mobile not optimized
             </motion.div>
 
             {/* Enter */}

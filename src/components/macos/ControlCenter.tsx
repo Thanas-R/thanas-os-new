@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Wifi, Bluetooth, Radio, Moon, Monitor, Sun, Volume2, VolumeX, Calculator, Camera, Timer, Sparkles } from 'lucide-react';
+import {
+  Wifi, Bluetooth, Radio, Moon, Sun, Volume2, VolumeX,
+  Keyboard, Airplay, Music, Play, SkipForward,
+} from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Slider } from '@/components/ui/slider';
 
@@ -11,7 +14,7 @@ interface Props {
 
 export const ControlCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { settings, updateSettings, openApp } = useMacOS();
+  const { settings, updateSettings } = useMacOS();
 
   useEffect(() => {
     if (!open) return;
@@ -22,29 +25,6 @@ export const ControlCenter = ({ open, onClose }: Props) => {
     return () => { document.removeEventListener('mousedown', onDown); window.removeEventListener('keydown', onKey); };
   }, [open, onClose]);
 
-  const Pill = ({ active, onClick, icon, label, sub }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; sub?: string }) => (
-    <button
-      onClick={onClick}
-      className={`flex items-center gap-2.5 px-3 py-2 rounded-full transition-colors ${active ? 'bg-blue-500 text-white' : 'bg-white/15 text-white hover:bg-white/20'}`}
-    >
-      <div className={`w-7 h-7 rounded-full flex items-center justify-center ${active ? 'bg-white/25' : 'bg-white/15'}`}>{icon}</div>
-      <div className="text-left leading-tight">
-        <div className="text-[12px] font-semibold">{label}</div>
-        {sub && <div className="text-[10px] opacity-70">{sub}</div>}
-      </div>
-    </button>
-  );
-
-  const Square = ({ active, onClick, icon, label }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string }) => (
-    <button
-      onClick={onClick}
-      className={`flex flex-col items-center justify-center gap-1.5 rounded-3xl aspect-square transition-colors ${active ? 'bg-blue-500 text-white' : 'bg-white/15 text-white hover:bg-white/20'}`}
-    >
-      <div className="w-9 h-9 rounded-full bg-white/15 flex items-center justify-center">{icon}</div>
-      <div className="text-[11px] font-medium">{label}</div>
-    </button>
-  );
-
   return (
     <AnimatePresence>
       {open && (
@@ -54,109 +34,142 @@ export const ControlCenter = ({ open, onClose }: Props) => {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: -10, scale: 0.96 }}
           transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-          className="fixed top-9 right-3 z-[300] w-80 rounded-3xl p-3 liquid-glass-card text-white"
+          className="fixed top-9 right-3 z-[300] rounded-3xl p-3 text-white"
           style={{
+            width: 360,
             background: 'rgba(28,28,32,0.55)',
             backdropFilter: 'blur(40px) saturate(180%)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            boxShadow: '0 20px 60px -10px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Connectivity row */}
-          <div className="rounded-3xl bg-white/5 p-3 mb-3 grid grid-cols-2 gap-2">
-            <Pill
-              active={settings.wifi}
-              onClick={() => updateSettings({ wifi: !settings.wifi })}
-              icon={<Wifi className="w-3.5 h-3.5" />}
-              label="Wi-Fi"
-              sub={settings.wifi ? 'ThanasOS-Net' : 'Off'}
-            />
-            <Pill
-              active={settings.bluetooth}
-              onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
-              icon={<Bluetooth className="w-3.5 h-3.5" />}
-              label="Bluetooth"
-              sub={settings.bluetooth ? 'On' : 'Off'}
-            />
-            <Pill
-              active={settings.airdrop}
-              onClick={() => updateSettings({ airdrop: !settings.airdrop })}
-              icon={<Radio className="w-3.5 h-3.5" />}
-              label="AirDrop"
-              sub="Contacts"
-            />
-            <Pill
-              active={settings.focus}
-              onClick={() => updateSettings({ focus: !settings.focus })}
-              icon={<Moon className="w-3.5 h-3.5" />}
-              label="Focus"
-            />
+          {/* Top row: Connections (large) + stacked DnD/Keyboard/AirPlay */}
+          <div className="grid grid-cols-2 gap-2 mb-2">
+            {/* Connections module */}
+            <div className="rounded-2xl bg-white/10 p-2.5 flex flex-col gap-1.5">
+              <ConnRow
+                active={settings.wifi}
+                onClick={() => updateSettings({ wifi: !settings.wifi })}
+                icon={<Wifi className="w-4 h-4" />}
+                label="Wi-Fi"
+                sub={settings.wifi ? 'ThanasOS-Net' : 'Off'}
+                accent="bg-blue-500"
+              />
+              <ConnRow
+                active={settings.bluetooth}
+                onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
+                icon={<Bluetooth className="w-4 h-4" />}
+                label="Bluetooth"
+                sub={settings.bluetooth ? 'On' : 'Off'}
+                accent="bg-blue-500"
+              />
+              <ConnRow
+                active={settings.airdrop}
+                onClick={() => updateSettings({ airdrop: !settings.airdrop })}
+                icon={<Radio className="w-4 h-4" />}
+                label="AirDrop"
+                sub="Contacts"
+                accent="bg-blue-500"
+              />
+            </div>
+
+            {/* Stacked tiles */}
+            <div className="grid grid-rows-3 gap-2">
+              <Tile
+                active={settings.focus}
+                onClick={() => updateSettings({ focus: !settings.focus })}
+                icon={<Moon className="w-3.5 h-3.5" />}
+                label="Focus"
+                accent="bg-violet-500"
+              />
+              <Tile
+                onClick={() => {}}
+                icon={<Keyboard className="w-3.5 h-3.5" />}
+                label="Keyboard"
+                accent="bg-amber-500"
+              />
+              <Tile
+                onClick={() => {}}
+                icon={<Airplay className="w-3.5 h-3.5" />}
+                label="AirPlay"
+                accent="bg-blue-500"
+              />
+            </div>
           </div>
 
-          {/* Display brightness */}
-          <div className="rounded-3xl bg-white/5 p-3 mb-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Sun className="w-4 h-4" />
-              <div className="text-[12px] font-semibold">Display</div>
-            </div>
-            <Slider
-              value={[settings.brightness ?? 80]}
-              min={20}
-              max={100}
-              step={5}
-              onValueChange={(v) => updateSettings({ brightness: v[0] })}
-            />
-          </div>
+          {/* Display */}
+          <SliderModule
+            label="Display"
+            icon={<Sun className="w-4 h-4" />}
+            value={settings.brightness ?? 80}
+            onChange={(v) => updateSettings({ brightness: v })}
+          />
 
           {/* Sound */}
-          <div className="rounded-3xl bg-white/5 p-3 mb-3">
-            <div className="flex items-center gap-2 mb-2">
-              {(settings.volume ?? 65) === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
-              <div className="text-[12px] font-semibold">Sound</div>
-            </div>
-            <Slider
-              value={[settings.volume ?? 65]}
-              min={0}
-              max={100}
-              step={5}
-              onValueChange={(v) => updateSettings({ volume: v[0] })}
-            />
-          </div>
+          <SliderModule
+            label="Sound"
+            icon={(settings.volume ?? 65) === 0 ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+            value={settings.volume ?? 65}
+            onChange={(v) => updateSettings({ volume: v })}
+          />
 
-          {/* Quick action squares */}
-          <div className="grid grid-cols-4 gap-2">
-            <Square
-              active={settings.theme === 'dark'}
-              onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
-              icon={settings.theme === 'dark' ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
-              label={settings.theme === 'dark' ? 'Dark' : 'Light'}
-            />
-            <Square
-              onClick={() => { openApp('settings'); onClose(); }}
-              icon={<Sparkles className="w-4 h-4" />}
-              label="Settings"
-            />
-            <Square
-              onClick={() => { /* timer placeholder */ }}
-              icon={<Timer className="w-4 h-4" />}
-              label="Timer"
-            />
-            <Square
-              onClick={() => { /* screenshot placeholder */ }}
-              icon={<Camera className="w-4 h-4" />}
-              label="Shot"
-            />
-            <Square
-              onClick={() => { openApp('finder'); onClose(); }}
-              icon={<Monitor className="w-4 h-4" />}
-              label="Finder"
-            />
-            <Square
-              onClick={() => { /* calculator hook future */ }}
-              icon={<Calculator className="w-4 h-4" />}
-              label="Calc"
-            />
+          {/* Now Playing */}
+          <div className="rounded-2xl bg-white/10 p-3 mt-2 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-pink-500 to-orange-500 flex items-center justify-center">
+              <Music className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="text-[12px] font-semibold truncate">Liquid Glass</div>
+              <div className="text-[10.5px] text-white/60 truncate">ThanasOS Radio</div>
+            </div>
+            <button className="p-1.5 rounded-full hover:bg-white/10"><Play className="w-4 h-4" /></button>
+            <button className="p-1.5 rounded-full hover:bg-white/10"><SkipForward className="w-4 h-4" /></button>
           </div>
         </motion.div>
       )}
     </AnimatePresence>
   );
 };
+
+const ConnRow = ({
+  active, onClick, icon, label, sub, accent,
+}: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; sub: string; accent: string }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center gap-2.5 px-1.5 py-1 rounded-xl hover:bg-white/5 transition-colors text-left"
+  >
+    <div className={`w-7 h-7 rounded-full flex items-center justify-center text-white ${active ? accent : 'bg-white/15'}`}>
+      {icon}
+    </div>
+    <div className="leading-tight min-w-0">
+      <div className="text-[12px] font-semibold truncate">{label}</div>
+      <div className="text-[10px] text-white/55 truncate">{sub}</div>
+    </div>
+  </button>
+);
+
+const Tile = ({
+  active, onClick, icon, label, accent,
+}: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; accent: string }) => (
+  <button
+    onClick={onClick}
+    className="flex items-center gap-2 px-2.5 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors"
+  >
+    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>
+      {icon}
+    </div>
+    <div className="text-[11.5px] font-medium">{label}</div>
+  </button>
+);
+
+const SliderModule = ({
+  label, icon, value, onChange,
+}: { label: string; icon: React.ReactNode; value: number; onChange: (v: number) => void }) => (
+  <div className="rounded-2xl bg-white/10 p-3 mt-2">
+    <div className="flex items-center gap-2 mb-2">
+      <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">{icon}</div>
+      <div className="text-[12px] font-semibold">{label}</div>
+    </div>
+    <Slider value={[value]} min={0} max={100} step={5} onValueChange={(v) => onChange(v[0])} />
+  </div>
+);

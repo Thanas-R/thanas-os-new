@@ -107,7 +107,7 @@ export const NotesApp = () => {
       <div className="flex-1 overflow-auto bg-[#1c1c1e]">
         <div className="max-w-2xl mx-auto px-10 py-10">
           <div className="text-[11px] text-neutral-500 mb-4 text-center">{active.date}</div>
-          <article className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-neutral-200 prose-a:text-blue-400 prose-code:text-pink-300 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-black/60 prose-pre:text-neutral-100 prose-blockquote:border-yellow-500 prose-blockquote:text-neutral-300">
+          <article className="prose prose-invert max-w-none prose-headings:text-white prose-p:text-neutral-200 prose-a:text-blue-400 prose-code:text-emerald-300 prose-code:bg-white/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-code:before:content-none prose-code:after:content-none prose-pre:bg-black/60 prose-pre:text-neutral-100 prose-blockquote:border-yellow-500 prose-blockquote:text-neutral-300">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{active.content}</ReactMarkdown>
           </article>
         </div>

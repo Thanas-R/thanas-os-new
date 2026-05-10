@@ -3,7 +3,7 @@
 
 .utility-clock-shell {
   position: relative;
-  background: #1C1C1E;
+  background: #18181A;
   border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.05);
@@ -45,7 +45,7 @@
   width: 10px;
   height: 10px;
   border: 3px solid #FA9F22;
-  background: #ffffff;
+  background: transparent;
   box-sizing: border-box;
   border-radius: 50%;
 }

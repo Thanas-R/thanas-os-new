@@ -47,9 +47,7 @@
 
 /* Tick marks — BLACK */
 .utility-clock .minute-line {
-  background: #000; width: 1px; height: 9px;
-  transform: translate(-50%,-100%) translateY(-131px);
-  opacity: 0.45;
+  display: none;
 }
 .utility-clock .major.minute-line { opacity: 0.85; width: 2px; height: 11px; }
 
@@ -59,7 +57,7 @@
   background: #000; width: 6px; height: 35px; border-radius: 10px;
   transform: translate(-50%,-100%) translateY(-85px); opacity: 0.85;
 }
-.utility-clock .hour-text { font: 700 40px "SF Pro Display", Helvetica, sans-serif; color: #000; top: -105px; }
+.utility-clock .hour-text { font: 700 32px "SF Pro Display", Helvetica, sans-serif; color: #000; top: -105px; }
 .utility-clock .hour-10 .content { padding-left: 0.4ex; }
 .utility-clock .hour-11 .content { padding-left: 0.25ex; }
 

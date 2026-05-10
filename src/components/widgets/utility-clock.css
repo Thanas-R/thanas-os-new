@@ -74,7 +74,7 @@
 /* Thin hand stem */
 .utility-clock .thin-hand {
   width: 4px;
-  height: 62px;
+  height: 61px;
   background: #18181A;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-6px);
@@ -83,7 +83,7 @@
 /* Main hand body */
 .utility-clock .fat-hand {
   width: 10px;
-  height: 61px;
+  height: 64px;
   background: #18181A;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-18px);

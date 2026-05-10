@@ -59,18 +59,23 @@ const fetchWithTimeout = async (resource: string, timeout = 8000) => {
   } finally { clearTimeout(id); }
 };
 
-const raceProxies = async (targetUrl: string): Promise<string> => {
-  const promises = PROXIES.map(async (p) => {
-    const res = await fetchWithTimeout(p.url + encodeURIComponent(targetUrl));
-    if (!res.ok) throw new Error('status ' + res.status);
-    let text = '';
-    if (p.type === 'json') { const json = await res.json(); text = json.contents; }
-    else { text = await res.text(); }
-    if (!text || text.length < 50) throw new Error('empty');
-    return text;
+const raceProxies = (targetUrl: string): Promise<string> =>
+  new Promise<string>((resolve, reject) => {
+    let remaining = PROXIES.length;
+    PROXIES.forEach(async (p) => {
+      try {
+        const res = await fetchWithTimeout(p.url + encodeURIComponent(targetUrl));
+        if (!res.ok) throw new Error('status ' + res.status);
+        let text = '';
+        if (p.type === 'json') { const json = await res.json(); text = json.contents; }
+        else { text = await res.text(); }
+        if (!text || text.length < 50) throw new Error('empty');
+        resolve(text);
+      } catch {
+        if (--remaining === 0) reject(new Error('all proxies failed'));
+      }
+    });
   });
-  return Promise.any(promises);
-};
 
 const newTab = (url = HOMEPAGE): Tab => ({
   id: 't-' + Math.random().toString(36).slice(2, 9),

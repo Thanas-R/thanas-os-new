@@ -11,11 +11,12 @@ interface SpotlightProps {
   onClose: () => void;
 }
 
-const SHORTCUTS = [
-  { label: 'Apps', icon: <LayoutGrid className="w-5 h-5" /> },
-  { label: 'Files', icon: <Folder className="w-5 h-5" /> },
-  { label: 'Actions', icon: <Activity className="w-5 h-5" /> },
-  { label: 'Clipboard', icon: <Files className="w-5 h-5" /> },
+type ShortcutId = 'apps' | 'files' | 'web' | 'calc' | 'settings';
+const SHORTCUTS: { id: ShortcutId; label: string; icon: React.ReactNode }[] = [
+  { id: 'apps', label: 'Apps', icon: <LayoutGrid className="w-5 h-5" /> },
+  { id: 'files', label: 'Files', icon: <Folder className="w-5 h-5" /> },
+  { id: 'web', label: 'Web', icon: <Activity className="w-5 h-5" /> },
+  { id: 'settings', label: 'Settings', icon: <Files className="w-5 h-5" /> },
 ];
 
 export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
@@ -81,10 +82,10 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
           onClick={onClose}
         >
           <motion.div
-            initial={{ y: -20, opacity: 0, scale: 0.97 }}
+            initial={{ y: -16, opacity: 0, scale: 0.94 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: -10, opacity: 0, scale: 0.97 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+            exit={{ y: -8, opacity: 0, scale: 0.96 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-2xl mx-4"
           >
@@ -113,13 +114,21 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
               <AnimatePresence>
                 {hovered && !query && SHORTCUTS.map((s, idx) => (
                   <motion.button
-                    key={s.label}
+                    key={s.id}
                     layout
                     initial={{ scale: 0.6, opacity: 0, x: -20 }}
                     animate={{ scale: 1, opacity: 1, x: 0 }}
                     exit={{ scale: 0.6, opacity: 0, x: 20 }}
-                    transition={{ duration: 0.25, delay: idx * 0.04 }}
+                    transition={{ duration: 0.22, delay: idx * 0.04 }}
                     title={s.label}
+                    onClick={() => {
+                      if (s.id === 'apps') openApp('launchpad');
+                      else if (s.id === 'files') openApp('finder');
+                      else if (s.id === 'web') openApp('safari');
+                      else if (s.id === 'settings') openApp('settings');
+                      else if (s.id === 'calc') openApp('calculator');
+                      onClose();
+                    }}
                     className="w-12 h-12 rounded-full liquid-glass-card text-white flex items-center justify-center hover:bg-white/10"
                   >
                     {s.icon}

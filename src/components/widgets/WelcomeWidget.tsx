@@ -13,21 +13,19 @@ export const WelcomeWidget = () => {
       href="https://thanas.vercel.app/"
       target="_blank"
       rel="noopener noreferrer"
-      className="block rounded-3xl p-5 hover:scale-[1.02] transition-transform cursor-pointer liquid-glass-card"
-      style={{ width: 460 }}
+      className="block rounded-2xl p-4 hover:scale-[1.02] transition-transform cursor-pointer liquid-glass-card"
+      style={{ width: 300 }}
     >
-      <p className="text-[13px] text-white/60 font-medium tracking-wide uppercase mb-1">
+      <p className="text-[10px] text-white/60 font-medium tracking-wider uppercase mb-1">
         {greeting}
       </p>
-      <h1 className="text-2xl font-bold text-white leading-tight">Thanas R</h1>
-      <p className="text-[13px] text-white/70 mt-1.5 leading-snug">
-        Developer & creative problem-solver. Building thoughtful digital experiences with code.
+      <h1 className="text-lg font-bold text-white leading-tight">Thanas R</h1>
+      <p className="text-[11px] text-white/70 mt-1 leading-snug line-clamp-2">
+        Developer & creative problem-solver. Building thoughtful digital experiences.
       </p>
-      <div className="flex items-center gap-1.5 mt-3">
-        <ExternalLink className="w-3.5 h-3.5 text-blue-400" />
-        <p className="text-[12px] text-blue-400 font-medium">
-          Visit my portfolio at thanas.vercel.app
-        </p>
+      <div className="flex items-center gap-1 mt-2">
+        <ExternalLink className="w-3 h-3 text-blue-400" />
+        <p className="text-[10px] text-blue-400 font-medium truncate">thanas.vercel.app</p>
       </div>
     </a>
   );

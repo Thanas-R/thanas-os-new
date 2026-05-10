@@ -1,16 +1,35 @@
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Switch } from '@/components/ui/switch';
 import { Slider } from '@/components/ui/slider';
-import { Sun, Moon, Sparkles, Eye, Magnet, EyeOff, Image as ImageIcon } from 'lucide-react';
+import { Sun, Moon, Sparkles, Magnet, EyeOff, Image as ImageIcon, Upload } from 'lucide-react';
+import wallpaper1 from '@/assets/wallpaper-1.jpg';
+import wallpaper2 from '@/assets/wallpaper-2.jpg';
+import wallpaper3 from '@/assets/wallpaper-3.jpg';
+import wallpaper4 from '@/assets/minecraft-valley.jpg';
+
+const PRESETS = [
+  { id: 'wallpaper-1', src: wallpaper1, label: '#1' },
+  { id: 'wallpaper-2', src: wallpaper2, label: '#2' },
+  { id: 'wallpaper-3', src: wallpaper3, label: '#3' },
+  { id: 'wallpaper-4', src: wallpaper4, label: '#4' },
+];
 
 export const ControlPanelApp = () => {
   const { settings, updateSettings } = useMacOS();
   const Tile = ({ children, span = 1 }: { children: React.ReactNode; span?: number }) => (
-    <div
-      className="rounded-3xl p-5 liquid-glass-card text-white"
-      style={{ gridColumn: `span ${span}` }}
-    >{children}</div>
+    <div className="rounded-3xl p-5 liquid-glass-card text-white" style={{ gridColumn: `span ${span}` }}>{children}</div>
   );
+
+  const onUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      updateSettings({ wallpaper: 'custom', customWallpaper: dataUrl });
+    };
+    reader.readAsDataURL(file);
+  };
 
   return (
     <div className="h-full w-full overflow-auto p-6" style={{ background: 'rgba(20,20,24,0.6)' }}>
@@ -46,14 +65,35 @@ export const ControlPanelApp = () => {
         </Tile>
 
         <Tile span={2}>
-          <div className="flex items-center gap-3 mb-3"><ImageIcon className="w-5 h-5" /><div className="font-semibold">Wallpaper</div></div>
-          <div className="grid grid-cols-4 gap-2">
-            {['wallpaper-1','wallpaper-2','wallpaper-3','wallpaper-4'].map(w => (
-              <button key={w} onClick={() => updateSettings({ wallpaper: w })} className={`h-16 rounded-xl border-2 ${settings.wallpaper === w ? 'border-blue-400' : 'border-white/10'}`} style={{ background: 'rgba(255,255,255,0.05)' }}>
-                <div className="text-xs">{w.replace('wallpaper-','#')}</div>
-              </button>
-            ))}
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-3"><ImageIcon className="w-5 h-5" /><div className="font-semibold">Wallpaper</div></div>
+            <label className="cursor-pointer flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/15 text-xs">
+              <Upload className="w-3.5 h-3.5" /> Upload
+              <input type="file" accept="image/*" className="hidden" onChange={onUpload} />
+            </label>
           </div>
+          <div className="grid grid-cols-5 gap-2">
+            {PRESETS.map(w => (
+              <button
+                key={w.id}
+                onClick={() => updateSettings({ wallpaper: w.id })}
+                className={`h-16 rounded-xl border-2 overflow-hidden ${settings.wallpaper === w.id ? 'border-blue-400' : 'border-white/10'}`}
+                style={{ backgroundImage: `url(${w.src})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                title={w.label}
+              />
+            ))}
+            {settings.customWallpaper && (
+              <button
+                onClick={() => updateSettings({ wallpaper: 'custom' })}
+                className={`h-16 rounded-xl border-2 overflow-hidden ${settings.wallpaper === 'custom' ? 'border-blue-400' : 'border-white/10'}`}
+                style={{ backgroundImage: `url(${settings.customWallpaper})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
+                title="Custom"
+              />
+            )}
+          </div>
+          {settings.wallpaper === 'custom' && (
+            <p className="mt-2 text-xs text-white/60">Custom wallpaper saved to localStorage. Persists across reloads.</p>
+          )}
         </Tile>
       </div>
     </div>

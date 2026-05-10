@@ -2,12 +2,14 @@ import { useEffect, useRef } from 'react';
 import './utility-clock.css';
 
 /**
- * macOS Utility Clock — adapted from a CodePen by Mike Bostock-style demo.
- * Config: hour-style-text · hour-text-style-small · hour-display-style-all ·
- *         minute-style-line · minute-display-style-coarse · minute-text-style-none ·
- *         hand-style-normal
+ * macOS-style Utility Clock — direct port of the CodePen JS.
+ * Outer chassis #000, inner dial white, black numbers/lines/hands, orange second hand.
+ * Configured per user spec:
+ *   hour-style-text · hour-text-style-small · hour-display-style-all
+ *   minute-style-line · minute-display-style-coarse · minute-text-style-none
+ *   hand-style-normal
  */
-export const UtilityClockWidget = ({ size = 220 }: { size?: number }) => {
+export const UtilityClockWidget = ({ size = 200 }: { size?: number }) => {
   const rootRef = useRef<HTMLDivElement>(null);
   const hourRef = useRef<HTMLDivElement>(null);
   const minRef = useRef<HTMLDivElement>(null);
@@ -17,6 +19,7 @@ export const UtilityClockWidget = ({ size = 220 }: { size?: number }) => {
     const root = rootRef.current;
     if (!root) return;
     const dynamic = root.querySelector('.dynamic') as HTMLDivElement;
+    if (!dynamic) return;
     dynamic.innerHTML = '';
 
     const div = (className: string, html = '') => {
@@ -35,6 +38,7 @@ export const UtilityClockWidget = ({ size = 220 }: { size?: number }) => {
       dynamic.appendChild(a);
     };
 
+    // Minute lines + (hidden) minute text — quarter-step granularity
     for (let i = 0.25; i <= 60; i += 0.25) {
       const klass = i % 5 === 0 ? 'major' : i % 1 === 0 ? 'whole' : 'part';
       anchor(div('element minute-line ' + klass), i);
@@ -45,6 +49,7 @@ export const UtilityClockWidget = ({ size = 220 }: { size?: number }) => {
         anchor(text, i);
       }
     }
+    // Hour pills (hidden by hour-style-text) + hour numerals
     for (let i = 1; i <= 12; i++) {
       const klass = 'hour-item hour-' + i;
       anchor(div('element hour-pill ' + klass), i * 5);
@@ -71,30 +76,31 @@ export const UtilityClockWidget = ({ size = 220 }: { size?: number }) => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  const scale = size / (295 + 32);
+  // Native clock is ~ 327 px (295 dial + 32 padding). Scale to chosen size.
+  const NATIVE = 327;
+  const scale = size / NATIVE;
 
   return (
-    <div
-      style={{ width: size, height: size, background: 'black', borderRadius: 24, overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}
-    >
+    <div className="utility-clock-shell" style={{ width: size, height: size }}>
+      <div className="dial" />
       <div
         ref={rootRef}
-        id="utility-clock"
         className="utility-clock hour-style-text hour-text-style-small hour-display-style-all minute-style-line minute-display-style-coarse minute-text-style-none hand-style-normal"
-        style={{ position: 'relative', width: size, height: size }}
       >
         <div className="clock" style={{ transform: `translate(-50%,-50%) scale(${scale.toFixed(3)})` }}>
           <div className="centre">
             <div className="dynamic" />
             <div className="anchor hour" ref={hourRef}>
-              <div className="element fat-hand round" />
+              <div className="element thin-hand" />
+              <div className="element fat-hand" />
             </div>
             <div className="anchor minute" ref={minRef}>
-              <div className="element thin-hand minute-hand round" />
+              <div className="element thin-hand" />
+              <div className="element fat-hand minute-hand" />
             </div>
             <div className="anchor second" ref={secRef}>
-              <div className="element second-hand-front round" />
-              <div className="element second-hand-back round" />
+              <div className="element second-hand-front" />
+              <div className="element second-hand-back" />
             </div>
             <div className="element circle-1 round" style={{ transform: 'translate(-50%,-50%)' }} />
             <div className="element circle-2 round" style={{ transform: 'translate(-50%,-50%)' }} />

@@ -26,6 +26,12 @@ const DEFAULT_SETTINGS: MacOSSettings = {
   dockAutoHide: false,
   dockMagnification: 75,
   reducedMotion: false,
+  brightness: 80,
+  volume: 65,
+  wifi: true,
+  bluetooth: true,
+  airdrop: true,
+  focus: false,
 };
 
 export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: AppConfig[] }) => {

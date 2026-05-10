@@ -53,8 +53,9 @@ export const Desktop = () => {
   }, []);
 
   const getBackgroundImage = () => {
+    if (settings.wallpaper === 'custom' && settings.customWallpaper) return settings.customWallpaper;
     if (settings.wallpaper.startsWith('data:')) return settings.wallpaper;
-    return wallpapers[settings.wallpaper as keyof typeof wallpapers];
+    return wallpapers[settings.wallpaper as keyof typeof wallpapers] || wallpapers['wallpaper-2'];
   };
 
   return (
@@ -65,15 +66,16 @@ export const Desktop = () => {
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
+        filter: settings.brightness != null ? `brightness(${0.5 + (settings.brightness / 100) * 0.6})` : undefined,
       }}
     >
       <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
 
       <div className="pt-7 h-full p-8">
-        <div className="absolute top-12 left-6 space-y-4">
+        <div className="absolute top-12 left-6 space-y-3">
           <WelcomeWidget />
-          <div className="flex gap-4 items-start">
-            <UtilityClockWidget size={220} />
+          <div className="flex gap-3 items-start">
+            <UtilityClockWidget size={172} />
             <CalendarWidget />
           </div>
           <StatsWidget />

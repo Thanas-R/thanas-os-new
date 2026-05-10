@@ -76,7 +76,7 @@
   width: 4px;
   height: 62px;
   background: #1C1C1E;
-  border-radius: 999px 999px 0 0;
+  border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-6px);
 }
 
@@ -85,7 +85,7 @@
   width: 10px;
   height: 62px;
   background: #1C1C1E;
-  border-radius: 999px 999px 0 0;
+  border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-18px);
 }
 

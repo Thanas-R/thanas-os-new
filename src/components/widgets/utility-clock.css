@@ -1,84 +1,143 @@
-/* Utility clock — port of CodePen with WHITE dial / BLACK hands / orange second hand. */
+/* Utility clock — refined Apple-style version */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
+
 .utility-clock-shell {
   position: relative;
   background: #000000;
   border-radius: 24px;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255,255,255,0.05);
 }
+
+/* Dial */
 .utility-clock-shell .dial {
   position: absolute;
   inset: 4%;
   border-radius: 50%;
-  background: #ffffff;
-  box-shadow: inset 0 0 0 2px #000;
+  background: #f8f8f8;
+  box-shadow: inset 0 0 0 2px #111;
 }
 
+/* Core layout */
 .utility-clock { position: relative; width: 100%; height: 100%; }
-.utility-clock .clock { position: absolute; opacity: 1; left: 50%; top: 50%; }
+.utility-clock .clock { position: absolute; left: 50%; top: 50%; opacity: 1; }
 .utility-clock .centre { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
 .utility-clock .expand { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); }
 .utility-clock .anchor { position: absolute; top: 0; left: 0; width: 0; height: 0; }
 .utility-clock .element { position: absolute; top: 0; left: 0; }
-.utility-clock .round { border-radius: 296px; }
+.utility-clock .round { border-radius: 999px; }
 
-/* Centre caps */
-.utility-clock .circle-1 { width: 6px; height: 6px; border: 3px solid #000; background: #000; }
-.utility-clock .circle-2 { width: 4px; height: 4px; border: 2px solid #FA9F22; background: #FA9F22; }
+/* Center hub */
+.utility-clock .circle-1 {
+  width: 10px;
+  height: 10px;
+  border: 3px solid #111;
+  background: #111;
+}
 
-/* Hands — BLACK on white dial */
+.utility-clock .circle-2 {
+  width: 5px;
+  height: 5px;
+  border: 2px solid #FA9F22;
+  background: #FA9F22;
+}
+
+/* Second hand */
 .utility-clock .second-hand-front {
-  width: 2px; height: 137px; background: #FA9F22;
+  width: 2px;
+  height: 137px;
+  background: #FA9F22;
   transform: translate(-50%,-100%) translateY(-3px);
 }
+
 .utility-clock .second-hand-back {
-  width: 2px; height: 21px; background: #FA9F22; opacity: 1;
-  transform: translate(-50%,-100%) translateY(24px);
+  width: 2px;
+  height: 18px;
+  background: #FA9F22;
+  transform: translate(-50%,-100%) translateY(22px);
 }
+
+/* Hour + Minute Hands */
 .utility-clock .thin-hand {
-  width: 4px; height: 50px; background: #000;
+  width: 4px;
+  height: 52px;
+  background: #111;
   transform: translate(-50%,-100%) translateY(-5px);
 }
-.utility-clock .fat-hand {
-  box-sizing: border-box; width: 10px; height: 57px; border-radius: 10px;
-  background: #000; transform: translate(-50%,-100%) translateY(-18px);
-}
-.utility-clock .minute-hand { height: 112px; }
 
-/* Tick marks — BLACK */
+.utility-clock .fat-hand {
+  width: 10px;
+  height: 46px;
+  background: #111;
+  border-radius: 99px;
+  transform: translate(-50%,-100%) translateY(-16px);
+}
+
+.utility-clock .minute-hand {
+  height: 82px;
+}
+
+/* Minute ticks */
 .utility-clock .minute-line {
-  background: #000; width: 1px; height: 9px;
-  transform: translate(-50%,-100%) translateY(-131px);
+  background: #888;
+  width: 1px;
+  height: 6px;
+  transform: translate(-50%,-100%) translateY(-138px);
   opacity: 0.45;
 }
-.utility-clock .major.minute-line { opacity: 0.85; width: 2px; height: 11px; }
 
-/* Labels — BLACK */
-.utility-clock .minute-text { font: 12px Avenir Next, Helvetica; color: #000; top: -135px; }
-.utility-clock .hour-pill {
-  background: #000; width: 6px; height: 35px; border-radius: 10px;
-  transform: translate(-50%,-100%) translateY(-85px); opacity: 0.85;
+.utility-clock .major.minute-line {
+  width: 2px;
+  height: 10px;
+  opacity: 0.65;
 }
+
+/* Labels */
+.utility-clock .minute-text {
+  font-family: "Quicksand", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #222;
+  top: -138px;
+}
+
+/* Hidden pills by default if using text mode */
+.utility-clock .hour-pill {
+  background: #111;
+  width: 4px;
+  height: 22px;
+  border-radius: 99px;
+  transform: translate(-50%,-100%) translateY(-78px);
+  opacity: 0.8;
+}
+
+/* Hour numbers */
 .utility-clock .hour-text {
   font-family: "Quicksand", sans-serif;
-  font-size: 32px;
+  font-size: 34px;
   font-weight: 600;
-  color: #000;
-  top: -105px;
-}.utility-clock .hour-10 .content { padding-left: 0.4ex; }
-.utility-clock .hour-11 .content { padding-left: 0.25ex; }
+  color: #111;
+  letter-spacing: -0.02em;
+  top: -118px;
+}
 
-/* === Style toggles applied: ===
- * hour-style-text → hide pills
- * hour-text-style-small
- * hour-display-style-all (default - nothing to hide)
- * minute-style-line (default)
- * minute-display-style-coarse → hide part lines
- * minute-text-style-none → hide minute texts
- * hand-style-normal (default - solid)
- */
-.utility-clock.hour-style-text .hour-pill { opacity: 0; }
-.utility-clock.hour-text-style-small .hour-text { font-size: 24px; top: -113px; }
-.utility-clock.minute-display-style-coarse .part.minute-line { opacity: 0; }
-.utility-clock.minute-text-style-none .minute-text { opacity: 0; }
+.utility-clock .hour-10 .content { padding-left: 0.35ex; }
+.utility-clock .hour-11 .content { padding-left: 0.20ex; }
+
+/* Style toggles */
+.utility-clock.hour-style-text .hour-pill {
+  opacity: 0;
+}
+
+.utility-clock.hour-text-style-small .hour-text {
+  font-size: 26px;
+  top: -118px;
+}
+
+.utility-clock.minute-display-style-coarse .part.minute-line {
+  opacity: 0;
+}
+
+.utility-clock.minute-text-style-none .minute-text {
+  opacity: 0;
+}

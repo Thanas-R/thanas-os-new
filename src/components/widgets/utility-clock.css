@@ -4,7 +4,7 @@
 .utility-clock-shell {
   position: relative;
   background: #1C1C1E;
-  border-radius: 24px;
+  border-radius: 23px; /* reduced by 1px */
   overflow: hidden;
   border: 1px solid rgba(255,255,255,0.05);
 }
@@ -17,24 +17,58 @@
   box-shadow: inset 0 0 0 2px #1C1C1E;
 }
 
-.utility-clock { position: relative; width: 100%; height: 100%; }
-.utility-clock .clock { position: absolute; left: 50%; top: 50%; opacity: 1; }
-.utility-clock .centre { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
-.utility-clock .expand { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); }
-.utility-clock .anchor { position: absolute; top: 0; left: 0; width: 0; height: 0; }
-.utility-clock .element { position: absolute; top: 0; left: 0; }
-.utility-clock .round { border-radius: 999px; }
+.utility-clock {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
 
-/* Hand layering: hour bottom, minute middle, second top */
-.utility-clock .hour { z-index: 1; }
+.utility-clock .clock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  opacity: 1;
+}
+
+.utility-clock .centre {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+}
+
+.utility-clock .expand {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -50%);
+}
+
+.utility-clock .anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+}
+
+.utility-clock .element {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* Hand layering */
+.utility-clock .hour   { z-index: 1; }
 .utility-clock .minute { z-index: 2; }
 .utility-clock .second { z-index: 3; }
 .utility-clock .centre { z-index: 4; }
 
 /* Centre caps */
 .utility-clock .circle-1 {
-  width: 18px;
-  height: 18px;
+  width: 17px;   /* reduced by 1px */
+  height: 17px;
   border: 5px solid #1C1C1E;
   background: transparent;
   box-sizing: border-box;
@@ -42,49 +76,55 @@
 }
 
 .utility-clock .circle-2 {
-  width: 12px;
-  height: 12px;
+  width: 10px;   /* reduced by 1px */
+  height: 10px;
   border: 3px solid #FA9F22;
   background: transparent;
   box-sizing: border-box;
   border-radius: 50%;
 }
 
-/* Hands */
+/* ---------------- HANDS ---------------- */
+/* Flat centre end, rounded tip end only */
+
+/* Second hand front */
 .utility-clock .second-hand-front {
   width: 3px;
-  height: 132px;
+  height: 128px; /* slightly shorter to avoid overlap */
   background: #FA9F22;
-  border-radius: 999px;
+  border-radius: 999px 999px 0 0;
   transform: translate(-50%,-100%) translateY(-2px);
 }
 
+/* Second hand back */
 .utility-clock .second-hand-back {
   width: 3px;
-  height: 18px;
+  height: 16px;
   background: #FA9F22;
-  border-radius: 999px;
-  transform: translate(-50%,-100%) translateY(20px);
+  border-radius: 0 0 999px 999px;
+  transform: translate(-50%,-100%) translateY(18px);
 }
 
+/* Minute hand */
 .utility-clock .thin-hand {
   width: 4px;
-  height: 62px;
+  height: 58px; /* reduced to avoid touching centre */
   background: #1C1C1E;
-  border-radius: 999px;
+  border-radius: 999px 999px 0 0;
   transform: translate(-50%,-100%) translateY(-4px);
 }
 
+/* Hour hand */
 .utility-clock .fat-hand {
   width: 10px;
-  height: 68px;
+  height: 64px;
   background: #1C1C1E;
-  border-radius: 999px;
+  border-radius: 999px 999px 0 0;
   transform: translate(-50%,-100%) translateY(-15px);
 }
 
 .utility-clock .minute-hand {
-  height: 120px;
+  height: 116px;
 }
 
 /* Remove minute text */
@@ -92,7 +132,7 @@
   display: none;
 }
 
-/* Tick marks — same size, slightly farther out */
+/* Tick marks */
 .utility-clock .minute-line {
   background: #B3B3B3;
   width: 2.5px;

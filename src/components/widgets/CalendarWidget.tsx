@@ -23,34 +23,34 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-3 select-none liquid-glass-card"
-      style={{ width: 172, height: 172 }}
+      className="rounded-2xl p-4 select-none shadow-xl"
+      style={{
+        width: 220,
+        height: 220,
+        background: '#1a1a1d',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }}
     >
-      <div
-        className="text-[10px] font-bold tracking-wider mb-2"
-        style={{ color: '#FF453A' }}
-      >
+      <div className="text-[12px] font-bold tracking-wider mb-3" style={{ color: '#FF453A' }}>
         {monthName}
       </div>
 
-      <div className="grid grid-cols-7 gap-0 mb-0.5">
+      <div className="grid grid-cols-7 gap-0 mb-1">
         {weekdays.map((d, i) => (
-          <div key={i} className="text-center text-[9px] font-semibold text-white/45">
-            {d}
-          </div>
+          <div key={i} className="text-center text-[11px] font-semibold text-white/55">{d}</div>
         ))}
       </div>
 
-      <div className="grid grid-cols-7 gap-0">
+      <div className="grid grid-cols-7 gap-y-0.5">
         {calendarDays.map((day, i) => (
-          <div key={i} className="flex items-center justify-center h-[20px]">
+          <div key={i} className="flex items-center justify-center h-[22px]">
             {day !== null && (
               <span
-                className="w-[18px] h-[18px] flex items-center justify-center rounded-full text-[9px] font-medium"
+                className="w-[22px] h-[22px] flex items-center justify-center rounded-full text-[11px] font-semibold"
                 style={
                   day === todayDate
-                    ? { background: '#FF453A', color: 'white', fontWeight: 700 }
-                    : { color: 'rgba(255,255,255,0.85)' }
+                    ? { background: '#FF453A', color: 'white' }
+                    : { color: 'rgba(255,255,255,0.92)' }
                 }
               >
                 {day}

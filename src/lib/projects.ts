@@ -5,7 +5,11 @@ import pesuMcIcon from '@/assets/pesu-mc-s2-icon.png';
 import askbookieIcon from '@/assets/askbookie-icon.png';
 import smartChefIcon from '@/assets/smart-chef-new-icon.png';
 import contourFlowIcon from '@/assets/contour-flow-icon.png';
-import turtleIcon from '@/assets/turtle-icon.png';
+import thanasosIcon from '@/assets/thanasos-turtle-icon.png';
+import pesuForgeIcon from '@/assets/pesuforge-shield-icon.png';
+import odintreeIcon from '@/assets/odintree-icon.png';
+import portfolioIcon from '@/assets/portfolio-icon.png';
+import askpesuIcon from '@/assets/askpesu-rowlet-icon.png';
 
 export interface Project {
   id: string;
@@ -34,6 +38,14 @@ export const PROJECTS: Project[] = [
     favicon: virdisIcon,
   },
   {
+    id: 'portfolio',
+    name: 'Portfolio',
+    description: 'My main personal portfolio website.',
+    liveUrl: 'https://thanas.vercel.app',
+    githubUrl: 'https://github.com/Thanas-R',
+    favicon: portfolioIcon,
+  },
+  {
     id: 'spheal',
     name: 'Spheal',
     description: 'Smart AI travel planner with interactive map visualization',
@@ -58,6 +70,14 @@ export const PROJECTS: Project[] = [
     favicon: askbookieIcon,
   },
   {
+    id: 'askpesu',
+    name: 'AskPESU',
+    description: 'A focused Q&A tool for PESU students.',
+    liveUrl: 'https://askpesu.vercel.app/',
+    githubUrl: 'https://github.com/Thanas-R',
+    favicon: askpesuIcon,
+  },
+  {
     id: 'smart-chef',
     name: 'Smart Chef',
     description: 'In-memory Vector Space Model using TF-IDF for recipe recommendations',
@@ -79,7 +99,7 @@ export const PROJECTS: Project[] = [
     description: 'macOS-themed interactive portfolio',
     liveUrl: 'https://thanas-os.vercel.app',
     githubUrl: 'https://github.com/Thanas-R',
-    favicon: turtleIcon,
+    favicon: thanasosIcon,
   },
   {
     id: 'pesu-forge',
@@ -87,7 +107,15 @@ export const PROJECTS: Project[] = [
     description: 'AI-powered study tool with flashcards, quizzes, and mind maps',
     liveUrl: 'https://pesuforge.vercel.app',
     githubUrl: 'https://github.com/Thanas-R',
-    favicon: turtleIcon,
+    favicon: pesuForgeIcon,
+  },
+  {
+    id: 'odintree',
+    name: 'OdinTree',
+    description: 'A focused repository explorer and project landing page.',
+    liveUrl: 'https://odintree.vercel.app/',
+    githubUrl: 'https://github.com/Thanas-R',
+    favicon: odintreeIcon,
   },
 ];
 

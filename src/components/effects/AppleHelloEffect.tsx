@@ -25,6 +25,22 @@ function AppleHelloEffect({
 }: Props) {
   const calc = (x: number) => x * speed;
 
+  // Lazy warm-up: kick off dynamic imports of every app while the Hello plays so
+  // first-launch feels instant.
+  if (typeof window !== 'undefined' && !(window as unknown as { __thanasosWarmed?: boolean }).__thanasosWarmed) {
+    (window as unknown as { __thanasosWarmed?: boolean }).__thanasosWarmed = true;
+    Promise.allSettled([
+      import('@/components/apps/SafariApp'),
+      import('@/components/apps/FinderApp'),
+      import('@/components/apps/NotesApp'),
+      import('@/components/apps/TerminalApp'),
+      import('@/components/apps/LaunchpadApp'),
+      import('@/components/apps/AppStoreApp'),
+      import('@/components/apps/ProjectsApp'),
+      import('@/components/apps/ControlPanelApp'),
+    ]).catch(() => {});
+  }
+
   return (
     <motion.svg
       className={cn("h-20", className)}

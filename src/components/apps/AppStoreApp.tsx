@@ -182,8 +182,24 @@ export const AppStoreApp = () => {
                       >
                         <Github className="w-3 h-3" /> GitHub
                       </a>
-                    </div>
-                  </div>
+          </div>
+
+          <h2 className="text-lg font-semibold mt-8 mb-4">Coming Soon</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {COMING_SOON.map(c => (
+              <div key={c.id} className="flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10">
+                <div className="w-14 h-14 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center overflow-hidden shrink-0">
+                  <img src={c.icon} alt={c.name} className="w-9 h-9" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="font-semibold truncate">{c.name}</div>
+                  <div className="text-xs text-neutral-500 dark:text-neutral-400">{c.description}</div>
+                  <button disabled className="mt-2 text-[11px] px-3 py-0.5 rounded-full bg-neutral-200 dark:bg-neutral-700 text-neutral-500 cursor-not-allowed">Coming Soon</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
                 </div>
               );
             })}

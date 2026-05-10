@@ -14,7 +14,7 @@ export const WelcomeWidget = () => {
       target="_blank"
       rel="noopener noreferrer"
       className="block rounded-2xl p-4 hover:scale-[1.02] transition-transform cursor-pointer liquid-glass-card"
-      style={{ width: 300 }}
+      style={{ width: 356 }}
     >
       <p className="text-[10px] text-white/60 font-medium tracking-wider uppercase mb-1">
         {greeting}

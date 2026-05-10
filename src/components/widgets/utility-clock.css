@@ -56,7 +56,7 @@
 /* Orange seconds front */
 .utility-clock .second-hand-front {
   width: 3px;
-  height: 124px;
+  height: 126px;
   background: #FA9F22;
   border-radius: 999px 999px 0 0;
   transform: translate(-50%,-100%) translateY(-4px);
@@ -83,14 +83,14 @@
 /* Main hand body */
 .utility-clock .fat-hand {
   width: 10px;
-  height: 57px;
+  height: 59px;
   background: #1C1C1E;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-18px);
 }
 
 .utility-clock .minute-hand {
-  height: 105px;
+  height: 108px;
 }
 
 /* Remove minute text */
@@ -104,7 +104,7 @@
   width: 2.5px;
   height: 10px;
   border-radius: 999px;
-  transform: translate(-50%,-100%) translateY(-116px);
+  transform: translate(-50%,-100%) translateY(-120px);
   opacity: 0.9;
 }
 
@@ -122,7 +122,7 @@
   width: 4px;
   height: 20px;
   border-radius: 999px;
-  transform: translate(-50%,-100%) translateY(-64px);
+  transform: translate(-50%,-100%) translateY(-67px);
   opacity: 0.8;
 }
 

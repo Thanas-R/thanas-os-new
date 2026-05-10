@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useInstalledProjects } from '@/lib/installedApps';
 import { getProject } from '@/lib/projects';

@@ -1,156 +1,196 @@
 import { useEffect, useState, useCallback } from 'react';
 import { registerAppMenus } from '@/types/macos';
 
-type Op = '+' | '-' | '*' | '/' | '';
+type Op = '+' | '-' | '*' | '/' | null;
 
 export const CalculatorApp = () => {
   const [display, setDisplay] = useState('0');
-  const [oldValue, setOldValue] = useState(0);
-  const [value, setValue] = useState(0);
-  const [sign, setSign] = useState(1);
-  const [op, setOp] = useState<Op>('');
-  const [justEval, setJustEval] = useState(false);
+  const [prev, setPrev] = useState<number | null>(null);
+  const [op, setOp] = useState<Op>(null);
+  const [waiting, setWaiting] = useState(false);
 
-  const fmt = (n: number) => {
+  const fmt = (n: number): string => {
     if (!isFinite(n)) return 'Error';
-    const s = String(n);
+    if (Math.abs(n) >= 1e16) return n.toExponential(6);
+    const s = Number(n.toFixed(10)).toString();
     if (s.includes('.')) {
       const [a, b] = s.split('.');
-      return a.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, ',') + '.' + b;
+      return Number(a).toLocaleString('en-US') + '.' + b;
     }
-    return s.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, ',');
+    return Number(s).toLocaleString('en-US');
   };
 
-  useEffect(() => { setDisplay(fmt(sign * value)); }, [value, sign]);
+  const inputDigit = useCallback((d: string) => {
+    if (waiting) {
+      setDisplay(d);
+      setWaiting(false);
+    } else {
+      setDisplay(display === '0' ? d : display + d);
+    }
+  }, [display, waiting]);
 
-  const inputDigit = useCallback((n: number) => {
-    if (justEval) { setValue(n); setSign(1); setOp(''); setJustEval(false); return; }
-    setValue(v => v * 10 + n);
-  }, [justEval]);
+  const inputDot = useCallback(() => {
+    if (waiting) { setDisplay('0.'); setWaiting(false); return; }
+    if (!display.includes('.')) setDisplay(display + '.');
+  }, [display, waiting]);
 
-  const allClear = useCallback(() => {
-    setValue(0); setOldValue(0); setSign(1); setOp(''); setJustEval(false);
+  const clearAll = useCallback(() => {
+    setDisplay('0'); setPrev(null); setOp(null); setWaiting(false);
   }, []);
 
-  const toggleSign = useCallback(() => setSign(s => s * -1), []);
-  const percent = useCallback(() => setValue(v => v / 100), []);
+  const toggleSign = useCallback(() => {
+    setDisplay(d => d.startsWith('-') ? d.slice(1) : d === '0' ? '0' : '-' + d);
+  }, []);
 
-  const operate = useCallback((next: Op) => {
-    setOldValue(sign * value);
-    setValue(0);
-    setSign(1);
+  const percent = useCallback(() => {
+    setDisplay(d => fmt(parseFloat(d.replace(/,/g, '')) / 100));
+  }, []);
+
+  const compute = (a: number, b: number, o: Op): number => {
+    switch (o) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return b === 0 ? NaN : a / b;
+      default: return b;
+    }
+  };
+
+  const performOp = useCallback((next: Op) => {
+    const cur = parseFloat(display.replace(/,/g, ''));
+    if (prev === null) {
+      setPrev(cur);
+    } else if (op && !waiting) {
+      const r = compute(prev, cur, op);
+      setPrev(r);
+      setDisplay(fmt(r));
+    }
     setOp(next);
-    setJustEval(false);
-  }, [sign, value]);
+    setWaiting(true);
+  }, [display, prev, op, waiting]);
 
   const equals = useCallback(() => {
-    let result = sign * value;
-    const cur = sign * value;
-    switch (op) {
-      case '+': result = oldValue + cur; break;
-      case '-': result = oldValue - cur; break;
-      case '*': result = oldValue * cur; break;
-      case '/': result = cur === 0 ? NaN : Number((oldValue / cur).toFixed(8)); break;
-    }
-    setValue(Math.abs(result));
-    setSign(result < 0 ? -1 : 1);
-    setOp('');
-    setJustEval(true);
-  }, [op, oldValue, value, sign]);
+    if (op === null || prev === null) return;
+    const cur = parseFloat(display.replace(/,/g, ''));
+    const r = compute(prev, cur, op);
+    setDisplay(fmt(r));
+    setPrev(null);
+    setOp(null);
+    setWaiting(true);
+  }, [display, prev, op]);
 
-  // Register menus + keyboard
   useEffect(() => {
     registerAppMenus('calculator', {
       Edit: [
         { label: 'Copy', shortcut: '⌘C', action: () => navigator.clipboard?.writeText(display) },
-        { label: 'Clear', shortcut: 'C', action: allClear },
+        { label: 'Clear', shortcut: 'C', action: clearAll },
       ],
-      View: [
-        { label: 'Basic' },
-        { label: 'Scientific (coming soon)' },
-      ],
+      View: [{ label: 'Basic' }],
     });
     return () => registerAppMenus('calculator', null);
-  }, [display, allClear]);
+  }, [display, clearAll]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key >= '0' && e.key <= '9') inputDigit(Number(e.key));
-      else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') operate(e.key as Op);
-      else if (e.key === 'Enter' || e.key === '=') equals();
-      else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') allClear();
+      if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
+      else if (e.key === '.') inputDot();
+      else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') performOp(e.key as Op);
+      else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); equals(); }
+      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
       else if (e.key === '%') percent();
     };
-    window.addEventListener('keyup', onKey);
-    return () => window.removeEventListener('keyup', onKey);
-  }, [inputDigit, operate, equals, allClear, percent]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [inputDigit, inputDot, performOp, equals, clearAll, percent]);
 
-  const Btn = ({ children, onClick, variant = 'gray', span = false, br }: {
-    children: React.ReactNode; onClick: () => void;
-    variant?: 'gray' | 'dark' | 'orange'; span?: boolean; br?: 'bl' | 'br';
+  // Match the reference image precisely
+  const Btn = ({ label, onClick, variant = 'gray', wide, active }: {
+    label: React.ReactNode; onClick: () => void;
+    variant?: 'gray' | 'dark' | 'orange'; wide?: boolean; active?: boolean;
   }) => {
-    const bg = variant === 'orange' ? '#ff9f0b' : variant === 'dark' ? '#626065' : '#7c7b7f';
+    const styles = {
+      gray:   { bg: '#737375', color: '#fff' },
+      dark:   { bg: '#5d5d5f', color: '#fff' },
+      orange: { bg: active ? '#fff' : '#ff9f0a', color: active ? '#ff9f0a' : '#fff' },
+    }[variant];
     return (
       <button
         onClick={onClick}
-        className="text-white font-medium m-px transition-[filter] hover:brightness-110 active:brightness-95"
+        className="select-none transition-[filter,background] duration-75 active:brightness-90 hover:brightness-110 flex items-center"
         style={{
-          background: bg, border: 'none', fontSize: '1.7rem', fontWeight: 500,
-          width: span ? 'calc(50% - 3px)' : 'calc(25% - 2.5px)',
-          height: '100%',
-          borderBottomLeftRadius: br === 'bl' ? '1.1rem' : 0,
-          borderBottomRightRadius: br === 'br' ? '1.4rem' : 0,
+          background: styles.bg,
+          color: styles.color,
+          gridColumn: wide ? 'span 2' : undefined,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
+          fontWeight: 300,
+          fontSize: 30,
+          justifyContent: wide ? 'flex-start' : 'center',
+          paddingLeft: wide ? 28 : 0,
+          border: 'none',
+          outline: 'none',
         }}
-      >{children}</button>
+      >
+        {label}
+      </button>
     );
   };
 
   return (
     <div
       className="h-full w-full flex flex-col select-none"
-      style={{ background: '#504e53', fontFamily: 'Montserrat, system-ui, sans-serif' }}
+      style={{ background: '#1c1c1e', fontFamily: '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif' }}
     >
       {/* Display */}
-      <div className="px-6 pt-10 pb-4">
+      <div className="flex items-end justify-end px-5" style={{ flex: '0 0 32%', background: '#3a3a3c' }}>
         <div
-          className="text-white text-right font-light"
-          style={{ fontSize: '4.5rem', lineHeight: 0.85, letterSpacing: '-0.02em', overflow: 'hidden', whiteSpace: 'nowrap' }}
+          className="text-white text-right pb-1 w-full"
+          style={{
+            fontWeight: 200,
+            fontSize: 'clamp(48px, 14vw, 76px)',
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+          }}
         >
           {display}
         </div>
       </div>
 
-      {/* Buttons */}
-      <div className="flex-1 flex flex-col" style={{ fontSize: 0 }}>
-        <div className="flex" style={{ height: '20%' }}>
-          <Btn variant="dark" onClick={allClear}>AC</Btn>
-          <Btn variant="dark" onClick={toggleSign}>±</Btn>
-          <Btn variant="dark" onClick={percent}>％</Btn>
-          <Btn variant="orange" onClick={() => operate('/')}>÷</Btn>
-        </div>
-        <div className="flex" style={{ height: '20%' }}>
-          <Btn onClick={() => inputDigit(7)}>7</Btn>
-          <Btn onClick={() => inputDigit(8)}>8</Btn>
-          <Btn onClick={() => inputDigit(9)}>9</Btn>
-          <Btn variant="orange" onClick={() => operate('*')}>×</Btn>
-        </div>
-        <div className="flex" style={{ height: '20%' }}>
-          <Btn onClick={() => inputDigit(4)}>4</Btn>
-          <Btn onClick={() => inputDigit(5)}>5</Btn>
-          <Btn onClick={() => inputDigit(6)}>6</Btn>
-          <Btn variant="orange" onClick={() => operate('-')}>−</Btn>
-        </div>
-        <div className="flex" style={{ height: '20%' }}>
-          <Btn onClick={() => inputDigit(1)}>1</Btn>
-          <Btn onClick={() => inputDigit(2)}>2</Btn>
-          <Btn onClick={() => inputDigit(3)}>3</Btn>
-          <Btn variant="orange" onClick={() => operate('+')}>+</Btn>
-        </div>
-        <div className="flex" style={{ height: '20%' }}>
-          <Btn span br="bl" onClick={() => inputDigit(0)}>0</Btn>
-          <Btn onClick={() => { /* decimal placeholder */ }}>,</Btn>
-          <Btn variant="orange" br="br" onClick={equals}>＝</Btn>
-        </div>
+      {/* Buttons grid 4x5 */}
+      <div
+        className="flex-1 grid"
+        style={{
+          gridTemplateColumns: 'repeat(4, 1fr)',
+          gridTemplateRows: 'repeat(5, 1fr)',
+          gap: 1,
+          background: '#1c1c1e',
+        }}
+      >
+        <Btn variant="dark" label="AC" onClick={clearAll} />
+        <Btn variant="dark" label="±" onClick={toggleSign} />
+        <Btn variant="dark" label="%" onClick={percent} />
+        <Btn variant="orange" active={op === '/'} label="÷" onClick={() => performOp('/')} />
+
+        <Btn label="7" onClick={() => inputDigit('7')} />
+        <Btn label="8" onClick={() => inputDigit('8')} />
+        <Btn label="9" onClick={() => inputDigit('9')} />
+        <Btn variant="orange" active={op === '*'} label="×" onClick={() => performOp('*')} />
+
+        <Btn label="4" onClick={() => inputDigit('4')} />
+        <Btn label="5" onClick={() => inputDigit('5')} />
+        <Btn label="6" onClick={() => inputDigit('6')} />
+        <Btn variant="orange" active={op === '-'} label="−" onClick={() => performOp('-')} />
+
+        <Btn label="1" onClick={() => inputDigit('1')} />
+        <Btn label="2" onClick={() => inputDigit('2')} />
+        <Btn label="3" onClick={() => inputDigit('3')} />
+        <Btn variant="orange" active={op === '+'} label="+" onClick={() => performOp('+')} />
+
+        <Btn wide label="0" onClick={() => inputDigit('0')} />
+        <Btn label="." onClick={inputDot} />
+        <Btn variant="orange" label="=" onClick={equals} />
       </div>
     </div>
   );

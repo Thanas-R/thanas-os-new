@@ -11,7 +11,7 @@
 
 .utility-clock-shell .dial {
   position: absolute;
-  inset: 5.5%;
+  inset: 6.5%;
   border-radius: 50%;
   background: #f8f8f8;
   box-shadow: none;
@@ -56,7 +56,7 @@
 /* Orange seconds front */
 .utility-clock .second-hand-front {
   width: 3px;
-  height: 135px;
+  height: 124px;
   background: #FA9F22;
   border-radius: 999px 999px 0 0;
   transform: translate(-50%,-100%) translateY(-4px);
@@ -83,14 +83,14 @@
 /* Main hand body */
 .utility-clock .fat-hand {
   width: 10px;
-  height: 62px;
+  height: 57px;
   background: #1C1C1E;
   border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-18px);
 }
 
 .utility-clock .minute-hand {
-  height: 115px;
+  height: 106px;
 }
 
 /* Remove minute text */
@@ -104,7 +104,7 @@
   width: 2.5px;
   height: 10px;
   border-radius: 999px;
-  transform: translate(-50%,-100%) translateY(-128px);
+  transform: translate(-50%,-100%) translateY(-116px);
   opacity: 0.9;
 }
 
@@ -122,7 +122,7 @@
   width: 4px;
   height: 20px;
   border-radius: 999px;
-  transform: translate(-50%,-100%) translateY(-70px);
+  transform: translate(-50%,-100%) translateY(-64px);
   opacity: 0.8;
 }
 

@@ -356,15 +356,20 @@ const [lines, setLines] = useState<Line[]>([
       <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-[1.45]">
         {lines.map((l, i) => {
   if (l.text === 'BANNER_TOP') {
-    return (
-      <div key={i} className="text-[#e6e6e6]">
-        <pre className="whitespace-pre-wrap font-mono">
+  return (
+    <div key={i} className="text-[#e6e6e6]">
+      
+      {/* Login text */}
+      <pre className="whitespace-pre-wrap font-mono mb-2">
 {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
-        </pre>
+      </pre>
 
-        {/* SUPER SMALL ASCII ONLY */}
+      {/* ASCII + Right Text Row */}
+      <div className="flex items-start gap-8">
+
+        {/* ASCII */}
         <pre
-          className="whitespace-pre leading-none text-[#e6e6e6]"
+          className="whitespace-pre leading-none text-[#e6e6e6] shrink-0"
           style={{
             fontSize: '5px',
             lineHeight: '5px'
@@ -373,13 +378,29 @@ const [lines, setLines] = useState<Line[]>([
 {ASCII}
         </pre>
 
-        <pre className="whitespace-pre-wrap font-mono">
-{`       ThanasOS  v1.0  ·  Liquid Glass Edition
-       Type \`help\` for available commands, \`status\` for system info.`}
-        </pre>
+        {/* RIGHT SIDE TEXT */}
+        <div className="pt-4">
+          <div className="text-[18px] font-semibold mb-2">
+            ThanasOS v1.0
+          </div>
+
+          <div className="text-white/80 mb-1">
+            Liquid Glass Edition
+          </div>
+
+          <div className="text-white/70">
+            Type <b>help</b> for commands
+          </div>
+
+          <div className="text-white/70">
+            Use <b>status</b> for system info
+          </div>
+        </div>
+
       </div>
-    );
-  }
+    </div>
+  );
+}
 
   return (
     <pre key={i} className="whitespace-pre-wrap font-mono text-[#e6e6e6]">

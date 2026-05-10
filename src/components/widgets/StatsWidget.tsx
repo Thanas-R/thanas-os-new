@@ -44,10 +44,8 @@ const baseActivities = (stars: number): ActivityData[] => [
 ];
 
 export const StatsWidget = ({
-  title = 'Activity',
   className,
 }: {
-  title?: string;
   className?: string;
 }) => {
   const [stars, setStars] = useState<number>(8);
@@ -79,15 +77,9 @@ export const StatsWidget = ({
   return (
     <div
       className={cn('rounded-3xl overflow-hidden liquid-glass-card', className)}
-      style={{ width: 352 }}
+      style={{ width: 300 }}
     >
-      <div className="px-5 pt-4 pb-3 flex items-center justify-between">
-        <span className="text-white/95 text-sm font-semibold tracking-tight">{title}</span>
-        <span className="text-[10px] uppercase tracking-wider text-white/40 font-semibold">
-          Live
-        </span>
-      </div>
-      <div className="px-5 pb-5">
+      <div className="px-4 py-3">
         <div className="flex items-center gap-5">
           <div className="relative flex-shrink-0" style={{ width: 130, height: 130 }}>
             {activities.map((activity, index) => {

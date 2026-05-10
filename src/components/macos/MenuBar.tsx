@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo, useSyncExternalStore } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { Wifi, Battery, Volume2, Search, SlidersHorizontal } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -28,8 +28,8 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const { focusedWindowId, apps, windows, minimizeAllWindows, openApp, closeWindow, focusWindow, settings } = useMacOS();
   const menuBarRef = useRef<HTMLDivElement>(null);
 
-  // Force re-renders when app menus get registered/unregistered
-  useSyncExternalStore(subscribeMenuRegistry, () => Object.keys(getAppMenus('') ?? {}).length + Math.random(), () => 0);
+  const [, force] = useState(0);
+  useEffect(() => subscribeMenuRegistry(() => force(n => n + 1)), []);
 
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);

@@ -1,5 +1,3 @@
-import '@fontsource/inter/400.css';
-import '@fontsource/inter/600.css';
 import { useState, useRef, useEffect, KeyboardEvent } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import {
@@ -35,6 +33,11 @@ const ASCII = String.raw`
                       ####+==========*####                  
                           ############                             
 `;
+
+const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
+${ASCII}
+       ThanasOS  v1.0  ·  Liquid Glass Edition
+       Type \`help\` for available commands, \`status\` for system info.`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
@@ -335,120 +338,43 @@ const [lines, setLines] = useState<Line[]>([
     <div
       className="h-full w-full bg-[#1d1f21]/95 text-[#e6e6e6] font-mono text-[13px] flex flex-col"
       onClick={() => inputRef.current?.focus()}
-      style={{ fontFamily: 'Inter, sans-serif' }}
+      style={{ fontFamily: '"SF Mono", "JetBrains Mono", Menlo, monospace' }}
     >
       <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-[1.45]">
         {lines.map((l, i) => {
-if (l.text === 'BANNER_TOP') {
-  return (
-    <div key={i} className="text-[#e6e6e6]">
+  if (l.text === 'BANNER_TOP') {
+    return (
+      <div key={i} className="text-[#e6e6e6]">
+        <pre className="whitespace-pre-wrap font-mono">
+{`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
+        </pre>
 
-      {/* Login */}
-      <div
-        style={{
-          fontSize: '13px',
-          marginBottom: '10px',
-          fontFamily: 'Inter, sans-serif'
-        }}
-      >
-        {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
-      </div>
-
-      {/* TABLE LAYOUT */}
-      <table
-        style={{
-          borderCollapse: 'collapse',
-          marginBottom: '18px'
-        }}
-      >
-        <tbody>
-          <tr>
-
-            {/* ASCII COLUMN */}
-            <td
-              style={{
-                width: '520px',
-                verticalAlign: 'top',
-                paddingRight: '30px'
-              }}
-            >
-              <pre
-                style={{
-                  margin: 0,
-                  whiteSpace: 'pre',
-                  fontSize: '12px',
-                  lineHeight: '12px',
-                  transform: 'scale(2)',
-                  transformOrigin: 'top left',
-                  width: '260px',
-                  height: '180px',
-                  fontFamily: '"SF Mono","JetBrains Mono",monospace'
-                }}
-              >
+        {/* SUPER SMALL ASCII ONLY */}
+        <pre
+          className="whitespace-pre leading-none text-[#e6e6e6]"
+          style={{
+            fontSize: '5px',
+            lineHeight: '5px'
+          }}
+        >
 {ASCII}
-              </pre>
-            </td>
+        </pre>
 
-            {/* TEXT COLUMN */}
-            <td
-              style={{
-                verticalAlign: 'middle',
-                fontFamily: 'Inter, sans-serif'
-              }}
-            >
-              <div
-                style={{
-                  fontSize: '24px',
-                  fontWeight: 600,
-                  marginBottom: '10px'
-                }}
-              >
-                ThanasOS
-              </div>
-
-              <div
-                style={{
-                  fontSize: '16px',
-                  opacity: 0.8,
-                  marginBottom: '8px'
-                }}
-              >
-                macOS Tahoe Edition
-              </div>
-
-              <div
-                style={{
-                  fontSize: '14px',
-                  opacity: 0.75,
-                  lineHeight: '1.8'
-                }}
-              >
-                Type <b>help</b> for commands<br />
-                Use <b>status</b> for system info
-              </div>
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
+        <pre className="whitespace-pre-wrap font-mono">
+{`       ThanasOS  v1.0  ·  Liquid Glass Edition
+       Type \`help\` for available commands, \`status\` for system info.`}
+        </pre>
+      </div>
+    );
+  }
 
   return (
-    <pre
-      key={i}
-      className="whitespace-pre-wrap text-[#e6e6e6]"
-      style={{
-        fontFamily: 'Inter, sans-serif',
-        fontSize: '13px'
-      }}
-    >
+    <pre key={i} className="whitespace-pre-wrap font-mono text-[#e6e6e6]">
       {l.text}
     </pre>
   );
 })}
-        <div className="flex items-center font-mono">
+        <div className="flex items-center">
           <span className="text-emerald-400">thanas@thanasos</span>
           <span className="text-white/40 mx-1">:</span>
           <span className="text-sky-400">{prettyPath(cwd)}</span>
@@ -460,7 +386,7 @@ if (l.text === 'BANNER_TOP') {
             onChange={e => setInput(e.target.value)}
             onKeyDown={onKey}
             spellCheck={false}
-            className="flex-1 bg-transparent outline-none text-white font-mono"
+            className="flex-1 bg-transparent outline-none text-white"
           />
         </div>
       </div>

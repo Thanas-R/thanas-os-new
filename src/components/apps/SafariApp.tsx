@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ArrowLeft, ArrowRight, RotateCw, Plus, Lock, Share, X } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
-import prankIcon from '@/assets/prank-pichu-icon.png';
+import { registerAppMenus } from '@/types/macos';
 
 interface Tab {
   id: string;
@@ -20,36 +20,33 @@ const PROJECT_HOSTS = new Set(
 );
 
 const buildPrankSrcDoc = () => `
-<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well…</title>
+<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0;height:100%;overflow:hidden}
-body{font-family:'Inter',sans-serif;color:#0a0a0a;background:#fafafa;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;color:#0a0a0a;background:#0d0d10;color:#f5f5f5;-webkit-font-smoothing:antialiased}
 ::selection{background:#30A65B;color:#0a0a0a}
-.dots{position:fixed;inset:0;background-image:radial-gradient(circle,#c8c8c8 1.2px,transparent 1.4px);background-size:22px 22px;z-index:0;pointer-events:none}
-.fade{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(250,250,250,1) 0%,rgba(250,250,250,.55) 60%,rgba(250,250,250,0) 85%);backdrop-filter:blur(6px)}
-main{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center}
+.dots{position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1.2px,transparent 1.4px);background-size:22px 22px;z-index:0;pointer-events:none}
+.fade{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(13,13,16,0.6) 0%,rgba(13,13,16,0.3) 60%,rgba(13,13,16,0) 85%);backdrop-filter:blur(6px)}
+main{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transform:scale(0.9);transform-origin:center}
 .wrap{max-width:760px;width:100%}
-.kicker{font-family:'Caveat',cursive;font-size:clamp(28px,3.4vw,40px);color:#6b6b6b;transform:rotate(-3deg);display:inline-block;margin-bottom:-6px}
-h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(40px,6.2vw,78px);line-height:.98;letter-spacing:-.03em;margin:8px 0 22px}
-h1 .ital{font-style:italic;font-weight:400;color:#2a2a2a}
-h1 .accent{background:linear-gradient(180deg,transparent 62%,#fff177 62%,#fff177 92%,transparent 92%);padding:0 6px}
-.lead{font-size:clamp(15px,1.25vw,17px);color:#4a4a4a;max-width:560px;margin:0 auto 12px;line-height:1.6}
-.sub{font-family:'Caveat',cursive;font-size:clamp(20px,1.8vw,24px);color:#888;margin:4px 0 26px}
-.discord{display:inline-flex;align-items:center;gap:14px;background:#0a0a0a;color:#fff;text-decoration:none;padding:14px 22px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:500;box-shadow:0 8px 24px -10px rgba(0,0,0,.35)}
-.discord .label{font-family:'Inter',sans-serif;font-size:12px;color:#9a9a9a;text-transform:uppercase;letter-spacing:.18em;margin-right:4px;border-right:1px solid #2a2a2a;padding-right:12px}
-.socials{margin-top:26px;display:flex;gap:22px;align-items:center;justify-content:center}
-.socials a{color:#6a6a6a;text-decoration:none;font-size:13px;letter-spacing:.04em}
-.socials a:hover{color:#0a0a0a}
-footer{position:fixed;bottom:14px;left:0;right:0;text-align:center;font-family:'Caveat',cursive;font-size:16px;color:#a8a8a8;z-index:2}
-.avatar{width:64px;height:64px;border-radius:16px;margin-bottom:14px;image-rendering:pixelated;box-shadow:0 6px 18px -6px rgba(0,0,0,.35)}
+.kicker{font-family:'Caveat',cursive;font-size:clamp(24px,3vw,34px);color:#cfcfcf;transform:rotate(-3deg);display:inline-block;margin-bottom:-6px}
+h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(34px,5.4vw,68px);line-height:.98;letter-spacing:-.03em;margin:8px 0 22px;color:#ffffff}
+h1 .ital{font-style:italic;font-weight:400;color:#d8d8d8}
+h1 .accent{background:linear-gradient(180deg,transparent 62%,#fff177 62%,#fff177 92%,transparent 92%);padding:0 6px;color:#0a0a0a}
+.lead{font-size:clamp(14px,1.1vw,16px);color:#bdbdbd;max-width:560px;margin:0 auto 12px;line-height:1.6}
+.sub{font-family:'Caveat',cursive;font-size:clamp(18px,1.6vw,22px);color:#a0a0a0;margin:4px 0 26px}
+.discord{display:inline-flex;align-items:center;gap:14px;background:#ffffff;color:#0a0a0a;text-decoration:none;padding:13px 20px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500;box-shadow:0 8px 24px -10px rgba(0,0,0,.55)}
+.discord .label{font-family:'Inter',sans-serif;font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.18em;margin-right:4px;border-right:1px solid #d4d4d4;padding-right:12px}
+.socials{margin-top:24px;display:flex;gap:22px;align-items:center;justify-content:center}
+.socials a{color:#a8a8a8;text-decoration:none;font-size:13px;letter-spacing:.04em}
+.socials a:hover{color:#ffffff}
 </style></head><body>
 <div class="dots"></div><div class="fade"></div>
 <main><div class="wrap">
-  <img class="avatar" src="${window.location.origin}/prank-pichu.png" onerror="this.style.display='none'"/>
   <span class="kicker">well, well, well...</span>
-  <h1><span class="ital">Haha... looks like i</span><br/><span class="accent">sniped your domain</span></h1>
-  <p class="lead">no worries though — this is just a friendly reminder to secure your domains early. if you wait too long, someone else might claim your username before you do.</p>
+  <h1><span class="ital">Haha, looks like i</span><br/><span class="accent">sniped your domain</span></h1>
+  <p class="lead">no worries though, this is just a friendly reminder to secure your domains early. if you wait too long, someone else might claim your username before you do.</p>
   <p class="sub">send me a dm and i'll hand it back, free of charge :)</p>
   <a class="discord" href="https://discord.com" target="_blank" rel="noreferrer"><span class="label">DISCORD</span>DarkSpacePirate</a>
   <div class="socials">
@@ -58,7 +55,6 @@ footer{position:fixed;bottom:14px;left:0;right:0;text-align:center;font-family:'
     <a href="https://www.linkedin.com/in/thanas-r" target="_blank" rel="noreferrer">linkedin</a>
   </div>
 </div></main>
-<footer>made with ☕ &amp; mischief</footer>
 </body></html>`;
 
 const newTab = (url = START_PAGE, title = 'Favorites'): Tab => ({

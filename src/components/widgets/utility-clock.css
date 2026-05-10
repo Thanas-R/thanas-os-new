@@ -33,8 +33,8 @@
 
 /* Centre caps */
 .utility-clock .circle-1 {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   border: 6px solid #1C1C1E;
   background: transparent;
   box-sizing: border-box;
@@ -42,10 +42,10 @@
 }
 
 .utility-clock .circle-2 {
-  width: 11px;
-  height: 11px;
-  border: 4px solid #FA9F22;
-  background: transparent;
+  width: 10px;
+  height: 10px;
+  border: 3px solid #FA9F22;
+  background: #ffffff;
   box-sizing: border-box;
   border-radius: 50%;
 }

@@ -31,7 +31,7 @@
 .utility-clock .second { z-index: 3; }
 .utility-clock .centre { z-index: 4; }
 
-/* Centre caps — reduced radius by 1px each */
+/* Centre caps */
 .utility-clock .circle-1 {
   width: 17px;
   height: 17px;
@@ -51,37 +51,42 @@
 }
 
 /* Hands */
-/* flat inner end + rounded outer end */
+/* Tail near center shortened only. Outer reach unchanged */
+
+/* Orange seconds front */
 .utility-clock .second-hand-front {
   width: 3px;
   height: 132px;
   background: #FA9F22;
   border-radius: 999px 999px 0 0;
-  transform: translate(-50%,-100%) translateY(-1px);
+  transform: translate(-50%,-100%) translateY(-4px);
 }
 
+/* Orange seconds rear tail */
 .utility-clock .second-hand-back {
   width: 3px;
-  height: 18px;
+  height: 12px;
   background: #FA9F22;
   border-radius: 0 0 999px 999px;
-  transform: translate(-50%,-100%) translateY(21px);
+  transform: translate(-50%,-100%) translateY(18px);
 }
 
+/* Thin hand stem */
 .utility-clock .thin-hand {
   width: 4px;
   height: 62px;
   background: #1C1C1E;
   border-radius: 999px 999px 0 0;
-  transform: translate(-50%,-100%) translateY(-2px);
+  transform: translate(-50%,-100%) translateY(-6px);
 }
 
+/* Main hand body */
 .utility-clock .fat-hand {
   width: 10px;
   height: 68px;
   background: #1C1C1E;
   border-radius: 999px 999px 0 0;
-  transform: translate(-50%,-100%) translateY(-12px);
+  transform: translate(-50%,-100%) translateY(-18px);
 }
 
 .utility-clock .minute-hand {

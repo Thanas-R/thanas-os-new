@@ -125,11 +125,29 @@ export const GoogleApp = () => {
       let content = await raceProxies(norm);
       if (!content.toLowerCase().includes('<base')) {
         if (content.toLowerCase().includes('<head')) {
-          content = content.replace(/<head[^>]*>/i, m => `${m}<base href="${norm}">`);
+          content = content.replace(/<head[^>]*>/i, m => `${m}<base href="${norm}" target="_self">`);
         } else {
-          content = `<base href="${norm}">` + content;
+          content = `<base href="${norm}" target="_self">` + content;
         }
       }
+      // Inject link interceptor: route clicks to parent so we can navigate via proxy
+      const interceptor = `<script>(function(){
+        document.addEventListener('click',function(e){
+          var a=e.target&&e.target.closest&&e.target.closest('a');
+          if(!a||!a.href) return;
+          if(a.target==='_blank'){ e.preventDefault(); window.parent.postMessage({type:'gnav',url:a.href},'*'); return; }
+          e.preventDefault(); window.parent.postMessage({type:'gnav',url:a.href},'*');
+        },true);
+        document.addEventListener('submit',function(e){
+          var f=e.target; if(!f||f.tagName!=='FORM') return;
+          try{ var u=new URL(f.action||location.href); var fd=new FormData(f);
+            fd.forEach(function(v,k){u.searchParams.set(k,v);});
+            e.preventDefault(); window.parent.postMessage({type:'gnav',url:u.toString()},'*');
+          }catch(_){}
+        },true);
+      })();<\/script>`;
+      content = content.replace(/<\/body>/i, interceptor + '</body>');
+      if (!/<\/body>/i.test(content)) content += interceptor;
       const m = content.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
       let title = norm;
       try { title = m ? m[1].trim() : new URL(norm).hostname; } catch {}
@@ -142,6 +160,17 @@ export const GoogleApp = () => {
       });
     }
   }, [light, updateTab]);
+
+  // Listen for nav messages from iframe
+  useEffect(() => {
+    const onMsg = (e: MessageEvent) => {
+      if (e.data && e.data.type === 'gnav' && typeof e.data.url === 'string') {
+        navigate(activeId, e.data.url);
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [activeId, navigate]);
 
   // initial load for first tab
   useEffect(() => {
@@ -357,10 +386,6 @@ export const GoogleApp = () => {
         )}
       </div>
 
-      {/* STATUS BAR */}
-      <div className="px-3 py-0.5 shrink-0 text-[11px] border-t" style={{ background: tk.toolbar, color: tk.icon, opacity: 0.7, borderColor: tk.border }}>
-        {active.loading ? 'Loading...' : 'Done'}
-      </div>
     </div>
   );
 };

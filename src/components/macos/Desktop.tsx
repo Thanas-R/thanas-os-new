@@ -5,10 +5,9 @@ import { Dock } from './Dock';
 import { MenuBar } from './MenuBar';
 import { Spotlight } from './Spotlight';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
-import { TimeWidget } from '@/components/widgets/TimeWidget';
+import { UtilityClockWidget } from '@/components/widgets/UtilityClockWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
 import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
-import { WeatherWidget } from '@/components/widgets/WeatherWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
@@ -36,21 +35,20 @@ export const Desktop = () => {
         e.preventDefault();
         setSpotlightOpen(true);
       }
-      if (e.key === 'Escape' && windows.length > 0) {
+      if (e.key === 'Escape' && windows.length > 0 && !spotlightOpen) {
         const focused = windows.reduce((max, w) => (w.zIndex > max.zIndex ? w : max), windows[0]);
         closeWindow(focused.id);
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [windows, closeWindow]);
+  }, [windows, closeWindow, spotlightOpen]);
 
   useEffect(() => {
     Object.values(wallpapers).forEach((src) => {
       const img = new Image();
       img.src = src as string;
       img.decoding = 'async';
-      img.loading = 'eager';
     });
   }, []);
 
@@ -72,15 +70,13 @@ export const Desktop = () => {
       <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
 
       <div className="pt-7 h-full p-8">
-        {/* Widgets - Left column */}
         <div className="absolute top-12 left-6 space-y-4">
           <WelcomeWidget />
-          <div className="flex gap-2 items-start">
-            <TimeWidget />
+          <div className="flex gap-4 items-start">
+            <UtilityClockWidget size={220} />
             <CalendarWidget />
           </div>
           <StatsWidget />
-          <WeatherWidget />
         </div>
 
         {windows.map(window => (

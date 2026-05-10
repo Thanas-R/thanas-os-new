@@ -42,7 +42,9 @@ ${ASCII}
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
   const [cwd, setCwd] = useState(HOME);
-  const [lines, setLines] = useState<Line[]>([{ type: 'out', text: BANNER }]);
+const [lines, setLines] = useState<Line[]>([
+  { type: 'out', text: 'BANNER_TOP' }
+]);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [historyIdx, setHistoryIdx] = useState<number | null>(null);
@@ -339,11 +341,39 @@ export const TerminalApp = () => {
       style={{ fontFamily: '"SF Mono", "JetBrains Mono", Menlo, monospace' }}
     >
       <div ref={scrollRef} className="flex-1 overflow-auto px-4 py-3 leading-[1.45]">
-        {lines.map((l, i) => (
-          <pre key={i} className="whitespace-pre-wrap font-mono text-[#e6e6e6]">
-            {l.text}
-          </pre>
-        ))}
+        {lines.map((l, i) => {
+  if (l.text === 'BANNER_TOP') {
+    return (
+      <div key={i} className="text-[#e6e6e6]">
+        <pre className="whitespace-pre-wrap font-mono">
+{`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
+        </pre>
+
+        {/* SUPER SMALL ASCII ONLY */}
+        <pre
+          className="whitespace-pre leading-none text-[#e6e6e6]"
+          style={{
+            fontSize: '5px',
+            lineHeight: '5px'
+          }}
+        >
+{ASCII}
+        </pre>
+
+        <pre className="whitespace-pre-wrap font-mono">
+{`       ThanasOS  v1.0  ·  Liquid Glass Edition
+       Type \`help\` for available commands, \`status\` for system info.`}
+        </pre>
+      </div>
+    );
+  }
+
+  return (
+    <pre key={i} className="whitespace-pre-wrap font-mono text-[#e6e6e6]">
+      {l.text}
+    </pre>
+  );
+})}
         <div className="flex items-center">
           <span className="text-emerald-400">thanas@thanasos</span>
           <span className="text-white/40 mx-1">:</span>

@@ -291,6 +291,28 @@ export const TerminalApp = () => {
         else print('logout');
         break;
       }
+      case 'status': {
+        const openWins = windows.filter(w => !w.isMinimized).length;
+        const minWins = windows.filter(w => w.isMinimized).length;
+        const mem = (performance as any).memory;
+        const memLine = mem ? `Memory:    ${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB / ${(mem.jsHeapSizeLimit / 1048576).toFixed(0)} MB` : 'Memory:    n/a';
+        const upMs = performance.now();
+        const m = Math.floor(upMs / 60000), s = Math.floor((upMs % 60000) / 1000);
+        print([
+          'ThanasOS — System Status',
+          '──────────────────────────────',
+          `User:      thanas`,
+          `Shell:     thsh 0.2`,
+          `Uptime:    ${m}m ${s}s (since page load)`,
+          `Apps:      ${apps.length} installed`,
+          `Windows:   ${openWins} open · ${minWins} minimized`,
+          memLine,
+          `Network:   online`,
+          '──────────────────────────────',
+          'All systems nominal ✓',
+        ].join('\n'));
+        break;
+      }
       default: print(`thsh: command not found: ${name}`);
     }
   };

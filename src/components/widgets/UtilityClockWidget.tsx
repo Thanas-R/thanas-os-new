@@ -1,4 +1,4 @@
-/* Utility clock — pulled inward and kept inside the dial */
+/* Utility clock — clean dial / larger numerals */
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
 
 .utility-clock-shell {
@@ -52,7 +52,6 @@
   width: 2px;
   height: 18px;
   background: #FA9F22;
-  opacity: 1;
   transform: translate(-50%,-100%) translateY(20px);
 }
 
@@ -64,40 +63,25 @@
 }
 
 .utility-clock .fat-hand {
-  box-sizing: border-box;
   width: 10px;
   height: 52px;
-  border-radius: 99px;
   background: #000;
+  border-radius: 999px;
   transform: translate(-50%,-100%) translateY(-15px);
 }
 
-.utility-clock .minute-hand { height: 100px; }
-
-/* Tick marks */
-.utility-clock .minute-line {
-  background: #9a9a9a;
-  width: 1px;
-  height: 6px;
-  transform: translate(-50%,-100%) translateY(-124px);
-  opacity: 0.40;
+.utility-clock .minute-hand {
+  height: 100px;
 }
 
-.utility-clock .major.minute-line {
-  width: 2px;
-  height: 9px;
-  opacity: 0.65;
-}
-
-/* Labels */
+/* REMOVE dial lines completely */
+.utility-clock .minute-line,
+.utility-clock .major.minute-line,
 .utility-clock .minute-text {
-  font-family: "Quicksand", sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  color: #222;
-  top: -126px;
+  display: none;
 }
 
+/* Hour markers */
 .utility-clock .hour-pill {
   background: #000;
   width: 4px;
@@ -107,13 +91,14 @@
   opacity: 0.8;
 }
 
+/* Larger hour numbers */
 .utility-clock .hour-text {
   font-family: "Quicksand", sans-serif;
-  font-size: 32px;
+  font-size: 40px;
   font-weight: 600;
   color: #111;
   letter-spacing: -0.02em;
-  top: -104px;
+  top: -108px;
   line-height: 1;
 }
 
@@ -126,13 +111,13 @@
 }
 
 .utility-clock.hour-text-style-large .hour-text {
-  font-size: 32px;
-  top: -104px;
+  font-size: 40px;
+  top: -108px;
 }
 
 .utility-clock.hour-text-style-small .hour-text {
-  font-size: 24px;
-  top: -108px;
+  font-size: 28px;
+  top: -110px;
 }
 
 .utility-clock.minute-display-style-coarse .part.minute-line {

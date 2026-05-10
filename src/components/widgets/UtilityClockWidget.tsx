@@ -1,117 +1,144 @@
-import { useEffect, useRef } from 'react';
-import './utility-clock.css';
+/* Utility clock — tuned to stay inside the dial and match the reference better */
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
 
-/**
- * macOS-style Utility Clock — direct port of the CodePen JS.
- * Outer chassis #000, inner dial white, black numbers/lines/hands, orange second hand.
- * Configured per user spec:
- *   hour-style-text · hour-text-style-small · hour-display-style-all
- *   minute-style-line · minute-display-style-coarse · minute-text-style-none
- *   hand-style-normal
- */
-export const UtilityClockWidget = ({ size = 200 }: { size?: number }) => {
-  const rootRef = useRef<HTMLDivElement>(null);
-  const hourRef = useRef<HTMLDivElement>(null);
-  const minRef = useRef<HTMLDivElement>(null);
-  const secRef = useRef<HTMLDivElement>(null);
+.utility-clock-shell {
+  position: relative;
+  background: #000000;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
 
-  useEffect(() => {
-    const root = rootRef.current;
-    if (!root) return;
-    const dynamic = root.querySelector('.dynamic') as HTMLDivElement;
-    if (!dynamic) return;
-    dynamic.innerHTML = '';
+.utility-clock-shell .dial {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 2px #000;
+}
 
-    const div = (className: string, html = '') => {
-      const el = document.createElement('div');
-      el.className = className;
-      el.innerHTML = html;
-      return el;
-    };
-    const rotate = (el: HTMLElement, second: number) => {
-      el.style.transform = `rotate(${second * 6}deg)`;
-    };
-    const anchor = (el: HTMLElement, rotation: number) => {
-      const a = div('anchor');
-      rotate(a, rotation);
-      a.appendChild(el);
-      dynamic.appendChild(a);
-    };
+.utility-clock { position: relative; width: 100%; height: 100%; }
+.utility-clock .clock { position: absolute; opacity: 1; left: 50%; top: 50%; }
+.utility-clock .centre { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.utility-clock .expand { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); }
+.utility-clock .anchor { position: absolute; top: 0; left: 0; width: 0; height: 0; }
+.utility-clock .element { position: absolute; top: 0; left: 0; }
+.utility-clock .round { border-radius: 999px; }
 
-    // Minute lines + (hidden) minute text — quarter-step granularity
-    for (let i = 0.25; i <= 60; i += 0.25) {
-      const klass = i % 5 === 0 ? 'major' : i % 1 === 0 ? 'whole' : 'part';
-      anchor(div('element minute-line ' + klass), i);
-      if (i % 5 === 0) {
-        const text = div('anchor minute-text ' + klass);
-        text.appendChild(div('expand content', (i < 10 ? '0' : '') + i));
-        rotate(text, -i);
-        anchor(text, i);
-      }
-    }
-    // Hour pills (hidden by hour-style-text) + hour numerals
-    for (let i = 1; i <= 12; i++) {
-      const klass = 'hour-item hour-' + i;
-      anchor(div('element hour-pill ' + klass), i * 5);
-      const text = div('anchor hour-text ' + klass);
-      text.appendChild(div('expand content', String(i)));
-      rotate(text, -i * 5);
-      anchor(text, i * 5);
-    }
+/* Centre caps */
+.utility-clock .circle-1 {
+  width: 8px;
+  height: 8px;
+  border: 3px solid #000;
+  background: #000;
+}
 
-    let raf = 0;
-    const animate = () => {
-      const now = new Date();
-      const t =
-        now.getHours() * 3600 +
-        now.getMinutes() * 60 +
-        now.getSeconds() +
-        now.getMilliseconds() / 1000;
-      if (secRef.current) rotate(secRef.current, t);
-      if (minRef.current) rotate(minRef.current, t / 60);
-      if (hourRef.current) rotate(hourRef.current, t / 60 / 12);
-      raf = requestAnimationFrame(animate);
-    };
-    animate();
-    return () => cancelAnimationFrame(raf);
-  }, []);
+.utility-clock .circle-2 {
+  width: 5px;
+  height: 5px;
+  border: 2px solid #FA9F22;
+  background: #FA9F22;
+}
 
-  // Native dial radius is ~150px (longest hand 137px). The inner white circle of the
-  // chassis sits at inset 4% (radius ~ size*0.46). Scale the clock so the second hand
-  // (137 native px) lands inside that radius with a small margin.
-  // 137 * scale <= size*0.46 - 6  → scale <= (size*0.46 - 6) / 137
-  const innerRadius = size * 0.46 - 6;
-  const NATIVE = 150; // notional radius for hand length
-  const scale = Math.min(1.05, innerRadius / 137);
-  void NATIVE;
+/* Hands */
+.utility-clock .second-hand-front {
+  width: 2px;
+  height: 137px;
+  background: #FA9F22;
+  transform: translate(-50%,-100%) translateY(-3px);
+}
 
-  return (
-    <div className="utility-clock-shell" style={{ width: size, height: size }}>
-      <div className="dial" />
-      <div
-        ref={rootRef}
-        className="utility-clock hour-style-text hour-text-style-large hour-display-style-all minute-style-line minute-display-style-coarse minute-text-style-none hand-style-normal"
-      >
-        <div className="clock" style={{ transform: `translate(-50%,-50%) scale(${scale.toFixed(3)})` }}>
-          <div className="centre">
-            <div className="dynamic" />
-            <div className="anchor hour" ref={hourRef}>
-              <div className="element thin-hand" />
-              <div className="element fat-hand" />
-            </div>
-            <div className="anchor minute" ref={minRef}>
-              <div className="element thin-hand" />
-              <div className="element fat-hand minute-hand" />
-            </div>
-            <div className="anchor second" ref={secRef}>
-              <div className="element second-hand-front" />
-              <div className="element second-hand-back" />
-            </div>
-            <div className="element circle-1 round" style={{ transform: 'translate(-50%,-50%)' }} />
-            <div className="element circle-2 round" style={{ transform: 'translate(-50%,-50%)' }} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+.utility-clock .second-hand-back {
+  width: 2px;
+  height: 21px;
+  background: #FA9F22;
+  opacity: 1;
+  transform: translate(-50%,-100%) translateY(24px);
+}
+
+.utility-clock .thin-hand {
+  width: 4px;
+  height: 50px;
+  background: #000;
+  transform: translate(-50%,-100%) translateY(-5px);
+}
+
+.utility-clock .fat-hand {
+  box-sizing: border-box;
+  width: 10px;
+  height: 57px;
+  border-radius: 99px;
+  background: #000;
+  transform: translate(-50%,-100%) translateY(-18px);
+}
+
+.utility-clock .minute-hand { height: 112px; }
+
+/* Tick marks */
+.utility-clock .minute-line {
+  background: #9a9a9a;
+  width: 1px;
+  height: 7px;
+  transform: translate(-50%,-100%) translateY(-131px);
+  opacity: 0.42;
+}
+
+.utility-clock .major.minute-line {
+  opacity: 0.72;
+  width: 2px;
+  height: 10px;
+}
+
+/* Labels */
+.utility-clock .minute-text {
+  font-family: "Quicksand", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: #222;
+  top: -135px;
+}
+
+.utility-clock .hour-pill {
+  background: #000;
+  width: 4px;
+  height: 22px;
+  border-radius: 99px;
+  transform: translate(-50%,-100%) translateY(-78px);
+  opacity: 0.8;
+}
+
+.utility-clock .hour-text {
+  font-family: "Quicksand", sans-serif;
+  font-size: 34px;
+  font-weight: 600;
+  color: #111;
+  letter-spacing: -0.02em;
+  top: -112px;
+  line-height: 1;
+}
+
+.utility-clock .hour-10 .content { padding-left: 0.35ex; }
+.utility-clock .hour-11 .content { padding-left: 0.20ex; }
+
+/* Style toggles */
+.utility-clock.hour-style-text .hour-pill {
+  opacity: 0;
+}
+
+.utility-clock.hour-text-style-large .hour-text {
+  font-size: 34px;
+  top: -112px;
+}
+
+.utility-clock.hour-text-style-small .hour-text {
+  font-size: 24px;
+  top: -113px;
+}
+
+.utility-clock.minute-display-style-coarse .part.minute-line {
+  opacity: 0;
+}
+
+.utility-clock.minute-text-style-none .minute-text {
+  opacity: 0;
+}

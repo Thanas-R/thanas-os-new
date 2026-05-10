@@ -54,47 +54,35 @@ export const StatsWidget = ({
   const [repoCount, setRepoCount] = useState<number>(0);
 
   useEffect(() => {
-  let cancelled = false;
+    let cancelled = false;
 
-  (async () => {
-    try {
-      // Get actual repo count
-      const userRes = await fetch('https://api.github.com/users/Thanas-R');
-      if (!userRes.ok) return;
+    (async () => {
+      try {
+        const res = await fetch(
+          'https://api.github.com/users/Thanas-R/repos?per_page=100&type=owner&sort=created'
+        );
 
-      const userData = await userRes.json();
+        if (!res.ok) return;
 
-      if (!cancelled) {
-        setRepoCount(userData.public_repos || 0);
+        const repos = await res.json();
+
+        if (!Array.isArray(repos) || cancelled) return;
+
+        // Accurate public repo count
+        setRepoCount(repos.length);
+
+        // Total stars
+        const totalStars = repos.reduce(
+          (sum: number, repo: { stargazers_count?: number }) =>
+            sum + (repo.stargazers_count || 0),
+          0
+        );
+
+        setStars(totalStars);
+      } catch {
+        /* fallback values remain */
       }
-
-      // Get repos for stars
-      const repoRes = await fetch(
-        'https://api.github.com/users/Thanas-R/repos?per_page=100'
-      );
-
-      if (!repoRes.ok) return;
-
-      const repos = await repoRes.json();
-
-      if (!Array.isArray(repos) || cancelled) return;
-
-      const totalStars = repos.reduce(
-        (sum: number, repo: { stargazers_count?: number }) =>
-          sum + (repo.stargazers_count || 0),
-        0
-      );
-
-      setStars(totalStars);
-    } catch {
-      /* keep fallback */
-    }
-  })();
-
-  return () => {
-    cancelled = true;
-  };
-}, []);
+    })();
 
     return () => {
       cancelled = true;

@@ -275,10 +275,20 @@ export const SettingsApp = () => {
           )}
 
           {section === 'general' && (
-            <Card>
-              <Row label="About" desc="ThanasOS-Max · Version 1.0" />
-              <Row label="Software Update" desc="Your system is up to date." />
-            </Card>
+            <>
+              <div className="rounded-xl bg-neutral-50 dark:bg-neutral-800/60 ring-1 ring-black/5 dark:ring-white/5 p-5 mb-4 flex items-center gap-4">
+                <img src={profilePhoto} alt="Thanas R" className="w-16 h-16 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
+                <div className="min-w-0">
+                  <div className="text-[15px] font-semibold">Thanas R</div>
+                  <div className="text-[12px] text-neutral-500 dark:text-neutral-400">thanas@thanasos.dev</div>
+                  <div className="text-[11px] text-neutral-400 dark:text-neutral-500 mt-0.5">Apple Account · iCloud · Family</div>
+                </div>
+              </div>
+              <Card>
+                <Row label="About" desc="ThanasOS-Max · Version 1.0" />
+                <Row label="Software Update" desc="Your system is up to date." />
+              </Card>
+            </>
           )}
 
           {section === 'accessibility' && (

@@ -202,3 +202,12 @@ All colors MUST be HSL.
   background: white;
   animation: turtle-load 3.5s linear forwards;
 }
+
+@keyframes launchpadIn {
+  0% { opacity: 0; transform: scale(1.18); backdrop-filter: blur(0px) saturate(100%); }
+  100% { opacity: 1; transform: scale(1); backdrop-filter: blur(60px) saturate(160%); }
+}
+@keyframes launchpadItemIn {
+  0% { opacity: 0; transform: scale(0.6) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}

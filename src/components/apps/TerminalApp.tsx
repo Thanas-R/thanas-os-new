@@ -17,18 +17,32 @@ interface Line {
 }
 
 const ASCII = String.raw`
-       .:'
-    __ :'__
- .'\`__\`-'__\`\`.
-:__________.-'
-:-------------:
- \\_____ \\____/
-    \`.__.-\`     ThanasOS  v1.0  (liquid-glass)
+                                  #######     
+                               ############   
+                               ###*+++++###   
+                 #########  ###*+++++++++++###
+######      ###################*+++++++++++###
+######     #######*******######*++*##++++++###
+###++*######****************###*+++++++++++###
+###+++######****************###*+++++++++++###
+  ###*+++++*##***********###*++++++++######   
+     ###+--=++*##########*+++++=--+###        
+     ###+--=++*##########*+++++=--*###        
+        ###+==----=----==-----=*###           
+  ######*+++++*##++++++#####*+++++*###        
+  ######*+++++*##*+++++#####*+++++*###        
+###++++++  ####    ######*++++++  ####        
+#########  ###   ###++++++++++++  ###         
+  #######        ###++++++++++++              
+                 ###++++++++*###              
+                 ###********####              
+                   ##########           
 `;
 
 const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
 ${ASCII}
-Welcome to ThanasOS Terminal. Type "help" for a list of commands.`;
+       ThanasOS  v1.0  ·  Liquid Glass Edition
+       Type \`help\` for available commands, \`status\` for system info.`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
@@ -81,6 +95,7 @@ export const TerminalApp = () => {
           '  open <app>             open an app (e.g. open safari)',
           '  apps                   list installable apps',
           '  neofetch               system summary',
+          '  status                 system status (uptime, memory, apps)',
           '  exit                   close the terminal window',
         ].join('\n'));
         break;
@@ -274,6 +289,28 @@ export const TerminalApp = () => {
         const win = windows.find(w => w.appId === 'terminal');
         if (win) closeWindow(win.id);
         else print('logout');
+        break;
+      }
+      case 'status': {
+        const openWins = windows.filter(w => !w.isMinimized).length;
+        const minWins = windows.filter(w => w.isMinimized).length;
+        const mem = (performance as any).memory;
+        const memLine = mem ? `Memory:    ${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB / ${(mem.jsHeapSizeLimit / 1048576).toFixed(0)} MB` : 'Memory:    n/a';
+        const upMs = performance.now();
+        const m = Math.floor(upMs / 60000), s = Math.floor((upMs % 60000) / 1000);
+        print([
+          'ThanasOS — System Status',
+          '──────────────────────────────',
+          `User:      thanas`,
+          `Shell:     thsh 0.2`,
+          `Uptime:    ${m}m ${s}s (since page load)`,
+          `Apps:      ${apps.length} installed`,
+          `Windows:   ${openWins} open · ${minWins} minimized`,
+          memLine,
+          `Network:   online`,
+          '──────────────────────────────',
+          'All systems nominal ✓',
+        ].join('\n'));
         break;
       }
       default: print(`thsh: command not found: ${name}`);

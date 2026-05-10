@@ -34,9 +34,10 @@ const PROXIES = (url: string) => [
 ];
 
 const BOOKMARKS = [
-  { name: 'Apple', url: 'https://www.apple.com' },
+  { name: 'Portfolio', url: 'https://thanas.vercel.app' },
   { name: 'GitHub', url: 'https://github.com/Thanas-R' },
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanas-r/' },
+  { name: 'Apple', url: 'https://www.apple.com' },
   { name: 'DuckDuckGo', url: 'https://duckduckgo.com' },
   { name: 'Wikipedia', url: 'https://en.wikipedia.org' },
 ];
@@ -99,7 +100,7 @@ export const SafariApp = () => {
   const [tabs, setTabs] = useState<Tab[]>([initial.current]);
   const [activeId, setActiveId] = useState(initial.current.id);
   const [addressBar, setAddressBar] = useState(initial.current.url);
-  const [showSidebar, setShowSidebar] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const [showBookmarksBar, setShowBookmarksBar] = useState(true);
   const [showMenu, setShowMenu] = useState(false);
   const [proxyHtml, setProxyHtml] = useState<Record<string, string>>({});
@@ -335,15 +336,26 @@ export const SafariApp = () => {
 
         <div className="flex-1 overflow-hidden bg-white dark:bg-neutral-950">
           {isFavorites ? (
-            <div className="h-full overflow-auto p-10">
-              <h1 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-100 mb-8">Favorites</h1>
-              <div className="grid grid-cols-4 gap-6 max-w-3xl">
+            <div className="h-full overflow-auto py-12 px-6 flex flex-col items-center">
+              <h1 className="text-2xl font-semibold text-neutral-800 dark:text-neutral-100 mb-8 text-center">Favorites</h1>
+              <div className="grid grid-cols-4 gap-x-8 gap-y-6 mb-12 mx-auto place-items-center">
                 {PROJECTS.map(p => (
-                  <button key={p.id} onClick={() => goTo(p.liveUrl, p.name)} className="flex flex-col items-center gap-2 group">
+                  <button key={p.id} onClick={() => goTo(p.liveUrl, p.name)} className="flex flex-col items-center gap-2 group w-24">
                     <div className="w-16 h-16 rounded-2xl bg-neutral-100 dark:bg-neutral-800 border border-black/5 dark:border-white/10 flex items-center justify-center overflow-hidden group-hover:scale-110 transition-transform">
                       <img src={p.favicon} alt={p.name} className="w-12 h-12 object-cover" />
                     </div>
-                    <span className="text-xs text-neutral-700 dark:text-neutral-300">{p.name}</span>
+                    <span className="text-xs text-neutral-700 dark:text-neutral-300 text-center truncate w-full">{p.name}</span>
+                  </button>
+                ))}
+              </div>
+              <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">Bookmarks</h2>
+              <div className="grid grid-cols-6 gap-x-6 gap-y-4 mx-auto place-items-center">
+                {BOOKMARKS.map(b => (
+                  <button key={b.url} onClick={() => navigate(b.url)} className="flex flex-col items-center gap-1.5 group w-20">
+                    <div className="w-12 h-12 rounded-xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
+                      <img src={faviconFor(b.url)} alt={b.name} className="w-7 h-7" />
+                    </div>
+                    <span className="text-[11px] text-neutral-700 dark:text-neutral-300 text-center truncate w-full">{b.name}</span>
                   </button>
                 ))}
               </div>

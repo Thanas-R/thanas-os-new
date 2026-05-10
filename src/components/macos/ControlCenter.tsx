@@ -1,8 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wifi, Bluetooth, Radio, Moon, Sun, Volume2, VolumeX,
-  Keyboard, Airplay, Music, Play, SkipForward,
+  Keyboard, Airplay, Music, Play, SkipForward, Settings as SettingsIcon,
 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Slider } from '@/components/ui/slider';
@@ -14,7 +14,10 @@ interface Props {
 
 export const ControlCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { settings, updateSettings } = useMacOS();
+  const { settings, updateSettings, openApp } = useMacOS();
+  const [keyboardBright, setKeyboardBright] = useState(70);
+  const [airplayOn, setAirplayOn] = useState(false);
+  const [playing, setPlaying] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -83,19 +86,32 @@ export const ControlCenter = ({ open, onClose }: Props) => {
                 accent="bg-violet-500"
               />
               <Tile
-                onClick={() => {}}
+                onClick={() => setKeyboardBright(v => v >= 100 ? 0 : v + 25)}
                 icon={<Keyboard className="w-3.5 h-3.5" />}
-                label="Keyboard"
+                label={`Keyboard ${keyboardBright}%`}
                 accent="bg-amber-500"
+                active={keyboardBright > 0}
               />
               <Tile
-                onClick={() => {}}
+                onClick={() => setAirplayOn(v => !v)}
                 icon={<Airplay className="w-3.5 h-3.5" />}
-                label="AirPlay"
+                label={airplayOn ? 'AirPlay On' : 'AirPlay'}
                 accent="bg-blue-500"
+                active={airplayOn}
               />
             </div>
           </div>
+
+          {/* Quick open Settings */}
+          <button
+            onClick={() => { openApp('settings'); onClose(); }}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors mb-2"
+          >
+            <div className="w-6 h-6 rounded-full bg-neutral-500/70 flex items-center justify-center">
+              <SettingsIcon className="w-3.5 h-3.5" />
+            </div>
+            <div className="text-[12px] font-semibold">Settings…</div>
+          </button>
 
           {/* Display */}
           <SliderModule
@@ -122,7 +138,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="text-[12px] font-semibold truncate">Liquid Glass</div>
               <div className="text-[10.5px] text-white/60 truncate">ThanasOS Radio</div>
             </div>
-            <button className="p-1.5 rounded-full hover:bg-white/10"><Play className="w-4 h-4" /></button>
+            <button onClick={() => setPlaying(p => !p)} className="p-1.5 rounded-full hover:bg-white/10"><Play className={`w-4 h-4 ${playing ? 'opacity-100' : 'opacity-60'}`} /></button>
             <button className="p-1.5 rounded-full hover:bg-white/10"><SkipForward className="w-4 h-4" /></button>
           </div>
         </motion.div>

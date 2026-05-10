@@ -66,6 +66,11 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   const openApp = (appId: string) => {
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
+      // Launchpad: clicking dock icon again closes it
+      if (appId === 'launchpad') {
+        closeWindow(existingWindow.id);
+        return;
+      }
       // If window is already open and focused, minimize it
       minimizeWindow(existingWindow.id);
       return;
@@ -83,27 +88,30 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     const app = apps.find(a => a.id === appId);
     if (!app) return;
 
-    // Calculate available space (menu bar height = 28px, dock height ≈ 100px)
     const menuBarHeight = 28;
     const dockHeight = 100;
-    const availableHeight = window.innerHeight - menuBarHeight - dockHeight;
-    const defaultHeight = app.defaultSize?.height || 600;
-    const defaultWidth = app.defaultSize?.width || 800;
-    
-    // Ensure window fits in available space above dock
-    const maxHeight = Math.min(defaultHeight, availableHeight - 20);
-    
-    // Center window in available space above dock
-    const centerY = menuBarHeight + (availableHeight - maxHeight) / 2 + Math.random() * 30;
-    
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+    const availableHeight = vh - menuBarHeight - dockHeight;
+    const availableWidth = vw - 40;
+
+    // Cap the default size so windows don't overflow the usable area
+    const requestedW = app.defaultSize?.width || 800;
+    const requestedH = app.defaultSize?.height || 600;
+    const width = Math.min(requestedW, Math.max(420, availableWidth - 40));
+    const height = Math.min(requestedH, Math.max(360, availableHeight - 20));
+
+    // Center near (slightly above) the middle, with mild jitter so stacks fan out
+    const jitterX = (Math.random() - 0.5) * 40;
+    const jitterY = (Math.random() - 0.5) * 24;
+    const x = Math.max(10, Math.min(vw - width - 10, (vw - width) / 2 + jitterX));
+    const y = Math.max(menuBarHeight + 10, Math.min(vh - dockHeight - height - 10, menuBarHeight + (availableHeight - height) / 2 + jitterY));
+
     const newWindow: WindowState = {
       id: `${appId}-${Date.now()}`,
       appId,
-      position: {
-        x: window.innerWidth / 2 - defaultWidth / 2 + Math.random() * 50,
-        y: Math.max(menuBarHeight + 10, centerY),
-      },
-      size: { width: defaultWidth, height: maxHeight },
+      position: { x, y },
+      size: { width, height },
       isMinimized: false,
       isMaximized: false,
       zIndex: Math.max(...windows.map(w => w.zIndex), 0) + 1,

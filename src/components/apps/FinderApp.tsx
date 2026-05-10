@@ -30,7 +30,7 @@ type View = 'icons' | 'list' | 'columns';
 
 export const FinderApp = () => {
   const [path, setPath] = useState<string>(HOME);
-  const [view, setView] = useState<View>('columns');
+  const [view, setView] = useState<View>('icons');
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [selected, setSelected] = useState<string | null>(null);
 

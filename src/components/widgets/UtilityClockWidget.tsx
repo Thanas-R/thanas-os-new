@@ -90,7 +90,7 @@ export const UtilityClockWidget = ({ size = 200 }: { size?: number }) => {
       <div className="dial" />
       <div
         ref={rootRef}
-        className="utility-clock hour-style-text hour-text-style-large hour-display-style-all minute-style-line minute-display-style-none minute-text-style-none hand-style-normal"
+        className="utility-clock hour-style-text hour-text-style-small hour-display-style-all minute-style-line minute-display-style-major minute-text-style-none hand-style-normal"
       >
         <div className="clock" style={{ transform: `translate(-50%,-50%) scale(${scale.toFixed(3)})` }}>
           <div className="centre">

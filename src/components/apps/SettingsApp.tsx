@@ -253,12 +253,12 @@ export const SettingsApp = () => {
 
           {section === 'displays' && (
             <Card>
-              <Row label="Brightness" desc={`${settings.brightness ?? 80}%`}>
+              <Row label="Brightness" desc={`${settings.brightness ?? 100}%`}>
                 <input
                   type="range"
                   min={20}
                   max={100}
-                  value={settings.brightness ?? 80}
+                  value={settings.brightness ?? 100}
                   onChange={e => updateSettings({ brightness: +e.target.value })}
                   className="w-48"
                 />

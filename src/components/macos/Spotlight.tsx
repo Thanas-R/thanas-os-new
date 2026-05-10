@@ -81,6 +81,17 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
           className="fixed inset-0 z-[9999] flex items-start justify-center pt-24 bg-black/20 backdrop-blur-sm"
           onClick={onClose}
         >
+          {/* SVG goo filter to morph the chips into the search pill */}
+          <svg width="0" height="0" className="absolute" aria-hidden="true">
+            <defs>
+              <filter id="spotlight-goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur" />
+                <feColorMatrix in="blur" mode="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+              </filter>
+            </defs>
+          </svg>
           <motion.div
             initial={{ y: -16, opacity: 0, scale: 0.94 }}
             animate={{ y: 0, opacity: 1, scale: 1 }}
@@ -89,15 +100,17 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
             onClick={(e) => e.stopPropagation()}
             className="w-full max-w-2xl mx-4"
           >
-            {/* Pill row */}
+            {/* Pill row with goo morph */}
             <motion.div
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}
+              style={{ filter: 'url(#spotlight-goo)' }}
               className="flex items-center justify-end gap-3"
             >
               {/* Search pill */}
               <motion.div
                 layout
+                transition={{ type: 'spring', stiffness: 320, damping: 28 }}
                 className="flex-1 flex items-center gap-3 px-5 py-3 rounded-full liquid-glass-card text-white"
               >
                 <Search className="w-5 h-5 text-white/70" />
@@ -110,16 +123,16 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
                 />
               </motion.div>
 
-              {/* Shortcut chips appear on hover when no query */}
+              {/* Shortcut chips appear on hover when no query, animating in from behind the pill */}
               <AnimatePresence>
                 {hovered && !query && SHORTCUTS.map((s, idx) => (
                   <motion.button
                     key={s.id}
                     layout
-                    initial={{ scale: 0.6, opacity: 0, x: -20 }}
-                    animate={{ scale: 1, opacity: 1, x: 0 }}
-                    exit={{ scale: 0.6, opacity: 0, x: 20 }}
-                    transition={{ duration: 0.22, delay: idx * 0.04 }}
+                    initial={{ scale: 0.7, x: -1 * (60 * (idx + 1)) }}
+                    animate={{ scale: 1, x: 0 }}
+                    exit={{ scale: 0.7, x: 1 * (16 * (SHORTCUTS.length - idx - 1) + 60 * (SHORTCUTS.length - idx - 1)) }}
+                    transition={{ duration: 0.6, type: 'spring', bounce: 0.2, delay: idx * 0.05 }}
                     title={s.label}
                     onClick={() => {
                       if (s.id === 'apps') openApp('launchpad');

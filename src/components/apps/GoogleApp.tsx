@@ -382,13 +382,24 @@ const MenuRow = ({ label, onClick, disabled }: { label: string; onClick?: () => 
 
 const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> & Record<string, string>; light: boolean; onNavigate: (u: string) => void }) => {
   const [q, setQ] = useState('');
+  // Default tiles point to the user's portfolio projects.
+  const tiles = (() => {
+    try {
+      // Lazy import to avoid circular deps in production bundle.
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { PROJECTS } = require('@/lib/projects');
+      return PROJECTS.slice(0, 8).map((p: { name: string; liveUrl: string; favicon: string }) => ({
+        title: p.name, url: p.liveUrl, icon: p.favicon,
+      }));
+    } catch { return DEFAULT_FAVORITES; }
+  })();
   return (
-    <div className="h-full w-full flex flex-col items-center overflow-hidden" style={{ background: tk.bg, paddingTop: '12vh' }}>
+    <div className="h-full w-full flex flex-col items-center overflow-auto" style={{ background: tk.bg, paddingTop: '12vh' }}>
       <img
         src="https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png"
         alt="Google"
         className="mb-9"
-        style={{ width: 272, height: 92, filter: light ? undefined : 'none' }}
+        style={{ width: 272, height: 92 }}
       />
       <form
         onSubmit={(e) => { e.preventDefault(); onNavigate(q); }}
@@ -405,8 +416,8 @@ const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> &
         />
         <Mic className="w-5 h-5 cursor-pointer" style={{ color: tk.accent }} />
       </form>
-      <div className="flex flex-wrap justify-center gap-3 max-w-[600px] px-4">
-        {DEFAULT_FAVORITES.map(f => (
+      <div className="flex flex-wrap justify-center gap-3 max-w-[640px] px-4 pb-12">
+        {tiles.map((f: { title: string; url: string; icon: string }) => (
           <button
             key={f.url}
             onClick={() => onNavigate(f.url)}
@@ -415,8 +426,8 @@ const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> &
             onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = tk.card; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent'; }}
           >
-            <div className="w-12 h-12 rounded-full flex items-center justify-center p-2.5" style={{ background: tk.menuBg }}>
-              <img src={f.icon} alt="" className="w-6 h-6 object-contain" style={{ filter: f.title === 'GitHub' && !light ? 'invert(1)' : undefined }} />
+            <div className="w-12 h-12 rounded-2xl flex items-center justify-center p-1.5 overflow-hidden" style={{ background: '#fff' }}>
+              <img src={f.icon} alt="" className="w-9 h-9 object-contain" />
             </div>
             <div className="text-[12px] truncate w-full text-center" style={{ color: tk.tabText }}>{f.title}</div>
           </button>
@@ -425,3 +436,4 @@ const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> &
     </div>
   );
 };
+void light;

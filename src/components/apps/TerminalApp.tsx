@@ -342,8 +342,8 @@ const [lines, setLines] = useState<Line[]>([
 if (l.text === 'BANNER_TOP') {
   return (
     <div key={i} className="text-[#e6e6e6]">
-      
-      {/* login line */}
+
+      {/* Login text */}
       <div
         style={{
           fontFamily: 'Inter, sans-serif',
@@ -354,44 +354,51 @@ if (l.text === 'BANNER_TOP') {
         {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
       </div>
 
-      {/* MAIN ROW */}
+      {/* Row */}
       <div
         style={{
           display: 'flex',
-          flexWrap: 'nowrap',
           alignItems: 'center',
-          gap: '28px',
-          marginBottom: '14px',
-          width: '100%'
+          gap: '40px',
+          marginBottom: '18px'
         }}
       >
 
-        {/* ASCII */}
-        <pre
-          style={{
-            fontSize: '12px',
-            lineHeight: '12px',
-            margin: 0,
-            whiteSpace: 'pre',
-            flexShrink: 0,
-            fontFamily: '"SF Mono","JetBrains Mono",monospace'
-          }}
-        >
-{ASCII}
-        </pre>
-
-        {/* RIGHT SIDE CONTENT */}
+        {/* ASCII WRAPPER */}
         <div
           style={{
-            minWidth: '260px',
+            width: '280px',
+            height: '180px',
+            overflow: 'visible',
+            flexShrink: 0
+          }}
+        >
+          <pre
+            style={{
+              fontSize: '6px',
+              lineHeight: '6px',
+              margin: 0,
+              whiteSpace: 'pre',
+              transform: 'scale(2)',
+              transformOrigin: 'top left',
+              fontFamily: '"SF Mono","JetBrains Mono",monospace'
+            }}
+          >
+{ASCII}
+          </pre>
+        </div>
+
+        {/* Right Text */}
+        <div
+          style={{
             fontFamily: 'Inter, sans-serif',
             fontSize: '14px',
-            lineHeight: '1.65'
+            lineHeight: '1.7'
           }}
         >
           <div
             style={{
-              fontSize: '18px',
+              fontSize: '20px',
               fontWeight: 600,
               marginBottom: '8px'
             }}
@@ -399,12 +406,12 @@ if (l.text === 'BANNER_TOP') {
             ThanasOS - macOS Tahoe Edition
           </div>
 
-          <div style={{ opacity: 0.82 }}>
-            Type <span style={{ fontWeight: 600 }}>help</span> for commands
+          <div style={{ opacity: 0.8 }}>
+            Type <b>help</b> for commands
           </div>
 
-          <div style={{ opacity: 0.82 }}>
-            Use <span style={{ fontWeight: 600 }}>status</span> for system info
+          <div style={{ opacity: 0.8 }}>
+            Use <b>status</b> for system info
           </div>
         </div>
 

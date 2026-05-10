@@ -15,6 +15,7 @@ interface MacOSContextType {
   updateWindowPosition: (windowId: string, position: { x: number; y: number }) => void;
   updateWindowSize: (windowId: string, size: { width: number; height: number }) => void;
   updateSettings: (settings: Partial<MacOSSettings>) => void;
+  openUrl: (url: string) => void;
   apps: AppConfig[];
 }
 
@@ -178,6 +179,13 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     setSettings(prev => ({ ...prev, ...newSettings }));
   };
 
+  const openUrl = (url: string) => {
+    // route through default browser
+    import('@/lib/installedApps').then(m => m.setPendingSafariUrl(url));
+    const browser = settings.defaultBrowser === 'google' && settings.googleInstalled ? 'google' : 'safari';
+    openApp(browser);
+  };
+
   return (
     <MacOSContext.Provider
       value={{
@@ -194,6 +202,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         updateWindowPosition,
         updateWindowSize,
         updateSettings,
+        openUrl,
         apps,
       }}
     >

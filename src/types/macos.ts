@@ -47,6 +47,9 @@ export interface MacOSSettings {
   bluetooth?: boolean;
   airdrop?: boolean;
   focus?: boolean;
+  doNotDisturb?: boolean;
+  defaultBrowser?: 'safari' | 'google';
+  googleInstalled?: boolean;
 }
 
 export interface DockItem {

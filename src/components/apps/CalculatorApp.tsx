@@ -1,126 +1,155 @@
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Delete } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
+import { registerAppMenus } from '@/types/macos';
+
+type Op = '+' | '-' | '*' | '/' | '';
 
 export const CalculatorApp = () => {
   const [display, setDisplay] = useState('0');
-  const [equation, setEquation] = useState('');
-  const [waitingForOperand, setWaitingForOperand] = useState(false);
+  const [oldValue, setOldValue] = useState(0);
+  const [value, setValue] = useState(0);
+  const [sign, setSign] = useState(1);
+  const [op, setOp] = useState<Op>('');
+  const [justEval, setJustEval] = useState(false);
 
-  const inputDigit = (digit: string) => {
-    if (waitingForOperand) {
-      setDisplay(digit);
-      setWaitingForOperand(false);
-    } else {
-      setDisplay(display === '0' ? digit : display + digit);
+  const fmt = (n: number) => {
+    if (!isFinite(n)) return 'Error';
+    const s = String(n);
+    if (s.includes('.')) {
+      const [a, b] = s.split('.');
+      return a.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, ',') + '.' + b;
     }
+    return s.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, ',');
   };
 
-  const inputDecimal = () => {
-    if (waitingForOperand) {
-      setDisplay('0.');
-      setWaitingForOperand(false);
-    } else if (display.indexOf('.') === -1) {
-      setDisplay(display + '.');
+  useEffect(() => { setDisplay(fmt(sign * value)); }, [value, sign]);
+
+  const inputDigit = useCallback((n: number) => {
+    if (justEval) { setValue(n); setSign(1); setOp(''); setJustEval(false); return; }
+    setValue(v => v * 10 + n);
+  }, [justEval]);
+
+  const allClear = useCallback(() => {
+    setValue(0); setOldValue(0); setSign(1); setOp(''); setJustEval(false);
+  }, []);
+
+  const toggleSign = useCallback(() => setSign(s => s * -1), []);
+  const percent = useCallback(() => setValue(v => v / 100), []);
+
+  const operate = useCallback((next: Op) => {
+    setOldValue(sign * value);
+    setValue(0);
+    setSign(1);
+    setOp(next);
+    setJustEval(false);
+  }, [sign, value]);
+
+  const equals = useCallback(() => {
+    let result = sign * value;
+    const cur = sign * value;
+    switch (op) {
+      case '+': result = oldValue + cur; break;
+      case '-': result = oldValue - cur; break;
+      case '*': result = oldValue * cur; break;
+      case '/': result = cur === 0 ? NaN : Number((oldValue / cur).toFixed(8)); break;
     }
-  };
+    setValue(Math.abs(result));
+    setSign(result < 0 ? -1 : 1);
+    setOp('');
+    setJustEval(true);
+  }, [op, oldValue, value, sign]);
 
-  const clear = () => {
-    setDisplay('0');
-    setEquation('');
-    setWaitingForOperand(false);
-  };
+  // Register menus + keyboard
+  useEffect(() => {
+    registerAppMenus('calculator', {
+      Edit: [
+        { label: 'Copy', shortcut: '⌘C', action: () => navigator.clipboard?.writeText(display) },
+        { label: 'Clear', shortcut: 'C', action: allClear },
+      ],
+      View: [
+        { label: 'Basic' },
+        { label: 'Scientific (coming soon)' },
+      ],
+    });
+    return () => registerAppMenus('calculator', null);
+  }, [display, allClear]);
 
-  const performOperation = (nextOperator: string) => {
-    const inputValue = parseFloat(display);
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key >= '0' && e.key <= '9') inputDigit(Number(e.key));
+      else if (e.key === '+' || e.key === '-' || e.key === '*' || e.key === '/') operate(e.key as Op);
+      else if (e.key === 'Enter' || e.key === '=') equals();
+      else if (e.key === 'Escape' || e.key.toLowerCase() === 'c') allClear();
+      else if (e.key === '%') percent();
+    };
+    window.addEventListener('keyup', onKey);
+    return () => window.removeEventListener('keyup', onKey);
+  }, [inputDigit, operate, equals, allClear, percent]);
 
-    if (equation === '') {
-      setEquation(`${inputValue} ${nextOperator}`);
-    } else {
-      const parts = equation.split(' ');
-      const prevValue = parseFloat(parts[0]);
-      const operator = parts[1];
-      
-      let newValue = prevValue;
-      
-      switch (operator) {
-        case '+':
-          newValue = prevValue + inputValue;
-          break;
-        case '-':
-          newValue = prevValue - inputValue;
-          break;
-        case '×':
-          newValue = prevValue * inputValue;
-          break;
-        case '÷':
-          newValue = prevValue / inputValue;
-          break;
-      }
-      
-      setDisplay(String(newValue));
-      setEquation(nextOperator === '=' ? '' : `${newValue} ${nextOperator}`);
-    }
-    
-    setWaitingForOperand(true);
-  };
-
-  const buttons = [
-    ['AC', '±', '%', '÷'],
-    ['7', '8', '9', '×'],
-    ['4', '5', '6', '-'],
-    ['1', '2', '3', '+'],
-    ['0', '.', '='],
-  ];
-
-  const handleClick = (btn: string) => {
-    if (btn === 'AC') clear();
-    else if (btn === '±') setDisplay(String(parseFloat(display) * -1));
-    else if (btn === '%') setDisplay(String(parseFloat(display) / 100));
-    else if (['+', '-', '×', '÷', '='].includes(btn)) performOperation(btn);
-    else if (btn === '.') inputDecimal();
-    else inputDigit(btn);
+  const Btn = ({ children, onClick, variant = 'gray', span = false, br }: {
+    children: React.ReactNode; onClick: () => void;
+    variant?: 'gray' | 'dark' | 'orange'; span?: boolean; br?: 'bl' | 'br';
+  }) => {
+    const bg = variant === 'orange' ? '#ff9f0b' : variant === 'dark' ? '#626065' : '#7c7b7f';
+    return (
+      <button
+        onClick={onClick}
+        className="text-white font-medium m-px transition-[filter] hover:brightness-110 active:brightness-95"
+        style={{
+          background: bg, border: 'none', fontSize: '1.7rem', fontWeight: 500,
+          width: span ? 'calc(50% - 3px)' : 'calc(25% - 2.5px)',
+          height: '100%',
+          borderBottomLeftRadius: br === 'bl' ? '1.1rem' : 0,
+          borderBottomRightRadius: br === 'br' ? '1.4rem' : 0,
+        }}
+      >{children}</button>
+    );
   };
 
   return (
-    <div className="flex flex-col h-full justify-center items-center p-8 bg-gradient-to-br from-background to-muted/20">
-      <div className="w-full max-w-sm backdrop-blur-macos-heavy rounded-3xl p-6 shadow-macos-glass"
-        style={{
-          background: 'hsl(var(--macos-glass))',
-          border: '1px solid hsl(var(--macos-glass-border))',
-        }}
-      >
-        {/* Display */}
-        <div className="mb-6 p-6 rounded-2xl bg-black/10 backdrop-blur-sm">
-          {equation && (
-            <div className="text-sm text-muted-foreground mb-1 text-right font-mono">
-              {equation}
-            </div>
-          )}
-          <div className="text-4xl font-light text-right font-mono tabular-nums truncate">
-            {display}
-          </div>
+    <div
+      className="h-full w-full flex flex-col select-none"
+      style={{ background: '#504e53', fontFamily: 'Montserrat, system-ui, sans-serif' }}
+    >
+      {/* Display */}
+      <div className="px-6 pt-10 pb-4">
+        <div
+          className="text-white text-right font-light"
+          style={{ fontSize: '4.5rem', lineHeight: 0.85, letterSpacing: '-0.02em', overflow: 'hidden', whiteSpace: 'nowrap' }}
+        >
+          {display}
         </div>
+      </div>
 
-        {/* Buttons */}
-        <div className="grid gap-3">
-          {buttons.map((row, i) => (
-            <div key={i} className="grid gap-3" style={{ gridTemplateColumns: row.length === 3 ? '2fr 1fr 1fr' : 'repeat(4, 1fr)' }}>
-              {row.map((btn) => (
-                <Button
-                  key={btn}
-                  onClick={() => handleClick(btn)}
-                  variant={['÷', '×', '-', '+', '='].includes(btn) ? 'default' : 'outline'}
-                  className={`h-16 text-xl font-medium backdrop-blur-sm ${
-                    ['÷', '×', '-', '+', '='].includes(btn) ? 'bg-primary/80' : 'bg-background/40'
-                  } hover:scale-105 transition-transform`}
-                  style={{ gridColumn: btn === '0' ? 'span 2' : undefined }}
-                >
-                  {btn === 'AC' ? <Delete className="w-5 h-5" /> : btn}
-                </Button>
-              ))}
-            </div>
-          ))}
+      {/* Buttons */}
+      <div className="flex-1 flex flex-col" style={{ fontSize: 0 }}>
+        <div className="flex" style={{ height: '20%' }}>
+          <Btn variant="dark" onClick={allClear}>AC</Btn>
+          <Btn variant="dark" onClick={toggleSign}>±</Btn>
+          <Btn variant="dark" onClick={percent}>％</Btn>
+          <Btn variant="orange" onClick={() => operate('/')}>÷</Btn>
+        </div>
+        <div className="flex" style={{ height: '20%' }}>
+          <Btn onClick={() => inputDigit(7)}>7</Btn>
+          <Btn onClick={() => inputDigit(8)}>8</Btn>
+          <Btn onClick={() => inputDigit(9)}>9</Btn>
+          <Btn variant="orange" onClick={() => operate('*')}>×</Btn>
+        </div>
+        <div className="flex" style={{ height: '20%' }}>
+          <Btn onClick={() => inputDigit(4)}>4</Btn>
+          <Btn onClick={() => inputDigit(5)}>5</Btn>
+          <Btn onClick={() => inputDigit(6)}>6</Btn>
+          <Btn variant="orange" onClick={() => operate('-')}>−</Btn>
+        </div>
+        <div className="flex" style={{ height: '20%' }}>
+          <Btn onClick={() => inputDigit(1)}>1</Btn>
+          <Btn onClick={() => inputDigit(2)}>2</Btn>
+          <Btn onClick={() => inputDigit(3)}>3</Btn>
+          <Btn variant="orange" onClick={() => operate('+')}>+</Btn>
+        </div>
+        <div className="flex" style={{ height: '20%' }}>
+          <Btn span br="bl" onClick={() => inputDigit(0)}>0</Btn>
+          <Btn onClick={() => { /* decimal placeholder */ }}>,</Btn>
+          <Btn variant="orange" br="br" onClick={equals}>＝</Btn>
         </div>
       </div>
     </div>

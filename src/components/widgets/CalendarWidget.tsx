@@ -23,7 +23,7 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-2xl p-3 select-none shadow-xl"
+      className="rounded-3xl p-3 select-none shadow-xl"
       style={{
         width: 172,
         height: 172,

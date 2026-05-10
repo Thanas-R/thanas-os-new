@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, RotateCw, Home, Lock, Star, Bookmark as Bookmark
 import { registerAppMenus } from '@/types/macos';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
+import { PROJECTS } from '@/lib/projects';
 
 interface Tab {
   id: string;
@@ -380,19 +381,9 @@ const MenuRow = ({ label, onClick, disabled }: { label: string; onClick?: () => 
   >{label}</div>
 );
 
-const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> & Record<string, string>; light: boolean; onNavigate: (u: string) => void }) => {
+const NewTabPage = ({ tk, onNavigate }: { tk: ReturnType<typeof Object> & Record<string, string>; light: boolean; onNavigate: (u: string) => void }) => {
   const [q, setQ] = useState('');
-  // Default tiles point to the user's portfolio projects.
-  const tiles = (() => {
-    try {
-      // Lazy import to avoid circular deps in production bundle.
-      // eslint-disable-next-line @typescript-eslint/no-require-imports
-      const { PROJECTS } = require('@/lib/projects');
-      return PROJECTS.slice(0, 8).map((p: { name: string; liveUrl: string; favicon: string }) => ({
-        title: p.name, url: p.liveUrl, icon: p.favicon,
-      }));
-    } catch { return DEFAULT_FAVORITES; }
-  })();
+  const tiles = PROJECTS.slice(0, 8).map(p => ({ title: p.name, url: p.liveUrl, icon: p.favicon }));
   return (
     <div className="h-full w-full flex flex-col items-center overflow-auto" style={{ background: tk.bg, paddingTop: '12vh' }}>
       <img
@@ -436,4 +427,3 @@ const NewTabPage = ({ tk, light, onNavigate }: { tk: ReturnType<typeof Object> &
     </div>
   );
 };
-void light;

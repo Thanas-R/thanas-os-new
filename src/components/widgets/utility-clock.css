@@ -9,9 +9,10 @@
   border: 1px solid rgba(255,255,255,0.05);
 }
 
+/* White inner dial made smaller by 2px inward */
 .utility-clock-shell .dial {
   position: absolute;
-  inset: 3.5%;
+  inset: calc(3.5% + 2px);
   border-radius: 50%;
   background: #f8f8f8;
   box-shadow: inset 0 0 0 2px #1C1C1E;
@@ -51,9 +52,6 @@
 }
 
 /* Hands */
-/* Tail near center shortened only. Outer reach unchanged */
-
-/* Orange seconds front */
 .utility-clock .second-hand-front {
   width: 3px;
   height: 132px;
@@ -62,7 +60,6 @@
   transform: translate(-50%,-100%) translateY(-4px);
 }
 
-/* Orange seconds rear tail */
 .utility-clock .second-hand-back {
   width: 3px;
   height: 12px;
@@ -71,7 +68,6 @@
   transform: translate(-50%,-100%) translateY(18px);
 }
 
-/* Thin hand stem */
 .utility-clock .thin-hand {
   width: 4px;
   height: 62px;
@@ -80,7 +76,6 @@
   transform: translate(-50%,-100%) translateY(-6px);
 }
 
-/* Main hand body */
 .utility-clock .fat-hand {
   width: 10px;
   height: 68px;
@@ -140,7 +135,6 @@
 .utility-clock .hour-10 .content { padding-left: 0.35ex; }
 .utility-clock .hour-11 .content { padding-left: 0.20ex; }
 
-/* Style toggles */
 .utility-clock.hour-style-text .hour-pill {
   opacity: 0;
 }

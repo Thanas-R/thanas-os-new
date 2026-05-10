@@ -6,7 +6,7 @@ import { BLOG_POSTS } from '@/lib/blogPosts';
 
 export const NotesApp = () => {
   const [activeId, setActiveId] = useState(BLOG_POSTS[0].id);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState('');
   const active = BLOG_POSTS.find(p => p.id === activeId)!;
 

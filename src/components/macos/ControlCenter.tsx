@@ -130,7 +130,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               label={settings.theme === 'dark' ? 'Dark' : 'Light'}
             />
             <Square
-              onClick={() => { openApp('controlpanel'); onClose(); }}
+              onClick={() => { openApp('settings'); onClose(); }}
               icon={<Sparkles className="w-4 h-4" />}
               label="Settings"
             />

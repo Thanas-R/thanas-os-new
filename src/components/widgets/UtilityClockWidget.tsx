@@ -76,9 +76,14 @@ export const UtilityClockWidget = ({ size = 200 }: { size?: number }) => {
     return () => cancelAnimationFrame(raf);
   }, []);
 
-  // Slightly larger inner dial: scale to a smaller native size so hands fill more.
-  const NATIVE = 300;
-  const scale = size / NATIVE;
+  // Native dial radius is ~150px (longest hand 137px). The inner white circle of the
+  // chassis sits at inset 4% (radius ~ size*0.46). Scale the clock so the second hand
+  // (137 native px) lands inside that radius with a small margin.
+  // 137 * scale <= size*0.46 - 6  → scale <= (size*0.46 - 6) / 137
+  const innerRadius = size * 0.46 - 6;
+  const NATIVE = 150; // notional radius for hand length
+  const scale = Math.min(1.05, innerRadius / 137);
+  void NATIVE;
 
   return (
     <div className="utility-clock-shell" style={{ width: size, height: size }}>

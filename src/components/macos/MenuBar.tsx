@@ -145,8 +145,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
 
   const renderDropdown = (items: MenuItem[]) => (
     <div
-      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-2xl py-1.5 z-[100] liquid-glass-card text-white text-[13px] shadow-2xl"
+      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-xl py-1.5 z-[100] text-white text-[13px]"
       onClick={(e) => e.stopPropagation()}
+      style={{
+        background: 'rgba(30,30,34,0.55)',
+        backdropFilter: 'blur(40px) saturate(200%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+      }}
     >
       {items.map((it, i) =>
         it.separator ? (
@@ -156,7 +163,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             key={i}
             disabled={!it.action}
             onClick={() => { it.action?.(); setActiveMenu(null); setAppleOpen(false); }}
-            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-blue-500/80 hover:text-white' : 'opacity-50 cursor-default'}`}
+            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-blue-500/85 hover:text-white' : 'opacity-50 cursor-default'}`}
             style={{ width: 'calc(100% - 8px)' }}
           >
             <span>{it.label}</span>
@@ -171,7 +178,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     <>
       <div
         ref={menuBarRef}
-        className="fixed top-0 left-0 right-0 h-7 liquid-glass-dark flex items-center justify-between px-3 z-50 text-[13px] text-white"
+        className="fixed top-0 left-0 right-0 h-7 flex items-center justify-between px-3 z-50 text-[13px] text-white"
+        style={{
+          margin: 0,
+          borderRadius: 0,
+          background: 'rgba(20,20,25,0.45)',
+          backdropFilter: 'blur(28px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          borderBottom: '1px solid rgba(255,255,255,0.08)',
+        }}
       >
         <div className="flex items-center gap-1 relative">
           {/* Apple/turtle menu — own state, isolated */}

@@ -343,79 +343,94 @@ if (l.text === 'BANNER_TOP') {
   return (
     <div key={i} className="text-[#e6e6e6]">
 
-      {/* Login text */}
+      {/* Login */}
       <div
         style={{
-          fontFamily: 'Inter, sans-serif',
           fontSize: '13px',
-          marginBottom: '8px'
+          marginBottom: '10px',
+          fontFamily: 'Inter, sans-serif'
         }}
       >
         {`Last login: ${new Date().toString().split(' GMT')[0]} on ttys001`}
       </div>
 
-      {/* Row */}
-      <div
+      {/* TABLE LAYOUT */}
+      <table
         style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '40px',
+          borderCollapse: 'collapse',
           marginBottom: '18px'
         }}
       >
+        <tbody>
+          <tr>
 
-        {/* ASCII WRAPPER */}
-        <div
-          style={{
-            width: '280px',
-            height: '180px',
-            overflow: 'visible',
-            flexShrink: 0
-          }}
-        >
-          <pre
-            style={{
-              fontSize: '6px',
-              lineHeight: '6px',
-              margin: 0,
-              whiteSpace: 'pre',
-              transform: 'scale(2)',
-              transformOrigin: 'top left',
-              fontFamily: '"SF Mono","JetBrains Mono",monospace'
-            }}
-          >
+            {/* ASCII COLUMN */}
+            <td
+              style={{
+                width: '520px',
+                verticalAlign: 'top',
+                paddingRight: '30px'
+              }}
+            >
+              <pre
+                style={{
+                  margin: 0,
+                  whiteSpace: 'pre',
+                  fontSize: '12px',
+                  lineHeight: '12px',
+                  transform: 'scale(2)',
+                  transformOrigin: 'top left',
+                  width: '260px',
+                  height: '180px',
+                  fontFamily: '"SF Mono","JetBrains Mono",monospace'
+                }}
+              >
 {ASCII}
-          </pre>
-        </div>
+              </pre>
+            </td>
 
-        {/* Right Text */}
-        <div
-          style={{
-            fontFamily: 'Inter, sans-serif',
-            fontSize: '14px',
-            lineHeight: '1.7'
-          }}
-        >
-          <div
-            style={{
-              fontSize: '20px',
-              fontWeight: 600,
-              marginBottom: '8px'
-            }}
-          >
-            ThanasOS - macOS Tahoe Edition
-          </div>
+            {/* TEXT COLUMN */}
+            <td
+              style={{
+                verticalAlign: 'middle',
+                fontFamily: 'Inter, sans-serif'
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '24px',
+                  fontWeight: 600,
+                  marginBottom: '10px'
+                }}
+              >
+                ThanasOS
+              </div>
 
-          <div style={{ opacity: 0.8 }}>
-            Type <b>help</b> for commands
-          </div>
+              <div
+                style={{
+                  fontSize: '16px',
+                  opacity: 0.8,
+                  marginBottom: '8px'
+                }}
+              >
+                macOS Tahoe Edition
+              </div>
 
-          <div style={{ opacity: 0.8 }}>
-            Use <b>status</b> for system info
-          </div>
-        </div>
+              <div
+                style={{
+                  fontSize: '14px',
+                  opacity: 0.75,
+                  lineHeight: '1.8'
+                }}
+              >
+                Type <b>help</b> for commands<br />
+                Use <b>status</b> for system info
+              </div>
+            </td>
 
-      </div>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

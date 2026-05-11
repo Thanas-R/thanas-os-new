@@ -4,7 +4,7 @@ import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
-import ControlCentreIcon from '@/assets/control-centre.svg?react';
+import controlCenterIcon from '@/assets/control-centre.svg';
 import { ShortcutsModal } from './ShortcutsModal';
 import { HelpModal } from './HelpModal';
 import { ControlCenter } from './ControlCenter';
@@ -34,6 +34,7 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
             style={{ width: `${pct}%`, background: fillColor }}
           />
         </div>
+        {/* nub */}
         <div
           className="absolute top-1/2 -translate-y-1/2"
           style={{
@@ -44,11 +45,11 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
         />
         {charging && (
           <Zap
-            fill="white"
-            stroke="white"
-            strokeWidth={1.8}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
-          />
+  fill="white"
+  stroke="white"
+  strokeWidth={1.8}
+  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
+/>
         )}
       </div>
     </div>
@@ -87,8 +88,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       setBatteryCharging(!!battery.charging);
     };
     nav.getBattery().then((b: any) => {
-      battery = b;
-      update();
+      battery = b; update();
       b.addEventListener('levelchange', update);
       b.addEventListener('chargingchange', update);
     });
@@ -105,10 +105,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     const off = () => setOnline(false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
-    return () => {
-      window.removeEventListener('online', on);
-      window.removeEventListener('offline', off);
-    };
+    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
 
   const focusedWindow = windows.find(w => w.id === focusedWindowId && !w.isMinimized);
@@ -185,16 +182,13 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     ];
 
     return [
-      {
-        label: appName,
-        items: [
-          { label: `About ${appName}`, action: () => openApp('about') },
-          { separator: true },
-          { label: `Hide ${appName}`, shortcut: '⌘H', action: () => focusActive && closeWindow(focusActive.id) },
-          { separator: true },
-          { label: `Quit ${appName}`, shortcut: '⌘Q', action: () => focusActive && closeWindow(focusActive.id) },
-        ],
-      },
+      { label: appName, items: [
+        { label: `About ${appName}`, action: () => openApp('about') },
+        { separator: true },
+        { label: `Hide ${appName}`, shortcut: '⌘H', action: () => focusActive && closeWindow(focusActive.id) },
+        { separator: true },
+        { label: `Quit ${appName}`, shortcut: '⌘Q', action: () => focusActive && closeWindow(focusActive.id) },
+      ]},
       { label: 'File', items: customMenus?.File ?? defaultFile },
       { label: 'Edit', items: customMenus?.Edit ?? defaultEdit },
       { label: 'View', items: customMenus?.View ?? defaultView },
@@ -217,26 +211,23 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
 
   const formatTime = (d: Date) =>
     d.toLocaleTimeString('en-US', {
-      weekday: 'short',
-      month: 'short',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true,
+      weekday: 'short', month: 'short', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true,
     });
 
+  // Fully blurred liquid-glass dropdown (Inter, larger text, no shortcut keys)
   const renderDropdown = (items: MenuItem[]) => (
     <div
       className="fixed top-8 left-2 mt-1 min-w-[260px] rounded-xl py-1.5 z-[100] text-white"
       style={{
-        background: 'rgba(28,28,32,0.85)',
-        backdropFilter: 'blur(28px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-        border: '1px solid rgba(255,255,255,0.12)',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-        fontFamily: "'Inter', -apple-system, sans-serif",
-        fontSize: '14px',
-      }}
+  background: 'rgba(28,28,32,0.85)',
+  backdropFilter: 'blur(28px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+  border: '1px solid rgba(255,255,255,0.12)',
+  boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+  fontFamily: "'Inter', -apple-system, sans-serif",
+  fontSize: '14px',
+}}
       onClick={(e) => e.stopPropagation()}
     >
       {items.map((it, i) =>
@@ -246,11 +237,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <button
             key={i}
             disabled={!it.action}
-            onClick={() => {
-              it.action?.();
-              setActiveMenu(null);
-              setAppleOpen(false);
-            }}
+            onClick={() => { it.action?.(); setActiveMenu(null); setAppleOpen(false); }}
             className={`flex items-center px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-white/15' : 'opacity-50 cursor-default'}`}
             style={{ width: 'calc(100% - 8px)' }}
           >
@@ -276,21 +263,13 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         }}
       >
         <div className="flex items-center gap-1 relative">
+          {/* Turtle (Apple) menu */}
           <div
             className="relative"
-            onMouseEnter={() => {
-              if (activeMenu || appleOpen) {
-                setActiveMenu(null);
-                setAppleOpen(true);
-              }
-            }}
+            onMouseEnter={() => { if (activeMenu || appleOpen) { setActiveMenu(null); setAppleOpen(true); } }}
           >
             <button
-              onClick={(e) => {
-                e.stopPropagation();
-                setActiveMenu(null);
-                setAppleOpen(o => !o);
-              }}
+              onClick={(e) => { e.stopPropagation(); setActiveMenu(null); setAppleOpen(o => !o); }}
               className={`px-2 py-0.5 rounded hover:bg-white/15 flex items-center ${appleOpen ? 'bg-white/20' : ''}`}
             >
               <img src={turtleLogo} alt="Logo" className="h-5 w-auto object-contain" />
@@ -302,19 +281,10 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             <div
               key={m.label}
               className="relative"
-              onMouseEnter={() => {
-                if (activeMenu || appleOpen) {
-                  setAppleOpen(false);
-                  setActiveMenu(m.label);
-                }
-              }}
+              onMouseEnter={() => { if (activeMenu || appleOpen) { setAppleOpen(false); setActiveMenu(m.label); } }}
             >
               <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setAppleOpen(false);
-                  setActiveMenu(activeMenu === m.label ? null : m.label);
-                }}
+                onClick={(e) => { e.stopPropagation(); setAppleOpen(false); setActiveMenu(activeMenu === m.label ? null : m.label); }}
                 className={`px-2.5 py-0.5 rounded hover:bg-white/15 ${
                   idx === 0 ? 'font-semibold' : ''
                 } ${activeMenu === m.label ? 'bg-white/20' : ''}`}
@@ -346,17 +316,11 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               </div>
               <div className="mt-3 divide-y divide-border rounded-md border border-border">
                 <div className="flex items-center justify-between px-2.5 py-1.5 text-[12px]">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <Plug className="w-3.5 h-3.5" />
-                    Power Source
-                  </span>
+                  <span className="flex items-center gap-2 text-muted-foreground"><Plug className="w-3.5 h-3.5" />Power Source</span>
                   <span>{batteryCharging ? 'Power Adapter' : 'Battery'}</span>
                 </div>
                 <div className="flex items-center justify-between px-2.5 py-1.5 text-[12px]">
-                  <span className="flex items-center gap-2 text-muted-foreground">
-                    <ClockIcon className="w-3.5 h-3.5" />
-                    Time Remaining
-                  </span>
+                  <span className="flex items-center gap-2 text-muted-foreground"><ClockIcon className="w-3.5 h-3.5" />Time Remaining</span>
                   <span>
                     {batteryLevel === null
                       ? '—'
@@ -375,27 +339,22 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               </button>
             </PopoverContent>
           </Popover>
-
           <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
             <IoIosWifi className="w-[20.5px] h-[20.5px]" />
           </button>
-
           <button className="p-1 hover:bg-white/15 rounded" title={`Volume ${settings.volume ?? 65}%`}>
             <Volume2 className="w-4 h-4" />
           </button>
-
           <button onClick={onSpotlightClick} className="p-1 hover:bg-white/15 rounded" title="Spotlight (⌘K)">
             <Search className="w-4 h-4" />
           </button>
-
           <button
             onClick={() => setCcOpen(o => !o)}
             className={`p-1 hover:bg-white/15 rounded flex items-center ${ccOpen ? 'bg-white/20' : ''}`}
             title="Control Center"
           >
-            <ControlCentreIcon className="h-4 w-4 text-white" />
+            <img src={controlCenterIcon} alt="Control Center" className="h-4 w-auto object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
           </button>
-
           <Popover>
             <PopoverTrigger asChild>
               <button className="p-1 hover:bg-white/15 rounded">

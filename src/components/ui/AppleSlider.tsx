@@ -89,9 +89,9 @@ export const AppleSlider = ({
         style={{
           left: `${pct}%`,
           transform: `translate(-50%, -50%) ${dragging ? 'scaleY(0.96) scaleX(1.08)' : ''}`,
-          width: 30,
+          width: 33,
           height: 20,
-          background: dragging ? 'transparent' : '#fff',
+          background: '#fff',
           boxShadow: dragging ? 'none' : '0 1px 6px rgba(0,30,63,0.1), 0 0 2px rgba(0,9,20,0.1)',
           transition: 'transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease',
         }}

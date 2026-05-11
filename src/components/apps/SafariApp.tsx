@@ -298,7 +298,7 @@ export const SafariApp = () => {
       {/* Bookmarks bar */}
       {showBookmarksBar && (
         <div className="flex items-center gap-1 px-3 py-1 bg-neutral-50/80 dark:bg-neutral-900/60 border-b border-black/10 dark:border-white/10 overflow-x-auto">
-          {BOOKMARKS.map(b => (
+          {bookmarks.map(b => (
             <button
               key={b.url}
               onClick={() => navigate(b.url)}
@@ -316,7 +316,7 @@ export const SafariApp = () => {
         {showSidebar && (
           <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
-            {BOOKMARKS.map(b => (
+            {bookmarks.map(b => (
               <button
                 key={b.url}
                 onClick={() => navigate(b.url)}
@@ -345,7 +345,7 @@ export const SafariApp = () => {
               </div>
               <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">Bookmarks</h2>
               <div className="grid grid-cols-6 gap-x-6 gap-y-4 mx-auto place-items-center">
-                {BOOKMARKS.map(b => (
+                {bookmarks.map(b => (
                   <button key={b.url} onClick={() => navigate(b.url)} className="flex flex-col items-center gap-1.5 group w-20">
                     <div className="w-12 h-12 rounded-xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <img src={faviconFor(b.url)} alt={b.name} className="w-7 h-7" />

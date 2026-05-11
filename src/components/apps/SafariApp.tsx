@@ -306,21 +306,7 @@ export const SafariApp = () => {
         </div>
       </div>
 
-      {/* Bookmarks bar */}
-      {showBookmarksBar && (
-        <div className="flex items-center gap-1 px-3 py-1 bg-neutral-50/80 dark:bg-neutral-900/60 border-b border-black/10 dark:border-white/10 overflow-x-auto">
-          {bookmarks.map(b => (
-            <button
-              key={b.url}
-              onClick={() => navigate(b.url)}
-              className="flex items-center gap-1.5 px-2 py-0.5 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[12px] text-neutral-700 dark:text-neutral-300 whitespace-nowrap"
-            >
-              <img src={faviconFor(b.url)} alt="" className="w-3.5 h-3.5" />
-              {b.name}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Bookmarks bar removed; bookmarks live in the sidebar */}
 
       {/* Body: optional sidebar + content */}
       <div className="flex-1 flex overflow-hidden">

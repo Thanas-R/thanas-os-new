@@ -234,7 +234,7 @@ export const Dock = () => {
       
       <div
         ref={dockRef}
-        className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl shadow-macos-glass z-50 ${
+        className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl shadow-macos-glass z-[70] ${
           settings.reducedMotion ? '' : 'transition-all duration-500 ease-out'
         } ${
           (settings.dockAutoHide && !isDockVisible) ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'

@@ -140,7 +140,7 @@ export const SettingsApp = () => {
           </div>
         </button>
 
-        <nav className="flex-1 overflow-auto px-2 pb-3 space-y-0.5">
+        <nav className="flex-1 overflow-auto px-2 pb-3 pt-[2px] space-y-0.5">
           {filteredSidebar.map((n, i) => {
             // Insert separators between groups
             const prev = filteredSidebar[i - 1];
@@ -378,7 +378,7 @@ const KV = ({ k, v }: { k: string; v: string }) => (
 );
 
 const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: any; tint: string; active: boolean; onClick: () => void }) => (
-  <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1 rounded-md text-[12.5px] transition-colors ${
+  <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1 rounded-md text-[13.5px] transition-colors ${
     active ? 'bg-blue-500 text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
   }`}>
     <span className="w-5 h-5 rounded-[5px] flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>

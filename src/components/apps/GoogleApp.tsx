@@ -163,6 +163,10 @@ export const GoogleApp = () => {
       updateTab(id, { loading: false, title: 'New Tab' });
       return;
     }
+    if (norm === PRANK_URL) {
+      updateTab(id, { loading: false, content: PRANK_DOC, title: 'well, well, well…' });
+      return;
+    }
 
     try {
       let content = await raceProxies(norm);

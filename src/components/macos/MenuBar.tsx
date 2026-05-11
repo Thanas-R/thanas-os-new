@@ -4,7 +4,6 @@ import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
-import controlCenterIcon from '@/assets/control-center-icon.png';
 import { ShortcutsModal } from './ShortcutsModal';
 import { HelpModal } from './HelpModal';
 import { ControlCenter } from './ControlCenter';
@@ -18,6 +17,54 @@ interface MenuGroup {
   label: string;
   items: MenuItem[];
 }
+
+const ControlCenterIcon = ({ className = 'h-4 w-4' }: { className?: string }) => {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+      className={className}
+      fill="none"
+    >
+      <rect
+        x="3"
+        y="4"
+        width="18"
+        height="16"
+        rx="4"
+        stroke="currentColor"
+        strokeWidth="1.8"
+      />
+      <rect
+        x="6"
+        y="7"
+        width="5.5"
+        height="4.5"
+        rx="1.4"
+        fill="currentColor"
+        opacity="0.95"
+      />
+      <rect
+        x="6"
+        y="13"
+        width="5.5"
+        height="4"
+        rx="1.4"
+        fill="currentColor"
+        opacity="0.95"
+      />
+      <rect
+        x="13"
+        y="7"
+        width="5"
+        height="10"
+        rx="1.4"
+        fill="currentColor"
+        opacity="0.95"
+      />
+    </svg>
+  );
+};
 
 // iOS-style battery glyph (rounded body + nub, fills horizontally)
 const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
@@ -34,7 +81,6 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
             style={{ width: `${pct}%`, background: fillColor }}
           />
         </div>
-        {/* nub */}
         <div
           className="absolute top-1/2 -translate-y-1/2"
           style={{
@@ -45,11 +91,11 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
         />
         {charging && (
           <Zap
-  fill="white"
-  stroke="white"
-  strokeWidth={1.8}
-  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
-/>
+            fill="white"
+            stroke="white"
+            strokeWidth={1.8}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
+          />
         )}
       </div>
     </div>
@@ -215,19 +261,18 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       hour: 'numeric', minute: '2-digit', hour12: true,
     });
 
-  // Fully blurred liquid-glass dropdown (Inter, larger text, no shortcut keys)
   const renderDropdown = (items: MenuItem[]) => (
     <div
       className="fixed top-8 left-2 mt-1 min-w-[260px] rounded-xl py-1.5 z-[100] text-white"
       style={{
-  background: 'rgba(28,28,32,0.85)',
-  backdropFilter: 'blur(28px) saturate(180%)',
-  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
-  border: '1px solid rgba(255,255,255,0.12)',
-  boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-  fontFamily: "'Inter', -apple-system, sans-serif",
-  fontSize: '14px',
-}}
+        background: 'rgba(28,28,32,0.85)',
+        backdropFilter: 'blur(28px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontSize: '14px',
+      }}
       onClick={(e) => e.stopPropagation()}
     >
       {items.map((it, i) =>
@@ -263,7 +308,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         }}
       >
         <div className="flex items-center gap-1 relative">
-          {/* Turtle (Apple) menu */}
           <div
             className="relative"
             onMouseEnter={() => { if (activeMenu || appleOpen) { setActiveMenu(null); setAppleOpen(true); } }}
@@ -339,6 +383,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               </button>
             </PopoverContent>
           </Popover>
+
           <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
             <IoIosWifi className="w-[20.5px] h-[20.5px]" />
           </button>
@@ -348,13 +393,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <button onClick={onSpotlightClick} className="p-1 hover:bg-white/15 rounded" title="Spotlight (⌘K)">
             <Search className="w-4 h-4" />
           </button>
+
           <button
             onClick={() => setCcOpen(o => !o)}
             className={`p-1 hover:bg-white/15 rounded flex items-center ${ccOpen ? 'bg-white/20' : ''}`}
             title="Control Center"
           >
-            <img src={controlCenterIcon} alt="Control Center" className="h-4 w-auto object-contain" style={{ filter: 'brightness(0) invert(1)' }} />
+            <ControlCenterIcon className="h-4 w-4" />
           </button>
+
           <Popover>
             <PopoverTrigger asChild>
               <button className="p-1 hover:bg-white/15 rounded">

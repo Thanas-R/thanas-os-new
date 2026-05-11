@@ -110,6 +110,10 @@ export const TerminalApp = () => {
           '  apps                   list installable apps',
           '  neofetch               system summary',
           '  status                 system status (uptime, memory, apps)',
+          '  battery                show battery percentage',
+          '  time / now / cal       clock, ISO time, month calendar',
+          '  weather / joke         small fun commands',
+          '  man <cmd>              manual page for a command',
           '  exit                   close the terminal window',
         ].join('\n'));
         break;

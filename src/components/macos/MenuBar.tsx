@@ -299,7 +299,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="px-1 hover:bg-white/15 rounded flex items-center">
+              <button className="p-1 hover:bg-white/15 rounded flex items-center">
                 <IOSBattery level={batteryLevel} charging={batteryCharging} />
               </button>
             </PopoverTrigger>
@@ -340,7 +340,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             </PopoverContent>
           </Popover>
           <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
-            <IoIosWifi className="w-5 h-5" />
+            <IoIosWifi className="w-5.8 h-5.8" />
           </button>
           <button className="p-1 hover:bg-white/15 rounded" title={`Volume ${settings.volume ?? 65}%`}>
             <Volume2 className="w-4 h-4" />

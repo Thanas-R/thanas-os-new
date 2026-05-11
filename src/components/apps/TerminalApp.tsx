@@ -76,7 +76,8 @@ const [lines, setLines] = useState<Line[]>([
     if (!cmd) return;
     setHistory(prev => [...prev, cmd]);
 
-    const [name, ...args] = cmd.split(/\s+/);
+    const [rawName, ...args] = cmd.split(/\s+/);
+    const name = rawName.toLowerCase();
     switch (name) {
       case 'help':
         print([
@@ -323,7 +324,92 @@ const [lines, setLines] = useState<Line[]>([
         ].join('\n'));
         break;
       }
-      default: print(`thsh: command not found: ${name}`);
+      case 'sudo': print(args.length ? `${args[0]}: permission denied (nice try)` : 'usage: sudo <cmd>'); break;
+      case 'ifconfig': print([
+        'lo0: flags=8049<UP,LOOPBACK,RUNNING> mtu 16384',
+        '        inet 127.0.0.1 netmask 0xff000000',
+        'en0: flags=8863<UP,BROADCAST,RUNNING> mtu 1500',
+        '        ether 00:1c:42:2e:60:4a',
+        '        inet 192.168.1.42 netmask 0xffffff00 broadcast 192.168.1.255',
+        '        media: autoselect',
+      ].join('\n')); break;
+      case 'ping': {
+        if (!args[0]) { print('usage: ping <host>'); break; }
+        const host = args[0];
+        const ms = Math.round(20 + Math.random() * 30);
+        print([
+          `PING ${host} (93.184.216.34): 56 data bytes`,
+          `64 bytes from 93.184.216.34: icmp_seq=0 ttl=56 time=${ms}.${Math.floor(Math.random()*900+100)} ms`,
+          `64 bytes from 93.184.216.34: icmp_seq=1 ttl=56 time=${ms-2}.${Math.floor(Math.random()*900+100)} ms`,
+          '',
+          `--- ${host} ping statistics ---`,
+          '2 packets transmitted, 2 received, 0.0% packet loss',
+        ].join('\n'));
+        break;
+      }
+      case 'ps': print([
+        '  PID TTY           TIME CMD',
+        '    1 ttys001    0:00.04 thsh',
+        '   42 ttys001    0:00.12 finder',
+        '   88 ttys001    0:01.07 safari',
+        '  142 ttys001    0:00.21 dock',
+      ].join('\n')); break;
+      case 'top': print([
+        'Processes: 4 total, 1 running, 3 sleeping',
+        'Load Avg: 0.42, 0.38, 0.31  CPU usage: 3.1% user, 1.2% sys, 95.7% idle',
+        '',
+        'PID    COMMAND      %CPU TIME    MEM',
+        '88     safari       2.1  0:01.07 142M',
+        '42     finder       0.4  0:00.12 38M',
+        '142    dock         0.1  0:00.21 22M',
+        '1      thsh         0.0  0:00.04 4M',
+      ].join('\n')); break;
+      case 'df': print([
+        'Filesystem    Size   Used  Avail Capacity  Mounted on',
+        '/dev/disk1   500G   213G   287G    43%     /',
+        'devfs        198K   198K     0B   100%     /dev',
+      ].join('\n')); break;
+      case 'du': print(`${Math.floor(Math.random()*8000+200)}\t${args[0] || cwd}`); break;
+      case 'man': print(args[0] ? `No manual entry for ${args[0]}. Try \`help\`.` : 'What manual page do you want?'); break;
+      case 'curl': {
+        if (!args[0]) { print('curl: try \'curl <url>\''); break; }
+        print(`curl: simulated request to ${args[0]} ... 200 OK (Content-Length: 1337)`);
+        break;
+      }
+      case 'cowsay': {
+        const msg = args.join(' ') || 'moo';
+        const bar = '-'.repeat(msg.length + 2);
+        print([
+          ` ${bar}`,
+          `< ${msg} >`,
+          ` ${bar}`,
+          '        \\   ^__^',
+          '         \\  (oo)\\_______',
+          '            (__)\\       )\\/\\',
+          '                ||----w |',
+          '                ||     ||',
+        ].join('\n'));
+        break;
+      }
+      case 'banner': print(`### ${args.join(' ').toUpperCase() || 'THANASOS'} ###`); break;
+      case 'fortune': {
+        const fortunes = [
+          'Ship small, ship often.',
+          'Read the source. Always.',
+          'A clean cache hides many sins.',
+          'Optimism compiles. Pessimism debugs.',
+          'The best UI is no UI. The second best is fast UI.',
+        ];
+        print(fortunes[Math.floor(Math.random() * fortunes.length)]);
+        break;
+      }
+      case 'uptime': {
+        const upMs = performance.now();
+        const m = Math.floor(upMs / 60000), s = Math.floor((upMs % 60000) / 1000);
+        print(`up ${m}m ${s}s, 1 user, load averages: 0.42 0.38 0.31`);
+        break;
+      }
+      default: print(`thsh: command not found: ${rawName}`);
     }
   };
 

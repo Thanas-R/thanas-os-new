@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Github,
   ExternalLink,
@@ -47,6 +47,26 @@ export const AppStoreApp = () => {
   const [section, setSection] = useState('discover');
   const [query, setQuery] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [highlightId, setHighlightId] = useState<string | null>(null);
+  const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Listen for spotlight launches that target a specific project / Google
+  useEffect(() => {
+    const fn = (e: Event) => {
+      const d = (e as CustomEvent).detail;
+      if (d?.appId !== 'appstore') return;
+      const pid = d?.payload?.projectId;
+      if (pid) {
+        setHighlightId(pid);
+        setTimeout(() => {
+          cardRefs.current[pid]?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 80);
+        setTimeout(() => setHighlightId(null), 2200);
+      }
+    };
+    window.addEventListener('spotlight:open', fn);
+    return () => window.removeEventListener('spotlight:open', fn);
+  }, []);
 
   const list = useMemo(() => {
     return PROJECTS.filter(
@@ -213,7 +233,12 @@ export const AppStoreApp = () => {
               return (
                 <div
                   key={p.id}
-                  className="flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10 hover:shadow-sm transition-shadow"
+                  ref={(el) => { cardRefs.current[p.id] = el; }}
+                  className={`flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border transition-all ${
+                    highlightId === p.id
+                      ? 'border-blue-500 ring-2 ring-blue-500/40 shadow-lg'
+                      : 'border-black/5 dark:border-white/10 hover:shadow-sm'
+                  }`}
                 >
                   <div className="w-14 h-14 rounded-xl bg-neutral-100 dark:bg-neutral-800 flex items-center justify-center overflow-hidden shrink-0">
                     <img src={p.favicon} alt={p.name} className="w-9 h-9" />

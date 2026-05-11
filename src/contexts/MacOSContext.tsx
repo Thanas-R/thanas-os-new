@@ -45,15 +45,10 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   });
   const googleInstalled = useGoogleInstalled();
   const dockItems: DockItem[] = useMemo(() => {
-    // Order: insert google right after safari when installed
     const out: DockItem[] = [];
     apps.forEach(a => {
-      if (a.id === 'controlpanel') return;
       if (a.id === 'google' && !googleInstalled) return;
       out.push({ appId: a.id });
-      if (a.id === 'safari' && googleInstalled && !apps.some(x => x.id === 'google' && out.find(o => o.appId === 'google'))) {
-        // safety no-op; google is appended in its own iteration since it is in apps
-      }
     });
     return out;
   }, [apps, googleInstalled]);
@@ -64,14 +59,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   }, [settings]);
 
   const openApp = (appId: string) => {
-    // Auto-close Launchpad when launching any other app (macOS behavior)
-    if (appId !== 'launchpad') {
-      const lp = windows.find(w => w.appId === 'launchpad' && !w.isMinimized);
-      if (lp) {
-        setWindows(prev => prev.filter(w => w.id !== lp.id));
-      }
-    }
-
+    // Note: Launchpad stays open when launching apps so it acts as a persistent grid.
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
       // Launchpad: clicking dock icon again closes it

@@ -156,15 +156,15 @@ export const FinderApp = () => {
               )}
             </div>
           ) : (
-            <div className="p-3 grid grid-cols-7 gap-2 overflow-y-auto h-full content-start">
+            <div className="p-4 grid grid-cols-5 gap-3 overflow-y-auto h-full content-start">
               {node && node.type === 'dir' && Object.entries(node.children).map(([n, c]) => (
                 <button
                   key={n}
                   onClick={() => openItem(n, c, path)}
-                  className="flex flex-col items-center gap-1 p-1.5 rounded hover:bg-white/10"
+                  className="flex flex-col items-center gap-2 p-2 rounded-lg hover:bg-white/10"
                 >
-                  {c.type === 'dir' ? <FolderImg size={40} /> : <FileImg size={32} />}
-                  <span className="text-[11px] text-center truncate w-full">{n}</span>
+                  {c.type === 'dir' ? <FolderImg size={64} /> : <FileImg size={52} />}
+                  <span className="text-[12px] text-center truncate w-full">{n}</span>
                 </button>
               ))}
             </div>

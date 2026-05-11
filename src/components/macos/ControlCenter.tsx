@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Wifi, Bluetooth, Radio, Moon, Sun, Volume2, VolumeX,
+  Bluetooth, Moon, Sun, Volume2, VolumeX,
   Keyboard, Airplay, Music, Play, SkipForward, Settings as SettingsIcon,
 } from 'lucide-react';
+import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { AppleSlider } from '@/components/ui/AppleSlider';
+import airdropIcon from '@/assets/airdrop-icon-new.png';
 
 interface Props {
   open: boolean;
@@ -53,7 +55,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <ConnRow
                 active={settings.wifi}
                 onClick={() => updateSettings({ wifi: !settings.wifi })}
-                icon={<Wifi className="w-4 h-4" />}
+                icon={<IoIosWifi className="w-[18px] h-[18px]" />}
                 label="Wi-Fi"
                 sub={settings.wifi ? 'ThanasOS-Net' : 'Off'}
                 accent="bg-blue-500"
@@ -69,7 +71,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <ConnRow
                 active={settings.airdrop}
                 onClick={() => updateSettings({ airdrop: !settings.airdrop })}
-                icon={<Radio className="w-4 h-4" />}
+                icon={<img src={airdropIcon} alt="" className="w-5 h-5 object-contain" style={{ filter: settings.airdrop ? 'none' : 'grayscale(1) brightness(1.4)' }} />}
                 label="AirDrop"
                 sub="Contacts"
                 accent="bg-blue-500"
@@ -186,6 +188,9 @@ const SliderModule = ({
       <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">{icon}</div>
       <div className="text-[12px] font-semibold">{label}</div>
     </div>
-    <AppleSlider value={value} onChange={onChange} />
+    {/* Track shortened by 20% per design spec */}
+    <div style={{ width: '80%' }}>
+      <AppleSlider value={value} onChange={onChange} />
+    </div>
   </div>
 );

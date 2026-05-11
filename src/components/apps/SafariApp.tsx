@@ -268,7 +268,18 @@ export const SafariApp = () => {
             className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 text-center"
             placeholder="Search or enter website name"
           />
-          <button type="button" className="p-0.5 text-neutral-500 hover:text-yellow-500"><Star className="w-3.5 h-3.5" /></button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!isFavorites && /^https?:\/\//.test(active.url)) {
+                toggleBookmark({ name: active.title || active.url, url: active.url });
+              }
+            }}
+            className={`p-0.5 ${hasBookmark(active.url) ? 'text-yellow-500' : 'text-neutral-500 hover:text-yellow-500'}`}
+            title={hasBookmark(active.url) ? 'Remove bookmark' : 'Add bookmark'}
+          >
+            <Star className="w-3.5 h-3.5" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
+          </button>
         </form>
 
         <ToolbarBtn onClick={() => setShowBookmarksBar(s => !s)}><BookOpen className="w-4 h-4" /></ToolbarBtn>

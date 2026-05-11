@@ -122,7 +122,7 @@ export const LaunchpadApp = () => {
                 {item.icon ? (
                   <img src={item.icon} alt={item.name} className="w-full h-full object-cover" />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-3xl">📦</div>
+                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-white/50 text-xl font-semibold">{item.name.charAt(0)}</div>
                 )}
               </div>
               <span className="text-white text-[12px] text-center drop-shadow-lg max-w-[6rem] truncate">

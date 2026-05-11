@@ -140,7 +140,7 @@ export const SettingsApp = () => {
           </div>
         </button>
 
-        <nav className="flex-1 overflow-auto px-2 pb-3 space-y-0.5">
+        <nav className="flex-1 overflow-auto px-2 pb-3 pt-[2px] space-y-0.5">
           {filteredSidebar.map((n, i) => {
             // Insert separators between groups
             const prev = filteredSidebar[i - 1];

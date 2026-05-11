@@ -91,6 +91,7 @@ export const SafariApp = () => {
       ? newTab(pending, (() => { try { return new URL(pending).hostname; } catch { return pending; } })())
       : newTab();
   }
+  const { bookmarks, has: hasBookmark, toggle: toggleBookmark } = useBookmarks();
   const [tabs, setTabs] = useState<Tab[]>([initial.current]);
   const [activeId, setActiveId] = useState(initial.current.id);
   const [addressBar, setAddressBar] = useState(initial.current.url);

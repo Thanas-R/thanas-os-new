@@ -25,12 +25,12 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
   const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
   return (
     <div className="flex items-center gap-1">
-      <div className="relative" style={{ width: 24, height: 12 }}>
+      <div className="relative" style={{ width: 26, height: 13 }}>
         <div
-          className="absolute inset-0 rounded-[3.5px] border border-white/70 box-border p-[1px]"
+          className="absolute inset-0 rounded-[4px] border border-white/70 box-border px-[1px] py-[2px]"
         >
           <div
-            className="h-full rounded-[2px] transition-all"
+            className="h-full rounded-[1px]"
             style={{ width: `${pct}%`, background: fillColor }}
           />
         </div>
@@ -44,7 +44,12 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
           }}
         />
         {charging && (
-          <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-white/70" />
+          <Zap
+  fill="white"
+  stroke="white"
+  strokeWidth={1.8}
+  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5"
+/>
         )}
       </div>
     </div>

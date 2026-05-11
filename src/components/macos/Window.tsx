@@ -104,8 +104,8 @@ export const Window = ({ window }: WindowProps) => {
   if (window.appId === 'launchpad') {
     return (
       <div
-        className="fixed inset-0"
-        style={{ zIndex: 9000 + window.zIndex, animation: settings.reducedMotion ? undefined : 'launchpadIn 0.32s cubic-bezier(0.2,0.7,0.2,1) both' }}
+        className="fixed left-0 right-0 top-7 bottom-0"
+        style={{ zIndex: 40, animation: settings.reducedMotion ? undefined : 'launchpadIn 0.28s cubic-bezier(0.2,0.7,0.2,1) both' }}
         onMouseDown={() => focusWindow(window.id)}
         onKeyDown={(e) => { if (e.key === 'Escape') closeWindow(window.id); }}
       >

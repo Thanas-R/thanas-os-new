@@ -341,16 +341,6 @@ export const SafariApp = () => {
                 ))}
               </div>
               <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">Bookmarks</h2>
-              <div className="grid grid-cols-6 gap-x-6 gap-y-4 mx-auto place-items-center">
-                {bookmarks.map(b => (
-                  <button key={b.url} onClick={() => navigate(b.url)} className="flex flex-col items-center gap-1.5 group w-20">
-                    <div className="w-12 h-12 rounded-xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <img src={faviconFor(b.url)} alt={b.name} className="w-7 h-7" />
-                    </div>
-                    <span className="text-[11px] text-neutral-700 dark:text-neutral-300 text-center truncate w-full">{b.name}</span>
-                  </button>
-                ))}
-              </div>
             </div>
           ) : isExternalNonProject ? (
             proxyHtml[active.url] ? (

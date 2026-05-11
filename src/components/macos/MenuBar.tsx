@@ -215,14 +215,14 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     <div
       className="absolute top-7 left-0 mt-1 min-w-[260px] rounded-xl py-1.5 z-[100] text-white"
       style={{
-        background: 'rgba(28,28,32,0.58)',
-        backdropFilter: 'blur(80px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(80px) saturate(200%)',
-        border: '1px solid rgba(255,255,255,0.12)',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-        fontFamily: "'Inter', -apple-system, sans-serif",
-        fontSize: '14px',
-      }}
+  background: 'rgba(28,28,32,0.72)',
+  backdropFilter: 'blur(28px) saturate(180%)',
+  WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+  border: '1px solid rgba(255,255,255,0.12)',
+  boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+  fontFamily: "'Inter', -apple-system, sans-serif",
+  fontSize: '14px',
+}}
       onClick={(e) => e.stopPropagation()}
     >
       {items.map((it, i) =>

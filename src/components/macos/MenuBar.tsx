@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Wifi, Volume2, Search, BatteryCharging, Zap } from 'lucide-react';
+import { Volume2, Search, BatteryCharging, Zap, Plug, Clock as ClockIcon, ChevronRight } from 'lucide-react';
+import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
@@ -289,21 +290,44 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
                 <IOSBattery level={batteryLevel} charging={batteryCharging} />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="w-52 p-3 z-[200]">
-              <div className="text-sm font-medium flex items-center gap-1">
-                Battery {batteryLevel !== null ? `${batteryLevel}%` : 'unavailable'}
-                {batteryCharging && <BatteryCharging className="w-4 h-4 text-emerald-500" />}
+            <PopoverContent className="w-64 p-3 z-[200]">
+              <div className="text-[13px] font-semibold flex items-center gap-1.5">
+                Battery
+                {batteryCharging && <BatteryCharging className="w-3.5 h-3.5 text-emerald-500" />}
+              </div>
+              <div className="mt-1 text-[11px] text-muted-foreground">
+                {batteryLevel !== null ? `${batteryLevel}% available` : 'Battery API unavailable'}
               </div>
               <div className="w-full bg-secondary rounded-full h-2 mt-2">
                 <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${batteryLevel ?? 0}%` }} />
               </div>
-              <div className="text-[11px] text-muted-foreground mt-2">
-                {batteryLevel === null ? 'Battery API unavailable in this browser.' : batteryCharging ? 'Charging' : 'On battery'}
+              <div className="mt-3 divide-y divide-border rounded-md border border-border">
+                <div className="flex items-center justify-between px-2.5 py-1.5 text-[12px]">
+                  <span className="flex items-center gap-2 text-muted-foreground"><Plug className="w-3.5 h-3.5" />Power Source</span>
+                  <span>{batteryCharging ? 'Power Adapter' : 'Battery'}</span>
+                </div>
+                <div className="flex items-center justify-between px-2.5 py-1.5 text-[12px]">
+                  <span className="flex items-center gap-2 text-muted-foreground"><ClockIcon className="w-3.5 h-3.5" />Time Remaining</span>
+                  <span>
+                    {batteryLevel === null
+                      ? '—'
+                      : batteryCharging
+                        ? `${Math.max(1, Math.round((100 - batteryLevel) * 1.4))} min to full`
+                        : `${Math.max(1, Math.round(batteryLevel * 4.2))} min`}
+                  </span>
+                </div>
               </div>
+              <button
+                onClick={() => openApp('settings')}
+                className="mt-2 w-full flex items-center justify-between px-2.5 py-1.5 text-[12px] rounded-md hover:bg-accent"
+              >
+                <span>Battery Preferences…</span>
+                <ChevronRight className="w-3.5 h-3.5 opacity-60" />
+              </button>
             </PopoverContent>
           </Popover>
           <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
-            <Wifi className="w-4 h-4" />
+            <IoIosWifi className="w-4 h-4" />
           </button>
           <button className="p-1 hover:bg-white/15 rounded" title={`Volume ${settings.volume ?? 65}%`}>
             <Volume2 className="w-4 h-4" />

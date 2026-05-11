@@ -16,11 +16,38 @@ interface Tab {
 }
 
 const HOMEPAGE = 'about:home';
+const PRANK_URL = 'about:prank';
 const PROXIES = [
-  { url: 'https://api.allorigins.win/get?url=', type: 'json' as const },
   { url: 'https://corsproxy.io/?', type: 'raw' as const },
   { url: 'https://api.codetabs.com/v1/proxy?quest=', type: 'raw' as const },
+  { url: 'https://api.allorigins.win/get?url=', type: 'json' as const },
 ];
+
+const PRANK_DOC = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0;height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:#0d0d10;color:#f5f5f5;-webkit-font-smoothing:antialiased}
+.dots{position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1.2px,transparent 1.4px);background-size:22px 22px;z-index:0;pointer-events:none}
+.fade{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(13,13,16,0.6) 0%,rgba(13,13,16,0.3) 60%,rgba(13,13,16,0) 85%);backdrop-filter:blur(6px)}
+main{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transform:scale(0.9)}
+.kicker{font-family:'Caveat',cursive;font-size:clamp(24px,3vw,34px);color:#cfcfcf;transform:rotate(-3deg);display:inline-block;margin-bottom:-6px}
+h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(34px,5.4vw,68px);line-height:.98;letter-spacing:-.03em;margin:8px 0 22px;color:#fff}
+h1 .ital{font-style:italic;font-weight:400;color:#d8d8d8}
+h1 .accent{background:linear-gradient(180deg,transparent 62%,#fff177 62%,#fff177 92%,transparent 92%);padding:0 6px;color:#0a0a0a}
+.lead{font-size:clamp(14px,1.1vw,16px);color:#bdbdbd;max-width:560px;margin:0 auto 12px;line-height:1.6}
+.sub{font-family:'Caveat',cursive;font-size:clamp(18px,1.6vw,22px);color:#a0a0a0;margin:4px 0 26px}
+.discord{display:inline-flex;align-items:center;gap:14px;background:#fff;color:#0a0a0a;text-decoration:none;padding:13px 20px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500}
+.discord .label{font-family:'Inter',sans-serif;font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.18em;margin-right:4px;border-right:1px solid #d4d4d4;padding-right:12px}
+</style></head><body>
+<div class="dots"></div><div class="fade"></div>
+<main><div>
+<span class="kicker">well, well, well...</span>
+<h1><span class="ital">Haha, looks like i</span><br/><span class="accent">sniped your domain</span></h1>
+<p class="lead">no worries though, this is just a friendly reminder to secure your domains early.</p>
+<p class="sub">send me a dm and i'll hand it back, free of charge :)</p>
+<a class="discord" href="https://discord.com" target="_blank" rel="noreferrer"><span class="label">DISCORD</span>DarkSpacePirate</a>
+</div></main></body></html>`;
 
 const DEFAULT_FAVORITES = [
   { url: 'https://en.wikipedia.org/', title: 'Wikipedia', icon: 'https://upload.wikimedia.org/wikipedia/commons/8/80/Wikipedia-logo-v2.svg' },
@@ -33,12 +60,24 @@ const DEFAULT_FAVORITES = [
   { url: 'https://www.youtube.com/', title: 'YouTube', icon: 'https://upload.wikimedia.org/wikipedia/commons/4/4f/YouTube_social_white_squircle.svg' },
 ];
 
+const PRANK_HOSTS = ['darkspacepirate.dev', 'thanas.dev', 'thsh.dev'];
+
 const normalizeUrl = (input: string): string => {
   const s = input.trim();
   if (!s) return 'about:blank';
   if (s === HOMEPAGE) return s;
-  if (/^https?:\/\//i.test(s)) return s;
-  if (s.includes('.') && !s.includes(' ')) return 'https://' + s;
+  if (/^https?:\/\//i.test(s)) {
+    try {
+      const host = new URL(s).hostname.toLowerCase();
+      if (PRANK_HOSTS.some(h => host === h || host.endsWith('.' + h))) return PRANK_URL;
+    } catch { /* ignore */ }
+    return s;
+  }
+  if (s.includes('.') && !s.includes(' ')) {
+    const lower = s.toLowerCase();
+    if (PRANK_HOSTS.some(h => lower === h || lower.endsWith('.' + h))) return PRANK_URL;
+    return 'https://' + s;
+  }
   return `https://www.google.com/search?q=${encodeURIComponent(s)}`;
 };
 
@@ -51,7 +90,7 @@ const getFavicon = (url: string): string => {
   try { return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=32`; } catch { return ''; }
 };
 
-const fetchWithTimeout = async (resource: string, timeout = 8000) => {
+const fetchWithTimeout = async (resource: string, timeout = 4500) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   try {
@@ -63,6 +102,7 @@ const fetchWithTimeout = async (resource: string, timeout = 8000) => {
 const raceProxies = (targetUrl: string): Promise<string> =>
   new Promise<string>((resolve, reject) => {
     let remaining = PROXIES.length;
+    let settled = false;
     PROXIES.forEach(async (p) => {
       try {
         const res = await fetchWithTimeout(p.url + encodeURIComponent(targetUrl));
@@ -71,9 +111,9 @@ const raceProxies = (targetUrl: string): Promise<string> =>
         if (p.type === 'json') { const json = await res.json(); text = json.contents; }
         else { text = await res.text(); }
         if (!text || text.length < 50) throw new Error('empty');
-        resolve(text);
+        if (!settled) { settled = true; resolve(text); }
       } catch {
-        if (--remaining === 0) reject(new Error('all proxies failed'));
+        if (--remaining === 0 && !settled) reject(new Error('all proxies failed'));
       }
     });
   });

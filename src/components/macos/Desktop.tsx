@@ -70,7 +70,9 @@ export const Desktop = () => {
         filter: settings.brightness != null ? `brightness(${0.5 + (settings.brightness / 100) * 0.6})` : undefined,
       }}
     >
-      {!launchpadOpen && <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />}
+      <div className={`menubar-slide ${launchpadOpen ? 'menubar-slide-up' : ''}`}>
+        <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
+      </div>
 
       <div className="pt-7 h-full p-8">
         <div className="absolute top-12 left-6 space-y-3">

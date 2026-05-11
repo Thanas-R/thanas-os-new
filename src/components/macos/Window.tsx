@@ -100,12 +100,15 @@ export const Window = ({ window }: WindowProps) => {
 
   if (window.isMinimized) return null;
 
-  // Launchpad: fullscreen blurred overlay, no chrome (below menu bar, below dock)
+  // Launchpad: fullscreen blurred overlay covering even the menu bar; only dock stays visible above it.
   if (window.appId === 'launchpad') {
     return (
       <div
-        className="fixed left-0 right-0 top-7 bottom-0"
-        style={{ zIndex: 30, animation: settings.reducedMotion ? undefined : 'launchpadIn 0.28s cubic-bezier(0.2,0.7,0.2,1) both' }}
+        className="fixed inset-0"
+        style={{
+          zIndex: 60,
+          animation: settings.reducedMotion ? undefined : 'launchpadIn 0.34s cubic-bezier(0.2,0.7,0.2,1) both',
+        }}
         onMouseDown={() => focusWindow(window.id)}
         onKeyDown={(e) => { if (e.key === 'Escape') closeWindow(window.id); }}
       >

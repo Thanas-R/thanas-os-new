@@ -210,25 +210,33 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       hour: 'numeric', minute: '2-digit', hour12: true,
     });
 
-  // Solid (non-glass) dropdown matching theme
+  // Fully blurred liquid-glass dropdown (Inter, larger text, no shortcut keys)
   const renderDropdown = (items: MenuItem[]) => (
     <div
-      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-xl py-1.5 z-[100] text-[13px] bg-popover text-popover-foreground border border-border shadow-2xl"
+      className="absolute top-7 left-0 mt-1 min-w-[260px] rounded-xl py-1.5 z-[100] text-white"
+      style={{
+        background: 'rgba(28,28,32,0.45)',
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
+        border: '1px solid rgba(255,255,255,0.12)',
+        boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+        fontFamily: "'Inter', -apple-system, sans-serif",
+        fontSize: '15px',
+      }}
       onClick={(e) => e.stopPropagation()}
     >
       {items.map((it, i) =>
         it.separator ? (
-          <div key={i} className="h-px bg-border my-1 mx-2" />
+          <div key={i} className="h-px bg-white/10 my-1 mx-2" />
         ) : (
           <button
             key={i}
             disabled={!it.action}
             onClick={() => { it.action?.(); setActiveMenu(null); setAppleOpen(false); }}
-            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-accent hover:text-accent-foreground' : 'opacity-50 cursor-default'}`}
+            className={`flex items-center px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-white/15' : 'opacity-50 cursor-default'}`}
             style={{ width: 'calc(100% - 8px)' }}
           >
             <span>{it.label}</span>
-            {it.shortcut && <span className="opacity-60 ml-6 text-xs">{it.shortcut}</span>}
           </button>
         )
       )}

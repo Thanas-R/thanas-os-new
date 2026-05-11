@@ -34,14 +34,7 @@ const PROXIES = (url: string) => [
   `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`,
 ];
 
-const BOOKMARKS = [
-  { name: 'Portfolio', url: 'https://thanas.vercel.app' },
-  { name: 'GitHub', url: 'https://github.com/Thanas-R' },
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanas-r/' },
-  { name: 'Apple', url: 'https://www.apple.com' },
-  { name: 'DuckDuckGo', url: 'https://duckduckgo.com' },
-  { name: 'Wikipedia', url: 'https://en.wikipedia.org' },
-];
+// Bookmarks now live in localStorage via useBookmarks()
 
 const PRANK_DOC = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>

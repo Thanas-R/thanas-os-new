@@ -241,7 +241,7 @@ export const Dock = () => {
         }`}
         style={{
           width: `${contentWidth + padding * 2}px`,
-          background: 'rgba(45, 45, 45, 0.75)',
+          background: 'rgba(45, 45, 45, 0.5)',
           borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: `

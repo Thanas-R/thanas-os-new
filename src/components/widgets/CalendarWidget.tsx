@@ -43,20 +43,20 @@ export const CalendarWidget = () => {
 
       <div className="grid grid-cols-7 gap-y-0.5">
         {calendarDays.map((day, i) => (
-          <div key={i} className="flex items-center justify-center h-[16px]">
-            {day !== null && (
-              <span
-                className="w-[16px] h-[16px] flex items-center justify-center rounded-full text-[9.5px] font-semibold"
-                style={
-                  day === todayDate
-                    ? { background: '#FF453A', color: 'white' }
-                    : { color: 'rgba(255,255,255,0.92)' }
-                }
-              >
-                {day}
-              </span>
-            )}
-          </div>
+          <div key={i} className="flex items-center justify-center h-4">
+  {day !== null && (
+    <div
+      className="w-4 h-4 shrink-0 flex items-center justify-center rounded-full text-[9.5px] font-semibold leading-none"
+      style={
+        day === todayDate
+          ? { background: '#FF453A', color: 'white' }
+          : { color: 'rgba(255,255,255,0.92)' }
+      }
+    >
+      {day}
+    </div>
+  )}
+</div>
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Linkedin, ExternalLink, GraduationCap, MapPin, Users, Briefcase, ThumbsUp, MessageSquare, Repeat2, Send, MoreHorizontal } from 'lucide-react';
+import { ExternalLink, GraduationCap, MapPin, Users, Briefcase, ThumbsUp, MessageSquare, Repeat2, Send, MoreHorizontal } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
@@ -6,12 +6,6 @@ import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
 export const LinkedInApp = () => {
   return (
     <div className="min-h-full bg-[#f4f2ee] text-neutral-900 pb-10">
-      {/* Top thin nav strip (LinkedIn-style chrome, not a website) */}
-      <div className="bg-white border-b border-black/10 px-6 py-2 flex items-center gap-3">
-        <Linkedin className="w-7 h-7 text-[#0A66C2]" />
-        <div className="text-[13px] font-semibold text-neutral-700">Profile</div>
-      </div>
-
       <div className="max-w-3xl mx-auto px-4 pt-5 space-y-3">
         {/* Profile card with banner */}
         <Card className="overflow-hidden p-0 bg-white border border-black/10">

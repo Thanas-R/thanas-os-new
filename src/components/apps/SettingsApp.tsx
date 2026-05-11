@@ -126,7 +126,7 @@ export const SettingsApp = () => {
       <aside className="w-[230px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
         {/* Search */}
         <div className="px-3 pt-3 pb-2">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
+          <div className="flex items-center gap-2 px-2.5 py-3 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
             <Search className="w-5 h-5 text-neutral-400" />
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[12.5px]" />
           </div>

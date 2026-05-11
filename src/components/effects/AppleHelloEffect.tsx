@@ -37,7 +37,13 @@ function AppleHelloEffect({
       import('@/components/apps/LaunchpadApp'),
       import('@/components/apps/AppStoreApp'),
       import('@/components/apps/ProjectsApp'),
-      import('@/components/apps/ControlPanelApp'),
+      import('@/components/apps/SettingsApp'),
+      import('@/components/apps/CalculatorApp'),
+      import('@/components/apps/GoogleApp'),
+      // Preload key icons used across menubar / control center / settings
+      import('@/assets/google-icon-new.png'),
+      import('@/assets/airdrop-icon-new.png'),
+      import('@/assets/calculator-new-icon.png'),
     ]).catch(() => {});
   }
 

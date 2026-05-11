@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
+import { useBookmarks } from '@/lib/bookmarks';
 import { registerAppMenus } from '@/types/macos';
 
 interface Tab {

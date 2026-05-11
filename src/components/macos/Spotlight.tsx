@@ -1,17 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Search,
-  ArrowRight,
-  LayoutGrid,
-  Folder,
-  Globe,
-  Settings as Cog,
+  Search, ArrowRight, LayoutGrid, Folder, Globe, Settings as Cog, FileText, Star, Download, Compass,
 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { APP_ICONS } from '@/components/apps/LaunchpadApp';
-import { PROJECTS } from '@/lib/projects';
-import { setPendingSafariUrl, useInstalledProjects } from '@/lib/installedApps';
+import { useInstalledProjects, setPendingSafariUrl } from '@/lib/installedApps';
+import { buildSpotlightIndex, searchSpotlight, dispatchSpotlightOpen, SpotlightEntry } from '@/lib/spotlightIndex';
 
 interface SpotlightProps {
   isOpen: boolean;
@@ -20,21 +15,21 @@ interface SpotlightProps {
 
 type ShortcutId = 'apps' | 'files' | 'web' | 'settings';
 
-interface SearchResult {
-  kind: 'app' | 'project';
-  id: string;
-  name: string;
-  description: string;
-  icon?: string;
-  url?: string;
-}
-
 const SHORTCUTS: { id: ShortcutId; label: string; icon: React.ReactNode }[] = [
   { id: 'apps', label: 'Apps', icon: <LayoutGrid className="w-5 h-5" /> },
   { id: 'files', label: 'Files', icon: <Folder className="w-5 h-5" /> },
   { id: 'web', label: 'Web', icon: <Globe className="w-5 h-5" /> },
   { id: 'settings', label: 'Settings', icon: <Cog className="w-5 h-5" /> },
 ];
+
+const KIND_ICON: Record<SpotlightEntry['kind'], React.ReactNode> = {
+  app: <LayoutGrid className="w-4 h-4 text-white/70" />,
+  project: <Compass className="w-4 h-4 text-white/70" />,
+  note: <FileText className="w-4 h-4 text-white/70" />,
+  bookmark: <Star className="w-4 h-4 text-white/70" />,
+  appstore: <Download className="w-4 h-4 text-white/70" />,
+  setting: <Cog className="w-4 h-4 text-white/70" />,
+};
 
 export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
   const { apps, openApp } = useMacOS();
@@ -43,24 +38,11 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
   const [activeIdx, setActiveIdx] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const results = useMemo<SearchResult[]>(() => {
-    const q = query.toLowerCase().trim();
-    if (!q) return [];
-    const appResults: SearchResult[] = apps
-      .filter(a => a.name.toLowerCase().includes(q))
-      .map(a => ({
-        kind: 'app', id: a.id, name: a.name,
-        description: 'Application', icon: APP_ICONS[a.id],
-      }));
-    const projectResults: SearchResult[] = PROJECTS
-      .filter(p => installed.includes(p.id))
-      .filter(p => p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
-      .map(p => ({
-        kind: 'project', id: p.id, name: p.name,
-        description: p.description, icon: p.favicon, url: p.liveUrl,
-      }));
-    return [...appResults, ...projectResults];
-  }, [apps, installed, query]);
+  const index = useMemo(
+    () => buildSpotlightIndex(apps, APP_ICONS, installed),
+    [apps, installed]
+  );
+  const results = useMemo(() => searchSpotlight(index, query), [index, query]);
 
   useEffect(() => {
     if (isOpen) {
@@ -72,12 +54,12 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
 
   useEffect(() => { setActiveIdx(0); }, [query]);
 
-  const launch = (r: SearchResult) => {
-    if (r.kind === 'project' && r.url) {
-      setPendingSafariUrl(r.url);
-      openApp('safari');
-    } else {
-      openApp(r.id);
+  const launch = (r: SpotlightEntry) => {
+    if (r.url) setPendingSafariUrl(r.url);
+    if (r.appId) {
+      openApp(r.appId);
+      // Dispatch after open so consumers can react
+      setTimeout(() => dispatchSpotlightOpen({ appId: r.appId!, payload: r.payload, url: r.url }), 30);
     }
     onClose();
   };
@@ -128,7 +110,6 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
             onClick={e => e.stopPropagation()}
             className="w-full max-w-2xl mx-4"
           >
-            {/* Glass pill container */}
             <div
               className="rounded-[28px] overflow-hidden"
               style={{
@@ -139,7 +120,6 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
                 boxShadow: '0 30px 80px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.08)',
               }}
             >
-              {/* Search input */}
               <div className="flex items-center gap-3 px-5 h-[60px]">
                 <Search className="w-5 h-5 text-white/70 shrink-0" />
                 <input
@@ -151,7 +131,6 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
                 />
               </div>
 
-              {/* Shortcut chips (only when no query) */}
               {!query && (
                 <div className="border-t border-white/10 px-3 py-3 flex items-center gap-2">
                   {SHORTCUTS.map(s => (
@@ -167,12 +146,11 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
                 </div>
               )}
 
-              {/* Results */}
               {query && results.length > 0 && (
-                <div className="border-t border-white/10 max-h-[50vh] overflow-y-auto py-2 px-2">
+                <div className="border-t border-white/10 max-h-[55vh] overflow-y-auto py-2 px-2">
                   {results.map((r, i) => (
                     <button
-                      key={`${r.kind}:${r.id}`}
+                      key={r.id}
                       onMouseEnter={() => setActiveIdx(i)}
                       onClick={() => launch(r)}
                       className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left transition-colors ${
@@ -183,15 +161,16 @@ export const Spotlight = ({ isOpen, onClose }: SpotlightProps) => {
                         {r.icon ? (
                           <img src={r.icon} alt="" className="w-full h-full object-cover" />
                         ) : (
-                          <Search className="w-4 h-4 text-white/70" />
+                          KIND_ICON[r.kind]
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="text-sm font-medium truncate">{r.name}</div>
+                        <div className="text-sm font-medium truncate">{r.title}</div>
                         <div className={`text-xs truncate ${i === activeIdx ? 'text-white/75' : 'text-white/50'}`}>
-                          {r.description}
+                          {r.subtitle}
                         </div>
                       </div>
+                      <span className="text-[10px] uppercase tracking-wider text-white/40 mr-2">{r.kind}</span>
                       <ArrowRight className={`w-4 h-4 ${i === activeIdx ? 'opacity-100' : 'opacity-0'}`} />
                     </button>
                   ))}

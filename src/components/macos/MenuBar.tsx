@@ -299,7 +299,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1 hover:bg-white/15 rounded flex items-center">
+              <button className="p-1.3 hover:bg-white/15 rounded flex items-center">
                 <IOSBattery level={batteryLevel} charging={batteryCharging} />
               </button>
             </PopoverTrigger>

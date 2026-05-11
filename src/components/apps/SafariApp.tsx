@@ -282,7 +282,7 @@ export const SafariApp = () => {
           </button>
         </form>
 
-        <ToolbarBtn onClick={() => setShowBookmarksBar(s => !s)}><BookOpen className="w-4 h-4" /></ToolbarBtn>
+        {/* Bookmarks toggle removed (sidebar already shows bookmarks) */}
         <ToolbarBtn onClick={() => navigator.share?.({ url: active.url }).catch(() => {})}><Share className="w-4 h-4" /></ToolbarBtn>
         <div className="relative">
           <ToolbarBtn onClick={() => setShowMenu(s => !s)}><MoreHorizontal className="w-4 h-4" /></ToolbarBtn>

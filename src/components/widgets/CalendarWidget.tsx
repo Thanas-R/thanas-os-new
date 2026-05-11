@@ -31,7 +31,7 @@ export const CalendarWidget = () => {
         border: '1px solid rgba(255,255,255,0.06)',
       }}
     >
-      <div className="text-[11px] font-bold tracking-wider mb-2 pl-2" style={{ color: '#FF453A' }}>
+      <div className="text-[11px] font-bold tracking-wider mb-2 pl-1.5" style={{ color: '#FF453A' }}>
         {monthName}
       </div>
 

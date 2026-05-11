@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { useInstalledProjects } from '@/lib/installedApps';
+import { useInstalledProjects, useGoogleInstalled } from '@/lib/installedApps';
 import { getProject } from '@/lib/projects';
 import { setPendingSafariUrl } from '@/lib/installedApps';
 import finderIcon from '@/assets/finder-icon.png';
@@ -17,7 +17,6 @@ import safariIcon from '@/assets/safari-icon.png';
 import notesIcon from '@/assets/notes-icon.png';
 import appstoreIcon from '@/assets/appstore-icon.png';
 import launchpadIcon from '@/assets/launchpad-icon.png';
-import controlPanelIcon from '@/assets/settings-icon.png';
 import calculatorNewIcon from '@/assets/calculator-new-icon.png';
 import googleNewIcon from '@/assets/google-icon-new.png';
 
@@ -36,7 +35,6 @@ export const APP_ICONS: Record<string, string> = {
   notes: notesIcon,
   appstore: appstoreIcon,
   launchpad: launchpadIcon,
-  controlpanel: controlPanelIcon,
   calculator: calculatorNewIcon,
   google: googleNewIcon,
 };
@@ -46,12 +44,14 @@ const PAGE_SIZE = 28; // 7 cols x 4 rows
 export const LaunchpadApp = () => {
   const { apps, openApp, closeWindow, windows } = useMacOS();
   const installed = useInstalledProjects();
+  const googleInstalled = useGoogleInstalled();
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
 
   const items = useMemo(() => {
     const core = apps
       .filter(a => a.id !== 'launchpad')
+      .filter(a => a.id !== 'google' || googleInstalled)
       .map(a => ({ id: a.id, name: a.name, icon: APP_ICONS[a.id], kind: 'app' as const, url: '' }));
     const projects = installed
       .map(getProject)
@@ -60,7 +60,7 @@ export const LaunchpadApp = () => {
     return [...core, ...projects].filter(i =>
       i.name.toLowerCase().includes(query.toLowerCase())
     );
-  }, [apps, installed, query]);
+  }, [apps, installed, googleInstalled, query]);
 
   const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const pageItems = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -72,8 +72,7 @@ export const LaunchpadApp = () => {
     } else {
       openApp(item.id);
     }
-    const lp = windows.find(w => w.appId === 'launchpad');
-    if (lp) closeWindow(lp.id);
+    // Launchpad stays open intentionally so users can launch multiple apps.
   };
 
   const dismiss = () => {

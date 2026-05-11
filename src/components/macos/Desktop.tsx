@@ -26,6 +26,7 @@ export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const isMobile = useIsMobile();
+  const launchpadOpen = windows.some(w => w.appId === 'launchpad' && !w.isMinimized);
 
   useImagePreloader();
 
@@ -69,7 +70,7 @@ export const Desktop = () => {
         filter: settings.brightness != null ? `brightness(${0.5 + (settings.brightness / 100) * 0.6})` : undefined,
       }}
     >
-      <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
+      {!launchpadOpen && <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />}
 
       <div className="pt-7 h-full p-8">
         <div className="absolute top-12 left-6 space-y-3">

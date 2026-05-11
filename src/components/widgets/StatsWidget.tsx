@@ -54,39 +54,41 @@ export const StatsWidget = ({
   const [repoCount, setRepoCount] = useState<number>(0);
 
   useEffect(() => {
+    const KEY = 'thanasos.github-activity';
+    const TTL = 2 * 60 * 60 * 1000; // 2 hours
     let cancelled = false;
+
+    // Hydrate from cache immediately
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const cached = JSON.parse(raw);
+        if (cached?.data) {
+          setRepoCount(cached.data.repoCount ?? 0);
+          setStars(cached.data.stars ?? 0);
+        }
+        if (cached?.fetchedAt && Date.now() - cached.fetchedAt < TTL) {
+          return; // fresh enough, skip API
+        }
+      }
+    } catch { /* ignore */ }
 
     (async () => {
       try {
-        const res = await fetch(
-          'https://api.github.com/users/Thanas-R/repos?per_page=100&type=owner&sort=created'
-        );
-
+        const res = await fetch('https://api.github.com/users/Thanas-R/repos?per_page=100&type=owner&sort=created');
         if (!res.ok) return;
-
         const repos = await res.json();
-
         if (!Array.isArray(repos) || cancelled) return;
-
-        // Accurate public repo count
+        const totalStars = repos.reduce((s: number, r: { stargazers_count?: number }) => s + (r.stargazers_count || 0), 0);
         setRepoCount(repos.length);
-
-        // Total stars
-        const totalStars = repos.reduce(
-          (sum: number, repo: { stargazers_count?: number }) =>
-            sum + (repo.stargazers_count || 0),
-          0
-        );
-
         setStars(totalStars);
-      } catch {
-        /* fallback values remain */
-      }
+        try {
+          localStorage.setItem(KEY, JSON.stringify({ data: { repoCount: repos.length, stars: totalStars }, fetchedAt: Date.now() }));
+        } catch { /* ignore */ }
+      } catch { /* keep cache */ }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, []);
 
   const activities = baseActivities(stars, repoCount);

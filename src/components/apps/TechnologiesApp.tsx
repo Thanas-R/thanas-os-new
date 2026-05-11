@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, ExternalLink } from 'lucide-react';
 
 // VS Code app: loads the project repo via the github1s VS Code-style web editor.
@@ -16,12 +16,12 @@ export const TechnologiesApp = () => {
   const [blocked, setBlocked] = useState(false);
 
   // If the iframe doesn't fire onLoad within 6s, assume the host blocked us.
-  useState(() => {
+  useEffect(() => {
     const t = setTimeout(() => {
       if (loading) setBlocked(true);
     }, 6000);
     return () => clearTimeout(t);
-  });
+  }, [loading]);
 
   return (
     <div className="h-full w-full flex flex-col bg-[#1e1e1e] text-neutral-200">

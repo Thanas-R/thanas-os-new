@@ -59,7 +59,14 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   }, [settings]);
 
   const openApp = (appId: string) => {
-    // Note: Launchpad stays open when launching apps so it acts as a persistent grid.
+    // If launchpad is open and we're opening a different app, close launchpad first.
+    if (appId !== 'launchpad') {
+      const lp = windows.find(w => w.appId === 'launchpad' && !w.isMinimized);
+      if (lp) {
+        setWindows(prev => prev.filter(w => w.id !== lp.id));
+      }
+    }
+
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
       // Launchpad: clicking dock icon again closes it

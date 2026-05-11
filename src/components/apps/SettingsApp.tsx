@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Search, Bluetooth, Wifi, Battery, HardDrive, Lock as LockIcon, ChevronRight, ChevronLeft, Bell,
+  Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, ChevronLeft, Bell,
   Volume2, Moon, Clock, Globe, RefreshCw, Settings as SettingsIcon, Eye, Layout, Palette, Compass,
   Sun, Star, ArrowDownToLine, Languages, Database, Share2, Keyboard, Gauge, User,
 } from 'lucide-react';
+import { IoIosWifi } from 'react-icons/io';
+import airdropImg from '@/assets/airdrop-icon-new.png';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useGoogleInstalled } from '@/lib/installedApps';
 import { Switch } from '@/components/ui/switch';
@@ -32,7 +34,7 @@ type SectionId =
 type GeneralSubsection = 'about' | 'software' | 'storage' | 'airdrop' | 'login' | 'language' | 'datetime' | 'sharing' | 'time-machine' | 'transfer' | 'startup';
 
 const SIDEBAR_TOP = [
-  { id: 'wifi', label: 'Wi-Fi', icon: Wifi, tint: '#0a84ff' },
+  { id: 'wifi', label: 'Wi-Fi', icon: IoIosWifi, tint: '#0a84ff' },
   { id: 'bluetooth', label: 'Bluetooth', icon: Bluetooth, tint: '#0a84ff' },
   { id: 'network', label: 'Network', icon: Globe, tint: '#0a84ff' },
 ] as const;
@@ -365,8 +367,13 @@ const GeneralPane = ({ sub, batteryLevel, batteryCharging, onBack }: { sub: Gene
           <div className="text-[13px] text-neutral-500">2026</div>
         </div>
         <Card>
-          <KV k="Chip" v="Apple M-Web" />
-          <KV k="Memory" v="32 GB" />
+          <KV k="Model Name" v="MacBook Air" />
+          <KV k="Model Identifier" v="MacBookAir2026,1" />
+          <KV k="Chip" v="Apple M5" />
+          <KV k="Total Number of Cores" v="10 (4 performance and 6 efficiency)" />
+          <KV k="Memory" v="24 GB Unified Memory" />
+          <KV k="Storage" v="512 GB SSD" />
+          <KV k="Display" v="13.6-inch Liquid Retina, 2560×1664" />
           <KV k="Serial Number" v="THANAS-OS-2026" />
           <KV k="Battery" v={batteryLevel !== null ? `${batteryLevel}%${batteryCharging ? ' Charging' : ''}` : 'Unavailable'} />
         </Card>
@@ -396,8 +403,8 @@ const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon
   <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1 rounded-md text-[12.5px] transition-colors ${
     active ? 'bg-blue-500 text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
   }`}>
-    <span className="w-5 h-5 rounded-md flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>
-      <I className="w-3 h-3" />
+    <span className="w-5 h-5 rounded-[5px] flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>
+      {label === 'AirDrop & Handoff' ? <img src={airdropImg} alt="" className="w-3.5 h-3.5 object-contain" /> : <I className="w-3 h-3" />}
     </span>
     <span className="truncate">{label}</span>
   </button>

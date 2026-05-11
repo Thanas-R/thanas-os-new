@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import {
   Phone,
   MessageSquare,
-  Video,
   Mail,
 } from 'lucide-react';
 import contactImg from '@/assets/contact-img.png';
@@ -31,39 +30,21 @@ export const ContactApp = () => {
       />
 
       <div className="relative z-10 h-full w-full overflow-y-auto no-scrollbar pb-8">
-        {/* Top profile */}
-        <div className="flex flex-col items-center pt-8 px-4">
-          <div
-            className="rounded-full overflow-hidden ring-1 ring-white/20 shadow-2xl"
-            style={{
-              width: 132,
-              height: 132,
-              background: 'rgba(255,255,255,0.08)',
-              backdropFilter: 'blur(30px) saturate(180%)',
-              WebkitBackdropFilter: 'blur(30px) saturate(180%)',
-            }}
-          >
-            <img
-              src={contactImg}
-              alt="Thanas R"
-              className="w-full h-full object-cover"
-            />
-          </div>
-
-          <h1 className="mt-4 text-[44px] font-bold tracking-tight leading-none drop-shadow-lg text-center">
+        {/* Top title */}
+        <div className="flex flex-col items-center pt-10 px-4">
+          <h1 className="text-[44px] font-bold tracking-tight leading-none drop-shadow-lg text-center">
             Thanas R
           </h1>
-
-          <p className="mt-2 text-[14px] text-white/70 text-center">
-            Contact profile
-          </p>
         </div>
 
         {/* Action circles */}
         <div className="flex justify-center gap-4 mt-6 px-4">
           <GlassCircle href="sms:+919141944808" icon={<MessageSquare className="w-6 h-6" strokeWidth={2.4} />} />
           <GlassCircle href="tel:+919141944808" icon={<Phone className="w-6 h-6" strokeWidth={2.4} />} />
-          <GlassCircle href="https://meet.google.com/" icon={<Video className="w-6 h-6" strokeWidth={2.4} />} />
+          <GlassCircle
+            href="https://discord.com/users/677174403859087378"
+            icon={<DiscordIcon className="w-6 h-6" />}
+          />
           <GlassCircle href="mailto:thanas5.rd@gmail.com" icon={<Mail className="w-6 h-6" strokeWidth={2.4} />} />
         </div>
 
@@ -93,17 +74,17 @@ export const ContactApp = () => {
           <GlassPanel className="divide-y divide-white/10">
             <Field
               label="linkedin"
-              value="https://www.linkedin.com/in/thanasr/"
+              value="linkedin.com/in/thanasr"
               right={<LinkedInIcon className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="github"
-              value="https://github.com/Thanas-R/"
+              value="github.com/Thanas-R"
               right={<GitHubIcon className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="portfolio"
-              value="https://thanas.vercel.app/"
+              value="thanas.vercel.app"
               right={<PortfolioIcon className="w-5 h-5 text-yellow-400" />}
             />
           </GlassPanel>

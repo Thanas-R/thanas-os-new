@@ -64,7 +64,6 @@ export const AppleSlider = ({
     };
   }, [dragging, handleMove]);
 
-  // Sized 30% smaller than the reference: 7px track, 46x30 thumb
   return (
     <div
       ref={trackRef}

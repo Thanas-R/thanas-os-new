@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Wifi, Battery, Volume2, Search, SlidersHorizontal } from 'lucide-react';
+import { Wifi, Volume2, Search, BatteryCharging, Zap } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import turtleLogo from '@/assets/turtle-logo.png';
+import controlCenterIcon from '@/assets/control-center-icon.png';
 import { ShortcutsModal } from './ShortcutsModal';
 import { HelpModal } from './HelpModal';
 import { ControlCenter } from './ControlCenter';
@@ -16,6 +17,41 @@ interface MenuGroup {
   label: string;
   items: MenuItem[];
 }
+
+// iOS-style battery glyph (rounded body + nub, fills horizontally)
+const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
+  const pct = Math.max(0, Math.min(100, level ?? 100));
+  const fillColor = charging ? '#34d399' : pct <= 20 ? '#ef4444' : '#ffffff';
+  return (
+    <div className="flex items-center gap-1">
+      {level !== null && (
+        <span className="text-[11px] font-medium text-white/90">{Math.round(pct)}%</span>
+      )}
+      <div className="relative" style={{ width: 24, height: 12 }}>
+        <div
+          className="absolute inset-0 rounded-[3.5px] border border-white/70 box-border p-[1.5px]"
+        >
+          <div
+            className="h-full rounded-[2px] transition-all"
+            style={{ width: `${pct}%`, background: fillColor }}
+          />
+        </div>
+        {/* nub */}
+        <div
+          className="absolute top-1/2 -translate-y-1/2"
+          style={{
+            right: -2.5, width: 1.5, height: 5,
+            background: 'rgba(255,255,255,0.7)',
+            borderRadius: 1,
+          }}
+        />
+        {charging && (
+          <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-black/80" />
+        )}
+      </div>
+    </div>
+  );
+};
 
 export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [time, setTime] = useState(new Date());
@@ -39,7 +75,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     return () => clearInterval(t);
   }, []);
 
-  // Real battery via Battery Status API (when available)
   useEffect(() => {
     const nav: any = navigator;
     if (!nav.getBattery) return;
@@ -80,7 +115,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     setAppleOpen(false);
     setActiveMenu(null);
     setTimeout(() => {
-      if (label === 'Restart…' || label === 'Shut Down…') {
+      if (label === 'Restart' || label === 'Shut Down') {
         windows.forEach(w => closeWindow(w.id));
       }
       setLoader(null);
@@ -90,14 +125,14 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const appleMenu: MenuItem[] = [
     { label: 'About This Mac', action: () => { openApp('about'); setAppleOpen(false); } },
     { separator: true },
-    { label: 'System Settings…', action: () => { openApp('settings'); setAppleOpen(false); } },
-    { label: 'App Store…', action: () => { openApp('appstore'); setAppleOpen(false); } },
+    { label: 'System Settings', action: () => { openApp('settings'); setAppleOpen(false); } },
+    { label: 'App Store', action: () => { openApp('appstore'); setAppleOpen(false); } },
     { separator: true },
     { label: 'Force Quit All', shortcut: '⌥⌘⎋', action: () => { windows.forEach(w => closeWindow(w.id)); setAppleOpen(false); } },
     { separator: true },
     { label: 'Sleep', action: () => triggerLoader('Sleep') },
-    { label: 'Restart…', action: () => triggerLoader('Restart…') },
-    { label: 'Shut Down…', action: () => triggerLoader('Shut Down…') },
+    { label: 'Restart', action: () => triggerLoader('Restart') },
+    { label: 'Shut Down', action: () => triggerLoader('Shut Down') },
     { separator: true },
     { label: 'Lock Screen', shortcut: '⌃⌘Q', action: () => triggerLoader('Lock Screen') },
   ];
@@ -111,7 +146,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       { label: 'Close Window', shortcut: '⌘W', action: () => focusActive && closeWindow(focusActive.id) },
       { label: 'Minimize', shortcut: '⌘M', action: () => focusActive && minimizeAllWindows() },
       { separator: true },
-      { label: 'Print…', shortcut: '⌘P', action: () => window.print() },
+      { label: 'Print', shortcut: '⌘P', action: () => window.print() },
     ];
     const defaultEdit: MenuItem[] = [
       { label: 'Undo', shortcut: '⌘Z', action: () => document.execCommand('undo') },
@@ -140,7 +175,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       { label: 'ThanasOS Help', action: () => setHelpOpen(true) },
       { label: 'Keyboard Shortcuts', action: () => setShortcutsOpen(true) },
       { separator: true },
-      { label: 'Contact Me…', action: () => openApp('contact') },
+      { label: 'Contact Me', action: () => openApp('contact') },
     ];
 
     return [
@@ -177,31 +212,25 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       hour: 'numeric', minute: '2-digit', hour12: true,
     });
 
+  // Solid (non-glass) dropdown matching theme
   const renderDropdown = (items: MenuItem[]) => (
     <div
-      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-xl py-1.5 z-[100] text-white text-[13px]"
+      className="absolute top-7 left-0 mt-1 min-w-[240px] rounded-xl py-1.5 z-[100] text-[13px] bg-popover text-popover-foreground border border-border shadow-2xl"
       onClick={(e) => e.stopPropagation()}
-      style={{
-        background: 'rgba(30,30,34,0.55)',
-        backdropFilter: 'blur(40px) saturate(200%)',
-        WebkitBackdropFilter: 'blur(40px) saturate(200%)',
-        border: '1px solid rgba(255,255,255,0.12)',
-        boxShadow: '0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
-      }}
     >
       {items.map((it, i) =>
         it.separator ? (
-          <div key={i} className="h-px bg-white/10 my-1 mx-2" />
+          <div key={i} className="h-px bg-border my-1 mx-2" />
         ) : (
           <button
             key={i}
             disabled={!it.action}
             onClick={() => { it.action?.(); setActiveMenu(null); setAppleOpen(false); }}
-            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-blue-500/85 hover:text-white' : 'opacity-50 cursor-default'}`}
+            className={`flex items-center justify-between px-3 py-1.5 text-left rounded-md mx-1 ${it.action ? 'hover:bg-accent hover:text-accent-foreground' : 'opacity-50 cursor-default'}`}
             style={{ width: 'calc(100% - 8px)' }}
           >
             <span>{it.label}</span>
-            {it.shortcut && <span className="text-white/55 ml-6 text-xs">{it.shortcut}</span>}
+            {it.shortcut && <span className="opacity-60 ml-6 text-xs">{it.shortcut}</span>}
           </button>
         )
       )}
@@ -223,22 +252,28 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         }}
       >
         <div className="flex items-center gap-1 relative">
-          {/* Apple/turtle menu — own state, isolated */}
-          <div className="relative">
+          {/* Turtle (Apple) menu */}
+          <div
+            className="relative"
+            onMouseEnter={() => { if (activeMenu || appleOpen) { setActiveMenu(null); setAppleOpen(true); } }}
+          >
             <button
               onClick={(e) => { e.stopPropagation(); setActiveMenu(null); setAppleOpen(o => !o); }}
-              className={`px-2 py-0.5 rounded hover:bg-white/15 ${appleOpen ? 'bg-white/20' : ''}`}
+              className={`px-2 py-0.5 rounded hover:bg-white/15 flex items-center ${appleOpen ? 'bg-white/20' : ''}`}
             >
-              <img src={turtleLogo} alt="Logo" className="h-4 w-auto object-contain" />
+              <img src={turtleLogo} alt="Logo" className="h-5 w-auto object-contain" />
             </button>
             {appleOpen && renderDropdown(appleMenu)}
           </div>
 
           {menus.map((m, idx) => (
-            <div key={m.label} className="relative">
+            <div
+              key={m.label}
+              className="relative"
+              onMouseEnter={() => { if (activeMenu || appleOpen) { setAppleOpen(false); setActiveMenu(m.label); } }}
+            >
               <button
                 onClick={(e) => { e.stopPropagation(); setAppleOpen(false); setActiveMenu(activeMenu === m.label ? null : m.label); }}
-                onMouseEnter={() => activeMenu && setActiveMenu(m.label)}
                 className={`px-2.5 py-0.5 rounded hover:bg-white/15 ${
                   idx === 0 ? 'font-semibold' : ''
                 } ${activeMenu === m.label ? 'bg-white/20' : ''}`}
@@ -253,24 +288,27 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1 hover:bg-white/15 rounded flex items-center gap-1">
-                <Battery className="w-4 h-4" />
-                {batteryLevel !== null && <span className="text-[11px] font-medium">{batteryLevel}%</span>}
+              <button className="px-1 hover:bg-white/15 rounded flex items-center">
+                <IOSBattery level={batteryLevel} charging={batteryCharging} />
               </button>
             </PopoverTrigger>
             <PopoverContent className="w-52 p-3 z-[200]">
-              <div className="text-sm font-medium">
-                Battery {batteryLevel !== null ? `${batteryLevel}%` : '—'}
-                {batteryCharging && <span className="ml-1 text-xs text-emerald-500">⚡</span>}
+              <div className="text-sm font-medium flex items-center gap-1">
+                Battery {batteryLevel !== null ? `${batteryLevel}%` : 'unavailable'}
+                {batteryCharging && <BatteryCharging className="w-4 h-4 text-emerald-500" />}
               </div>
               <div className="w-full bg-secondary rounded-full h-2 mt-2">
                 <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${batteryLevel ?? 0}%` }} />
               </div>
-              <div className="text-[11px] text-muted-foreground mt-2">{batteryLevel === null ? 'Battery API unavailable in this browser.' : batteryCharging ? 'Charging' : 'On battery'}</div>
+              <div className="text-[11px] text-muted-foreground mt-2">
+                {batteryLevel === null ? 'Battery API unavailable in this browser.' : batteryCharging ? 'Charging' : 'On battery'}
+              </div>
             </PopoverContent>
           </Popover>
-          <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}><Wifi className="w-4 h-4" /></button>
-          <button className="p-1 hover:bg-white/15 rounded flex items-center gap-1" title={`Volume ${settings.volume ?? 65}%`}>
+          <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
+            <Wifi className="w-4 h-4" />
+          </button>
+          <button className="p-1 hover:bg-white/15 rounded" title={`Volume ${settings.volume ?? 65}%`}>
             <Volume2 className="w-4 h-4" />
           </button>
           <button onClick={onSpotlightClick} className="p-1 hover:bg-white/15 rounded" title="Spotlight (⌘K)">
@@ -278,10 +316,10 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           </button>
           <button
             onClick={() => setCcOpen(o => !o)}
-            className={`p-1 hover:bg-white/15 rounded ${ccOpen ? 'bg-white/20' : ''}`}
+            className={`p-1 hover:bg-white/15 rounded flex items-center ${ccOpen ? 'bg-white/20' : ''}`}
             title="Control Center"
           >
-            <SlidersHorizontal className="w-4 h-4" />
+            <img src={controlCenterIcon} alt="Control Center" className="w-4 h-4 object-contain" />
           </button>
           <Popover>
             <PopoverTrigger asChild>

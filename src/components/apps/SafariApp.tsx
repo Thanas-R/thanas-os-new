@@ -5,6 +5,7 @@ import {
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
+import { useBookmarks } from '@/lib/bookmarks';
 import { registerAppMenus } from '@/types/macos';
 
 interface Tab {
@@ -33,14 +34,7 @@ const PROXIES = (url: string) => [
   `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`,
 ];
 
-const BOOKMARKS = [
-  { name: 'Portfolio', url: 'https://thanas.vercel.app' },
-  { name: 'GitHub', url: 'https://github.com/Thanas-R' },
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanas-r/' },
-  { name: 'Apple', url: 'https://www.apple.com' },
-  { name: 'DuckDuckGo', url: 'https://duckduckgo.com' },
-  { name: 'Wikipedia', url: 'https://en.wikipedia.org' },
-];
+// Bookmarks now live in localStorage via useBookmarks()
 
 const PRANK_DOC = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
@@ -97,6 +91,7 @@ export const SafariApp = () => {
       ? newTab(pending, (() => { try { return new URL(pending).hostname; } catch { return pending; } })())
       : newTab();
   }
+  const { bookmarks, has: hasBookmark, toggle: toggleBookmark } = useBookmarks();
   const [tabs, setTabs] = useState<Tab[]>([initial.current]);
   const [activeId, setActiveId] = useState(initial.current.id);
   const [addressBar, setAddressBar] = useState(initial.current.url);
@@ -273,7 +268,18 @@ export const SafariApp = () => {
             className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 text-center"
             placeholder="Search or enter website name"
           />
-          <button type="button" className="p-0.5 text-neutral-500 hover:text-yellow-500"><Star className="w-3.5 h-3.5" /></button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!isFavorites && /^https?:\/\//.test(active.url)) {
+                toggleBookmark({ name: active.title || active.url, url: active.url });
+              }
+            }}
+            className={`p-0.5 ${hasBookmark(active.url) ? 'text-yellow-500' : 'text-neutral-500 hover:text-yellow-500'}`}
+            title={hasBookmark(active.url) ? 'Remove bookmark' : 'Add bookmark'}
+          >
+            <Star className="w-3.5 h-3.5" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
+          </button>
         </form>
 
         <ToolbarBtn onClick={() => setShowBookmarksBar(s => !s)}><BookOpen className="w-4 h-4" /></ToolbarBtn>
@@ -303,7 +309,7 @@ export const SafariApp = () => {
       {/* Bookmarks bar */}
       {showBookmarksBar && (
         <div className="flex items-center gap-1 px-3 py-1 bg-neutral-50/80 dark:bg-neutral-900/60 border-b border-black/10 dark:border-white/10 overflow-x-auto">
-          {BOOKMARKS.map(b => (
+          {bookmarks.map(b => (
             <button
               key={b.url}
               onClick={() => navigate(b.url)}
@@ -321,7 +327,7 @@ export const SafariApp = () => {
         {showSidebar && (
           <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto">
             <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
-            {BOOKMARKS.map(b => (
+            {bookmarks.map(b => (
               <button
                 key={b.url}
                 onClick={() => navigate(b.url)}
@@ -350,7 +356,7 @@ export const SafariApp = () => {
               </div>
               <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">Bookmarks</h2>
               <div className="grid grid-cols-6 gap-x-6 gap-y-4 mx-auto place-items-center">
-                {BOOKMARKS.map(b => (
+                {bookmarks.map(b => (
                   <button key={b.url} onClick={() => navigate(b.url)} className="flex flex-col items-center gap-1.5 group w-20">
                     <div className="w-12 h-12 rounded-xl bg-white dark:bg-neutral-800 border border-black/5 dark:border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform">
                       <img src={faviconFor(b.url)} alt={b.name} className="w-7 h-7" />

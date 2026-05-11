@@ -4,7 +4,6 @@ import { APP_ICONS as iconMap } from '@/components/apps/LaunchpadApp';
 
 export const Dock = () => {
   const { apps, dockItems, openApp, windows, settings } = useMacOS();
-  const launchpadOpen = windows.some(w => w.appId === 'launchpad' && !w.isMinimized);
   const [isDockVisible, setIsDockVisible] = useState(!settings.dockAutoHide);
   const [mouseX, setMouseX] = useState<number | null>(null);
   const [currentScales, setCurrentScales] = useState<number[]>([]);
@@ -238,7 +237,7 @@ export const Dock = () => {
         className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl shadow-macos-glass z-50 ${
           settings.reducedMotion ? '' : 'transition-all duration-500 ease-out'
         } ${
-          (settings.dockAutoHide && !isDockVisible) || launchpadOpen ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
+          (settings.dockAutoHide && !isDockVisible) ? 'translate-y-full opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'
         }`}
         style={{
           width: `${contentWidth + padding * 2}px`,

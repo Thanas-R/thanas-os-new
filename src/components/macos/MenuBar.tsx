@@ -21,12 +21,12 @@ interface MenuGroup {
 // iOS-style battery glyph (rounded body + nub, fills horizontally)
 const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
-  const fillColor = charging ? '#34d399' : pct <= 20 ? '#ef4444' : '#ffffff';
+  const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
   return (
     <div className="flex items-center gap-1">
       <div className="relative" style={{ width: 24, height: 12 }}>
         <div
-          className="absolute inset-0 rounded-[3.5px] border border-white/70 box-border p-[1.5px]"
+          className="absolute inset-0 rounded-[3.5px] border border-white/70 box-border p-[1px]"
         >
           <div
             className="h-full rounded-[2px] transition-all"
@@ -43,7 +43,7 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
           }}
         />
         {charging && (
-          <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-black/80" />
+          <Zap className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5 text-white/70" />
         )}
       </div>
     </div>

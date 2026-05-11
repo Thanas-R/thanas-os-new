@@ -265,7 +265,7 @@ export const SafariApp = () => {
           <input
             value={addressBar}
             onChange={(e) => setAddressBar(e.target.value)}
-            className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 text-center"
+            className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100"
             placeholder="Search or enter website name"
           />
           <button

@@ -20,36 +20,51 @@ interface MenuGroup {
 }
 
 // iOS-style battery glyph (rounded body + nub, fills horizontally)
+// Replace ONLY your IOSBattery component with this improved version
+
 const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
   const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
+
   return (
     <div className="flex items-center gap-1">
-      <div className="relative" style={{ width: 26, height: 13 }}>
+      {/* smaller overall battery */}
+      <div className="relative" style={{ width: 23, height: 11 }}>
+        
+        {/* outer shell */}
         <div
-          className="absolute inset-0 rounded-[4px] border border-white/70 box-border px-[1px] py-[2px]"
+          className="absolute inset-0 rounded-[4px] border border-white/70 box-border px-[1px] py-[1.8px]"
         >
+          {/* inner fill with rounder edges */}
           <div
-            className="h-full rounded-[1px]"
-            style={{ width: `${pct}%`, background: fillColor }}
+            className="h-full rounded-[2.4px] transition-all"
+            style={{
+              width: `${pct}%`,
+              background: fillColor,
+            }}
           />
         </div>
+
         {/* nub */}
         <div
           className="absolute top-1/2 -translate-y-1/2"
           style={{
-            right: -2.5, width: 1.5, height: 5,
+            right: -2.2,
+            width: 1.4,
+            height: 4.4,
             background: 'rgba(255,255,255,0.7)',
-            borderRadius: 1,
+            borderRadius: 1.5,
           }}
         />
+
+        {/* bigger zap */}
         {charging && (
           <Zap
-  fill="white"
-  stroke="white"
-  strokeWidth={1.8}
-  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5"
-/>
+            fill="white"
+            stroke="white"
+            strokeWidth={1.8}
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3"
+          />
         )}
       </div>
     </div>

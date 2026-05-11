@@ -126,7 +126,7 @@ export const AppStoreApp = () => {
 
         {/* Featured hero */}
         {featured && section === 'discover' && (
-          <div className="px-8 pt-8 pb-6 border-b border-black/5 dark:border-white/10">
+          <div className="pl-16 pr-8 pt-8 pb-6 border-b border-black/5 dark:border-white/10">
             <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
               Featured Project
             </div>
@@ -158,7 +158,7 @@ export const AppStoreApp = () => {
 
         {/* Apps section — Google as a standalone app */}
         {showGoogleCard && (
-          <div className="px-8 pt-6">
+          <div className="pl-16 pr-8 pt-6">
             <h2 className="text-lg font-semibold mb-4">Apps</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10">
@@ -205,7 +205,7 @@ export const AppStoreApp = () => {
         )}
 
         {/* Projects */}
-        <div className="px-8 py-6">
+        <div className="pl-16 pr-8 py-6">
           <h2 className="text-lg font-semibold mb-4">All Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {list.map(p => {

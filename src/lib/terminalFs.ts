@@ -10,27 +10,39 @@ export const ROOT: FsNode = dir({
   Users: dir({
     thanas: dir({
       Desktop: dir({
-        'README.md': file('Welcome to ThanasOS Desktop.\nDrag, drop, magnify.'),
+        'README.md': file('# Welcome to ThanasOS\n\nThis is your **Desktop**.\nDrag, drop, magnify.\n\n- Hit `Cmd+K` to open Spotlight\n- Open Launchpad from the dock\n- Try `open terminal` in Terminal\n'),
+        'notes.txt': file('Random thoughts:\n- ship more\n- write less yaml\n- design with conviction\n'),
       }),
       Documents: dir({
-        'about.txt': file('Thanas — builder of small useful things.'),
-        'projects.txt': file('See the App Store for the project list.'),
+        'about.txt': file('Thanas R\nBuilder of small useful things.\nFind me at https://thanas.vercel.app\n'),
+        'projects.md': file('# Projects\n\n- **ThanasOS** — the desktop you are using\n- **Portfolio** — thanas.vercel.app\n- **Spotlight v2** — goo-filter morph\n\nSee the App Store inside ThanasOS for the full list.\n'),
+        'resume.md': file('# Thanas R — Resume\n\n## Stack\n- TypeScript, React, Vite, Tailwind\n- Node, Postgres, Supabase\n- Framer Motion, shadcn/ui\n\n## Highlights\n- Built ThanasOS from scratch\n- Three-proxy race for browser apps\n- Cosine-based dock magnification\n'),
+        'todo.txt': file('[ ] finish notes preview pane\n[ ] add file viewer to finder\n[x] real battery in menu bar\n[x] case-insensitive terminal\n'),
       }),
-      Downloads: dir({}),
-      Music: dir({}),
-      Pictures: dir({}),
+      Downloads: dir({
+        'lipsum.txt': file('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.\n'),
+      }),
+      Music: dir({
+        'playlist.txt': file('1. Aphex Twin — Avril 14th\n2. Boards of Canada — Roygbiv\n3. Tycho — A Walk\n'),
+      }),
+      Pictures: dir({
+        'caption.txt': file('Wallpapers live in Settings > Wallpaper.\n'),
+      }),
       Movies: dir({}),
-      '.zshrc': file('# zsh config\nexport PS1="thanas@thanasos %~ %% "'),
-      '.bash_history': file('ls\ncd Documents\ncat about.txt\nneofetch\n'),
+      '.zshrc': file('# zsh config\nexport PS1="thanas@thanasos %~ %% "\nalias ll="ls -la"\nalias gs="git status"\n'),
+      '.bash_history': file('ls\ncd Documents\ncat about.txt\nneofetch\nstatus\nopen safari\n'),
     }),
   }),
   bin: dir({}),
   etc: dir({
     hostname: file('thanasos'),
-    motd: file('Welcome to ThanasOS — type `help` to get started.'),
+    motd: file('Welcome to ThanasOS — type `help` to get started.\n'),
+    'os-release': file('NAME="ThanasOS"\nVERSION="1.0 (Liquid Glass)"\nID=thanasos\nPRETTY_NAME="ThanasOS 1.0"\n'),
   }),
   tmp: dir({}),
-  var: dir({ log: dir({}) }),
+  var: dir({ log: dir({
+    'system.log': file('[boot] kernel ok\n[boot] dock attached\n[boot] menubar online\n[boot] welcome.\n'),
+  }) }),
 });
 
 export const HOME = '/Users/thanas';

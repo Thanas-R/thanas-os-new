@@ -49,15 +49,18 @@ const ASCII = String.raw`
 
 const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
 ${ASCII}
+
+
        ThanasOS  v1.0  ·  Liquid Glass Edition
-       Type \`help\` for available commands, \`status\` for system info.`;
+       Type \`help\` for available commands, \`status\` for system info.
+
+
+`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
   const [cwd, setCwd] = useState(HOME);
-const [lines, setLines] = useState<Line[]>([
-  { type: 'out', text: 'BANNER_TOP' }
-]);
+  const [lines, setLines] = useState<Line[]>([{ type: 'out', text: BANNER }]);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [historyIdx, setHistoryIdx] = useState<number | null>(null);
@@ -76,7 +79,8 @@ const [lines, setLines] = useState<Line[]>([
     if (!cmd) return;
     setHistory(prev => [...prev, cmd]);
 
-    const [name, ...args] = cmd.split(/\s+/);
+    const [rawName, ...args] = cmd.split(/\s+/);
+    const name = rawName.toLowerCase();
     switch (name) {
       case 'help':
         print([
@@ -106,6 +110,10 @@ const [lines, setLines] = useState<Line[]>([
           '  apps                   list installable apps',
           '  neofetch               system summary',
           '  status                 system status (uptime, memory, apps)',
+          '  battery                show battery percentage',
+          '  time / now / cal       clock, ISO time, month calendar',
+          '  weather / joke         small fun commands',
+          '  man <cmd>              manual page for a command',
           '  exit                   close the terminal window',
         ].join('\n'));
         break;
@@ -301,6 +309,57 @@ const [lines, setLines] = useState<Line[]>([
         else print('logout');
         break;
       }
+      case 'time': print(new Date().toLocaleTimeString()); break;
+      case 'now': print(new Date().toISOString()); break;
+      case 'cal': {
+        const d = new Date();
+        const y = d.getFullYear(); const m = d.getMonth();
+        const first = new Date(y, m, 1).getDay();
+        const days = new Date(y, m + 1, 0).getDate();
+        const month = d.toLocaleString('en-US', { month: 'long' });
+        let out = `      ${month} ${y}\nSu Mo Tu We Th Fr Sa\n`;
+        let row = '   '.repeat(first);
+        for (let i = 1; i <= days; i++) {
+          row += String(i).padStart(2, ' ') + ' ';
+          if ((first + i) % 7 === 0) { out += row + '\n'; row = ''; }
+        }
+        if (row.trim()) out += row;
+        print(out);
+        break;
+      }
+      case 'joke': {
+        const jokes = [
+          'There are 10 kinds of people: those who understand binary and those who do not.',
+          "I told my computer I needed a break. It said: 'no problem, I will go to sleep.'",
+          'Why do programmers prefer dark mode? Because light attracts bugs.',
+          'A SQL query walks into a bar, walks up to two tables and asks: may I join you?',
+        ];
+        print(jokes[Math.floor(Math.random() * jokes.length)]);
+        break;
+      }
+      case 'weather': print('Cupertino  ☀️  72°F  ·  Clear  ·  H 75°  L 58°'); break;
+      case 'battery': {
+        const nav: any = navigator;
+        if (nav.getBattery) {
+          nav.getBattery().then((b: any) => print(`Battery: ${Math.round(b.level * 100)}%${b.charging ? ' (charging)' : ''}`));
+        } else print('Battery: n/a');
+        break;
+      }
+      case 'man': {
+        if (!args[0]) { print('What manual page do you want? Try `man ls`.'); break; }
+        const pages: Record<string, string> = {
+          ls: 'ls — list directory contents.\nUsage: ls [-la] [path]',
+          cd: 'cd — change directory.\nUsage: cd <path>',
+          cat: 'cat — concatenate and print files.\nUsage: cat <file>',
+          echo: 'echo — write arguments to stdout.\nUsage: echo [text] [> file]',
+          grep: 'grep — search for a pattern in a file.\nUsage: grep <pattern> <file>',
+          status: 'status — print system status (uptime, memory, windows).',
+          help: 'help — list all available commands.',
+        };
+        print(pages[args[0].toLowerCase()] || `No manual entry for ${args[0]}`);
+        break;
+      }
+      case 'sudo': print('thanas is not in the sudoers file. This incident will be reported.'); break;
       case 'status': {
         const openWins = windows.filter(w => !w.isMinimized).length;
         const minWins = windows.filter(w => w.isMinimized).length;

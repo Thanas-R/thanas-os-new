@@ -135,7 +135,10 @@ const SpotlightInput = ({
   );
 };
 
-interface SearchResultCardProps extends SearchResult {
+interface SearchResultCardProps {
+  icon?: string;
+  name: string;
+  description: string;
   isLast: boolean;
   isActive: boolean;
   onClick: () => void;

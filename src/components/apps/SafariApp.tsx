@@ -224,7 +224,7 @@ export const SafariApp = () => {
           <div
             key={t.id}
             onClick={() => setActiveId(t.id)}
-            className={`group flex items-center gap-1.5 px-2.5 py-1.5 rounded-t-md text-[12px] cursor-pointer max-w-[200px] min-w-[120px] ${
+            className={`group flex items-center gap-2 px-3.5 py-2.5 rounded-t-lg text-[13px] cursor-pointer max-w-[260px] min-w-[170px] ${
               t.id === activeId
                 ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-sm'
                 : 'text-neutral-600 dark:text-neutral-400 hover:bg-white/40 dark:hover:bg-neutral-700/40'

@@ -64,6 +64,14 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   }, [settings]);
 
   const openApp = (appId: string) => {
+    // Auto-close Launchpad when launching any other app (macOS behavior)
+    if (appId !== 'launchpad') {
+      const lp = windows.find(w => w.appId === 'launchpad' && !w.isMinimized);
+      if (lp) {
+        setWindows(prev => prev.filter(w => w.id !== lp.id));
+      }
+    }
+
     const existingWindow = windows.find(w => w.appId === appId && !w.isMinimized);
     if (existingWindow) {
       // Launchpad: clicking dock icon again closes it

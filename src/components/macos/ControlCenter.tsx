@@ -5,7 +5,7 @@ import {
   Keyboard, Airplay, Music, Play, SkipForward, Settings as SettingsIcon,
 } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { Slider } from '@/components/ui/slider';
+import { AppleSlider } from '@/components/ui/AppleSlider';
 
 interface Props {
   open: boolean;
@@ -186,6 +186,6 @@ const SliderModule = ({
       <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">{icon}</div>
       <div className="text-[12px] font-semibold">{label}</div>
     </div>
-    <Slider value={[value]} min={0} max={100} step={5} onValueChange={(v) => onChange(v[0])} />
+    <AppleSlider value={value} onChange={onChange} />
   </div>
 );

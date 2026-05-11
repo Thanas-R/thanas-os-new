@@ -83,8 +83,11 @@ const newTab = (url = HOMEPAGE): Tab => ({
   url, title: 'New Tab', loading: false, history: [url], histIdx: 0,
 });
 
+import { useBookmarks } from '@/lib/bookmarks';
+
 export const GoogleApp = () => {
   const { settings, updateSettings } = useMacOS();
+  const { bookmarks, has: hasBookmark, toggle: toggleBookmark } = useBookmarks();
   const [tabs, setTabs] = useState<Tab[]>(() => {
     const pending = consumePendingSafariUrl();
     return [pending ? { ...newTab(normalizeUrl(pending)) } : newTab()];
@@ -319,8 +322,18 @@ export const GoogleApp = () => {
               className="flex-1 bg-transparent border-none outline-none mx-2 text-[14px]"
               style={{ color: tk.urlText, fontFamily: 'inherit' }}
             />
-            <button type="button" className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-black/10" style={{ color: tk.icon, opacity: 0.7 }}>
-              <Star className="w-4 h-4" />
+            <button
+              type="button"
+              onClick={() => {
+                if (active.url !== HOMEPAGE && /^https?:\/\//.test(active.url)) {
+                  toggleBookmark({ name: active.title || active.url, url: active.url });
+                }
+              }}
+              className="w-7 h-7 rounded-full flex items-center justify-center hover:bg-black/10"
+              style={{ color: hasBookmark(active.url) ? '#f59e0b' : tk.icon, opacity: hasBookmark(active.url) ? 1 : 0.7 }}
+              title={hasBookmark(active.url) ? 'Remove bookmark' : 'Add bookmark'}
+            >
+              <Star className="w-4 h-4" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
             </button>
           </form>
         </div>
@@ -353,6 +366,17 @@ export const GoogleApp = () => {
       {/* BOOKMARKS BAR */}
       {showBookmarks && (
         <div className="flex items-center gap-1 px-3 py-1.5 shrink-0 overflow-x-auto" style={{ background: tk.toolbar }}>
+          {bookmarks.map(b => (
+            <button
+              key={b.url}
+              onClick={() => navigate(active.id, b.url)}
+              className="flex items-center gap-2 px-2.5 py-1 rounded-full whitespace-nowrap text-[11px] hover:bg-black/10"
+              style={{ color: tk.icon }}
+            >
+              <img src={`https://www.google.com/s2/favicons?domain=${(() => { try { return new URL(b.url).hostname; } catch { return ''; } })()}&sz=32`} alt="" className="w-4 h-4 object-contain" />
+              {b.name}
+            </button>
+          ))}
           {DEFAULT_FAVORITES.map(f => (
             <button
               key={f.url}

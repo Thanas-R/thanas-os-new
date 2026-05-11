@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { ChevronLeft, ChevronRight, Search, FolderOpen, Lock, Pin, Trash2, PenSquare } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Search, FolderOpen, Lock, Pin, Trash2, PenSquare, Folder } from 'lucide-react';
 import { BLOG_POSTS } from '@/lib/blogPosts';
 
 export const NotesApp = () => {
@@ -9,6 +9,17 @@ export const NotesApp = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [query, setQuery] = useState('');
   const active = BLOG_POSTS.find(p => p.id === activeId)!;
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.appId === 'notes' && detail?.payload?.noteId) {
+        setActiveId(detail.payload.noteId);
+      }
+    };
+    window.addEventListener('spotlight:open', handler);
+    return () => window.removeEventListener('spotlight:open', handler);
+  }, []);
 
   const filtered = BLOG_POSTS.filter(
     p => !query || p.title.toLowerCase().includes(query.toLowerCase())
@@ -53,9 +64,10 @@ export const NotesApp = () => {
           {['Notes', 'Blog', 'Drafts'].map(f => (
             <button
               key={f}
-              className="w-full text-left px-2.5 py-1.5 rounded-md text-[13px] text-neutral-300 hover:bg-white/5"
+              className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[13px] text-neutral-300 hover:bg-white/5 text-left"
             >
-              📁 {f}
+              <Folder className="w-3.5 h-3.5" />
+              {f}
             </button>
           ))}
         </div>

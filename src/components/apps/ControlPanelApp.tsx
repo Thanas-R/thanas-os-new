@@ -1,7 +1,10 @@
 import { useMacOS } from '@/contexts/MacOSContext';
 import { Switch } from '@/components/ui/switch';
-import { Slider } from '@/components/ui/slider';
-import { Sun, Moon, Sparkles, Magnet, EyeOff, Image as ImageIcon, Upload } from 'lucide-react';
+import { AppleSlider } from '@/components/ui/AppleSlider';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Wifi, Battery, BatteryCharging } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Sun, Moon, Magnet, EyeOff, Image as ImageIcon, Upload, Sparkles } from 'lucide-react';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
@@ -60,8 +63,46 @@ export const ControlPanelApp = () => {
 
         <Tile span={2}>
           <div className="flex items-center gap-3 mb-3"><Magnet className="w-5 h-5" /><div className="font-semibold">Dock Magnification</div></div>
-          <Slider value={[settings.dockMagnification]} min={0} max={150} step={5} onValueChange={(v) => updateSettings({ dockMagnification: v[0] })} />
+          <AppleSlider value={settings.dockMagnification} max={150} step={5} onChange={(v) => updateSettings({ dockMagnification: v })} />
           <div className="text-xs text-white/60 mt-2">{settings.dockMagnification}%</div>
+        </Tile>
+
+        <Tile span={2}>
+          <div className="grid grid-cols-2 gap-3">
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="flex items-center gap-3 p-3 rounded-2xl bg-white/5 hover:bg-white/10 text-left">
+                  <Wifi className={`w-5 h-5 ${settings.wifi ? 'text-blue-400' : 'text-white/40'}`} />
+                  <div>
+                    <div className="font-semibold text-sm">Wi-Fi</div>
+                    <div className="text-[11px] text-white/60">{settings.wifi ? 'ThanasOS-Net' : 'Off'}</div>
+                  </div>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent className="w-64 p-3 z-[200]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="text-sm font-semibold">Wi-Fi</div>
+                  <Switch checked={!!settings.wifi} onCheckedChange={(v) => updateSettings({ wifi: v })} />
+                </div>
+                {settings.wifi && (
+                  <div className="text-[12px]">
+                    <div className="font-medium mb-1">Preferred Network</div>
+                    <div className="px-2 py-1.5 rounded-md bg-blue-500/15 text-blue-700 dark:text-blue-300 flex items-center gap-2">
+                      <Wifi className="w-3.5 h-3.5" /> ThanasOS-Net
+                    </div>
+                    <div className="text-muted-foreground mt-2 text-[11px]">Other Networks</div>
+                    {['CoffeeShop_5G', 'NETGEAR_24', 'iPhone Hotspot'].map(n => (
+                      <div key={n} className="px-2 py-1 rounded-md hover:bg-accent flex items-center gap-2 text-[12px]">
+                        <Wifi className="w-3 h-3 opacity-60" /> {n}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+
+            <BatteryHover />
+          </div>
         </Tile>
 
         <Tile span={2}>

@@ -1,6 +1,13 @@
 import { MapPin, GraduationCap, Cake, ExternalLink } from 'lucide-react';
 import profilePhoto from '@/assets/profile-photo-new.jpg';
 
+const TECH_STACK: { group: string; items: string[] }[] = [
+  { group: 'Languages', items: ['TypeScript', 'JavaScript', 'Python', 'C++', 'HTML', 'CSS'] },
+  { group: 'Frameworks', items: ['React', 'Next.js', 'Vite', 'Tailwind CSS', 'Node.js', 'Express'] },
+  { group: 'AI / ML', items: ['PyTorch', 'TensorFlow', 'scikit-learn', 'Pandas', 'NumPy'] },
+  { group: 'Tooling', items: ['Git', 'GitHub Actions', 'Docker', 'Vercel', 'Supabase', 'Figma'] },
+];
+
 export const AboutApp = () => {
   return (
     <div className="p-8 space-y-6">
@@ -10,8 +17,8 @@ export const AboutApp = () => {
         </div>
         <div className="flex-1">
           <h1 className="text-4xl font-bold mb-2">Thanas R</h1>
-          <p className="text-muted-foreground text-lg mb-4">Developer & creative problem-solver. Building thoughtful digital experiences with code.</p>
-          
+          <p className="text-muted-foreground text-lg mb-4">Developer and creative problem-solver. Building thoughtful digital experiences with code.</p>
+
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-muted-foreground">
               <Cake className="w-4 h-4" />
@@ -32,13 +39,13 @@ export const AboutApp = () => {
       <div className="prose prose-neutral dark:prose-invert max-w-none">
         <h2 className="text-2xl font-bold mb-3">About Me</h2>
         <p className="text-base leading-relaxed">
-          I am a passionate learner who believes in growing a little every day. I'm genuinely interested in coding 
-          and problem-solving, and I enjoy turning complex challenges into simple, effective solutions. While I take 
+          I am a passionate learner who believes in growing a little every day. I'm genuinely interested in coding
+          and problem-solving, and I enjoy turning complex challenges into simple, effective solutions. While I take
           my work seriously, I also value creating a positive and cheerful environment.
         </p>
         <p className="text-base leading-relaxed mt-3">
-          I strive to be honest, supportive, and reliable. I combine technical skills with UI/UX knowledge to create 
-          intuitive, powerful applications. Currently pursuing B.Tech in Computer Science Engineering with a specialization 
+          I strive to be honest, supportive, and reliable. I combine technical skills with UI/UX knowledge to create
+          intuitive, powerful applications. Currently pursuing B.Tech in Computer Science Engineering with a specialization
           in AI/ML at PES University.
         </p>
       </div>
@@ -67,9 +74,33 @@ export const AboutApp = () => {
         <ExternalLink className="w-5 h-5 text-primary" />
         <div>
           <span className="text-sm font-semibold text-primary">Visit my main portfolio</span>
-          <p className="text-xs text-muted-foreground">thanas.vercel.app - the latest and fully functional version</p>
+          <p className="text-xs text-muted-foreground">thanas.vercel.app — the latest and fully functional version</p>
         </div>
       </a>
+
+      {/* Tech stack — moved here from the (now removed) Technologies app */}
+      <div className="pt-2">
+        <h2 className="text-2xl font-bold mb-4">Tech Stack</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {TECH_STACK.map((g) => (
+            <div key={g.group} className="bg-secondary/60 rounded-xl p-4">
+              <div className="text-xs uppercase tracking-wider text-muted-foreground mb-2 font-semibold">
+                {g.group}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {g.items.map((it) => (
+                  <span
+                    key={it}
+                    className="px-2.5 py-1 rounded-md bg-background/80 text-[12.5px] border border-border"
+                  >
+                    {it}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 };

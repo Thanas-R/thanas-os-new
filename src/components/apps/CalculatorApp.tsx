@@ -1,291 +1,206 @@
 import { useEffect, useState, useCallback } from 'react';
 import { registerAppMenus } from '@/types/macos';
 
-type Op = '+' | '-' | '*' | '/' | null;
+type Op = '+' | '-' | '*' | '/' | '';
 
+// macOS-style calculator faithfully ported from the user-supplied HTML/CSS/JS.
 export const CalculatorApp = () => {
-  const [display, setDisplay] = useState('0');
-  const [prev, setPrev] = useState<number | null>(null);
-  const [op, setOp] = useState<Op>(null);
-  const [waiting, setWaiting] = useState(false);
+  // Mirror of the user's STATE object, in React form.
+  const [oldValue, setOldValue] = useState(0);
+  const [value, setValue] = useState(0);
+  const [sign, setSign] = useState(1);
+  const [operator, setOperator] = useState<Op>('');
 
-  const fmt = (n: number): string => {
-    if (!isFinite(n)) return 'Error';
-    if (Math.abs(n) >= 1e16) return n.toExponential(6);
-
-    const s = Number(n.toFixed(10)).toString();
-
-    if (s.includes('.')) {
-      const [a, b] = s.split('.');
-      return Number(a).toLocaleString('en-US') + '.' + b;
-    }
-
-    return Number(s).toLocaleString('en-US');
+  const formatNumber = (n: number) => {
+    const s = `${n}`;
+    return s.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, '.');
   };
 
-  const getNum = (val: string) => parseFloat(val.replace(/,/g, ''));
+  const result = formatNumber(sign * value);
 
-  const inputDigit = useCallback(
-    (d: string) => {
-      if (waiting) {
-        setDisplay(d);
-        setWaiting(false);
-      } else {
-        setDisplay((prevVal) => (prevVal === '0' ? d : prevVal + d));
-      }
-    },
-    [waiting]
-  );
-
-  const inputDot = useCallback(() => {
-    if (waiting) {
-      setDisplay('0.');
-      setWaiting(false);
-      return;
-    }
-
-    setDisplay((prevVal) =>
-      prevVal.includes('.') ? prevVal : prevVal + '.'
-    );
-  }, [waiting]);
+  const setVal = useCallback((number: number) => {
+    setValue((v) => v * 10 + number);
+  }, []);
 
   const clearAll = useCallback(() => {
-    setDisplay('0');
-    setPrev(null);
-    setOp(null);
-    setWaiting(false);
+    setOldValue(0);
+    setValue(0);
+    setSign(1);
   }, []);
 
-  const toggleSign = useCallback(() => {
-    setDisplay((d) =>
-      d === '0' ? '0' : d.startsWith('-') ? d.slice(1) : '-' + d
-    );
-  }, []);
+  const toggleSign = useCallback(() => setSign((s) => s * -1), []);
 
-  const percent = useCallback(() => {
-    setDisplay((d) => fmt(getNum(d) / 100));
-  }, []);
-
-  const compute = (a: number, b: number, o: Op): number => {
-    switch (o) {
-      case '+':
-        return a + b;
-      case '-':
-        return a - b;
-      case '*':
-        return a * b;
-      case '/':
-        return b === 0 ? NaN : a / b;
-      default:
-        return b;
-    }
-  };
-
-  const performOp = useCallback(
+  const setOp = useCallback(
     (next: Op) => {
-      const current = getNum(display);
-
-      if (prev === null) {
-        setPrev(current);
-      } else if (op && !waiting) {
-        const result = compute(prev, current, op);
-        setPrev(result);
-        setDisplay(fmt(result));
-      }
-
-      setOp(next);
-      setWaiting(true);
+      setOperator(next);
+      setOldValue(sign * value);
+      setValue(0);
+      setSign(1);
     },
-    [display, prev, op, waiting]
+    [sign, value]
   );
 
   const equals = useCallback(() => {
-    if (prev === null || op === null) return;
+    let next = value;
+    switch (operator) {
+      case '+':
+        next = oldValue + value;
+        break;
+      case '-':
+        next = oldValue - value;
+        break;
+      case '*':
+        next = oldValue * value;
+        break;
+      case '/':
+        next = value === 0 ? NaN : Number((oldValue / value).toFixed(3));
+        break;
+      default:
+        return;
+    }
+    setValue(next);
+  }, [value, oldValue, operator]);
 
-    const current = getNum(display);
-    const result = compute(prev, current, op);
-
-    setDisplay(fmt(result));
-    setPrev(null);
-    setOp(null);
-    setWaiting(true);
-  }, [display, prev, op]);
+  // Keyboard support — same intent as the source script's keyup handler.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const num = Number(e.key);
+      if (!Number.isNaN(num) && e.key.trim() !== '') {
+        setVal(num);
+        return;
+      }
+      if (['+', '-', '*', '/'].includes(e.key)) setOp(e.key as Op);
+      else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        equals();
+      } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
+    };
+    window.addEventListener('keyup', onKey);
+    return () => window.removeEventListener('keyup', onKey);
+  }, [setVal, setOp, equals, clearAll]);
 
   useEffect(() => {
     registerAppMenus('calculator', {
       Edit: [
-        {
-          label: 'Copy',
-          shortcut: '⌘C',
-          action: () => navigator.clipboard?.writeText(display),
-        },
-        { label: 'Clear', shortcut: 'C', action: clearAll },
+        { label: 'Copy', action: () => navigator.clipboard?.writeText(result) },
+        { label: 'Clear', action: clearAll },
       ],
-      View: [{ label: 'Basic' }],
     });
-
     return () => registerAppMenus('calculator', null);
-  }, [display, clearAll]);
+  }, [result, clearAll]);
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
-      else if (e.key === '.') inputDot();
-      else if (
-        e.key === '+' ||
-        e.key === '-' ||
-        e.key === '*' ||
-        e.key === '/'
-      )
-        performOp(e.key as Op);
-      else if (e.key === 'Enter' || e.key === '=') {
-        e.preventDefault();
-        equals();
-      } else if (
-        e.key === 'Escape' ||
-        e.key === 'c' ||
-        e.key === 'C'
-      )
-        clearAll();
-      else if (e.key === '%') percent();
-    };
-
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [inputDigit, inputDot, performOp, equals, clearAll, percent]);
-
-  const Btn = ({
-    label,
-    onClick,
-    variant = 'gray',
-    wide,
-    active,
-  }: {
-    label: React.ReactNode;
-    onClick: () => void;
-    variant?: 'gray' | 'dark' | 'orange';
-    wide?: boolean;
-    active?: boolean;
-  }) => {
-    const styles = {
-      gray: { bg: '#737375', color: '#fff' },
-      dark: { bg: '#5d5d5f', color: '#fff' },
-      orange: {
-        bg: active ? '#fff' : '#ff9f0a',
-        color: active ? '#ff9f0a' : '#fff',
-      },
-    }[variant];
-
-    return (
-      <button
-        onClick={onClick}
-        className="select-none transition-[filter,background] duration-75 active:brightness-90 hover:brightness-110 flex items-center"
-        style={{
-          background: styles.bg,
-          color: styles.color,
-          gridColumn: wide ? 'span 2' : undefined,
-          fontFamily:
-            '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
-          fontWeight: 300,
-          fontSize: 30,
-          justifyContent: wide ? 'flex-start' : 'center',
-          paddingLeft: wide ? 28 : 0,
-          border: 'none',
-          outline: 'none',
-        }}
-      >
-        {label}
-      </button>
-    );
-  };
-
+  // Note: the window already provides traffic-light controls — we render only
+  // the calculator body to avoid a duplicated red/yellow/green strip.
   return (
     <div
-      className="h-full w-full flex flex-col select-none"
+      className="h-full w-full select-none flex flex-col"
       style={{
-        background: '#1c1c1e',
-        fontFamily:
-          '-apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif',
+        background: '#504e53',
+        boxShadow: 'inset 2px 2px #888, inset -2px -2px #888',
+        fontFamily: '"Montserrat", -apple-system, BlinkMacSystemFont, sans-serif',
       }}
     >
-      {/* Display */}
+      {/* Calculus / display */}
       <div
-        className="flex items-end justify-end px-5"
-        style={{
-          flex: '0 0 32%',
-          background: '#3a3a3c',
-        }}
+        className="w-full flex items-end justify-end"
+        style={{ padding: '2rem 1.5rem 0', height: '7rem' }}
       >
         <div
-          className="text-white text-right pb-1 w-full"
+          className="w-full text-right text-white"
           style={{
-            fontWeight: 200,
-            fontSize: 'clamp(48px, 14vw, 76px)',
-            lineHeight: 1,
-            letterSpacing: '-0.02em',
+            fontSize: 'clamp(3rem, 12vw, 6rem)',
+            fontWeight: 300,
+            lineHeight: 0.9,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
         >
-          {display}
+          {result}
         </div>
       </div>
 
       {/* Buttons */}
       <div
-        className="flex-1 grid"
-        style={{
-          gridTemplateColumns: 'repeat(4, 1fr)',
-          gridTemplateRows: 'repeat(5, 1fr)',
-          gap: 1,
-          background: '#1c1c1e',
-        }}
+        className="w-full flex-1"
+        style={{ marginTop: '1.5rem', paddingLeft: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
       >
-        <Btn variant="dark" label="AC" onClick={clearAll} />
-        <Btn variant="dark" label="±" onClick={toggleSign} />
-        <Btn variant="dark" label="%" onClick={percent} />
-        <Btn
-          variant="orange"
-          active={op === '/'}
-          label="÷"
-          onClick={() => performOp('/')}
-        />
-
-        <Btn label="7" onClick={() => inputDigit('7')} />
-        <Btn label="8" onClick={() => inputDigit('8')} />
-        <Btn label="9" onClick={() => inputDigit('9')} />
-        <Btn
-          variant="orange"
-          active={op === '*'}
-          label="×"
-          onClick={() => performOp('*')}
-        />
-
-        <Btn label="4" onClick={() => inputDigit('4')} />
-        <Btn label="5" onClick={() => inputDigit('5')} />
-        <Btn label="6" onClick={() => inputDigit('6')} />
-        <Btn
-          variant="orange"
-          active={op === '-'}
-          label="−"
-          onClick={() => performOp('-')}
-        />
-
-        <Btn label="1" onClick={() => inputDigit('1')} />
-        <Btn label="2" onClick={() => inputDigit('2')} />
-        <Btn label="3" onClick={() => inputDigit('3')} />
-        <Btn
-          variant="orange"
-          active={op === '+'}
-          label="+"
-          onClick={() => performOp('+')}
-        />
-
-        <Btn wide label="0" onClick={() => inputDigit('0')} />
-        <Btn label="." onClick={inputDot} />
-        <Btn variant="orange" label="=" onClick={equals} />
+        <Row>
+          <Sq variant="dark" onClick={clearAll}>AC</Sq>
+          <Sq variant="dark" onClick={toggleSign}>±</Sq>
+          <Sq variant="dark" onClick={() => setValue((v) => v / 100)}>％</Sq>
+          <Sq variant="yellow" onClick={() => setOp('/')}>÷</Sq>
+        </Row>
+        <Row>
+          <Sq onClick={() => setVal(7)}>7</Sq>
+          <Sq onClick={() => setVal(8)}>8</Sq>
+          <Sq onClick={() => setVal(9)}>9</Sq>
+          <Sq variant="yellow" onClick={() => setOp('*')}>×</Sq>
+        </Row>
+        <Row>
+          <Sq onClick={() => setVal(4)}>4</Sq>
+          <Sq onClick={() => setVal(5)}>5</Sq>
+          <Sq onClick={() => setVal(6)}>6</Sq>
+          <Sq variant="yellow" onClick={() => setOp('-')}>−</Sq>
+        </Row>
+        <Row>
+          <Sq onClick={() => setVal(1)}>1</Sq>
+          <Sq onClick={() => setVal(2)}>2</Sq>
+          <Sq onClick={() => setVal(3)}>3</Sq>
+          <Sq variant="yellow" onClick={() => setOp('+')}>+</Sq>
+        </Row>
+        <Row>
+          <Sq span onClick={() => setVal(0)} bleft>0</Sq>
+          <Sq onClick={() => { /* decimal placeholder per spec */ }}>,</Sq>
+          <Sq variant="yellow" bright onClick={equals}>＝</Sq>
+        </Row>
       </div>
     </div>
+  );
+};
+
+const Row = ({ children }: { children: React.ReactNode }) => (
+  <div
+    className="w-full flex"
+    style={{ height: 'calc(20% - 2px)', gap: 2, paddingInline: 1, marginBottom: 0 }}
+  >
+    {children}
+  </div>
+);
+
+const Sq = ({
+  children,
+  onClick,
+  variant = 'gray',
+  span,
+  bleft,
+  bright,
+}: {
+  children: React.ReactNode;
+  onClick?: () => void;
+  variant?: 'gray' | 'dark' | 'yellow';
+  span?: boolean;
+  bleft?: boolean;
+  bright?: boolean;
+}) => {
+  const bg =
+    variant === 'dark' ? '#626065' : variant === 'yellow' ? '#ff9f0b' : '#7c7b7f';
+  return (
+    <button
+      onClick={onClick}
+      className="text-white border-0 cursor-pointer transition-[filter] duration-75 hover:brightness-110 active:brightness-90"
+      style={{
+        flex: span ? 2 : 1,
+        background: bg,
+        fontSize: '2.2rem',
+        fontWeight: 500,
+        textAlign: span ? 'left' : 'center',
+        paddingLeft: span ? '2rem' : 0,
+        borderBottomLeftRadius: bleft ? '1.1rem' : 0,
+        borderBottomRightRadius: bright ? '1.4rem' : 0,
+      }}
+    >
+      {children}
+    </button>
   );
 };

@@ -127,7 +127,7 @@ export const SettingsApp = () => {
         {/* Search */}
         <div className="px-3 pt-3 pb-2">
           <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
-            <Search className="w-3.5 h-3.5 text-neutral-400" />
+            <Search className="w-5 h-5 text-neutral-400" />
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[12.5px]" />
           </div>
         </div>
@@ -338,7 +338,6 @@ const GeneralPane = ({ sub, batteryLevel, batteryCharging, onBack }: { sub: Gene
   if (sub === 'about') {
     return (
       <div className="px-8 pt-5 pb-10 max-w-2xl">
-        <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-blue-500 mb-4"><ChevronLeft className="w-4 h-4" />About</button>
         <div className="flex flex-col items-center pb-6">
           <img src={macStudio} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
           <div className="text-[28px] font-semibold mt-3">ThanasOS</div>

@@ -2,12 +2,19 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Bluetooth, Moon, Sun, Volume2, VolumeX,
-  Keyboard, Airplay, Music, Play, SkipForward, Settings as SettingsIcon,
+  Airplay, Music, Play, SkipForward, Settings as SettingsIcon,
 } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { AppleSlider } from '@/components/ui/AppleSlider';
 import airdropIcon from '@/assets/airdrop-icon-new.png';
+
+// Eagerly preload AirDrop icon at module load so it's cached before Control Center opens.
+if (typeof window !== 'undefined') {
+  const i = new Image();
+  i.src = airdropIcon;
+  i.decoding = 'async';
+}
 
 interface Props {
   open: boolean;
@@ -17,7 +24,6 @@ interface Props {
 export const ControlCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const { settings, updateSettings, openApp } = useMacOS();
-  const [keyboardBright, setKeyboardBright] = useState(70);
   const [airplayOn, setAirplayOn] = useState(false);
   const [playing, setPlaying] = useState(false);
 
@@ -48,7 +54,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
             boxShadow: '0 20px 60px -10px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Top row: Connections (large) + stacked DnD/Keyboard/AirPlay */}
+          {/* Top row: Connections (large) + stacked AirPlay/Focus/Settings */}
           <div className="grid grid-cols-2 gap-2 mb-2">
             {/* Connections module */}
             <div className="rounded-2xl bg-white/10 p-2.5 flex flex-col gap-1.5">
@@ -78,8 +84,15 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               />
             </div>
 
-            {/* Stacked tiles */}
+            {/* Stacked tiles: AirPlay (top), Focus (middle), Settings (bottom) */}
             <div className="grid grid-rows-3 gap-2">
+              <Tile
+                onClick={() => setAirplayOn(v => !v)}
+                icon={<Airplay className="w-3.5 h-3.5" />}
+                label={airplayOn ? 'AirPlay On' : 'AirPlay'}
+                accent="bg-blue-500"
+                active={airplayOn}
+              />
               <Tile
                 active={settings.focus}
                 onClick={() => updateSettings({ focus: !settings.focus })}
@@ -88,32 +101,13 @@ export const ControlCenter = ({ open, onClose }: Props) => {
                 accent="bg-violet-500"
               />
               <Tile
-                onClick={() => setKeyboardBright(v => v >= 100 ? 0 : v + 25)}
-                icon={<Keyboard className="w-3.5 h-3.5" />}
-                label={`Keyboard ${keyboardBright}%`}
-                accent="bg-amber-500"
-                active={keyboardBright > 0}
-              />
-              <Tile
-                onClick={() => setAirplayOn(v => !v)}
-                icon={<Airplay className="w-3.5 h-3.5" />}
-                label={airplayOn ? 'AirPlay On' : 'AirPlay'}
-                accent="bg-blue-500"
-                active={airplayOn}
+                onClick={() => { openApp('settings'); onClose(); }}
+                icon={<SettingsIcon className="w-3.5 h-3.5" />}
+                label="Settings"
+                accent="bg-neutral-500"
               />
             </div>
           </div>
-
-          {/* Quick open Settings */}
-          <button
-            onClick={() => { openApp('settings'); onClose(); }}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-2xl bg-white/10 hover:bg-white/15 transition-colors mb-2"
-          >
-            <div className="w-6 h-6 rounded-full bg-neutral-500/70 flex items-center justify-center">
-              <SettingsIcon className="w-3.5 h-3.5" />
-            </div>
-            <div className="text-[12px] font-semibold">Settings…</div>
-          </button>
 
           {/* Display */}
           <SliderModule
@@ -183,13 +177,13 @@ const Tile = ({
 const SliderModule = ({
   label, icon, value, onChange,
 }: { label: string; icon: React.ReactNode; value: number; onChange: (v: number) => void }) => (
-  <div className="rounded-2xl bg-white/10 p-3 mt-2">
-    <div className="flex items-center gap-2 mb-2">
+  <div className="rounded-2xl bg-white/10 px-3 pt-3 pb-4 mt-2">
+    <div className="flex items-center gap-2 mb-3.5">
       <div className="w-6 h-6 rounded-full bg-white/15 flex items-center justify-center">{icon}</div>
       <div className="text-[12px] font-semibold">{label}</div>
     </div>
-    {/* Track shortened by 20% per design spec */}
-    <div style={{ width: '80%' }}>
+    {/* Slider track centered with extra horizontal breathing room (was 80% off-center → now 88% centered) */}
+    <div className="mx-auto" style={{ width: '88%' }}>
       <AppleSlider value={value} onChange={onChange} />
     </div>
   </div>

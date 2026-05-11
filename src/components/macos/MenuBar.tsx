@@ -253,17 +253,26 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-1 hover:bg-white/15 rounded"><Battery className="w-4 h-4" /></button>
+              <button className="p-1 hover:bg-white/15 rounded flex items-center gap-1">
+                <Battery className="w-4 h-4" />
+                {batteryLevel !== null && <span className="text-[11px] font-medium">{batteryLevel}%</span>}
+              </button>
             </PopoverTrigger>
-            <PopoverContent className="w-48 p-3 z-[200]">
-              <div className="text-sm font-medium">Battery 87%</div>
-              <div className="w-full bg-secondary rounded-full h-2 mt-2">
-                <div className="bg-primary h-2 rounded-full" style={{ width: '87%' }} />
+            <PopoverContent className="w-52 p-3 z-[200]">
+              <div className="text-sm font-medium">
+                Battery {batteryLevel !== null ? `${batteryLevel}%` : '—'}
+                {batteryCharging && <span className="ml-1 text-xs text-emerald-500">⚡</span>}
               </div>
+              <div className="w-full bg-secondary rounded-full h-2 mt-2">
+                <div className="bg-primary h-2 rounded-full transition-all" style={{ width: `${batteryLevel ?? 0}%` }} />
+              </div>
+              <div className="text-[11px] text-muted-foreground mt-2">{batteryLevel === null ? 'Battery API unavailable in this browser.' : batteryCharging ? 'Charging' : 'On battery'}</div>
             </PopoverContent>
           </Popover>
-          <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi ? '' : 'opacity-50'}`}><Wifi className="w-4 h-4" /></button>
-          <button className="p-1 hover:bg-white/15 rounded"><Volume2 className="w-4 h-4" /></button>
+          <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}><Wifi className="w-4 h-4" /></button>
+          <button className="p-1 hover:bg-white/15 rounded flex items-center gap-1" title={`Volume ${settings.volume ?? 65}%`}>
+            <Volume2 className="w-4 h-4" />
+          </button>
           <button onClick={onSpotlightClick} className="p-1 hover:bg-white/15 rounded" title="Spotlight (⌘K)">
             <Search className="w-4 h-4" />
           </button>

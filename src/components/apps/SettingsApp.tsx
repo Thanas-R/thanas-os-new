@@ -160,35 +160,13 @@ export const SettingsApp = () => {
         </nav>
       </aside>
 
-      {/* Middle (only for General) */}
+      {/* Middle (only for General) - simplified: shows About content directly on the right */}
       {section === 'general' ? (
-        <>
-          <aside className="w-[230px] shrink-0 bg-white dark:bg-neutral-900 border-r border-black/5 dark:border-white/10 overflow-auto">
-            <div className="px-5 pt-5 pb-3 text-[19px] font-semibold">General</div>
-            <div className="px-2 pb-3 space-y-0.5">
-              {GENERAL_ITEMS.map(g => (
-                <button
-                  key={g.id}
-                  onClick={() => setGeneralSub(g.id)}
-                  className={`w-full flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-[13px] ${
-                    generalSub === g.id ? 'bg-blue-500 text-white' : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
-                  }`}
-                >
-                  <span className={`w-5 h-5 rounded-md flex items-center justify-center text-white`} style={{ background: generalSub === g.id ? 'rgba(255,255,255,0.2)' : g.tint }}>
-                    <g.icon className="w-3 h-3" />
-                  </span>
-                  <span className="flex-1 text-left">{g.label}</span>
-                  <ChevronRight className="w-3.5 h-3.5 opacity-60" />
-                </button>
-              ))}
-            </div>
-          </aside>
-          <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900">
-            <GeneralPane sub={generalSub} batteryLevel={batteryLevel} batteryCharging={batteryCharging} onBack={() => setGeneralSub('about')} />
-          </div>
-        </>
+        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 no-scrollbar">
+          <GeneralPane sub={'about'} batteryLevel={batteryLevel} batteryCharging={batteryCharging} onBack={() => setSection('general')} />
+        </div>
       ) : (
-        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900">
+        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 no-scrollbar">
           <div className="px-7 pt-5 pb-10 max-w-3xl">
             <h1 className="text-[20px] font-semibold mb-5">{sectionLabel}</h1>
 

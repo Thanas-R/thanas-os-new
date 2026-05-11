@@ -340,7 +340,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             </PopoverContent>
           </Popover>
           <button className={`p-1 hover:bg-white/15 rounded ${settings.wifi && online ? '' : 'opacity-50'}`} title={online ? 'Online' : 'Offline'}>
-            <IoIosWifi className="w-4 h-4" />
+            <IoIosWifi className="w-5 h-5" />
           </button>
           <button className="p-1 hover:bg-white/15 rounded" title={`Volume ${settings.volume ?? 65}%`}>
             <Volume2 className="w-4 h-4" />

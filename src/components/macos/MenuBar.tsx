@@ -30,7 +30,7 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
           className="absolute inset-0 rounded-[4px] border border-white/70 box-border px-[1px] py-[2px]"
         >
           <div
-            className="h-full rounded-[3px]"
+            className="h-full rounded-[1.5px]"
             style={{ width: `${pct}%`, background: fillColor }}
           />
         </div>
@@ -48,7 +48,7 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
   fill="white"
   stroke="white"
   strokeWidth={1.8}
-  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-2.5 h-2.5"
+  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
 />
         )}
       </div>

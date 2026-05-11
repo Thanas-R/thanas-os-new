@@ -52,11 +52,25 @@ export const LaunchpadApp = () => {
   const items = useMemo(() => {
     const core = apps
       .filter(a => a.id !== 'launchpad')
-      .map(a => ({ id: a.id, name: a.name, icon: APP_ICONS[a.id], kind: 'app' as const, url: '' }));
+      .map(a => ({
+        id: a.id,
+        name: a.name,
+        icon: APP_ICONS[a.id],
+        kind: 'app' as const,
+        url: ''
+      }));
+
     const projects = installed
       .map(getProject)
       .filter(Boolean)
-      .map(p => ({ id: `proj:${p!.id}`, name: p!.name, icon: p!.favicon, kind: 'project' as const, url: p!.liveUrl }));
+      .map(p => ({
+        id: `proj:${p!.id}`,
+        name: p!.name,
+        icon: p!.favicon,
+        kind: 'project' as const,
+        url: p!.liveUrl
+      }));
+
     return [...core, ...projects].filter(i =>
       i.name.toLowerCase().includes(query.toLowerCase())
     );
@@ -72,6 +86,7 @@ export const LaunchpadApp = () => {
     } else {
       openApp(item.id);
     }
+
     const lp = windows.find(w => w.appId === 'launchpad');
     if (lp) closeWindow(lp.id);
   };
@@ -81,29 +96,34 @@ export const LaunchpadApp = () => {
     if (lp) closeWindow(lp.id);
   };
 
-  // ESC to close
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') dismiss(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') dismiss();
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [windows]);
 
   return (
     <div
-      className="h-full w-full flex flex-col"
+      className="fixed inset-0 z-[9999] flex flex-col"
       style={{
         background: 'rgba(0,0,0,0.35)',
         backdropFilter: 'blur(60px) saturate(160%)',
         WebkitBackdropFilter: 'blur(60px) saturate(160%)',
       }}
-      onClick={(e) => { if (e.target === e.currentTarget) dismiss(); }}
+      onClick={(e) => {
+        if (e.target === e.currentTarget) dismiss();
+      }}
     >
       <div className="pt-10 pb-6 flex justify-center">
         <input
           autoFocus
           value={query}
-          onChange={e => { setQuery(e.target.value); setPage(0); }}
+          onChange={e => {
+            setQuery(e.target.value);
+            setPage(0);
+          }}
           placeholder="Search"
           className="w-80 px-5 py-2 rounded-full liquid-glass-dark text-white placeholder-white/50 text-center outline-none text-sm"
         />
@@ -116,15 +136,25 @@ export const LaunchpadApp = () => {
               key={item.id}
               onClick={() => handleOpen(item)}
               className="flex flex-col items-center gap-2 group focus:outline-none"
-              style={{ animation: `launchpadItemIn 0.35s cubic-bezier(0.2,0.7,0.2,1) both`, animationDelay: `${idx * 18}ms` }}
+              style={{
+                animation: `launchpadItemIn 0.35s cubic-bezier(0.2,0.7,0.2,1) both`,
+                animationDelay: `${idx * 18}ms`
+              }}
             >
               <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-110 group-active:scale-95 transition-transform">
                 {item.icon ? (
-                  <img src={item.icon} alt={item.name} className="w-full h-full object-cover" />
+                  <img
+                    src={item.icon}
+                    alt={item.name}
+                    className="w-full h-full object-cover"
+                  />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-white/50 text-xl font-semibold">{item.name.charAt(0)}</div>
+                  <div className="w-full h-full flex items-center justify-center bg-white/10 text-3xl">
+                    📦
+                  </div>
                 )}
               </div>
+
               <span className="text-white text-[12px] text-center drop-shadow-lg max-w-[6rem] truncate">
                 {item.name}
               </span>

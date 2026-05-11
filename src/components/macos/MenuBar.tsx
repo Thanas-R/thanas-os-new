@@ -48,7 +48,7 @@ const IOSBattery = ({ level, charging }: { level: number | null; charging: boole
   fill="white"
   stroke="white"
   strokeWidth={1.8}
-  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3.5 h-3.5"
+  className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4"
 />
         )}
       </div>
@@ -299,7 +299,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger asChild>
-              <button className="p-2 hover:bg-white/15 rounded flex items-center">
+              <button className="p-1.75 hover:bg-white/15 rounded flex items-center">
                 <IOSBattery level={batteryLevel} charging={batteryCharging} />
               </button>
             </PopoverTrigger>

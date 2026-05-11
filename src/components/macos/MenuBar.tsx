@@ -215,7 +215,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     <div
       className="fixed top-8 left-2 mt-1 min-w-[260px] rounded-xl py-1.5 z-[100] text-white"
       style={{
-  background: 'rgba(28,28,32,0.85)',
+  background: 'rgba(28,28,32,0.9)',
   backdropFilter: 'blur(28px) saturate(180%)',
   WebkitBackdropFilter: 'blur(28px) saturate(180%)',
   border: '1px solid rgba(255,255,255,0.12)',

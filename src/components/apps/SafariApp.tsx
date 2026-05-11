@@ -340,7 +340,6 @@ export const SafariApp = () => {
                   </button>
                 ))}
               </div>
-              <h2 className="text-sm font-semibold text-neutral-500 dark:text-neutral-400 mb-4 uppercase tracking-wider">Bookmarks</h2>
             </div>
           ) : isExternalNonProject ? (
             proxyHtml[active.url] ? (

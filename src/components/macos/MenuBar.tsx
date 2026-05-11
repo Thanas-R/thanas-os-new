@@ -25,6 +25,9 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const [loader, setLoader] = useState<null | { label: string }>(null);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [batteryCharging, setBatteryCharging] = useState(false);
+  const [online, setOnline] = useState<boolean>(typeof navigator !== 'undefined' ? navigator.onLine : true);
   const { focusedWindowId, apps, windows, minimizeAllWindows, openApp, closeWindow, focusWindow, settings } = useMacOS();
   const menuBarRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +37,37 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   useEffect(() => {
     const t = setInterval(() => setTime(new Date()), 1000);
     return () => clearInterval(t);
+  }, []);
+
+  // Real battery via Battery Status API (when available)
+  useEffect(() => {
+    const nav: any = navigator;
+    if (!nav.getBattery) return;
+    let battery: any;
+    const update = () => {
+      if (!battery) return;
+      setBatteryLevel(Math.round(battery.level * 100));
+      setBatteryCharging(!!battery.charging);
+    };
+    nav.getBattery().then((b: any) => {
+      battery = b; update();
+      b.addEventListener('levelchange', update);
+      b.addEventListener('chargingchange', update);
+    });
+    return () => {
+      if (battery) {
+        battery.removeEventListener?.('levelchange', update);
+        battery.removeEventListener?.('chargingchange', update);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    const on = () => setOnline(true);
+    const off = () => setOnline(false);
+    window.addEventListener('online', on);
+    window.addEventListener('offline', off);
+    return () => { window.removeEventListener('online', on); window.removeEventListener('offline', off); };
   }, []);
 
   const focusedWindow = windows.find(w => w.id === focusedWindowId && !w.isMinimized);

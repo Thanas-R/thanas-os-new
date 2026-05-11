@@ -49,15 +49,18 @@ const ASCII = String.raw`
 
 const BANNER = `Last login: ${new Date().toString().split(' GMT')[0]} on ttys001
 ${ASCII}
+
+
        ThanasOS  v1.0  ·  Liquid Glass Edition
-       Type \`help\` for available commands, \`status\` for system info.`;
+       Type \`help\` for available commands, \`status\` for system info.
+
+
+`;
 
 export const TerminalApp = () => {
   const { apps, openApp, windows, closeWindow } = useMacOS();
   const [cwd, setCwd] = useState(HOME);
-const [lines, setLines] = useState<Line[]>([
-  { type: 'out', text: 'BANNER_TOP' }
-]);
+  const [lines, setLines] = useState<Line[]>([{ type: 'out', text: BANNER }]);
   const [input, setInput] = useState('');
   const [history, setHistory] = useState<string[]>([]);
   const [historyIdx, setHistoryIdx] = useState<number | null>(null);
@@ -76,7 +79,8 @@ const [lines, setLines] = useState<Line[]>([
     if (!cmd) return;
     setHistory(prev => [...prev, cmd]);
 
-    const [name, ...args] = cmd.split(/\s+/);
+    const [rawName, ...args] = cmd.split(/\s+/);
+    const name = rawName.toLowerCase();
     switch (name) {
       case 'help':
         print([

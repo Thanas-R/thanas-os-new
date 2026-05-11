@@ -1,117 +1,166 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
-import { cn } from '@/lib/utils';
+/* Utility clock — finalised style */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
 
-let filterMounted = false;
-const ensureFilter = () => {
-  if (filterMounted || typeof document === 'undefined') return;
-  filterMounted = true;
-  const wrap = document.createElement('div');
-  wrap.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none';
-  wrap.innerHTML = `
-    <svg width="0" height="0" aria-hidden="true">
-      <filter id="apple-slider-lens" x="-50%" y="-50%" width="200%" height="200%">
-        <feImage x="0" y="0" result="normalMap" xlink:href="data:image/svg+xml;utf8,${encodeURIComponent(
-          `<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><radialGradient id='m' cx='50%' cy='50%' r='75%'><stop offset='0%' stop-color='rgb(128,128,255)'/><stop offset='90%' stop-color='rgb(255,255,255)'/></radialGradient><rect width='100%' height='100%' fill='url(%23m)'/></svg>`
-        )}"/>
-        <feDisplacementMap in="SourceGraphic" in2="normalMap" scale="-180" xChannelSelector="R" yChannelSelector="G"/>
-      </filter>
-    </svg>`;
-  document.body.appendChild(wrap);
-};
-
-interface AppleSliderProps {
-  value: number;
-  min?: number;
-  max?: number;
-  step?: number;
-  onChange?: (v: number) => void;
-  className?: string;
+.utility-clock-shell {
+  position: relative;
+  background: #18181A;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.05);
 }
 
-export const AppleSlider = ({
-  value, min = 0, max = 100, step = 1, onChange, className,
-}: AppleSliderProps) => {
-  const trackRef = useRef<HTMLDivElement>(null);
-  const [dragging, setDragging] = useState(false);
-  useEffect(() => { ensureFilter(); }, []);
+.utility-clock-shell .dial {
+  position: absolute;
+  inset: 6.5%;
+  border-radius: 50%;
+  background: #f8f8f8;
+  box-shadow: none;
+}
 
-  const pct = Math.max(0, Math.min(100, ((value - min) / (max - min)) * 100));
+.utility-clock { position: relative; width: 100%; height: 100%; }
+.utility-clock .clock { position: absolute; left: 50%; top: 50%; opacity: 1; }
+.utility-clock .centre { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.utility-clock .expand { position: absolute; top: 0; left: 0; transform: translate(-50%, -50%); }
+.utility-clock .anchor { position: absolute; top: 0; left: 0; width: 0; height: 0; }
+.utility-clock .element { position: absolute; top: 0; left: 0; }
+.utility-clock .round { border-radius: 999px; }
 
-  const handleMove = useCallback((clientX: number) => {
-    const el = trackRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
-    let v = min + p * (max - min);
-    if (step) v = Math.round(v / step) * step;
-    onChange?.(Math.max(min, Math.min(max, v)));
-  }, [min, max, step, onChange]);
+/* Hand layering: hour bottom, minute middle, second top */
+.utility-clock .hour { z-index: 1; }
+.utility-clock .minute { z-index: 2; }
+.utility-clock .second { z-index: 3; }
+.utility-clock .centre { z-index: 4; }
 
-  useEffect(() => {
-    if (!dragging) return;
-    const move = (e: MouseEvent) => handleMove(e.clientX);
-    const tmove = (e: TouchEvent) => { if (e.touches[0]) handleMove(e.touches[0].clientX); };
-    const up = () => setDragging(false);
-    window.addEventListener('mousemove', move);
-    window.addEventListener('mouseup', up);
-    window.addEventListener('touchmove', tmove, { passive: false });
-    window.addEventListener('touchend', up);
-    return () => {
-      window.removeEventListener('mousemove', move);
-      window.removeEventListener('mouseup', up);
-      window.removeEventListener('touchmove', tmove);
-      window.removeEventListener('touchend', up);
-    };
-  }, [dragging, handleMove]);
+/* Centre caps */
+.utility-clock .circle-1 {
+  width: 17px;
+  height: 17px;
+  border: 6px solid #18181A;
+  background: transparent;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
 
-  return (
-    <div
-      ref={trackRef}
-      onMouseDown={(e) => { setDragging(true); handleMove(e.clientX); }}
-      onTouchStart={(e) => { setDragging(true); if (e.touches[0]) handleMove(e.touches[0].clientX); }}
-      className={cn('relative w-full select-none cursor-pointer', className)}
-      style={{ height: 7 }}
-    >
-      <div
-        className="absolute inset-0 rounded-full"
-        style={{ background: 'rgba(214,214,218,0.85)' }}
-      />
-      <div
-        className="absolute top-0 bottom-0 left-0 rounded-full"
-        style={{
-          width: `${pct}%`,
-          background: 'linear-gradient(117deg,#49a3fc,#3681ee)',
-        }}
-      />
-      <div
-        className="absolute top-1/2 rounded-full overflow-hidden"
-        style={{
-          left: `${pct}%`,
-          transform: `translate(-50%, -50%) ${dragging ? 'scaleY(0.96) scaleX(1.08)' : ''}`,
-          width: 46,
-          height: 30,
-          background: dragging ? 'transparent' : '#fff',
-          boxShadow: dragging ? 'none' : '0 1px 6px rgba(0,30,63,0.1), 0 0 2px rgba(0,9,20,0.1)',
-          transition: 'transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease',
-        }}
-      >
-        {dragging && (
-          <>
-            <div
-              className="absolute inset-0"
-              style={{ backdropFilter: 'blur(0.6px)', WebkitBackdropFilter: 'blur(0.6px)', filter: 'url(#apple-slider-lens)' }}
-            />
-            <div className="absolute inset-0" style={{ background: 'rgba(255,255,255,0.1)' }} />
-            <div
-              className="absolute inset-0 rounded-full"
-              style={{
-                boxShadow:
-                  'inset 1px 1px 0 rgba(69,168,243,0.2), inset 1px 3px 0 rgba(28,63,90,0.05), inset 0 0 22px rgba(255,255,255,0.6), inset -1px -1px 0 rgba(69,168,243,0.12)',
-              }}
-            />
-          </>
-        )}
-      </div>
-    </div>
-  );
-};
+.utility-clock .circle-2 {
+  width: 10px;
+  height: 10px;
+  border: 3px solid #FA9F22;
+  background: transparent;
+  box-sizing: border-box;
+  border-radius: 50%;
+}
+
+/* Hands */
+/* Tail near center shortened only. Outer reach unchanged */
+
+/* Orange seconds front */
+.utility-clock .second-hand-front {
+  width: 3px;
+  height: 128px;
+  background: #FA9F22;
+  border-radius: 999px 999px 0 0;
+  transform: translate(-50%,-100%) translateY(-4px);
+}
+
+/* Orange seconds rear tail */
+.utility-clock .second-hand-back {
+  width: 3px;
+  height: 12px;
+  background: #FA9F22;
+  border-radius: 0 0 999px 999px;
+  transform: translate(-50%,-100%) translateY(16px);
+}
+
+/* Thin hand stem */
+.utility-clock .thin-hand {
+  width: 4px;
+  height: 61px;
+  background: #18181A;
+  border-radius: 999px;
+  transform: translate(-50%,-100%) translateY(-6px);
+}
+
+/* Main hand body */
+.utility-clock .fat-hand {
+  width: 10px;
+  height: 64px;
+  background: #18181A;
+  border-radius: 999px;
+  transform: translate(-50%,-100%) translateY(-18px);
+}
+
+.utility-clock .minute-hand {
+  height: 108px;
+}
+
+/* Remove minute text */
+.utility-clock .minute-text {
+  display: none;
+}
+
+/* Tick marks */
+.utility-clock .minute-line {
+  background: #B3B3B3;
+  width: 3px;
+  height: 10px;
+  border-radius: 999px;
+  transform: translate(-50%,-100%) translateY(-122px);
+  opacity: 1;
+}
+
+.utility-clock .major.minute-line {
+  width: 3px;
+  height: 10px;
+  border-radius: 999px;
+  background: #18181A;
+  opacity: 1;
+}
+
+/* Hour markers */
+.utility-clock .hour-pill {
+  background: #18181A;
+  width: 4px;
+  height: 20px;
+  border-radius: 999px;
+  transform: translate(-50%,-100%) translateY(-67px);
+  opacity: 0.8;
+}
+
+/* Hour numbers */
+.utility-clock .hour-text {
+  font-family: "Inter", sans-serif;
+  font-size: 32px;
+  font-weight: 600;
+  color: #18181A;
+  letter-spacing: -0.02em;
+  top: -85px;
+  line-height: 1;
+}
+
+.utility-clock .hour-10 .content { padding-left: 0.35ex; }
+.utility-clock .hour-11 .content { padding-left: 0.20ex; }
+
+/* Style toggles */
+.utility-clock.hour-style-text .hour-pill {
+  opacity: 0;
+}
+
+.utility-clock.hour-text-style-large .hour-text {
+  font-size: 31px;
+  font-weight: 600;
+  top: -101px;
+}
+
+.utility-clock.hour-text-style-small .hour-text {
+  font-size: 28px;
+  font-weight: 600;
+  top: -110px;
+}
+
+.utility-clock.minute-display-style-coarse .part.minute-line {
+  opacity: 0;
+}
+
+.utility-clock.minute-text-style-none .minute-text {
+  opacity: 0;
+}

@@ -54,6 +54,10 @@ export const LinkedInApp = () => {
             <div className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md" style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}>
               <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
             </div>
+            <div className="flex items-center gap-2 mb-1">
+                <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
+                <span className="text-[13px] font-semibold">PES University</span>
+              </div>
 
             <div className="mt-3">
               <div className="flex items-center gap-2 flex-wrap">

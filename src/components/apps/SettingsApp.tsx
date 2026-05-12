@@ -121,11 +121,6 @@ export const SettingsApp = () => {
       <aside className="w-[240px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
         {/* Search row leaves ~78px on the left for traffic lights */}
         <div className="pt-2.5 pb-2">
-<div className="px-3 flex justify-end">
-  <div className="text-[14px] font-normal text-neutral-900 dark:text-neutral-100 text-right">
-    Settings
-  </div>
-</div>
 
   <div className="mt-2 px-3">
     <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">

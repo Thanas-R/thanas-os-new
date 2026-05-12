@@ -32,7 +32,7 @@ export const ContactApp = () => {
 
       <div className="relative z-10 h-full w-full overflow-y-auto no-scrollbar pb-8">
         {/* Top profile */}
-        <div className="flex flex-col items-center pt-8 px-4">
+        <div className="flex flex-col items-center pt-16 px-4">
           <div
             className="rounded-full overflow-hidden ring-1 ring-white/20 shadow-2xl"
             style={{

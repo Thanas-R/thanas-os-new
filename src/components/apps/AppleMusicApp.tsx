@@ -25,11 +25,11 @@ export const AppleMusicApp = () => {
         {/* Sidebar */}
         <aside className="overflow-y-auto no-scrollbar px-2 pb-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
           {/* Traffic-light row: leave room on left, Music label to the right */}
-          <div className="pl-[78px] pr-2 pt-3 pb-2 flex justify-end">
+          <div className="pl-[78px] pr-2 pt-3 pb-2">
             <div className="font-semibold text-[15px]" style={{ color: accent }}>Music</div>
           </div>
           <div className="px-2 mb-3">
-            <div className="flex items-center gap-1.5 h-8 rounded-md px-3 shadow-sm">
+            <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
               style={{
                 width: '110%',
                 marginLeft: '-5%',

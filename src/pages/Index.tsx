@@ -35,7 +35,7 @@ const apps: AppConfig[] = [
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1000, height: 750 }, chromeMode: 'integrated' },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 700 }, chromeMode: 'transparent', chromeColor: '#3B3B3B' },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
-  { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 870 } },
+  { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
   { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1100, height: 600 }, chromeMode: 'integrated' },
   { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 900, height: 700 } },
   { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 890, height: 700 }, chromeMode: 'integrated' },

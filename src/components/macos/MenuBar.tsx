@@ -8,7 +8,7 @@ import { ShortcutsModal } from './ShortcutsModal';
 import { HelpModal } from './HelpModal';
 import { ControlCenter } from './ControlCenter';
 import { NotificationCenter } from './NotificationCenter';
-import { AppleSlider } from '@/components/ui/AppleSlider';
+
 import { getAppMenus, subscribeMenuRegistry, MenuItem, AppMenus } from '@/types/macos';
 
 interface MenuBarProps { onSpotlightClick?: () => void; }

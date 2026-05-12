@@ -238,7 +238,7 @@ const SliderModule = ({
     <div className="rounded-2xl bg-white/10 px-3 pt-3 pb-3 mt-2">
       <div className="text-[12.5px] font-semibold mb-2">{label}</div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-h-[36px]">
         <div
           ref={trackRef}
           onPointerDown={(e) => {
@@ -250,29 +250,17 @@ const SliderModule = ({
         >
           {/* filled part */}
           <div
-            className="absolute inset-y-0 left-0 rounded-full"
-            style={{
-              width: `calc(${pct}% + 12px)`,
-              background: '#ffffff',
-              boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
-            }}
-          />
-
+  className="absolute left-[3px] top-[3px] bottom-[3px] rounded-full"
+  style={{
+    width: `calc(${pct}% - 6px)`,
+    background: '#ffffff',
+  }}
+/>
           {/* icon moved a bit more left */}
           <div className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
             {icon}
           </div>
 
-          {/* draggable handle */}
-          {/* draggable handle */}
-<div
-  className="absolute top-1/2 -translate-y-1/2 z-20 pointer-events-none"
-  style={{
-    left: `max(2px, calc(${pct}% - 12px))`,
-  }}
->
-  <div className="w-6 h-6 rounded-full bg-white shadow-[0_1px_6px_rgba(0,0,0,0.18)] border border-black/5" />
-</div>
         </div>
 
         {trailing}

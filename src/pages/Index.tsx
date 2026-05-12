@@ -25,24 +25,24 @@ import { AppConfig } from '@/types/macos';
 
 // Dock order: finder, launchpad, terminal, about, journey, notes, projects, technologies, safari, google, github, linkedin, contact, calculator, appstore, settings
 const apps: AppConfig[] = [
-  { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 900, height: 550 } },
+  { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 } },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
-  { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 800, height: 625 } },
+  { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 650 } },
   { id: 'about', name: 'About Me', icon: '👨‍💻', component: AboutApp, defaultSize: { width: 725, height: 600 } },
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 750, height: 600 } },
-  { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 980, height: 640 } },
-  { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 850, height: 650 } },
+  { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 850, height: 640 } },
+  { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 750, height: 650 } },
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1000, height: 750 } },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 700 } },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 870 } },
   { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 720 } },
   { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1100, height: 720 } },
   { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 900, height: 700 } },
-  { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 950, height: 700 } },
+  { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 870, height: 700 } },
   { id: 'contact', name: 'Contact', icon: '✉️', component: ContactApp, defaultSize: { width: 750, height: 650 } },
   { id: 'calculator', name: 'Calculator', icon: '🧮', component: CalculatorApp, defaultSize: { width: 300, height: 490 }, nonResizable: true, noMaximize: true },
   { id: 'appstore', name: 'App Store', icon: '🛍️', component: AppStoreApp, defaultSize: { width: 1100, height: 680 } },
-  { id: 'settings', name: 'Settings', icon: '⚙️', component: SettingsApp, defaultSize: { width: 950, height: 650 } },
+  { id: 'settings', name: 'Settings', icon: '⚙️', component: SettingsApp, defaultSize: { width: 900, height: 650 } },
 ];
 
 const Index = () => {

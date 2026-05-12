@@ -15,10 +15,10 @@ import { getAppMenus, subscribeMenuRegistry, MenuItem, AppMenus } from '@/types/
 interface MenuBarProps { onSpotlightClick?: () => void; }
 interface MenuGroup { label: string; items: MenuItem[]; }
 
-// Battery glyph — body now 22px wide (was 26 → 15% smaller, rounded)
-const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
+// Battery glyph — body 22px wide. Fill turns yellow in Low Power Mode.
+const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charging: boolean; lowPower?: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
-  const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
+  const fillColor = lowPower ? '#FFD60A' : charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
   return (
     <div className="flex items-center gap-1">
       <div className="relative" style={{ width: 22, height: 13 }}>

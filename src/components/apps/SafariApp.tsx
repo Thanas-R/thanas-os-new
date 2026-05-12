@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, Star, X, Home,
-  Share, MoreHorizontal, Loader2,
+  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, X, Home,
+  Loader2,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';

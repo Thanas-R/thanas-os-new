@@ -18,6 +18,8 @@ import { SafariApp } from '@/components/apps/SafariApp';
 import { AppStoreApp } from '@/components/apps/AppStoreApp';
 import { CalculatorApp } from '@/components/apps/CalculatorApp';
 import { GoogleApp } from '@/components/apps/GoogleApp';
+import { CalendarApp } from '@/components/apps/CalendarApp';
+import { AppleMusicApp } from '@/components/apps/AppleMusicApp';
 
 import { AppConfig } from '@/types/macos';
 
@@ -30,10 +32,11 @@ const apps: AppConfig[] = [
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 750, height: 600 } },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 980, height: 640 } },
   { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 850, height: 650 } },
+  { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 900, height: 640 } },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 700 } },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 720 } },
-  // Google placed right after Safari so the dock places it next to Safari when installed
   { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 720 } },
+  { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1100, height: 720 } },
   { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 800, height: 650 } },
   { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 750, height: 600 } },
   { id: 'contact', name: 'Contact', icon: '✉️', component: ContactApp, defaultSize: { width: 650, height: 600 } },

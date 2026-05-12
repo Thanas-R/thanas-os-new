@@ -82,7 +82,7 @@ export const LinkedInApp = () => {
               <div className="flex flex-col items-end gap-2 shrink-0 pt-1">
                 <div className="flex items-center gap-2">
                   <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-                  <span className="text-[14px] font-semibold">PES University</span>
+                  <span className="text-[16px] font-semibold">PES University</span>
                 </div>
                 <a
                   href="https://www.linkedin.com/in/thanasr"
@@ -93,7 +93,7 @@ export const LinkedInApp = () => {
                     background: dark ? '#1d2226' : '#ffffff',
                     color: dark ? '#e8e6e3' : '#1d2226',
                     borderColor: dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
-                    transform: 'translateY(10px)',
+                    transform: 'translateY(20px)',
                   }}
                 >
                   Connect

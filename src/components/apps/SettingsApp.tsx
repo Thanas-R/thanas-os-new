@@ -122,7 +122,7 @@ export const SettingsApp = () => {
         {/* Search row leaves ~78px on the left for traffic lights */}
         <div className="pt-2.5 pb-2">
 <div className="px-3 flex justify-end">
-  <div className="text-[15px] font-semibold text-neutral-900 dark:text-neutral-100 text-right">
+  <div className="text-[14px] font-normal text-neutral-900 dark:text-neutral-100 text-right">
     Settings
   </div>
 </div>

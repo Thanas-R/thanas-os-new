@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Volume2, VolumeX, Search, BatteryCharging, Zap, Bluetooth, Check } from 'lucide-react';
+import { Search, BatteryCharging, Zap, Bluetooth, Check } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import turtleLogo from '@/assets/turtle-logo.png';

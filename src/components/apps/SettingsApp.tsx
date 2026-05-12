@@ -27,6 +27,7 @@ const wallpapers = [
 ];
 
 type SectionId =
+  | 'apple-account'
   | 'wifi' | 'bluetooth' | 'battery' | 'notifications' | 'sound' | 'focus'
   | 'general' | 'appearance' | 'desktop' | 'displays' | 'wallpaper' | 'browser' | 'privacy';
 
@@ -69,7 +70,7 @@ const GENERAL_ITEMS: { id: GeneralSubsection; label: string; icon: any; tint: st
 export const SettingsApp = () => {
   const { settings, updateSettings } = useMacOS();
   const googleInstalled = useGoogleInstalled();
-  const [section, setSection] = useState<SectionId>('general');
+  const [section, setSection] = useState<SectionId>('apple-account');
   const [generalSub, setGeneralSub] = useState<GeneralSubsection>('about');
   const [query, setQuery] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,8 +126,15 @@ export const SettingsApp = () => {
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[13px]" />
           </div>
         </div>
-        {/* Profile */}
-        <button onClick={() => { setSection('general'); setGeneralSub('about'); }} className="mx-3 mb-2 flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60 text-left">
+        {/* Profile / Apple Account row */}
+        <button
+          onClick={() => setSection('apple-account')}
+          className={`mx-3 mb-2 flex items-center gap-2.5 px-2 py-2 rounded-lg text-left transition-colors ${
+            section === 'apple-account'
+              ? 'bg-neutral-300/70 dark:bg-neutral-700/60'
+              : 'hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60'
+          }`}
+        >
           <img src={profilePhoto} alt="Thanas R" className="w-10 h-10 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
           <div className="min-w-0">
             <div className="text-[13px] font-semibold truncate">Thanas R</div>
@@ -153,10 +161,14 @@ export const SettingsApp = () => {
         </nav>
       </aside>
 
-      {/* Middle (only for General) - simplified: shows About content directly on the right */}
-      {section === 'general' ? (
+      {/* Right pane */}
+      {section === 'apple-account' ? (
         <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
-          <GeneralPane sub={'about'} batteryLevel={batteryLevel} batteryCharging={batteryCharging} onBack={() => setSection('general')} />
+          <AppleAccountPane />
+        </div>
+      ) : section === 'general' ? (
+        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
+          <GeneralPane sub={generalSub} setSub={setGeneralSub} batteryLevel={batteryLevel} batteryCharging={batteryCharging} />
         </div>
       ) : (
         <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">

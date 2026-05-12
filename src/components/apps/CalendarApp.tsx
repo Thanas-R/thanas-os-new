@@ -210,7 +210,7 @@ export const CalendarApp = () => {
             value={draft.date}
             onChange={(e) => setDraft((d) => ({ ...d, date: e.target.value }))}
             className="w-full h-9 px-3 rounded-md border text-[13px] outline-none"
-            style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text }}
+            style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text, colorScheme: dark ? 'dark' : 'light' }}
           />
 
           <div className="grid grid-cols-2 gap-3 mt-3">

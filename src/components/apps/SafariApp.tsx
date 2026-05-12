@@ -222,7 +222,7 @@ export const SafariApp = () => {
 
         <form
           onSubmit={(e) => { e.preventDefault(); navigate(addressBar); }}
-          className="flex-1 flex items-center gap-2 bg-white dark:bg-neutral-800 rounded-md px-3 py-1 border border-black/5 dark:border-white/10 max-w-2xl mx-auto"
+          className="flex-1 flex items-center gap-3 bg-white dark:bg-neutral-800 rounded-md px-3 py-1 border border-black/5 dark:border-white/10 max-w-[590px] mx-auto"
         >
           {active.loading ? <Loader2 className="w-3 h-3 text-blue-500 animate-spin" /> : <Lock className="w-3 h-3 text-neutral-500" />}
           <input
@@ -231,40 +231,7 @@ export const SafariApp = () => {
             className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 min-w-0"
             placeholder="Search or enter website name"
           />
-          <button
-            type="button"
-            onClick={() => {
-              if (!isFavorites && /^https?:\/\//.test(active.url)) {
-                toggleBookmark({ name: active.title || active.url, url: active.url });
-              }
-            }}
-            className={`p-0.5 ${hasBookmark(active.url) ? 'text-yellow-500' : 'text-neutral-500 hover:text-yellow-500'}`}
-          >
-            <Star className="w-3.5 h-3.5" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
-          </button>
         </form>
-
-        <ToolbarBtn onClick={() => navigator.share?.({ url: active.url }).catch(() => {})}><Share className="w-4 h-4" /></ToolbarBtn>
-        <div className="relative">
-          <ToolbarBtn onClick={() => setShowMenu(s => !s)}><MoreHorizontal className="w-4 h-4" /></ToolbarBtn>
-          {showMenu && (
-            <div
-              className="absolute right-0 top-9 w-48 rounded-xl shadow-2xl py-1 z-50 text-[13px]"
-              style={{
-                background: 'rgba(255,255,255,0.7)',
-                backdropFilter: 'blur(40px) saturate(180%)',
-                border: '1px solid rgba(0,0,0,0.08)',
-              }}
-              onMouseLeave={() => setShowMenu(false)}
-            >
-              <MenuItem onClick={() => { addTab(); setShowMenu(false); }}>New Tab</MenuItem>
-              <MenuItem onClick={() => { setShowSidebar(s => !s); setShowMenu(false); }}>{showSidebar ? 'Hide' : 'Show'} Sidebar</MenuItem>
-              <MenuItem onClick={() => { goTo(START_PAGE, 'Favorites'); setShowMenu(false); }}>Home Page</MenuItem>
-              <div className="my-1 border-t border-black/10" />
-              <MenuItem onClick={() => { navigate(active.url); setShowMenu(false); }}>Reload</MenuItem>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Body: tab sidebar + content */}

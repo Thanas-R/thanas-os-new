@@ -212,7 +212,28 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       </div>
     </FrostedPanel>
   );
-
+const StatusPanel: React.FC<{
+  children: React.ReactNode;
+  width?: number;
+  className?: string;
+}> = ({ children, width = 280, className = '' }) => (
+  <div
+    className={`absolute top-full mt-1 rounded-xl py-2.5 px-3 z-[200] text-white ${className}`}
+    style={{
+      width: `min(${width}px, calc(100vw - 12px))`,
+      background: 'rgba(28,28,32,0.85)',
+      backdropFilter: 'blur(28px) saturate(180%)',
+      WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+      border: '1px solid rgba(255,255,255,0.12)',
+      boxShadow: '0 20px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08)',
+      fontFamily: "'Inter', -apple-system, sans-serif",
+      fontSize: '13px',
+    }}
+    onClick={(e) => e.stopPropagation()}
+  >
+    {children}
+  </div>
+);
   // Status icon button — darkens on hover (no white overlay)
   const StatusBtn: React.FC<{ onClick?: () => void; active?: boolean; title?: string; children: React.ReactNode; className?: string }> = ({ onClick, active, title, children, className='' }) => (
     <button onClick={onClick} title={title}
@@ -247,33 +268,221 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         </div>
 
         {/* Right status group — order: bluetooth, wifi, battery, search, control center, date */}
-        <div className="flex items-center gap-1 relative">
-          <div className="relative">
-            <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <IoBluetooth className="w-5 h-5" />
-            </StatusBtn>
-            {btOpen && (
-              <div className="absolute right-0"><FrostedPanel width={260}>
-                <div className="font-semibold mb-1 flex items-center justify-between">Bluetooth
-                  <span className={`text-[11px] ${settings.bluetooth ? 'text-emerald-400' : 'text-white/50'}`}>{settings.bluetooth ? 'On' : 'Off'}</span>
-                </div>
-                <button onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
-                  className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]">
-                  {settings.bluetooth ? 'Turn Bluetooth Off' : 'Turn Bluetooth On'}
-                </button>
-                <div className="h-px bg-white/10 my-1" />
-                <div className="text-[11px] text-white/55 px-2 mb-1">Devices</div>
-                {['Thanas\u2019 AirPods Pro','Magic Mouse','Magic Keyboard'].map(d => (
-                  <div key={d} className="px-2 py-1 text-[12.5px] flex items-center justify-between">
-                    <span>{d}</span><span className="text-[10.5px] text-white/55">Connected</span>
-                  </div>
-                ))}
-                <div className="h-px bg-white/10 my-1" />
-                <button onClick={() => { openApp('settings'); openOnly(null); }} className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]">Bluetooth Settings…</button>
-              </FrostedPanel></div>
-            )}
-          </div>
+<div className="flex items-center gap-1 relative">
+  <div
+    className="relative"
+    onMouseEnter={() => openOnly('bt')}
+    onMouseLeave={() => openOnly(null)}
+  >
+    <StatusBtn
+      onClick={() => openOnly(btOpen ? null : 'bt')}
+      active={btOpen}
+      title="Bluetooth"
+    >
+      <IoBluetooth className="w-4 h-4" />
+    </StatusBtn>
 
+    {btOpen && (
+      <StatusPanel width={260} className="right-0">
+        <div className="font-semibold mb-1 flex items-center justify-between">
+          Bluetooth
+          <span className={`text-[11px] ${settings.bluetooth ? 'text-emerald-400' : 'text-white/50'}`}>
+            {settings.bluetooth ? 'On' : 'Off'}
+          </span>
+        </div>
+
+        <button
+          onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
+          className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+        >
+          {settings.bluetooth ? 'Turn Bluetooth Off' : 'Turn Bluetooth On'}
+        </button>
+
+        <div className="h-px bg-white/10 my-1" />
+
+        <div className="text-[11px] text-white/55 px-2 mb-1">Devices</div>
+        {['Thanas\u2019 AirPods Pro', 'Magic Mouse', 'Magic Keyboard'].map((d) => (
+          <div key={d} className="px-2 py-1 text-[12.5px] flex items-center justify-between">
+            <span>{d}</span>
+            <span className="text-[10.5px] text-white/55">Connected</span>
+          </div>
+        ))}
+
+        <div className="h-px bg-white/10 my-1" />
+
+        <button
+          onClick={() => {
+            openApp('settings');
+            openOnly(null);
+          }}
+          className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+        >
+          Bluetooth Settings…
+        </button>
+      </StatusPanel>
+    )}
+  </div>
+
+  <div
+    className="relative"
+    onMouseEnter={() => openOnly('wifi')}
+    onMouseLeave={() => openOnly(null)}
+  >
+    <StatusBtn
+      onClick={() => openOnly(wifiOpen ? null : 'wifi')}
+      active={wifiOpen}
+      title={online ? 'Online' : 'Offline'}
+      className={settings.wifi && online ? '' : 'opacity-60'}
+    >
+      <IoIosWifi className="w-[19.5px] h-[19.5px]" />
+    </StatusBtn>
+
+    {wifiOpen && (
+      <StatusPanel width={280} className="right-0">
+        <div className="font-semibold mb-1 flex items-center justify-between">
+          Wi-Fi
+          <span className={`text-[11px] ${settings.wifi ? 'text-emerald-400' : 'text-white/50'}`}>
+            {settings.wifi ? 'On' : 'Off'}
+          </span>
+        </div>
+
+        <button
+          onClick={() => updateSettings({ wifi: !settings.wifi })}
+          className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+        >
+          {settings.wifi ? 'Turn Wi-Fi Off' : 'Turn Wi-Fi On'}
+        </button>
+
+        <div className="h-px bg-white/10 my-1" />
+
+        <div className="text-[11px] text-white/55 px-2 mb-1">Networks</div>
+        {[
+          { name: 'ThanasOS-Net', current: true },
+          { name: 'PESU-Wifi', current: false },
+          { name: 'JioFiber-5G', current: false },
+          { name: 'Cubbon Cafe', current: false },
+        ].map((n) => (
+          <div
+            key={n.name}
+            className="px-2 py-1 text-[12.5px] flex items-center justify-between hover:bg-black/40 rounded cursor-pointer"
+          >
+            <span className="flex items-center gap-1.5">
+              {n.current && <Check className="w-3 h-3 text-emerald-400" />}
+              {n.name}
+            </span>
+            <IoIosWifi className="w-3.5 h-3.5 opacity-70" />
+          </div>
+        ))}
+
+        <div className="h-px bg-white/10 my-1" />
+
+        <button
+          onClick={() => {
+            openApp('settings');
+            openOnly(null);
+          }}
+          className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+        >
+          Wi-Fi Settings…
+        </button>
+      </StatusPanel>
+    )}
+  </div>
+
+  <div
+    className="relative"
+    onMouseEnter={() => openOnly('battery')}
+    onMouseLeave={() => openOnly(null)}
+  >
+    <StatusBtn
+      onClick={() => openOnly(batteryOpen ? null : 'battery')}
+      active={batteryOpen}
+      title="Battery"
+    >
+      <IOSBattery level={batteryLevel} charging={batteryCharging} />
+    </StatusBtn>
+
+    {batteryOpen && (
+      <StatusPanel width={290} className="right-0">
+        <div className="flex items-center justify-between mb-2">
+          <div className="font-semibold flex items-center gap-1.5">
+            Battery
+            {batteryCharging && <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />}
+          </div>
+          <div className="text-[12px] text-white/70">{batteryLevel ?? 100}%</div>
+        </div>
+
+        <div className="text-[12px] text-white/70 mb-1">
+          Power Source: {batteryCharging ? 'Power Adapter' : 'Battery'}
+        </div>
+        {batteryCharging && <div className="text-[12px] text-white/70 mb-2">Slow Charger</div>}
+
+        <div className="h-px bg-white/10 my-1.5" />
+
+        <div className="text-[12px] font-semibold text-white/85 px-1 mb-1.5">
+          Energy Mode
+        </div>
+
+        {[
+          { label: 'Automatic', accent: 'bg-blue-500' },
+          { label: 'Low Power', accent: 'bg-amber-600' },
+          { label: 'High Power', accent: 'bg-rose-500' },
+        ].map((m) => (
+          <button
+            key={m.label}
+            className="w-full flex items-center gap-2.5 px-1.5 py-1.5 rounded-md hover:bg-black/40 text-left"
+          >
+            <div className={`w-7 h-4 rounded-[3px] flex items-center justify-center ${m.accent}`}>
+              <div
+                className="w-1 h-2.5 bg-white/70 rounded-sm absolute"
+                style={{ marginLeft: 22 }}
+              />
+            </div>
+            <span className="text-[12.5px]">{m.label}</span>
+          </button>
+        ))}
+
+        <div className="h-px bg-white/10 my-1.5" />
+
+        <div className="text-[11.5px] text-white/55 px-1 mb-1">
+          No Apps Using Significant Energy
+        </div>
+
+        <div className="h-px bg-white/10 my-1" />
+
+        <button
+          onClick={() => {
+            openApp('settings');
+            openOnly(null);
+          }}
+          className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+        >
+          Battery Settings…
+        </button>
+      </StatusPanel>
+    )}
+  </div>
+
+  <StatusBtn onClick={onSpotlightClick} title="Spotlight (⌘K)">
+    <Search className="w-4 h-4" />
+  </StatusBtn>
+
+  <StatusBtn onClick={() => openOnly(ccOpen ? null : 'cc')} active={ccOpen} title="Control Center">
+    <img
+      src={controlCenterIcon}
+      alt="Control Center"
+      className="h-4 w-auto object-contain"
+      style={{ filter: 'brightness(0) invert(1)' }}
+    />
+  </StatusBtn>
+
+  <button
+    onClick={() => openOnly(notifOpen ? null : 'notif')}
+    className={`px-2 py-0.5 rounded hover:bg-black/30 ${notifOpen ? 'bg-black/40' : ''}`}
+  >
+    <span className="font-medium">{formatTime(time)}</span>
+  </button>
+</div>
           <div className="relative">
             <StatusBtn onClick={() => openOnly(wifiOpen ? null : 'wifi')} active={wifiOpen} title={online ? 'Online' : 'Offline'} className={settings.wifi && online ? '' : 'opacity-60'}>
               <IoIosWifi className="w-[19.5px] h-[19.5px]" />

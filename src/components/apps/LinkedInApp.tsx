@@ -1,4 +1,4 @@
-import { MapPin, ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, UserPlus, GraduationCap } from 'lucide-react';
+import { ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, GraduationCap } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
 import linkedinBanner from '@/assets/linkedin-banner.png';
@@ -8,7 +8,7 @@ import sriVaniLogo from '@/assets/sri-vani-logo.png';
 import virdisProject from '@/assets/virdis-project.png';
 
 export const LinkedInApp = () => {
-  const { settings } = useMacOS();
+  const { settings, openApp } = useMacOS();
   const dark = settings.theme === 'dark';
 
   const t = dark
@@ -62,27 +62,41 @@ export const LinkedInApp = () => {
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1 className="text-[24px] font-bold leading-tight">Thanas R</h1>
-                  <ShieldCheck className="w-5 h-5" style={{ color: t.link }} />
+                  <ShieldCheck className="w-5 h-5" style={{ color: dark ? '#9ca3af' : '#6b7280' }} />
                   <span className="text-[13px]" style={{ color: t.sub }}>He/Him</span>
                 </div>
                 <div className="text-[15px] mt-1">B.Tech CSE [AIML] Student | PES University</div>
-                <div className="flex items-center gap-1 text-[13px] mt-1" style={{ color: t.sub }}>
-                  <MapPin className="w-3.5 h-3.5" /><span>Bengaluru, Karnataka, India</span>
+                <div className="flex items-center gap-2 text-[13px] mt-1" style={{ color: t.sub }}>
+                  <span>Bengaluru, Karnataka, India</span>
+                  <span style={{ color: t.sub }}>·</span>
+                  <button
+                    onClick={() => openApp('contact')}
+                    className="hover:underline"
+                    style={{ color: t.link }}
+                  >Contact info</button>
                 </div>
 
-                <div className="flex items-center gap-3 mt-2">
-                  <div className="text-[13px] font-semibold" style={{ color: t.link }}>98 connections</div>
-                  <a href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-5 h-9 rounded-full text-[14px] font-semibold text-white"
-                    style={{ background: '#0a66c2' }}>
-                    <UserPlus className="w-4 h-4" /> Connect
-                  </a>
-                </div>
+                <div className="text-[13px] font-semibold mt-2" style={{ color: t.link }}>98 connections</div>
               </div>
 
-              <div className="flex items-center gap-2 shrink-0 pt-1">
-                <img src={pesLogo} alt="PES" className="w-9 h-9 rounded object-contain" />
-                <span className="text-[13px] font-semibold">PES University</span>
+              <div className="flex flex-col items-end gap-2 shrink-0 pt-1">
+                <div className="flex items-center gap-2">
+                  <img src={pesLogo} alt="PES" className="w-6 h-6 rounded object-contain" />
+                  <span className="text-[13px] font-semibold">PES University</span>
+                </div>
+                <a
+                  href="https://www.linkedin.com/in/thanasr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-5 h-9 rounded-full text-[14px] font-semibold border"
+                  style={{
+                    background: dark ? '#1d2226' : '#ffffff',
+                    color: dark ? '#e8e6e3' : '#1d2226',
+                    borderColor: dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
+                  }}
+                >
+                  Connect
+                </a>
               </div>
             </div>
           </div>
@@ -111,10 +125,11 @@ export const LinkedInApp = () => {
         {/* Activity */}
         <Card>
           <div className="p-5">
-            <h2 className="text-[20px] font-semibold">Activity</h2>
-            <div className="text-[13px] font-semibold mb-4" style={{ color: t.link }}>101 followers</div>
-
-            <div className="rounded-lg border p-4" style={{ borderColor: t.divider }}>
+            <div className="flex items-baseline justify-between">
+              <h2 className="text-[20px] font-semibold">Activity</h2>
+              <div className="text-[13px] font-semibold" style={{ color: t.link }}>101 followers</div>
+            </div>
+            <div className="mt-4 rounded-lg border p-4" style={{ borderColor: t.divider }}>
               <div className="flex items-start gap-3">
                 <img src={linkedinPhoto} alt="" className="w-10 h-10 rounded-full object-cover" />
                 <div className="flex-1">

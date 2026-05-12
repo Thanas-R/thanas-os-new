@@ -104,14 +104,14 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   label="Display"
   value={settings.brightness ?? 80}
   onChange={(v) => updateSettings({ brightness: v })}
-  icon={<HiSun className="w-[15px] h-[15px] text-neutral-700 opacity-40" />}
+  icon={<HiSun className="w-[15px] h-[15px] text-neutral-700 opacity-50" />}
 />
 
 <SliderModule
   label="Sound"
   value={settings.volume ?? 65}
   onChange={(v) => updateSettings({ volume: v })}
-  icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700 opacity-40" />}
+  icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700 opacity-50" />}
   trailing={
     <button
       onClick={() => setAirplayOn(v => !v)}

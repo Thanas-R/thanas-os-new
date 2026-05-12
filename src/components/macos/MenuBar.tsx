@@ -320,12 +320,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-1 relative">
           <div
             className="relative"
-            onMouseEnter={() => {
-              if (activeMenu || appleOpen) {
-                setActiveMenu(null);
-                setAppleOpen(true);
-              }
-            }}
+            onMouseEnter={() => { setActiveMenu(null); setAppleOpen(true); }}
           >
             <button
               onClick={(e) => {
@@ -344,12 +339,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             <div
               key={m.label}
               className="relative"
-              onMouseEnter={() => {
-                if (activeMenu || appleOpen) {
-                  setAppleOpen(false);
-                  setActiveMenu(m.label);
-                }
-              }}
+              onMouseEnter={() => { setAppleOpen(false); setActiveMenu(m.label); }}
             >
               <button
                 onClick={(e) => {
@@ -492,37 +482,34 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             </StatusBtn>
 
             {batteryOpen && (
-              <FrostedPanel width={290} align="right" offset={8}>
+              <FrostedPanel width={260} align="right" offset={8}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-semibold flex items-center gap-1.5">
-                    Battery {batteryCharging && <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />}
+                    Battery {batteryCharging && <BatteryCharging className="w-5 h-5 text-emerald-400" />}
                   </div>
                   <div className="text-[12px] text-white/70">{batteryLevel ?? 100}%</div>
                 </div>
 
-                <div className="text-[12px] text-white/70 mb-1">
+                <div className="text-[12px] text-white/70 mb-2">
                   Power Source: {batteryCharging ? 'Power Adapter' : 'Battery'}
                 </div>
-                {batteryCharging && <div className="text-[12px] text-white/70 mb-2">Slow Charger</div>}
 
                 <div className="h-px bg-white/10 my-1.5" />
-                <div className="text-[12px] font-semibold text-white/85 px-1 mb-1.5">Energy Mode</div>
-
-                {[
-                  { label: 'Automatic', accent: 'bg-blue-500' },
-                  { label: 'Low Power', accent: 'bg-amber-600' },
-                  { label: 'High Power', accent: 'bg-rose-500' },
-                ].map(m => (
-                  <button key={m.label} className="w-full flex items-center gap-2.5 px-1.5 py-1.5 rounded-md hover:bg-black/40 text-left">
-                    <div className={`w-7 h-4 rounded-[3px] flex items-center justify-center ${m.accent}`}>
-                      <div className="w-1 h-2.5 bg-white/70 rounded-sm absolute" style={{ marginLeft: 22 }} />
-                    </div>
-                    <span className="text-[12.5px]">{m.label}</span>
-                  </button>
-                ))}
-
-                <div className="h-px bg-white/10 my-1.5" />
-                <div className="text-[11.5px] text-white/55 px-1 mb-1">No Apps Using Significant Energy</div>
+                <button
+                  onClick={() => updateSettings({ lowPowerMode: !settings.lowPowerMode })}
+                  className="w-full flex items-center justify-between px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]"
+                >
+                  <span>Low Power Mode</span>
+                  <span
+                    className="relative inline-flex h-[18px] w-[30px] rounded-full transition-colors"
+                    style={{ background: settings.lowPowerMode ? '#34c759' : 'rgba(255,255,255,0.22)' }}
+                  >
+                    <span
+                      className="absolute top-[2px] h-[14px] w-[14px] rounded-full bg-white shadow transition-transform"
+                      style={{ left: 2, transform: settings.lowPowerMode ? 'translateX(12px)' : 'translateX(0)' }}
+                    />
+                  </span>
+                </button>
                 <div className="h-px bg-white/10 my-1" />
                 <button
                   onClick={() => {

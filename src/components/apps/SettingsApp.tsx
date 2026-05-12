@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, ChevronLeft, Bell,
+  Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, Bell,
   Volume2, Moon, Clock, Globe, RefreshCw, Settings as SettingsIcon, Eye, Layout, Palette, Compass,
   Sun, Star, ArrowDownToLine, Languages, Database, Share2, Keyboard, Gauge, User,
 } from 'lucide-react';
@@ -27,6 +27,7 @@ const wallpapers = [
 ];
 
 type SectionId =
+  | 'apple-account'
   | 'wifi' | 'bluetooth' | 'battery' | 'notifications' | 'sound' | 'focus'
   | 'general' | 'appearance' | 'desktop' | 'displays' | 'wallpaper' | 'browser' | 'privacy';
 
@@ -69,7 +70,7 @@ const GENERAL_ITEMS: { id: GeneralSubsection; label: string; icon: any; tint: st
 export const SettingsApp = () => {
   const { settings, updateSettings } = useMacOS();
   const googleInstalled = useGoogleInstalled();
-  const [section, setSection] = useState<SectionId>('general');
+  const [section, setSection] = useState<SectionId>('apple-account');
   const [generalSub, setGeneralSub] = useState<GeneralSubsection>('about');
   const [query, setQuery] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -125,8 +126,15 @@ export const SettingsApp = () => {
             <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[13px]" />
           </div>
         </div>
-        {/* Profile */}
-        <button onClick={() => { setSection('general'); setGeneralSub('about'); }} className="mx-3 mb-2 flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60 text-left">
+        {/* Profile / Apple Account row */}
+        <button
+          onClick={() => setSection('apple-account')}
+          className={`mx-3 mb-2 flex items-center gap-2.5 px-2 py-2 rounded-lg text-left transition-colors ${
+            section === 'apple-account'
+              ? 'bg-neutral-300/70 dark:bg-neutral-700/60'
+              : 'hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60'
+          }`}
+        >
           <img src={profilePhoto} alt="Thanas R" className="w-10 h-10 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
           <div className="min-w-0">
             <div className="text-[13px] font-semibold truncate">Thanas R</div>
@@ -153,10 +161,14 @@ export const SettingsApp = () => {
         </nav>
       </aside>
 
-      {/* Middle (only for General) - simplified: shows About content directly on the right */}
-      {section === 'general' ? (
+      {/* Right pane */}
+      {section === 'apple-account' ? (
         <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
-          <GeneralPane sub={'about'} batteryLevel={batteryLevel} batteryCharging={batteryCharging} onBack={() => setSection('general')} />
+          <AppleAccountPane />
+        </div>
+      ) : section === 'general' ? (
+        <div className="flex-1 min-h-0 bg-white dark:bg-neutral-900">
+          <GeneralPane sub={generalSub} setSub={setGeneralSub} batteryLevel={batteryLevel} batteryCharging={batteryCharging} />
         </div>
       ) : (
         <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
@@ -313,37 +325,95 @@ export const SettingsApp = () => {
   );
 };
 
-const GeneralPane = ({ sub, batteryLevel, batteryCharging, onBack }: { sub: GeneralSubsection; batteryLevel: number | null; batteryCharging: boolean; onBack: () => void }) => {
-  if (sub === 'about') {
-    return (
-      <div className="px-8 pt-5 pb-10 max-w-2xl">
-        <div className="flex flex-col items-center pb-6">
-          <img src={macStudio} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
-          <div className="text-[28px] font-semibold mt-3">ThanasOS</div>
-          <div className="text-[13px] text-neutral-500">2026</div>
-        </div>
-        <Card>
-          <KV k="Model Name" v="MacBook Air" />
-          <KV k="Model Identifier" v="MacBookAir2026,1" />
-          <KV k="Chip" v="Apple M5" />
-          <KV k="Total Number of Cores" v="10 (4 performance and 6 efficiency)" />
-          <KV k="Memory" v="24 GB Unified Memory" />
-          <KV k="Storage" v="512 GB SSD" />
-          <KV k="Display" v="13.6-inch Liquid Retina, 2560×1664" />
-          <KV k="Serial Number" v="THANAS-OS-2026" />
-          <KV k="Battery" v={batteryLevel !== null ? `${batteryLevel}%${batteryCharging ? ' Charging' : ''}` : 'Unavailable'} />
-        </Card>
-        <div className="text-[13px] font-semibold mt-6 mb-2">macOS</div>
-        <Card>
-          <KV k="ThanasOS" v="Version 1.0 (Build 2026.05)" />
-        </Card>
+const AppleAccountPane = () => (
+  <div className="px-8 pt-5 pb-10 max-w-2xl">
+    <div className="flex items-center gap-4 pb-6">
+      <img src={profilePhoto} alt="Thanas R" className="w-20 h-20 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
+      <div>
+        <div className="text-[22px] font-semibold">Thanas R</div>
+        <div className="text-[13px] text-neutral-500">thanas5.rd@gmail.com</div>
+        <div className="text-[12px] text-neutral-500 mt-0.5">Apple Account</div>
       </div>
-    );
-  }
-  return (
+    </div>
+    <Card>
+      <KV k="Personal Information" v="Manage" />
+      <KV k="Sign-In & Security" v="Manage" />
+      <KV k="Payment & Shipping" v="None" />
+    </Card>
+    <div className="text-[13px] font-semibold mt-6 mb-2">iCloud</div>
+    <Card>
+      <KV k="iCloud+" v="200 GB Plan" />
+      <KV k="iCloud Drive" v="On" />
+      <KV k="Photos" v="On" />
+    </Card>
+    <div className="text-[13px] font-semibold mt-6 mb-2">Devices</div>
+    <Card>
+      <KV k="MacBook Air (this device)" v="Online" />
+      <KV k="iPhone 16 Pro" v="Online" />
+    </Card>
+  </div>
+);
+
+const GeneralPane = ({ sub, setSub, batteryLevel, batteryCharging }: { sub: GeneralSubsection; setSub: (s: GeneralSubsection) => void; batteryLevel: number | null; batteryCharging: boolean }) => {
+  const renderAbout = () => (
     <div className="px-8 pt-5 pb-10 max-w-2xl">
-      <button onClick={onBack} className="flex items-center gap-1 text-[13px] text-blue-500 mb-4"><ChevronLeft className="w-4 h-4" />General</button>
-      <Card><Row label={GENERAL_ITEMS.find(g => g.id === sub)?.label || 'Section'} desc="Reserved." /></Card>
+      <div className="flex flex-col items-center pb-6">
+        <img src={macStudio} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
+        <div className="text-[28px] font-semibold mt-3">ThanasOS</div>
+        <div className="text-[13px] text-neutral-500">2026</div>
+      </div>
+      <Card>
+        <KV k="Model Name" v="MacBook Air" />
+        <KV k="Model Identifier" v="MacBookAir2026,1" />
+        <KV k="Chip" v="Apple M5" />
+        <KV k="Total Number of Cores" v="10 (4 performance and 6 efficiency)" />
+        <KV k="Memory" v="24 GB Unified Memory" />
+        <KV k="Storage" v="512 GB SSD" />
+        <KV k="Display" v="13.6-inch Liquid Retina, 2560×1664" />
+        <KV k="Serial Number" v="THANAS-OS-2026" />
+        <KV k="Battery" v={batteryLevel !== null ? `${batteryLevel}%${batteryCharging ? ' Charging' : ''}` : 'Unavailable'} />
+      </Card>
+      <div className="text-[13px] font-semibold mt-6 mb-2">macOS</div>
+      <Card>
+        <KV k="ThanasOS" v="Version 1.0 (Build 2026.05)" />
+      </Card>
+    </div>
+  );
+
+  return (
+    <div className="flex h-full">
+      {/* macOS-style General sub-sidebar */}
+      <div className="w-[220px] shrink-0 border-r border-black/5 dark:border-white/5 overflow-auto thin-scrollbar p-2 space-y-0.5 bg-neutral-100/40 dark:bg-neutral-900/40">
+        <div className="px-2 py-1 text-[11px] uppercase tracking-wider text-neutral-500">General</div>
+        {GENERAL_ITEMS.map((g) => {
+          const I = g.icon;
+          const active = g.id === sub;
+          return (
+            <button
+              key={g.id}
+              onClick={() => setSub(g.id)}
+              className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[13.5px] text-left transition-colors ${
+                active ? 'bg-neutral-300/70 dark:bg-neutral-700/60 text-neutral-900 dark:text-neutral-100'
+                       : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
+              }`}
+            >
+              <span className="w-6 h-6 rounded-[6px] flex items-center justify-center text-white" style={{ background: g.tint }}>
+                <I className="w-4 h-4" />
+              </span>
+              <span className="truncate">{g.label}</span>
+              <ChevronRight className="w-3.5 h-3.5 ml-auto opacity-40" />
+            </button>
+          );
+        })}
+      </div>
+      <div className="flex-1 overflow-auto thin-scrollbar">
+        {sub === 'about' ? renderAbout() : (
+          <div className="px-8 pt-5 pb-10 max-w-2xl">
+            <h1 className="text-[20px] font-semibold mb-5">{GENERAL_ITEMS.find(g => g.id === sub)?.label}</h1>
+            <Card><Row label="Section" desc="Reserved." /></Card>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
@@ -357,9 +427,10 @@ const KV = ({ k, v }: { k: string; v: string }) => (
 
 const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: any; tint: string; active: boolean; onClick: () => void }) => (
   <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[14px] transition-colors ${
-    active ? 'bg-blue-500 text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
+    active ? 'bg-neutral-300/70 dark:bg-neutral-700/60 text-neutral-900 dark:text-neutral-100'
+           : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
   }`}>
-    <span className="w-6 h-6 rounded-[6px] flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>
+    <span className="w-6 h-6 rounded-[6px] flex items-center justify-center text-white" style={{ background: tint }}>
       {label === 'AirDrop & Handoff' ? <img src={airdropImg} alt="" className="w-4 h-4 object-contain" /> : <I className="w-4 h-4" />}
     </span>
     <span className="truncate">{label}</span>

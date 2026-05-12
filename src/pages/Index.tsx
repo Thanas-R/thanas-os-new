@@ -32,7 +32,7 @@ const apps: AppConfig[] = [
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 750, height: 600 } },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 980, height: 640 } },
   { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 850, height: 650 } },
-  { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 900, height: 640 } },
+  { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 980, height: 740 } },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 700 } },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 720 } },
   { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 720 } },

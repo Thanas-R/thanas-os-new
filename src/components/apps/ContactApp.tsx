@@ -4,7 +4,7 @@ import {
   MessageSquare,
   Mail,
 } from 'lucide-react';
-import contactImg from '@/assets/contact-img.png';
+import contactImg from '@/assets/wallpaper-2.jpg';
 import newProfile from '@/assets/newprofile.png';
 
 // iOS-26 liquid-glass contact card updated

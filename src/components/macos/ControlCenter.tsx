@@ -59,19 +59,26 @@ export const ControlCenter = ({ open, onClose }: Props) => {
             </div>
 
             {/* RIGHT: focus on top, two squares on bottom */}
-            <div className="grid grid-rows-[1fr_auto] gap-2">
+            <div className="grid grid-rows-[auto_auto] gap-2">
               <button
-                onClick={() => updateSettings({ focus: !settings.focus })}
-                className="rounded-2xl bg-white/10 hover:bg-black/20 transition-colors p-3 flex flex-col items-start justify-between text-left"
-              >
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${settings.focus ? 'bg-violet-500' : 'bg-white/15'}`}>
-                  <Moon className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-[12.5px] font-semibold leading-tight">Focus</div>
-                  <div className="text-[10.5px] text-white/55">{settings.focus ? 'On' : 'Off'}</div>
-                </div>
-              </button>
+  onClick={() => updateSettings({ focus: !settings.focus })}
+  className="rounded-2xl bg-white/10 hover:bg-black/20 transition-colors px-3 py-2 flex items-center gap-3 text-left min-h-[78px]"
+>
+  <div
+    className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+      settings.focus ? 'bg-violet-500' : 'bg-white/15'
+    }`}
+  >
+    <Moon className="w-4 h-4" />
+  </div>
+
+  <div className="leading-tight">
+    <div className="text-[12.5px] font-semibold">Focus</div>
+    <div className="text-[10.5px] text-white/55">
+      {settings.focus ? 'On' : 'Off'}
+    </div>
+  </div>
+</button>
               <div className="grid grid-cols-2 gap-2">
                 <SquareTile
                   active={airplayOn}
@@ -129,10 +136,14 @@ const ConnRow = ({ active, onClick, icon, label, sub }: { active?: boolean; onCl
 const SquareTile = ({ active, onClick, icon, label, accent }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; accent: string }) => (
   <button
     onClick={onClick}
-    className="rounded-2xl bg-white/10 hover:bg-black/25 transition-colors p-2.5 flex flex-col items-start justify-between aspect-square min-h-[68px]"
-  >
-    <div className={`w-7 h-7 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>{icon}</div>
-    <div className="text-[11px] font-semibold mt-1">{label}</div>
+    className="rounded-2xl bg-white/10 hover:bg-black/25 transition-colors p-2.5 flex flex-col items-center justify-center aspect-square min-h-[68px]"
+    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>
+  {icon}
+</div>
+
+<div className="text-[11px] font-semibold mt-1 text-center">
+  {label}
+</div>
   </button>
 );
 
@@ -166,7 +177,7 @@ const SliderModule = ({ label, value, onChange, icon, trailing }: { label: strin
         <div
           ref={trackRef}
           onMouseDown={(e) => { setDrag(true); updateFromX(e.clientX); }}
-          className="relative flex-1 h-9 rounded-full overflow-hidden cursor-pointer"
+          className="relative flex-1 h-5 rounded-full overflow-hidden cursor-pointer"
           style={{ background: 'rgba(255,255,255,0.18)' }}
         >
           {/* white fill */}

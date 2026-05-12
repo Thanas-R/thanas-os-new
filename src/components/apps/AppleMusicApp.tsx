@@ -24,7 +24,7 @@ export const AppleMusicApp = () => {
       <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '220px 1fr' }}>
         {/* Sidebar */}
         <aside className="overflow-y-auto no-scrollbar px-2 py-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
-          <div className="px-2 pb-2 font-semibold text-[15px]" style={{ color: accent }}>
+          <div className="px-4 pb-2 font-semibold text-[15px]" style={{ color: accent }}>
             Music
           </div>
           <div className="px-2 mb-3">

@@ -115,28 +115,27 @@ export const SettingsApp = () => {
   const sectionLabel = allNav.find(n => n.id === section)?.label || 'Settings';
 
   return (
-    <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 text-[13px]">
+    <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 text-[14px]">
       {/* Sidebar */}
-      <aside className="w-[230px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
+      <aside className="w-[240px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
         {/* Search */}
         <div className="px-3 pt-3 pb-2">
-          <div className="flex items-center gap-2 px-2.5 py-1 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
-            <Search className="w-3 h-3 text-neutral-400" />
-            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[12.5px]" />
+          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
+            <Search className="w-4 h-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
+            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[13px]" />
           </div>
         </div>
         {/* Profile */}
         <button onClick={() => { setSection('general'); setGeneralSub('about'); }} className="mx-3 mb-2 flex items-center gap-2.5 px-2 py-2 rounded-lg hover:bg-neutral-300/60 dark:hover:bg-neutral-800/60 text-left">
           <img src={profilePhoto} alt="Thanas R" className="w-10 h-10 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
           <div className="min-w-0">
-            <div className="text-[12.5px] font-semibold truncate">Thanas R</div>
-            <div className="text-[10.5px] text-neutral-500 dark:text-neutral-400 truncate">Apple Account</div>
+            <div className="text-[13px] font-semibold truncate">Thanas R</div>
+            <div className="text-[11px] text-neutral-500 dark:text-neutral-400 truncate">Apple Account</div>
           </div>
         </button>
 
-        <nav className="flex-1 overflow-auto px-2 pb-3 pt-[2px] space-y-0.5">
+        <nav className="flex-1 overflow-auto thin-scrollbar px-2 pb-3 pt-[2px] space-y-0.5">
           {filteredSidebar.map((n, i) => {
-            // Insert separators between groups
             const prev = filteredSidebar[i - 1];
             const groupOf = (id: string) => {
               if (SIDEBAR_TOP.some(x => x.id === id)) return 'top';
@@ -156,11 +155,11 @@ export const SettingsApp = () => {
 
       {/* Middle (only for General) - simplified: shows About content directly on the right */}
       {section === 'general' ? (
-        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 no-scrollbar">
+        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
           <GeneralPane sub={'about'} batteryLevel={batteryLevel} batteryCharging={batteryCharging} onBack={() => setSection('general')} />
         </div>
       ) : (
-        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 no-scrollbar">
+        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
           <div className="px-7 pt-5 pb-10 max-w-3xl">
             <h1 className="text-[20px] font-semibold mb-5">{sectionLabel}</h1>
 
@@ -357,11 +356,11 @@ const KV = ({ k, v }: { k: string; v: string }) => (
 );
 
 const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: any; tint: string; active: boolean; onClick: () => void }) => (
-  <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1 rounded-md text-[13.5px] transition-colors ${
+  <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[14px] transition-colors ${
     active ? 'bg-blue-500 text-white' : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'
   }`}>
-    <span className="w-5 h-5 rounded-[5px] flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>
-      {label === 'AirDrop & Handoff' ? <img src={airdropImg} alt="" className="w-3.5 h-3.5 object-contain" /> : <I className="w-3 h-3" />}
+    <span className="w-6 h-6 rounded-[6px] flex items-center justify-center text-white" style={{ background: active ? 'rgba(255,255,255,0.2)' : tint }}>
+      {label === 'AirDrop & Handoff' ? <img src={airdropImg} alt="" className="w-4 h-4 object-contain" /> : <I className="w-4 h-4" />}
     </span>
     <span className="truncate">{label}</span>
   </button>

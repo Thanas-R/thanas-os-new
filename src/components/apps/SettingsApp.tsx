@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
-  Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, ChevronLeft, Bell,
+  Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, Bell,
   Volume2, Moon, Clock, Globe, RefreshCw, Settings as SettingsIcon, Eye, Layout, Palette, Compass,
   Sun, Star, ArrowDownToLine, Languages, Database, Share2, Keyboard, Gauge, User,
 } from 'lucide-react';

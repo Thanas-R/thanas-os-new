@@ -46,25 +46,38 @@ export const SAMPLE_CONTRIBUTIONS: ContributionDay[] = [
   { date: "2025-09-01", count: 1 },
 ];
 
-// Markdown stub; the user can paste their full README here later.
-export const README_MD = `# Hello, I'm Thanas R 👋
+ <table>
+<tr>
+<td width="65%" valign="top">
+ 
+# Hello, I’m Thanas R
 
-I am a passionate learner who believes in growing a little every day. I'm genuinely interested in coding and problem-solving, and I enjoy turning complex challenges into simple, effective solutions.
+I am a passionate learner who believes in growing a little every day. I’m genuinely interested in coding and problem-solving, and I enjoy turning complex challenges into simple, effective solutions.<br>
 
-While I take my work seriously, I also value creating a positive and cheerful environment. I believe a good laugh can go a long way in building strong, collaborative teams.
+While I take my work seriously, I also value creating a positive and cheerful environment. I believe a good laugh can go a long way in building strong, collaborative teams.<br>
 
-I strive to be honest, supportive, and reliable, taking responsibility or leading when needed while contributing and learning with the team.
+I strive to be honest, supportive, and reliable, taking responsibility or leading when needed while contributing and learning with the team.<br>
 
-## 🌐 Connect with me
 
-- 📧 [Email](mailto:thanasr@gmail.com)
-- 💼 [LinkedIn](https://www.linkedin.com/in/thanasr)
-- 🐙 [GitHub](https://github.com/Thanas-R)
-- 🌍 [Portfolio](https://thanas.vercel.app)
+**Connect with me:**
+<p align="left">
+<a href="https://www.linkedin.com/in/thanasr/"><img src="https://skillicons.dev/icons?i=linkedin" width="30"></a><img width="10">
+<a href="mailto:thanas5.rd@gmail.com"><img src="https://skillicons.dev/icons?i=gmail" width="30"></a><img width="10">
+<a href="https://discord.com/users/677174403859087378"><img src="https://skillicons.dev/icons?i=discord" width="30"></a><img width="10">
+<a href="https://github.com/Thanas-R"><img src="https://skillicons.dev/icons?i=github" width="30"></a>
 
-## 🛠 Tech Stack
+</p>
 
-\`C\` · \`C++\` · \`Python\` · \`Java\` · \`React\` · \`TypeScript\` · \`HTML\` · \`JavaScript\`
+</td>
 
-> *Paste your real README markdown here — it renders with full GitHub flavored markdown.*
+<td width="29.25%" align="center" valign="middle">
+  <img src="https://i.pinimg.com/736x/e6/a6/cc/e6a6ccf08c38edd428e13fe317f978af.jpg" width="100%"/>
+</td>
+</tr>
+</table>
+
+
+# Tech Stack
+<p align="left"><a href="https://en.cppreference.com/w/c"><img src="https://skillicons.dev/icons?i=c" width="45"></a><img width="10"><a href="https://en.cppreference.com/w/cpp"><img src="https://skillicons.dev/icons?i=cpp" width="45"></a><img width="10"><a href="https://www.python.org/"><img src="https://skillicons.dev/icons?i=py" width="45"></a><img width="10"><a href="https://www.oracle.com/java/"><img src="https://skillicons.dev/icons?i=java" width="45"></a><img width="10"><a href="https://reactjs.org/"><img src="https://skillicons.dev/icons?i=react" width="45"></a><img width="10"><a href="https://www.typescriptlang.org/"><img src="https://skillicons.dev/icons?i=ts" width="45"></a><img width="10"><a href="https://developer.mozilla.org/en-US/docs/Web/HTML"><img src="https://skillicons.dev/icons?i=html" width="45"></a><img width="10"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript"><img src="https://skillicons.dev/icons?i=js" width="45"></a><img width="10"><a href="https://code.visualstudio.com/"><img src="https://skillicons.dev/icons?i=vscode" width="45"></a><img width="10"><a href="https://www.jetbrains.com/pycharm/"><img src="https://skillicons.dev/icons?i=pycharm" width="45"></a></p>
+
 `;

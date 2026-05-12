@@ -175,10 +175,10 @@ export const CalculatorApp = () => {
         <div
           className="text-white text-right w-full"
           style={{
-            fontSize: 'clamp(40px, 15vw, 64px)',
+            fontSize: 'clamp(34px, 13vw, 56px)',
             lineHeight: 1,
             letterSpacing: '-0.03em',
-            fontWeight: 500,
+            fontWeight: 400,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',

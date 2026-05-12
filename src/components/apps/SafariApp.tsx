@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, Star, X, Sidebar, Home,
-  Share, BookOpen, MoreHorizontal, Loader2,
+  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, Star, X, Home,
+  Share, MoreHorizontal, Loader2,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
@@ -213,50 +213,13 @@ export const SafariApp = () => {
 
   return (
     <div className="h-full w-full flex flex-col bg-background text-foreground">
-      {/* Tab strip */}
-      <div className="flex items-center gap-1 px-2 pt-1.5 bg-neutral-200/70 dark:bg-neutral-800/70 border-b border-black/10 dark:border-white/10">
-        {tabs.map(t => (
-          <div
-            key={t.id}
-            onClick={() => setActiveId(t.id)}
-            className={`group flex items-center gap-2 px-3.5 py-2.5 rounded-t-lg text-[13px] cursor-pointer max-w-[260px] min-w-[170px] ${
-              t.id === activeId
-                ? 'bg-white dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100 shadow-sm'
-                : 'text-neutral-600 dark:text-neutral-400 hover:bg-white/40 dark:hover:bg-neutral-700/40'
-            }`}
-          >
-            {t.loading ? (
-              <Loader2 className="w-3 h-3 animate-spin shrink-0 text-blue-500" />
-            ) : t.favicon ? (
-              <img src={t.favicon} alt="" className="w-3.5 h-3.5 shrink-0" />
-            ) : (
-              <div className="w-3.5 h-3.5 rounded-sm bg-neutral-400/30 shrink-0" />
-            )}
-            <span className="truncate flex-1">{t.title}</span>
-            {tabs.length > 1 && (
-              <button
-                onClick={(e) => { e.stopPropagation(); closeTab(t.id); }}
-                className="opacity-0 group-hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-        ))}
-        <button onClick={addTab} className="p-1 ml-1 hover:bg-black/10 dark:hover:bg-white/10 rounded">
-          <Plus className="w-3.5 h-3.5" />
-        </button>
-      </div>
-
-      {/* Toolbar */}
-      <div className="flex items-center gap-1.5 px-3 py-1.5 bg-neutral-100/80 dark:bg-neutral-900/80 border-b border-black/10 dark:border-white/10 backdrop-blur-xl">
-        <ToolbarBtn onClick={() => setShowSidebar(s => !s)}><Sidebar className="w-4 h-4" /></ToolbarBtn>
+      {/* Top toolbar — single row with traffic-light room, URL pill, share/menu */}
+      <div className="flex items-center gap-1.5 pl-[80px] pr-3 py-2 bg-neutral-100/80 dark:bg-neutral-900/80 border-b border-black/10 dark:border-white/10 backdrop-blur-xl">
         <ToolbarBtn onClick={back} disabled={active.histIdx === 0}><ArrowLeft className="w-4 h-4" /></ToolbarBtn>
         <ToolbarBtn onClick={forward} disabled={active.histIdx >= active.history.length - 1}><ArrowRight className="w-4 h-4" /></ToolbarBtn>
         <ToolbarBtn onClick={() => navigate(active.url)}><RotateCw className="w-4 h-4" /></ToolbarBtn>
         <ToolbarBtn onClick={() => goTo(START_PAGE, 'Favorites')}><Home className="w-4 h-4" /></ToolbarBtn>
 
-        {/* URL pill */}
         <form
           onSubmit={(e) => { e.preventDefault(); navigate(addressBar); }}
           className="flex-1 flex items-center gap-2 bg-white dark:bg-neutral-800 rounded-md px-3 py-1 border border-black/5 dark:border-white/10 max-w-2xl mx-auto"
@@ -265,7 +228,7 @@ export const SafariApp = () => {
           <input
             value={addressBar}
             onChange={(e) => setAddressBar(e.target.value)}
-            className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100"
+            className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 min-w-0"
             placeholder="Search or enter website name"
           />
           <button
@@ -276,13 +239,11 @@ export const SafariApp = () => {
               }
             }}
             className={`p-0.5 ${hasBookmark(active.url) ? 'text-yellow-500' : 'text-neutral-500 hover:text-yellow-500'}`}
-            title={hasBookmark(active.url) ? 'Remove bookmark' : 'Add bookmark'}
           >
             <Star className="w-3.5 h-3.5" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
           </button>
         </form>
 
-        {/* Bookmarks toggle removed (sidebar already shows bookmarks) */}
         <ToolbarBtn onClick={() => navigator.share?.({ url: active.url }).catch(() => {})}><Share className="w-4 h-4" /></ToolbarBtn>
         <div className="relative">
           <ToolbarBtn onClick={() => setShowMenu(s => !s)}><MoreHorizontal className="w-4 h-4" /></ToolbarBtn>
@@ -297,7 +258,7 @@ export const SafariApp = () => {
               onMouseLeave={() => setShowMenu(false)}
             >
               <MenuItem onClick={() => { addTab(); setShowMenu(false); }}>New Tab</MenuItem>
-              <MenuItem onClick={() => { setShowBookmarksBar(s => !s); setShowMenu(false); }}>{showBookmarksBar ? 'Hide' : 'Show'} Bookmarks Bar</MenuItem>
+              <MenuItem onClick={() => { setShowSidebar(s => !s); setShowMenu(false); }}>{showSidebar ? 'Hide' : 'Show'} Sidebar</MenuItem>
               <MenuItem onClick={() => { goTo(START_PAGE, 'Favorites'); setShowMenu(false); }}>Home Page</MenuItem>
               <div className="my-1 border-t border-black/10" />
               <MenuItem onClick={() => { navigate(active.url); setShowMenu(false); }}>Reload</MenuItem>
@@ -306,23 +267,60 @@ export const SafariApp = () => {
         </div>
       </div>
 
-      {/* Bookmarks bar removed; bookmarks live in the sidebar */}
-
-      {/* Body: optional sidebar + content */}
+      {/* Body: tab sidebar + content */}
       <div className="flex-1 flex overflow-hidden">
         {showSidebar && (
-          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto">
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
-            {bookmarks.map(b => (
-              <button
-                key={b.url}
-                onClick={() => navigate(b.url)}
-                className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[12.5px] text-left"
-              >
-                <img src={faviconFor(b.url)} alt="" className="w-4 h-4" />
-                <span className="truncate">{b.name}</span>
-              </button>
-            ))}
+          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto flex flex-col gap-3">
+            <div>
+              <div className="flex items-center justify-between px-2 py-1">
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Tabs</div>
+                <button onClick={addTab} className="p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded">
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              {tabs.map(t => (
+                <div
+                  key={t.id}
+                  onClick={() => setActiveId(t.id)}
+                  className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] cursor-pointer ${
+                    t.id === activeId
+                      ? 'bg-white dark:bg-neutral-800 shadow-sm text-neutral-900 dark:text-neutral-100'
+                      : 'text-neutral-600 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-800/50'
+                  }`}
+                >
+                  {t.loading ? (
+                    <Loader2 className="w-3 h-3 animate-spin shrink-0 text-blue-500" />
+                  ) : t.favicon ? (
+                    <img src={t.favicon} alt="" className="w-3.5 h-3.5 shrink-0" />
+                  ) : (
+                    <div className="w-3.5 h-3.5 rounded-sm bg-neutral-400/30 shrink-0" />
+                  )}
+                  <span className="truncate flex-1">{t.title}</span>
+                  {tabs.length > 1 && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); closeTab(t.id); }}
+                      className="opacity-0 group-hover:opacity-100 hover:bg-black/10 dark:hover:bg-white/10 rounded p-0.5"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
+              {bookmarks.map(b => (
+                <button
+                  key={b.url}
+                  onClick={() => navigate(b.url)}
+                  className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[12.5px] text-left"
+                >
+                  <img src={faviconFor(b.url)} alt="" className="w-4 h-4" />
+                  <span className="truncate">{b.name}</span>
+                </button>
+              ))}
+            </div>
           </aside>
         )}
 

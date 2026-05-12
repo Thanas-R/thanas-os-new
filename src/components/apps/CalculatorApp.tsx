@@ -1,206 +1,233 @@
 import { useEffect, useState, useCallback } from 'react';
+import { Delete, Calculator as CalcIcon } from 'lucide-react';
 import { registerAppMenus } from '@/types/macos';
 
-type Op = '+' | '-' | '*' | '/' | '';
+type Op = '+' | '-' | '*' | '/' | null;
 
-// macOS-style calculator faithfully ported from the user-supplied HTML/CSS/JS.
+// Faithful macOS-style calculator matching the uploaded reference:
+// dark slate body, circular gray digit keys, dark-gray top utility row, orange operator column.
 export const CalculatorApp = () => {
-  // Mirror of the user's STATE object, in React form.
-  const [oldValue, setOldValue] = useState(0);
-  const [value, setValue] = useState(0);
-  const [sign, setSign] = useState(1);
-  const [operator, setOperator] = useState<Op>('');
+  const [display, setDisplay] = useState('0');
+  const [accumulator, setAccumulator] = useState<number | null>(null);
+  const [operator, setOperator] = useState<Op>(null);
+  const [waitingForNew, setWaitingForNew] = useState(false);
 
-  const formatNumber = (n: number) => {
-    const s = `${n}`;
-    return s.replace(/(?<=\d)(?=(\d\d\d)+(?!\d))/g, '.');
-  };
+  const inputDigit = useCallback((d: string) => {
+    setDisplay((cur) => {
+      if (waitingForNew) {
+        setWaitingForNew(false);
+        return d;
+      }
+      if (cur === '0') return d;
+      if (cur.replace(/[^0-9]/g, '').length >= 12) return cur;
+      return cur + d;
+    });
+  }, [waitingForNew]);
 
-  const result = formatNumber(sign * value);
-
-  const setVal = useCallback((number: number) => {
-    setValue((v) => v * 10 + number);
-  }, []);
+  const inputDecimal = useCallback(() => {
+    if (waitingForNew) {
+      setDisplay('0.');
+      setWaitingForNew(false);
+      return;
+    }
+    setDisplay((cur) => (cur.includes('.') ? cur : cur + '.'));
+  }, [waitingForNew]);
 
   const clearAll = useCallback(() => {
-    setOldValue(0);
-    setValue(0);
-    setSign(1);
+    setDisplay('0');
+    setAccumulator(null);
+    setOperator(null);
+    setWaitingForNew(false);
   }, []);
 
-  const toggleSign = useCallback(() => setSign((s) => s * -1), []);
+  const toggleSign = useCallback(() => {
+    setDisplay((cur) => (cur.startsWith('-') ? cur.slice(1) : cur === '0' ? cur : '-' + cur));
+  }, []);
 
-  const setOp = useCallback(
-    (next: Op) => {
+  const percent = useCallback(() => {
+    setDisplay((cur) => {
+      const n = parseFloat(cur);
+      if (Number.isNaN(n)) return cur;
+      return formatNum(n / 100);
+    });
+  }, []);
+
+  const backspace = useCallback(() => {
+    if (waitingForNew) return;
+    setDisplay((cur) => {
+      if (cur.length <= 1 || (cur.length === 2 && cur.startsWith('-'))) return '0';
+      return cur.slice(0, -1);
+    });
+  }, [waitingForNew]);
+
+  const compute = (a: number, b: number, op: Op): number => {
+    switch (op) {
+      case '+': return a + b;
+      case '-': return a - b;
+      case '*': return a * b;
+      case '/': return b === 0 ? NaN : a / b;
+      default: return b;
+    }
+  };
+
+  const setOp = useCallback((next: Op) => {
+    setDisplay((cur) => {
+      const value = parseFloat(cur);
+      if (accumulator === null) {
+        setAccumulator(value);
+      } else if (!waitingForNew && operator) {
+        const result = compute(accumulator, value, operator);
+        setAccumulator(result);
+        setWaitingForNew(true);
+        setOperator(next);
+        return formatNum(result);
+      }
       setOperator(next);
-      setOldValue(sign * value);
-      setValue(0);
-      setSign(1);
-    },
-    [sign, value]
-  );
+      setWaitingForNew(true);
+      return cur;
+    });
+  }, [accumulator, operator, waitingForNew]);
 
   const equals = useCallback(() => {
-    let next = value;
-    switch (operator) {
-      case '+':
-        next = oldValue + value;
-        break;
-      case '-':
-        next = oldValue - value;
-        break;
-      case '*':
-        next = oldValue * value;
-        break;
-      case '/':
-        next = value === 0 ? NaN : Number((oldValue / value).toFixed(3));
-        break;
-      default:
-        return;
-    }
-    setValue(next);
-  }, [value, oldValue, operator]);
+    setDisplay((cur) => {
+      if (operator === null || accumulator === null) return cur;
+      const value = parseFloat(cur);
+      const result = compute(accumulator, value, operator);
+      setAccumulator(null);
+      setOperator(null);
+      setWaitingForNew(true);
+      return formatNum(result);
+    });
+  }, [accumulator, operator]);
 
-  // Keyboard support — same intent as the source script's keyup handler.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const num = Number(e.key);
-      if (!Number.isNaN(num) && e.key.trim() !== '') {
-        setVal(num);
-        return;
-      }
-      if (['+', '-', '*', '/'].includes(e.key)) setOp(e.key as Op);
-      else if (e.key === 'Enter' || e.key === '=') {
-        e.preventDefault();
-        equals();
-      } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
+      if (e.key >= '0' && e.key <= '9') { inputDigit(e.key); return; }
+      if (e.key === '.' || e.key === ',') { inputDecimal(); return; }
+      if (e.key === '+') setOp('+');
+      else if (e.key === '-') setOp('-');
+      else if (e.key === '*') setOp('*');
+      else if (e.key === '/') { e.preventDefault(); setOp('/'); }
+      else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); equals(); }
+      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
+      else if (e.key === 'Backspace') backspace();
+      else if (e.key === '%') percent();
     };
-    window.addEventListener('keyup', onKey);
-    return () => window.removeEventListener('keyup', onKey);
-  }, [setVal, setOp, equals, clearAll]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [inputDigit, inputDecimal, setOp, equals, clearAll, backspace, percent]);
 
   useEffect(() => {
     registerAppMenus('calculator', {
       Edit: [
-        { label: 'Copy', action: () => navigator.clipboard?.writeText(result) },
+        { label: 'Copy', action: () => navigator.clipboard?.writeText(display) },
         { label: 'Clear', action: clearAll },
       ],
     });
     return () => registerAppMenus('calculator', null);
-  }, [result, clearAll]);
+  }, [display, clearAll]);
 
-  // Note: the window already provides traffic-light controls — we render only
-  // the calculator body to avoid a duplicated red/yellow/green strip.
+  // Show "AC" before any input, "C" after input started
+  const acLabel = display === '0' && accumulator === null && operator === null ? 'AC' : 'C';
+
   return (
     <div
       className="h-full w-full select-none flex flex-col"
       style={{
-        background: '#504e53',
-        boxShadow: 'inset 2px 2px #888, inset -2px -2px #888',
-        fontFamily: '"Montserrat", -apple-system, BlinkMacSystemFont, sans-serif',
+        background: '#1f2125',
+        fontFamily: '-apple-system, "SF Pro Display", "Helvetica Neue", sans-serif',
       }}
     >
-      {/* Calculus / display */}
-      <div
-        className="w-full flex items-end justify-end"
-        style={{ padding: '2rem 1.5rem 0', height: '7rem' }}
-      >
+      {/* Display */}
+      <div className="flex-1 flex items-end justify-end px-6 pt-6 pb-3 min-h-[110px]">
         <div
-          className="w-full text-right text-white"
+          className="text-white font-light text-right w-full"
           style={{
-            fontSize: 'clamp(3rem, 12vw, 6rem)',
-            fontWeight: 300,
-            lineHeight: 0.9,
+            fontSize: 'clamp(48px, 14vw, 88px)',
+            lineHeight: 1,
+            letterSpacing: '-0.02em',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
           }}
         >
-          {result}
+          {display}
         </div>
       </div>
 
-      {/* Buttons */}
-      <div
-        className="w-full flex-1"
-        style={{ marginTop: '1.5rem', paddingLeft: 1, display: 'flex', flexDirection: 'column', gap: 2 }}
-      >
-        <Row>
-          <Sq variant="dark" onClick={clearAll}>AC</Sq>
-          <Sq variant="dark" onClick={toggleSign}>±</Sq>
-          <Sq variant="dark" onClick={() => setValue((v) => v / 100)}>％</Sq>
-          <Sq variant="yellow" onClick={() => setOp('/')}>÷</Sq>
-        </Row>
-        <Row>
-          <Sq onClick={() => setVal(7)}>7</Sq>
-          <Sq onClick={() => setVal(8)}>8</Sq>
-          <Sq onClick={() => setVal(9)}>9</Sq>
-          <Sq variant="yellow" onClick={() => setOp('*')}>×</Sq>
-        </Row>
-        <Row>
-          <Sq onClick={() => setVal(4)}>4</Sq>
-          <Sq onClick={() => setVal(5)}>5</Sq>
-          <Sq onClick={() => setVal(6)}>6</Sq>
-          <Sq variant="yellow" onClick={() => setOp('-')}>−</Sq>
-        </Row>
-        <Row>
-          <Sq onClick={() => setVal(1)}>1</Sq>
-          <Sq onClick={() => setVal(2)}>2</Sq>
-          <Sq onClick={() => setVal(3)}>3</Sq>
-          <Sq variant="yellow" onClick={() => setOp('+')}>+</Sq>
-        </Row>
-        <Row>
-          <Sq span onClick={() => setVal(0)} bleft>0</Sq>
-          <Sq onClick={() => { /* decimal placeholder per spec */ }}>,</Sq>
-          <Sq variant="yellow" bright onClick={equals}>＝</Sq>
-        </Row>
+      {/* Keypad */}
+      <div className="px-3 pb-4 grid gap-2.5" style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '1fr' }}>
+        <Key variant="util" onClick={clearAll}>{acLabel === 'AC' ? 'AC' : <Delete className="w-5 h-5" />}</Key>
+        <Key variant="util" onClick={toggleSign} aria-label="Toggle sign"><span className="text-[18px]">±</span></Key>
+        <Key variant="util" onClick={percent}>%</Key>
+        <Key variant="op" active={operator === '/' && waitingForNew} onClick={() => setOp('/')}>÷</Key>
+
+        <Key onClick={() => inputDigit('7')}>7</Key>
+        <Key onClick={() => inputDigit('8')}>8</Key>
+        <Key onClick={() => inputDigit('9')}>9</Key>
+        <Key variant="op" active={operator === '*' && waitingForNew} onClick={() => setOp('*')}>×</Key>
+
+        <Key onClick={() => inputDigit('4')}>4</Key>
+        <Key onClick={() => inputDigit('5')}>5</Key>
+        <Key onClick={() => inputDigit('6')}>6</Key>
+        <Key variant="op" active={operator === '-' && waitingForNew} onClick={() => setOp('-')}>−</Key>
+
+        <Key onClick={() => inputDigit('1')}>1</Key>
+        <Key onClick={() => inputDigit('2')}>2</Key>
+        <Key onClick={() => inputDigit('3')}>3</Key>
+        <Key variant="op" active={operator === '+' && waitingForNew} onClick={() => setOp('+')}>+</Key>
+
+        <Key onClick={clearAll} aria-label="Clear"><CalcIcon className="w-5 h-5" /></Key>
+        <Key onClick={() => inputDigit('0')}>0</Key>
+        <Key onClick={inputDecimal}>,</Key>
+        <Key variant="op" onClick={equals}>=</Key>
       </div>
     </div>
   );
 };
 
-const Row = ({ children }: { children: React.ReactNode }) => (
-  <div
-    className="w-full flex"
-    style={{ height: 'calc(20% - 2px)', gap: 2, paddingInline: 1, marginBottom: 0 }}
-  >
-    {children}
-  </div>
-);
-
-const Sq = ({
+const Key = ({
   children,
   onClick,
-  variant = 'gray',
-  span,
-  bleft,
-  bright,
+  variant = 'digit',
+  active,
+  ...rest
 }: {
   children: React.ReactNode;
   onClick?: () => void;
-  variant?: 'gray' | 'dark' | 'yellow';
-  span?: boolean;
-  bleft?: boolean;
-  bright?: boolean;
-}) => {
-  const bg =
-    variant === 'dark' ? '#626065' : variant === 'yellow' ? '#ff9f0b' : '#7c7b7f';
+  variant?: 'digit' | 'op' | 'util';
+  active?: boolean;
+} & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
+  const styles = {
+    digit: { background: '#5b5e63', color: '#ffffff' },
+    op:    { background: active ? '#ffffff' : '#f5a623', color: active ? '#f5a623' : '#ffffff' },
+    util:  { background: '#3a3d42', color: '#ffffff' },
+  } as const;
   return (
     <button
       onClick={onClick}
-      className="text-white border-0 cursor-pointer transition-[filter] duration-75 hover:brightness-110 active:brightness-90"
+      {...rest}
+      className="rounded-full flex items-center justify-center transition-[filter,transform] active:brightness-90 active:scale-[0.97] hover:brightness-110"
       style={{
-        flex: span ? 2 : 1,
-        background: bg,
-        fontSize: '2.2rem',
-        fontWeight: 500,
-        textAlign: span ? 'left' : 'center',
-        paddingLeft: span ? '2rem' : 0,
-        borderBottomLeftRadius: bleft ? '1.1rem' : 0,
-        borderBottomRightRadius: bright ? '1.4rem' : 0,
+        ...styles[variant],
+        fontSize: '24px',
+        fontWeight: 400,
+        aspectRatio: '1 / 1',
+        boxShadow: 'inset 0 1px 0 rgba(255,255,255,0.06), 0 1px 0 rgba(0,0,0,0.25)',
       }}
     >
       {children}
     </button>
   );
+};
+
+const formatNum = (n: number): string => {
+  if (!Number.isFinite(n)) return 'Error';
+  // Trim trailing zeros and very small floating-point noise
+  const abs = Math.abs(n);
+  if (abs !== 0 && (abs < 1e-6 || abs >= 1e12)) {
+    return n.toExponential(6).replace(/\.?0+e/, 'e');
+  }
+  const fixed = parseFloat(n.toFixed(10)).toString();
+  return fixed;
 };

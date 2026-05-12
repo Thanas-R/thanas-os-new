@@ -1,12 +1,16 @@
 import { useEffect, useState, useCallback } from 'react';
 import { Calculator as CalcIcon } from 'lucide-react';
 import { BsBackspace } from 'react-icons/bs';
+import { HiOutlinePlus } from 'react-icons/hi';
+import { HiOutlineMinus } from 'react-icons/hi';
+import { HiOutlineDivide } from 'react-icons/hi2';
+import { RxCross1 } from 'react-icons/rx';
 import { registerAppMenus } from '@/types/macos';
 
 type Op = '+' | '-' | '*' | '/' | null;
 
 // Fixed-size macOS Calculator. No scroll, no resize, no maximize button.
-// Colors: orange #FEA916, digits #5E5A5A, utility #7C7676. Inter 400.
+// Colors: orange #FF9203, digits #333333, utility #5E5E5E. Inter 400.
 export const CalculatorApp = () => {
   const [display, setDisplay] = useState('0');
   const [accumulator, setAccumulator] = useState<number | null>(null);
@@ -15,7 +19,10 @@ export const CalculatorApp = () => {
 
   const inputDigit = useCallback((d: string) => {
     setDisplay((cur) => {
-      if (waitingForNew) { setWaitingForNew(false); return d; }
+      if (waitingForNew) {
+        setWaitingForNew(false);
+        return d;
+      }
       if (cur === '0') return d;
       if (cur.replace(/[^0-9]/g, '').length >= 9) return cur;
       return cur + d;
@@ -23,12 +30,19 @@ export const CalculatorApp = () => {
   }, [waitingForNew]);
 
   const inputDecimal = useCallback(() => {
-    if (waitingForNew) { setDisplay('0.'); setWaitingForNew(false); return; }
+    if (waitingForNew) {
+      setDisplay('0.');
+      setWaitingForNew(false);
+      return;
+    }
     setDisplay((cur) => (cur.includes('.') ? cur : cur + '.'));
   }, [waitingForNew]);
 
   const clearAll = useCallback(() => {
-    setDisplay('0'); setAccumulator(null); setOperator(null); setWaitingForNew(false);
+    setDisplay('0');
+    setAccumulator(null);
+    setOperator(null);
+    setWaitingForNew(false);
   }, []);
 
   const toggleSign = useCallback(() => {
@@ -64,6 +78,7 @@ export const CalculatorApp = () => {
   const setOp = useCallback((next: Op) => {
     setDisplay((cur) => {
       const value = parseFloat(cur);
+
       if (accumulator === null) {
         setAccumulator(value);
       } else if (!waitingForNew && operator) {
@@ -73,6 +88,7 @@ export const CalculatorApp = () => {
         setOperator(next);
         return formatNum(result);
       }
+
       setOperator(next);
       setWaitingForNew(true);
       return cur;
@@ -84,24 +100,45 @@ export const CalculatorApp = () => {
       if (operator === null || accumulator === null) return cur;
       const value = parseFloat(cur);
       const result = compute(accumulator, value, operator);
-      setAccumulator(null); setOperator(null); setWaitingForNew(true);
+      setAccumulator(null);
+      setOperator(null);
+      setWaitingForNew(true);
       return formatNum(result);
     });
   }, [accumulator, operator]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key >= '0' && e.key <= '9') { inputDigit(e.key); return; }
-      if (e.key === '.' || e.key === ',') { inputDecimal(); return; }
+      if (e.key >= '0' && e.key <= '9') {
+        inputDigit(e.key);
+        return;
+      }
+      if (e.key === '.' || e.key === ',') {
+        inputDecimal();
+        return;
+      }
       if (e.key === '+') setOp('+');
       else if (e.key === '-') setOp('-');
       else if (e.key === '*') setOp('*');
-      else if (e.key === '/') { e.preventDefault(); setOp('/'); }
-      else if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); equals(); }
-      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') clearAll();
-      else if (e.key === 'Backspace') backspace();
-      else if (e.key === '%') percent();
+      else if (e.key === '/') {
+        e.preventDefault();
+        setOp('/');
+      }
+      else if (e.key === 'Enter' || e.key === '=') {
+        e.preventDefault();
+        equals();
+      }
+      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+        clearAll();
+      }
+      else if (e.key === 'Backspace') {
+        backspace();
+      }
+      else if (e.key === '%') {
+        percent();
+      }
     };
+
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [inputDigit, inputDecimal, setOp, equals, clearAll, backspace, percent]);
@@ -132,9 +169,9 @@ export const CalculatorApp = () => {
         <div
           className="text-white text-right w-full"
           style={{
-            fontSize: 'clamp(40px, 16vw, 64px)',
+            fontSize: 'clamp(48px, 18vw, 76px)',
             lineHeight: 1,
-            letterSpacing: '-0.02em',
+            letterSpacing: '-0.03em',
             fontWeight: 300,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
@@ -151,48 +188,69 @@ export const CalculatorApp = () => {
         style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '1fr' }}
       >
         <Key variant="util" onClick={backspace} aria-label="Backspace">
-  <BsBackspace className="w-5 h-5" />
-</Key>
-<Key variant="util" onClick={toggleSign} aria-label="Toggle sign">+/-  </Key>
-<Key variant="util" onClick={percent}>%</Key>
-<Key variant="op" onClick={() => setOp('/')}>÷</Key>
+          <BsBackspace className="w-6 h-6" />
+        </Key>
+
+        <Key variant="util" onClick={toggleSign} aria-label="Toggle sign">
+          <span className="text-[24px] leading-none">+/-</span>
+        </Key>
+
+        <Key variant="util" onClick={percent} aria-label="Percent">
+          <span className="text-[26px] leading-none">%</span>
+        </Key>
+
+        <Key variant="op" onClick={() => setOp('/')} aria-label="Divide">
+          <HiOutlineDivide className="w-7 h-7" />
+        </Key>
 
         <Key onClick={() => inputDigit('7')}>7</Key>
         <Key onClick={() => inputDigit('8')}>8</Key>
         <Key onClick={() => inputDigit('9')}>9</Key>
-        <Key variant="op" onClick={() => setOp('*')}>×</Key>
+        <Key variant="op" onClick={() => setOp('*')} aria-label="Multiply">
+          <RxCross1 className="w-6.5 h-6.5" />
+        </Key>
 
         <Key onClick={() => inputDigit('4')}>4</Key>
         <Key onClick={() => inputDigit('5')}>5</Key>
         <Key onClick={() => inputDigit('6')}>6</Key>
-        <Key variant="op" onClick={() => setOp('-')}>−</Key>
+        <Key variant="op" onClick={() => setOp('-')} aria-label="Minus">
+          <HiOutlineMinus className="w-7 h-7" />
+        </Key>
 
         <Key onClick={() => inputDigit('1')}>1</Key>
         <Key onClick={() => inputDigit('2')}>2</Key>
         <Key onClick={() => inputDigit('3')}>3</Key>
-        <Key variant="op" onClick={() => setOp('+')}>+</Key>
+        <Key variant="op" onClick={() => setOp('+')} aria-label="Plus">
+          <HiOutlinePlus className="w-7 h-7" />
+        </Key>
 
-        <Key onClick={clearAll} aria-label="All Clear">AC</Key>
+        <Key onClick={clearAll} aria-label="All Clear">
+          <CalcIcon className="w-6 h-6" strokeWidth={1.8} />
+        </Key>
         <Key onClick={() => inputDigit('0')}>0</Key>
         <Key onClick={inputDecimal}>.</Key>
-        <Key variant="op" onClick={equals}>=</Key>
+        <Key variant="op" onClick={equals} aria-label="Equals">=</Key>
       </div>
     </div>
   );
 };
 
 const Key = ({
-  children, onClick, variant = 'digit', ...rest
+  children,
+  onClick,
+  variant = 'digit',
+  ...rest
 }: {
   children: React.ReactNode;
   onClick?: () => void;
   variant?: 'digit' | 'op' | 'util';
 } & React.ButtonHTMLAttributes<HTMLButtonElement>) => {
   const styles = {
-    digit: { background: '#5E5A5A', color: '#ffffff' },
-    op:    { background: '#FEA916', color: '#ffffff' },
-    util:  { background: '#7C7676', color: '#ffffff' },
+    digit: { background: '#333333', color: '#ffffff' },
+    op: { background: '#FF9203', color: '#ffffff' },
+    util: { background: '#5E5E5E', color: '#ffffff' },
   } as const;
+
   return (
     <button
       onClick={onClick}
@@ -200,7 +258,7 @@ const Key = ({
       className="rounded-full flex items-center justify-center transition-[filter,transform] active:brightness-90 active:scale-[0.97] hover:brightness-110"
       style={{
         ...styles[variant],
-        fontSize: '22px',
+        fontSize: '26px',
         fontWeight: 400,
         aspectRatio: '1 / 1',
       }}

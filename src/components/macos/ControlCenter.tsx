@@ -238,7 +238,7 @@ const SliderModule = ({
     <div className="rounded-2xl bg-white/10 px-3 pt-3 pb-3 mt-2">
       <div className="text-[12.5px] font-semibold mb-2">{label}</div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 min-h-[36px]">
         <div
           ref={trackRef}
           onPointerDown={(e) => {

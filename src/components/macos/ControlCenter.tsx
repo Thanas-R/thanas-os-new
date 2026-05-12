@@ -268,7 +268,7 @@ const SliderModule = ({
 <div
   className="absolute top-1/2 -translate-y-1/2 z-20 pointer-events-none"
   style={{
-    left: `clamp(0px, calc(${pct}% - 12px), calc(100% - 24px))`,
+    left: `max(2px, calc(${pct}% - 12px))`,
   }}
 >
   <div className="w-6 h-6 rounded-full bg-white shadow-[0_1px_6px_rgba(0,0,0,0.18)] border border-black/5" />

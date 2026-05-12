@@ -27,34 +27,28 @@ const wallpapers = [
 ];
 
 type SectionId =
-  | 'wifi' | 'bluetooth' | 'network' | 'notifications' | 'sound' | 'focus' | 'screentime'
-  | 'general' | 'appearance' | 'accessibility' | 'controlcenter' | 'siri'
-  | 'desktop' | 'displays' | 'wallpaper' | 'battery' | 'browser' | 'privacy';
+  | 'wifi' | 'bluetooth' | 'battery' | 'notifications' | 'sound' | 'focus'
+  | 'general' | 'appearance' | 'desktop' | 'displays' | 'wallpaper' | 'browser' | 'privacy';
 
 type GeneralSubsection = 'about' | 'software' | 'storage' | 'airdrop' | 'login' | 'language' | 'datetime' | 'sharing' | 'time-machine' | 'transfer' | 'startup';
 
 const SIDEBAR_TOP = [
   { id: 'wifi', label: 'Wi-Fi', icon: IoIosWifi, tint: '#0a84ff' },
   { id: 'bluetooth', label: 'Bluetooth', icon: Bluetooth, tint: '#0a84ff' },
-  { id: 'network', label: 'Network', icon: Globe, tint: '#0a84ff' },
+  { id: 'battery', label: 'Battery', icon: Battery, tint: '#34c759' },
 ] as const;
 const SIDEBAR_MID = [
   { id: 'notifications', label: 'Notifications', icon: Bell, tint: '#ff453a' },
   { id: 'sound', label: 'Sound', icon: Volume2, tint: '#ff375f' },
   { id: 'focus', label: 'Focus', icon: Moon, tint: '#a855f7' },
-  { id: 'screentime', label: 'Screen Time', icon: Clock, tint: '#a855f7' },
 ] as const;
 const SIDEBAR_BOTTOM = [
   { id: 'general', label: 'General', icon: SettingsIcon, tint: '#8e8e93' },
   { id: 'appearance', label: 'Appearance', icon: Palette, tint: '#1c1c1e' },
-  { id: 'accessibility', label: 'Accessibility', icon: Eye, tint: '#0a84ff' },
-  { id: 'controlcenter', label: 'Control Center', icon: Gauge, tint: '#1c1c1e' },
-  { id: 'siri', label: 'Siri & Spotlight', icon: Star, tint: '#a855f7' },
   { id: 'privacy', label: 'Privacy & Security', icon: LockIcon, tint: '#0a84ff' },
   { id: 'desktop', label: 'Desktop & Dock', icon: Layout, tint: '#8e8e93' },
   { id: 'displays', label: 'Displays', icon: Sun, tint: '#0a84ff' },
   { id: 'wallpaper', label: 'Wallpaper', icon: ArrowDownToLine, tint: '#06b6d4' },
-  { id: 'battery', label: 'Battery', icon: Battery, tint: '#34c759' },
   { id: 'browser', label: 'Default Browser', icon: Compass, tint: '#0a84ff' },
 ] as const;
 

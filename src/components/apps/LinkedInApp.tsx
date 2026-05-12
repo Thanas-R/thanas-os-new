@@ -1,4 +1,4 @@
-import { GraduationCap, MapPin, ThumbsUp, MessageSquare, Repeat2, Send, MoreHorizontal, ShieldCheck, Award, Globe, UserPlus } from 'lucide-react';
+import { MapPin, ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, Globe, UserPlus, GraduationCap } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
 import linkedinBanner from '@/assets/linkedin-banner.png';
@@ -12,21 +12,36 @@ export const LinkedInApp = () => {
   const dark = settings.theme === 'dark';
 
   const t = dark
-    ? {
-        page: '#1b1f23', card: '#1d2226', cardBorder: 'rgba(255,255,255,0.08)',
-        text: '#e8e6e3', sub: '#a8aeb4', muted: '#8b9298',
-        link: '#70b5f9', divider: 'rgba(255,255,255,0.08)', chipBg: 'rgba(255,255,255,0.06)',
-      }
-    : {
-        page: '#f4f2ee', card: '#ffffff', cardBorder: 'rgba(0,0,0,0.08)',
-        text: '#1d2226', sub: '#404a52', muted: '#666',
-        link: '#0a66c2', divider: 'rgba(0,0,0,0.08)', chipBg: '#f3f2ef',
-      };
+    ? { page: '#1b1f23', card: '#1d2226', cardBorder: 'rgba(255,255,255,0.08)', text: '#e8e6e3', sub: '#a8aeb4', muted: '#8b9298', link: '#70b5f9', divider: 'rgba(255,255,255,0.08)', chipBg: 'rgba(255,255,255,0.06)' }
+    : { page: '#f4f2ee', card: '#ffffff', cardBorder: 'rgba(0,0,0,0.08)', text: '#1d2226', sub: '#404a52', muted: '#666', link: '#0a66c2', divider: 'rgba(0,0,0,0.08)', chipBg: '#f3f2ef' };
 
   const Card = ({ children, className = '' }: { children: React.ReactNode; className?: string }) => (
-    <div className={`rounded-lg overflow-hidden ${className}`} style={{ background: t.card, border: `1px solid ${t.cardBorder}` }}>
-      {children}
-    </div>
+    <div className={`rounded-lg overflow-hidden ${className}`} style={{ background: t.card, border: `1px solid ${t.cardBorder}` }}>{children}</div>
+  );
+
+  const skills = [
+    { name: 'Python (Programming Language)', endorse: 'Endorsed by 1 person in the last 6 months' },
+    { name: 'Full-Stack Development' },
+    { name: 'Artificial Intelligence (AI)' },
+    { name: 'Team Leadership' },
+    { name: 'Retrieval-Augmented Generation (RAG)' },
+    { name: 'Java' },
+    { name: 'C++' },
+    { name: 'C (Programming Language)' },
+    { name: 'GitHub' },
+    { name: 'React.js' },
+    { name: 'TypeScript' },
+    { name: 'Creative Problem Solving' },
+  ];
+
+  const languages = [
+    { lang: 'English', level: 'Native or bilingual proficiency' },
+    { lang: 'Hindi', level: 'Limited working proficiency' },
+    { lang: 'Kannada', level: 'Native or bilingual proficiency' },
+  ];
+
+  const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: t.link }} className="hover:underline">{children}</a>
   );
 
   return (
@@ -34,18 +49,10 @@ export const LinkedInApp = () => {
       <div className="max-w-3xl mx-auto px-4 pt-5 space-y-3">
         {/* Profile */}
         <Card>
-          <div className="h-36 relative overflow-hidden">
-            <img src={linkedinBanner} alt="" className="w-full h-full object-cover" />
-          </div>
+          <div className="h-36 relative overflow-hidden"><img src={linkedinBanner} alt="" className="w-full h-full object-cover" /></div>
           <div className="px-6 pb-5 -mt-14 relative">
-            <div className="flex items-end justify-between">
-              <div className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md" style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}>
-                <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
-              </div>
-              <div className="flex items-center gap-2 mb-1">
-                <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-                <span className="text-[13px] font-semibold">PES University</span>
-              </div>
+            <div className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md" style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}>
+              <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
             </div>
 
             <div className="mt-3">
@@ -54,29 +61,16 @@ export const LinkedInApp = () => {
                 <ShieldCheck className="w-5 h-5" style={{ color: t.link }} />
                 <span className="text-[13px]" style={{ color: t.sub }}>He/Him</span>
               </div>
-              <div className="text-[15px] mt-1" style={{ color: t.text }}>
-                B.Tech CSE [AIML] Student | PES University
-              </div>
+              <div className="text-[15px] mt-1">B.Tech CSE [AIML] Student | PES University</div>
               <div className="flex items-center gap-1 text-[13px] mt-1" style={{ color: t.sub }}>
-                <MapPin className="w-3.5 h-3.5" />
-                <span>Bengaluru, Karnataka, India</span>
-              </div>
-              <div className="flex items-center gap-2 text-[13px] mt-1">
-                <img src={pesLogo} alt="PES" className="w-4 h-4 object-contain" />
-                <span style={{ color: t.sub }}>PES University</span>
-              </div>
-              <div className="text-[13px] font-semibold mt-1" style={{ color: t.link }}>
-                98 connections
+                <MapPin className="w-3.5 h-3.5" /><span>Bengaluru, Karnataka, India</span>
               </div>
 
-              <div className="mt-4">
-                <a
-                  href="https://www.linkedin.com/in/thanasr"
-                  target="_blank"
-                  rel="noopener noreferrer"
+              <div className="flex items-center justify-between mt-2">
+                <div className="text-[13px] font-semibold" style={{ color: t.link }}>98 connections</div>
+                <a href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 px-5 h-9 rounded-full text-[14px] font-semibold text-white"
-                  style={{ background: '#0a66c2' }}
-                >
+                  style={{ background: '#0a66c2' }}>
                   <UserPlus className="w-4 h-4" /> Connect
                 </a>
               </div>
@@ -92,7 +86,7 @@ export const LinkedInApp = () => {
               <p>I am a passionate learner who believes in growing a little every day. I'm genuinely interested in coding and problem-solving, and I enjoy turning complex challenges into simple, effective solutions.</p>
               <p>While I take my work seriously, I also value creating a positive and cheerful environment. I believe a good laugh can go a long way in building strong, collaborative teams.</p>
               <p>I strive to be honest, supportive, and reliable, taking responsibility or leading when needed while contributing and learning with the team.</p>
-              <p>More about me on: <span style={{ color: t.link }} className="hover:underline cursor-pointer">thanas.vercel.app</span></p>
+              <p>More about me on: <A href="https://thanas.vercel.app">thanas.vercel.app</A></p>
             </div>
             <div className="mt-4 rounded-lg border p-4 flex items-center gap-3" style={{ borderColor: t.divider }}>
               <Award className="w-5 h-5" style={{ color: t.text }} />
@@ -118,17 +112,15 @@ export const LinkedInApp = () => {
                     Thanas R <ShieldCheck className="w-3.5 h-3.5" style={{ color: t.link }} /> <span className="font-normal" style={{ color: t.sub }}>· You</span>
                   </div>
                   <div className="text-[12px]" style={{ color: t.sub }}>B.Tech CSE [AIML] Student | PES University</div>
-                  <div className="text-[12px] flex items-center gap-1" style={{ color: t.sub }}>4w · <Globe className="w-3 h-3" /></div>
                 </div>
-                <MoreHorizontal className="w-5 h-5 opacity-70" />
               </div>
-              <div className="text-[14px] mt-2 space-y-2" style={{ color: t.text }}>
+              <div className="text-[14px] mt-2 space-y-2">
                 <p>Our team made it to the final round of the SustainX hackathon, finishing in the top 6 at an event hosted by <span style={{ color: t.link }}>Solaris PESU</span> at PESU EC Campus</p>
                 <p>Along with <span style={{ color: t.link }}>Tanay S</span> and <span style={{ color: t.link }}>Vajjhala Sai Muralidhar</span>, we built "Virdis", a satellite powered platform for agricultural and land analytics that helps users analyze regions and get automated, visual crop planning insights based on real geospatial data and databases</p>
                 <p>Would love for you to check it out:</p>
-                <p>Live demo: <span style={{ color: t.link }}>https://virdis.vercel.app/</span></p>
-                <p>GitHub Repository: <span style={{ color: t.link }}>https://lnkd.in/gPMM86GZ</span></p>
-                <p>Project Detail page: <span style={{ color: t.link }}>https://lnkd.in/gV_Rqfhj</span></p>
+                <p>Live demo: <A href="https://virdis.vercel.app">https://virdis.vercel.app</A></p>
+                <p>GitHub Repository: <A href="https://github.com/Thanas-R/Virdis">https://github.com/Thanas-R/Virdis</A></p>
+                <p>Project Detail page: <A href="https://thanas.vercel.app/projects/virdis">https://thanas.vercel.app/projects/virdis</A></p>
                 <p>Hope you like it. Always open to feedback</p>
               </div>
               <div className="mt-3 rounded-lg overflow-hidden border" style={{ borderColor: t.divider }}>
@@ -138,7 +130,6 @@ export const LinkedInApp = () => {
                 <span className="inline-flex items-center gap-1"><ThumbsUp className="w-3.5 h-3.5" />46</span>
                 <span className="inline-flex items-center gap-1"><MessageSquare className="w-3.5 h-3.5" />5 comments</span>
                 <span className="inline-flex items-center gap-1"><Repeat2 className="w-3.5 h-3.5" />1 repost</span>
-                <span className="inline-flex items-center gap-1 ml-auto"><Send className="w-3.5 h-3.5" />Send</span>
               </div>
             </div>
           </div>
@@ -155,9 +146,9 @@ export const LinkedInApp = () => {
                 { title: 'Sri Vani Education Centre', sub: 'Schooling', when: '2013 – 2023', logo: sriVaniLogo },
               ].map((e) => (
                 <div key={e.title} className="flex gap-3">
-                  <div className="w-12 h-12 rounded-md flex items-center justify-center" style={{ background: t.chipBg }}>
+                  <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden" style={{ background: t.chipBg }}>
                     {e.logo
-                      ? <img src={e.logo} alt="" className="w-10 h-10 object-contain" />
+                      ? <img src={e.logo} alt="" className="w-12 h-12 object-cover rounded-full" />
                       : <GraduationCap className="w-6 h-6" style={{ color: t.link }} />}
                   </div>
                   <div className="flex-1">
@@ -176,14 +167,13 @@ export const LinkedInApp = () => {
           <div className="p-5">
             <h2 className="text-[20px] font-semibold mb-3">Skills</h2>
             <div className="space-y-3">
-              <div>
-                <div className="text-[15px] font-semibold">Python (Programming Language)</div>
-                <div className="text-[13px] mt-0.5" style={{ color: t.sub }}>1 endorsement</div>
-              </div>
-              <div className="border-t" style={{ borderColor: t.divider }} />
-              <div className="text-[15px] font-semibold">Full-Stack Development</div>
-              <div className="border-t" style={{ borderColor: t.divider }} />
-              <div className="text-[15px] font-semibold">Artificial Intelligence (AI)</div>
+              {skills.map((s, i) => (
+                <div key={s.name}>
+                  <div className="text-[15px] font-semibold">{s.name}</div>
+                  {s.endorse && <div className="text-[12.5px] mt-0.5" style={{ color: t.sub }}>{s.endorse}</div>}
+                  {i < skills.length - 1 && <div className="border-t mt-3" style={{ borderColor: t.divider }} />}
+                </div>
+              ))}
             </div>
           </div>
         </Card>
@@ -193,20 +183,13 @@ export const LinkedInApp = () => {
           <div className="p-5">
             <h2 className="text-[20px] font-semibold mb-3">Languages</h2>
             <div className="space-y-3">
-              <div>
-                <div className="text-[15px] font-semibold">English</div>
-                <div className="text-[13px]" style={{ color: t.sub }}>Native or bilingual proficiency</div>
-              </div>
-              <div className="border-t" style={{ borderColor: t.divider }} />
-              <div>
-                <div className="text-[15px] font-semibold">Hindi</div>
-                <div className="text-[13px]" style={{ color: t.sub }}>Limited working proficiency</div>
-              </div>
-              <div className="border-t" style={{ borderColor: t.divider }} />
-              <div>
-                <div className="text-[15px] font-semibold">Tamil</div>
-                <div className="text-[13px]" style={{ color: t.sub }}>Native proficiency</div>
-              </div>
+              {languages.map((l, i) => (
+                <div key={l.lang}>
+                  <div className="text-[15px] font-semibold">{l.lang}</div>
+                  <div className="text-[13px]" style={{ color: t.sub }}>{l.level}</div>
+                  {i < languages.length - 1 && <div className="border-t mt-3" style={{ borderColor: t.divider }} />}
+                </div>
+              ))}
             </div>
           </div>
         </Card>

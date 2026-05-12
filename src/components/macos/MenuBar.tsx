@@ -367,7 +367,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         </div>
 
         {/* Right status group — order: bluetooth, wifi, battery, search, control center, date */}
-        <div className="flex items-center gap-1 relative">
+        <div className="flex items-center gap-[2px] relative">
           <div
             className="relative"
             onMouseEnter={() => openOnly('bt')}

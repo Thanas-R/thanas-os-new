@@ -51,15 +51,21 @@ export const LinkedInApp = () => {
         <Card>
           <div className="h-36 relative overflow-hidden"><img src={linkedinBanner} alt="" className="w-full h-full object-cover" /></div>
           <div className="px-6 pb-5 -mt-14 relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md" style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}>
-              <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
-            </div>
-            <div className="flex items-center gap-2 mb-1">
-                <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-                <span className="text-[13px] font-semibold">PES University</span>
-              </div>
-            </div>
-            <div className="mt-3">
+  <div className="flex items-end justify-between">
+    <div
+      className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md"
+      style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}
+    >
+      <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
+    </div>
+
+    <div className="flex items-center gap-2 mb-1">
+      <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
+      <span className="text-[13px] font-semibold">PES University</span>
+    </div>
+  </div>
+
+  <div className="mt-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-[24px] font-bold leading-tight">Thanas R</h1>
                 <ShieldCheck className="w-5 h-5" style={{ color: t.link }} />

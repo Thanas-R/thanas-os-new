@@ -374,7 +374,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             onMouseLeave={() => openOnly(null)}
           >
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <IoBluetooth style={{ width: 14.4, height: 14.4 }} />
+              <IoBluetooth style={{ width: 17, height: 17 }} />
             </StatusBtn>
 
             {btOpen && (

@@ -15,14 +15,10 @@ import {
   Search,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
-import googleIcon from '@/assets/google-icon-new.png';
 import {
   useInstalledProjects,
   installProject,
   uninstallProject,
-  useGoogleInstalled,
-  installGoogleApp,
-  uninstallGoogleApp,
   setPendingSafariUrl,
 } from '@/lib/installedApps';
 import { useMacOS } from '@/contexts/MacOSContext';
@@ -40,14 +36,13 @@ const NAV = [
 
 export const AppStoreApp = () => {
   const installed = useInstalledProjects();
-  const googleInstalled = useGoogleInstalled();
-  const { openApp, updateSettings } = useMacOS();
+  const { openApp } = useMacOS();
   const [section, setSection] = useState('discover');
   const [query, setQuery] = useState('');
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  // Listen for spotlight launches that target a specific project / Google
+  // Listen for spotlight launches that target a specific project
   useEffect(() => {
     const fn = (e: Event) => {
       const d = (e as CustomEvent).detail;
@@ -75,20 +70,6 @@ export const AppStoreApp = () => {
   }, [query]);
 
   const featured = list[0];
-
-  const installGoogle = () => {
-    installGoogleApp();
-    updateSettings({ googleInstalled: true });
-  };
-  const uninstallGoogle = () => {
-    uninstallGoogleApp();
-    updateSettings({ googleInstalled: false, defaultBrowser: 'safari' });
-  };
-
-  const showGoogleCard =
-    !query ||
-    'google'.includes(query.toLowerCase()) ||
-    'browser'.includes(query.toLowerCase());
 
   return (
     <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">

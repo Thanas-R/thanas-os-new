@@ -46,7 +46,7 @@ export const LinkedInApp = () => {
 
   return (
     <div className="min-h-full pb-10" style={{ background: t.page, color: t.text }}>
-      <div className="max-w-3xl mx-auto px-4 pt-5 space-y-3">
+      <div className="max-w-3xl mx-auto px-4 pt-12 space-y-3">
         {/* Profile */}
         <Card>
           <div className="h-36 relative overflow-hidden"><img src={linkedinBanner} alt="" className="w-full h-full object-cover" /></div>

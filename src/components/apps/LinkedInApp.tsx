@@ -1,4 +1,4 @@
-import { MapPin, ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, Globe, UserPlus, GraduationCap } from 'lucide-react';
+import { MapPin, ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, UserPlus, GraduationCap } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
 import linkedinBanner from '@/assets/linkedin-banner.png';

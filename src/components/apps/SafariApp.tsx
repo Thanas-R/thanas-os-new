@@ -236,10 +236,10 @@ export const SafariApp = () => {
       {/* Body: tab sidebar + content */}
       <div className="flex-1 flex overflow-hidden">
         {showSidebar && (
-          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto flex flex-col gap-3">
+          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 pt-[34px] overflow-auto flex flex-col gap-3">
             <div>
               <div className="flex items-center justify-between px-2 py-1">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Tabs</div>
+                <div className="text-[12px] font-semibold uppercase tracking-wider text-neutral-500">Tabs</div>
                 <button onClick={addTab} className="p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded">
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -248,18 +248,18 @@ export const SafariApp = () => {
                 <div
                   key={t.id}
                   onClick={() => setActiveId(t.id)}
-                  className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] cursor-pointer ${
+                  className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-[14.5px] cursor-pointer ${
                     t.id === activeId
                       ? 'bg-white dark:bg-neutral-800 shadow-sm text-neutral-900 dark:text-neutral-100'
                       : 'text-neutral-600 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-800/50'
                   }`}
                 >
                   {t.loading ? (
-                    <Loader2 className="w-3 h-3 animate-spin shrink-0 text-blue-500" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0 text-blue-500" />
                   ) : t.favicon ? (
-                    <img src={t.favicon} alt="" className="w-3.5 h-3.5 shrink-0" />
+                    <img src={t.favicon} alt="" className="w-4 h-4 shrink-0" />
                   ) : (
-                    <div className="w-3.5 h-3.5 rounded-sm bg-neutral-400/30 shrink-0" />
+                    <div className="w-4 h-4 rounded-sm bg-neutral-400/30 shrink-0" />
                   )}
                   <span className="truncate flex-1">{t.title}</span>
                   {tabs.length > 1 && (
@@ -275,12 +275,12 @@ export const SafariApp = () => {
             </div>
 
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
+              <div className="text-[12px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
               {bookmarks.map(b => (
                 <button
                   key={b.url}
                   onClick={() => navigate(b.url)}
-                  className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[12.5px] text-left"
+                  className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[14.5px] text-left"
                 >
                   <img src={faviconFor(b.url)} alt="" className="w-4 h-4" />
                   <span className="truncate">{b.name}</span>

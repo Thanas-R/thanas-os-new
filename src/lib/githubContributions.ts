@@ -46,7 +46,9 @@ export const SAMPLE_CONTRIBUTIONS: ContributionDay[] = [
   { date: "2025-09-01", count: 1 },
 ];
 
- <table>
+// Markdown stub; the user can paste their full README here later.
+export const README_MD = ` 
+<table>
 <tr>
 <td width="65%" valign="top">
  
@@ -65,7 +67,6 @@ I strive to be honest, supportive, and reliable, taking responsibility or leadin
 <a href="mailto:thanas5.rd@gmail.com"><img src="https://skillicons.dev/icons?i=gmail" width="30"></a><img width="10">
 <a href="https://discord.com/users/677174403859087378"><img src="https://skillicons.dev/icons?i=discord" width="30"></a><img width="10">
 <a href="https://github.com/Thanas-R"><img src="https://skillicons.dev/icons?i=github" width="30"></a>
-
 </p>
 
 </td>

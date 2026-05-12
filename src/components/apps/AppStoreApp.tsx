@@ -13,8 +13,6 @@ import {
   LayoutGrid,
   ArrowDownToLine,
   Search,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import googleIcon from '@/assets/google-icon-new.png';
@@ -46,7 +44,6 @@ export const AppStoreApp = () => {
   const { openApp, updateSettings } = useMacOS();
   const [section, setSection] = useState('discover');
   const [query, setQuery] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [highlightId, setHighlightId] = useState<string | null>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -95,24 +92,22 @@ export const AppStoreApp = () => {
 
   return (
     <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
-      {/* Sidebar */}
+      {/* Sidebar — extended to top, traffic lights overlay above the search */}
       <aside
-        className={`shrink-0 transition-all duration-300 overflow-hidden bg-neutral-100/80 dark:bg-neutral-900/60 backdrop-blur-xl border-r border-black/5 dark:border-white/10 flex flex-col ${
-          sidebarOpen ? 'w-56' : 'w-0'
-        }`}
+        className={`shrink-0 overflow-hidden bg-neutral-100/80 dark:bg-neutral-900/60 backdrop-blur-xl border-r border-black/5 dark:border-white/10 flex flex-col w-56`}
       >
-        <div className="px-3 py-3 border-b border-black/5 dark:border-white/10">
+        <div className="px-3 pt-3 pb-2 border-b border-black/5 dark:border-white/10" style={{ paddingTop: 38 }}>
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white dark:bg-neutral-800 shadow-sm">
             <Search className="w-3.5 h-3.5 text-neutral-400" />
             <input
               value={query}
               onChange={e => setQuery(e.target.value)}
               placeholder="Search"
-              className="flex-1 bg-transparent outline-none text-sm"
+              className="flex-1 bg-transparent outline-none text-sm min-w-0"
             />
           </div>
         </div>
-        <nav className="flex-1 px-2 py-2 space-y-0.5">
+        <nav className="flex-1 px-2 py-2 space-y-0.5 overflow-auto thin-scrollbar">
           {NAV.map(n => {
             const I = n.icon;
             const active = section === n.id;
@@ -136,17 +131,9 @@ export const AppStoreApp = () => {
 
       {/* Main */}
       <div className="flex-1 overflow-auto relative">
-        <button
-          onClick={() => setSidebarOpen(s => !s)}
-          className="absolute top-3 left-3 z-10 p-1.5 rounded-md bg-white/80 dark:bg-neutral-800/80 hover:bg-white dark:hover:bg-neutral-700 backdrop-blur shadow-sm"
-          title="Toggle sidebar"
-        >
-          {sidebarOpen ? <ChevronLeft className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-        </button>
-
         {/* Featured hero */}
         {featured && section === 'discover' && (
-          <div className="pl-16 pr-8 pt-8 pb-6 border-b border-black/5 dark:border-white/10">
+          <div className="px-8 pt-10 pb-6 border-b border-black/5 dark:border-white/10">
             <div className="text-xs font-semibold text-blue-600 uppercase tracking-wider mb-2">
               Featured Project
             </div>
@@ -178,7 +165,7 @@ export const AppStoreApp = () => {
 
         {/* Apps section — Google as a standalone app */}
         {showGoogleCard && (
-          <div className="pl-16 pr-8 pt-6">
+          <div className="px-8 pt-6">
             <h2 className="text-lg font-semibold mb-4">Apps</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div className="flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10">
@@ -225,7 +212,7 @@ export const AppStoreApp = () => {
         )}
 
         {/* Projects */}
-        <div className="pl-16 pr-8 py-6">
+        <div className="px-8 py-6">
           <h2 className="text-lg font-semibold mb-4">All Projects</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {list.map(p => {

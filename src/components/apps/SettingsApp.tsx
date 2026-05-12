@@ -278,22 +278,8 @@ export const SettingsApp = () => {
             {section === 'battery' && (
               <Card>
                 <Row label="Battery Level" desc={batteryLevel !== null ? `${batteryLevel}%${batteryCharging ? ' (Charging)' : ''}` : 'Battery API unavailable'} />
-                <Row label="Low Power Mode" desc="Reduce energy use to extend battery life.">
-                  <Switch checked={false} onCheckedChange={() => {}} />
-                </Row>
-              </Card>
-            )}
-
-            {section === 'accessibility' && (
-              <Card>
-                <Row label="Reduce Transparency" desc="Use solid backgrounds in place of frosted ones.">
-                  <Switch checked={false} onCheckedChange={() => {}} />
-                </Row>
-                <Row label="Increase Contrast" desc="Enhance text and interface contrast.">
-                  <Switch checked={false} onCheckedChange={() => {}} />
-                </Row>
-                <Row label="Reduce Motion" desc="Minimize animation across the system.">
-                  <Switch checked={!!settings.reducedMotion} onCheckedChange={v => updateSettings({ reducedMotion: v })} />
+                <Row label="Low Power Mode" desc="Reduce energy use to extend battery life. Battery icon turns yellow.">
+                  <Switch checked={!!settings.lowPowerMode} onCheckedChange={v => updateSettings({ lowPowerMode: v })} />
                 </Row>
               </Card>
             )}
@@ -316,7 +302,7 @@ export const SettingsApp = () => {
               </Card>
             )}
 
-            {(section === 'notifications' || section === 'controlcenter' || section === 'siri' || section === 'screentime' || section === 'network') && (
+            {section === 'notifications' && (
               <Card>
                 <Row label={sectionLabel} desc="Pane reserved. Settings will appear here." />
               </Card>

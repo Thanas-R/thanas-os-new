@@ -79,9 +79,9 @@ export const LinkedInApp = () => {
                 <div className="text-[13px] font-semibold mt-2" style={{ color: t.link }}>98 connections</div>
               </div>
 
-              <div className="flex flex-col items-end gap-2 shrink-0 pt-1">
+              <div className="flex flex-col items-end gap-2 shrink-0 mt-6">
                 <div className="flex items-center gap-2">
-                  <img src={pesLogo} alt="PES" className="w-6 h-6 rounded object-contain" />
+                  <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
                   <span className="text-[13px] font-semibold">PES University</span>
                 </div>
                 <a

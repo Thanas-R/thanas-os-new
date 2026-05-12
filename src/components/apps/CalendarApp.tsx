@@ -50,13 +50,13 @@ const getTone = (dark: boolean) => dark ? {
   cell: '#1c1c1e', cellAlt: '#16161a', hover: 'rgba(250,45,72,0.12)',
   modal: '#2a2a2e', input: '#1c1c1e', inputBorder: 'rgba(255,255,255,0.18)',
   segActive: '#f5f5f7', segActiveText: '#1c1c1e', segText: '#a8a8ad', segHover: 'rgba(255,255,255,0.06)',
-  headerBg: 'linear-gradient(180deg, rgba(250,45,72,0.18), rgba(40,40,44,0.6))',
+  headerBg: '#2a2a2e',
 } : {
   page: '#ffffff', text: '#1c1c1e', sub: '#737378', border: 'rgba(0,0,0,0.10)',
   cell: '#ffffff', cellAlt: '#fafafa', hover: 'rgba(250,45,72,0.06)',
   modal: '#ffffff', input: '#ffffff', inputBorder: 'rgba(0,0,0,0.15)',
   segActive: '#1c1c1e', segActiveText: '#ffffff', segText: '#404048', segHover: 'rgba(0,0,0,0.05)',
-  headerBg: 'linear-gradient(180deg, rgba(250,45,72,0.08), rgba(255,255,255,0.6))',
+  headerBg: '#3a3a3e',
 };
 
 const COLORS_HEX: Record<CalEvent['color'], string> = {
@@ -142,25 +142,20 @@ export const CalendarApp = () => {
     <div className="h-full w-full flex flex-col select-none overflow-hidden"
       style={{ background: tone.page, color: tone.text, fontFamily: '-apple-system, "SF Pro Text", Roboto, sans-serif' }}>
 
-      {/* Header */}
+      {/* Header — leave 78px on the left for traffic lights */}
       <div
-        className="flex items-center justify-between px-4 py-3 border-b"
+        className="flex items-center justify-between pl-[88px] pr-4 py-3 border-b text-white"
         style={{ borderColor: tone.border, background: tone.headerBg, backdropFilter: 'blur(20px) saturate(180%)' }}
       >
-        <div className="flex items-center gap-3">
-          <h2 className="text-[20px] font-semibold tracking-tight min-w-[210px]">{headerLabel}</h2>
+        <div className="flex items-center gap-9 ml-auto">
+          <h2 className="text-[20px] font-semibold tracking-tight">{headerLabel}</h2>
           <div className="flex items-center gap-1">
-            <IconBtn tone={tone} onClick={() => navigate(-1)}><ChevronLeft className="w-4 h-4" /></IconBtn>
-            <button
-              onClick={() => setCurrent(new Date())}
-              className="h-7 px-2.5 text-[12px] rounded-md border"
-              style={{ borderColor: tone.border, color: tone.text, background: 'transparent' }}
-            >Today</button>
-            <IconBtn tone={tone} onClick={() => navigate(1)}><ChevronRight className="w-4 h-4" /></IconBtn>
+            <button onClick={() => navigate(-1)} className="w-7 h-7 flex items-center justify-center rounded-md text-white hover:bg-white/10"><ChevronLeft className="w-4 h-4" /></button>
+            <button onClick={() => navigate(1)} className="w-7 h-7 flex items-center justify-center rounded-md text-white hover:bg-white/10"><ChevronRight className="w-4 h-4" /></button>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-5 ml-5">
           <Segmented tone={tone} value={view} onChange={setView} />
           <button
             onClick={() => openCreate(current)}
@@ -170,13 +165,6 @@ export const CalendarApp = () => {
             <Plus className="w-3.5 h-3.5" /> New Event
           </button>
         </div>
-      </div>
-
-      {/* Legend */}
-      <div className="flex items-center gap-4 px-4 py-2 text-[11px] border-b" style={{ borderColor: tone.border, color: tone.sub }}>
-        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: COLORS_HEX.green }} />India holidays</span>
-        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: COLORS_HEX.blue }} />US holidays</span>
-        <span className="flex items-center gap-1.5"><span className="w-2 h-2 rounded-full" style={{ background: COLORS_HEX.red }} />Personal</span>
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">

@@ -29,7 +29,7 @@ export const AppleMusicApp = () => {
             <div className="font-semibold text-[15px]" style={{ color: accent }}>Music</div>
           </div>
           <div className="px-2 mb-3">
-            <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
+            <div className="flex items-center gap-1.5 h-8 rounded-md px-3 shadow-sm">
               style={{
                 width: '110%',
                 marginLeft: '-5%',

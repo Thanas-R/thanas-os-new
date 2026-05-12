@@ -117,15 +117,28 @@ export const SettingsApp = () => {
 
   return (
     <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100 text-[14px]">
-      {/* Sidebar */}
+      {/* Sidebar — extends to top, traffic lights overlay above the search */}
       <aside className="w-[240px] shrink-0 bg-neutral-200/70 dark:bg-neutral-900/70 backdrop-blur-xl border-r border-black/5 dark:border-white/5 flex flex-col">
-        {/* Search */}
-        <div className="px-3 pt-3 pb-2">
-          <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
-            <Search className="w-4 h-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
-            <input value={query} onChange={e => setQuery(e.target.value)} placeholder="Search" className="flex-1 bg-transparent outline-none text-[13px]" />
-          </div>
-        </div>
+        {/* Search row leaves ~78px on the left for traffic lights */}
+        <div className="pt-2.5 pb-2">
+  <div className="px-3">
+    <div className="text-[17px] font-semibold text-neutral-900 dark:text-neutral-100">
+      Settings
+    </div>
+  </div>
+
+  <div className="mt-2 px-3">
+    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white dark:bg-neutral-800 ring-1 ring-black/5 dark:ring-white/10">
+      <Search className="w-4 h-4 text-neutral-500 dark:text-neutral-400 shrink-0" />
+      <input
+        value={query}
+        onChange={e => setQuery(e.target.value)}
+        placeholder="Search"
+        className="flex-1 bg-transparent outline-none text-[13px] min-w-0"
+      />
+    </div>
+  </div>
+</div>
         {/* Profile / Apple Account row */}
         <button
           onClick={() => setSection('apple-account')}
@@ -327,7 +340,7 @@ export const SettingsApp = () => {
 
 const AppleAccountPane = () => (
   <div className="px-8 pt-5 pb-10 max-w-2xl">
-    <div className="flex items-center gap-4 pb-6">
+    <div className="flex flex-col items-center pt-4 pb-6">
       <img src={profilePhoto} alt="Thanas R" className="w-20 h-20 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
       <div>
         <div className="text-[22px] font-semibold">Thanas R</div>

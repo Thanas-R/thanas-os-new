@@ -51,38 +51,38 @@ export const LinkedInApp = () => {
         <Card>
           <div className="h-36 relative overflow-hidden"><img src={linkedinBanner} alt="" className="w-full h-full object-cover" /></div>
           <div className="px-6 pb-5 -mt-14 relative">
-  <div className="flex items-end justify-between">
-    <div
-      className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md"
-      style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}
-    >
-      <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
-    </div>
+            <div
+              className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md"
+              style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}
+            >
+              <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
+            </div>
 
-    <div className="flex items-center gap-2 mb-1">
-      <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-      <span className="text-[13px] font-semibold">PES University</span>
-    </div>
-  </div>
+            <div className="mt-3 flex items-start justify-between gap-4">
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1 className="text-[24px] font-bold leading-tight">Thanas R</h1>
+                  <ShieldCheck className="w-5 h-5" style={{ color: t.link }} />
+                  <span className="text-[13px]" style={{ color: t.sub }}>He/Him</span>
+                </div>
+                <div className="text-[15px] mt-1">B.Tech CSE [AIML] Student | PES University</div>
+                <div className="flex items-center gap-1 text-[13px] mt-1" style={{ color: t.sub }}>
+                  <MapPin className="w-3.5 h-3.5" /><span>Bengaluru, Karnataka, India</span>
+                </div>
 
-  <div className="mt-3">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-[24px] font-bold leading-tight">Thanas R</h1>
-                <ShieldCheck className="w-5 h-5" style={{ color: t.link }} />
-                <span className="text-[13px]" style={{ color: t.sub }}>He/Him</span>
+                <div className="flex items-center gap-3 mt-2">
+                  <div className="text-[13px] font-semibold" style={{ color: t.link }}>98 connections</div>
+                  <a href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 px-5 h-9 rounded-full text-[14px] font-semibold text-white"
+                    style={{ background: '#0a66c2' }}>
+                    <UserPlus className="w-4 h-4" /> Connect
+                  </a>
+                </div>
               </div>
-              <div className="text-[15px] mt-1">B.Tech CSE [AIML] Student | PES University</div>
-              <div className="flex items-center gap-1 text-[13px] mt-1" style={{ color: t.sub }}>
-                <MapPin className="w-3.5 h-3.5" /><span>Bengaluru, Karnataka, India</span>
-              </div>
 
-              <div className="flex items-center justify-between mt-2">
-                <div className="text-[13px] font-semibold" style={{ color: t.link }}>98 connections</div>
-                <a href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-5 h-9 rounded-full text-[14px] font-semibold text-white"
-                  style={{ background: '#0a66c2' }}>
-                  <UserPlus className="w-4 h-4" /> Connect
-                </a>
+              <div className="flex items-center gap-2 shrink-0 pt-1">
+                <img src={pesLogo} alt="PES" className="w-9 h-9 rounded object-contain" />
+                <span className="text-[13px] font-semibold">PES University</span>
               </div>
             </div>
           </div>

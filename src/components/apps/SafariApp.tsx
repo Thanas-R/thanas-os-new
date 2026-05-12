@@ -355,11 +355,3 @@ const ToolbarBtn = ({ children, onClick, disabled }: { children: React.ReactNode
   </button>
 );
 
-const MenuItem = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => (
-  <button
-    onClick={onClick}
-    className="w-full text-left px-3 py-1.5 hover:bg-blue-500 hover:text-white text-neutral-800"
-  >
-    {children}
-  </button>
-);

@@ -166,6 +166,21 @@ export const Window = ({ window }: WindowProps) => {
     }
   };
 
+  // Allow dragging from the top 28px row of the window when the click lands
+  // on a non-interactive surface (so empty header areas in integrated apps act as drag handles).
+  const handleTopRowMouseDown = (e: React.MouseEvent) => {
+    if (window.isMaximized) return;
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    const y = e.clientY - rect.top;
+    if (y > 30) return;
+    const x = e.clientX - rect.left;
+    if (x < 80) return; // traffic-light area
+    const target = e.target as HTMLElement;
+    if (target.closest('button,a,input,select,textarea,label,[role="button"],[role="link"],[role="tab"],[contenteditable="true"]')) return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+  };
+
   return (
     <div
       ref={windowRef}
@@ -180,7 +195,7 @@ export const Window = ({ window }: WindowProps) => {
         border: '1px solid hsl(var(--macos-glass-border))',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 1px rgba(255, 255, 255, 0.15) inset',
       }}
-      onMouseDown={() => focusWindow(window.id)}
+      onMouseDown={(e) => { focusWindow(window.id); handleTopRowMouseDown(e); }}
     >
       {!integrated && (
         <div

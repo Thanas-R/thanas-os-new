@@ -40,8 +40,13 @@ export const useInstalledProjects = () => {
 };
 
 // --- Google app install state (separate from project installs) ---
+// Default to installed (the "Chrome" app ships preinstalled).
 const readGoogle = () => {
-  try { return localStorage.getItem(GOOGLE_KEY) === '1'; } catch { return false; }
+  try {
+    const v = localStorage.getItem(GOOGLE_KEY);
+    if (v === null) return true;
+    return v === '1';
+  } catch { return true; }
 };
 
 export const installGoogleApp = () => {

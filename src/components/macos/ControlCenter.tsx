@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Airplay, Settings as SettingsIcon, Pause } from 'lucide-react';
+import { Moon, Airplay, Sun, Pause, Volume2, Sun as SunIconAlt } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
 import { IoPlay, IoPlayForward, IoBluetooth } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { AppleSlider } from '@/components/ui/AppleSlider';
 import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
 import airdropIcon from '@/assets/airdrop-icon-new.png';
 
@@ -14,7 +13,7 @@ interface Props { open: boolean; onClose: () => void; }
 
 export const ControlCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const { settings, updateSettings, openApp } = useMacOS();
+  const { settings, updateSettings } = useMacOS();
   const [airplayOn, setAirplayOn] = useState(false);
   const np = useNowPlaying();
 
@@ -26,6 +25,8 @@ export const ControlCenter = ({ open, onClose }: Props) => {
     window.addEventListener('keydown', onKey);
     return () => { document.removeEventListener('mousedown', onDown); window.removeEventListener('keydown', onKey); };
   }, [open, onClose]);
+
+  const isDark = settings.theme === 'dark';
 
   return (
     <AnimatePresence>
@@ -46,6 +47,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
           }}
         >
           <div className="grid grid-cols-2 gap-2 mb-2">
+            {/* LEFT: connectivity stack */}
             <div className="rounded-2xl bg-white/10 p-2.5 flex flex-col gap-1.5">
               <ConnRow active={settings.wifi} onClick={() => updateSettings({ wifi: !settings.wifi })}
                 icon={<IoIosWifi className="w-[24px] h-[24px]" />} label="Wi-Fi" sub={settings.wifi ? 'ThanasOS-Net' : 'Off'} />
@@ -56,17 +58,47 @@ export const ControlCenter = ({ open, onClose }: Props) => {
                 label="AirDrop" sub="Contacts" />
             </div>
 
-            <div className="grid grid-rows-3 gap-2">
-              <Tile onClick={() => setAirplayOn(v => !v)} icon={<Airplay className="w-3.5 h-3.5" />} label={airplayOn ? 'AirPlay On' : 'AirPlay'} active={airplayOn} accent="bg-blue-500" />
-              <Tile active={settings.focus} onClick={() => updateSettings({ focus: !settings.focus })} icon={<Moon className="w-3.5 h-3.5" />} label="Focus" accent="bg-violet-500" />
-              <Tile onClick={() => { openApp('settings'); onClose(); }} icon={<SettingsIcon className="w-3.5 h-3.5" />} label="Settings" accent="bg-neutral-500" />
+            {/* RIGHT: focus on top, two squares on bottom */}
+            <div className="grid grid-rows-[1fr_auto] gap-2">
+              <button
+                onClick={() => updateSettings({ focus: !settings.focus })}
+                className="rounded-2xl bg-white/10 hover:bg-black/20 transition-colors p-3 flex flex-col items-start justify-between text-left"
+              >
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center ${settings.focus ? 'bg-violet-500' : 'bg-white/15'}`}>
+                  <Moon className="w-4 h-4" />
+                </div>
+                <div>
+                  <div className="text-[12.5px] font-semibold leading-tight">Focus</div>
+                  <div className="text-[10.5px] text-white/55">{settings.focus ? 'On' : 'Off'}</div>
+                </div>
+              </button>
+              <div className="grid grid-cols-2 gap-2">
+                <SquareTile
+                  active={airplayOn}
+                  onClick={() => setAirplayOn(v => !v)}
+                  icon={<Airplay className="w-4 h-4" />}
+                  label="AirPlay"
+                  accent="bg-blue-500"
+                />
+                <SquareTile
+                  active={!isDark}
+                  onClick={() => updateSettings({ theme: isDark ? 'light' : 'dark' })}
+                  icon={isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  label={isDark ? 'Light' : 'Dark'}
+                  accent="bg-amber-500"
+                />
+              </div>
             </div>
           </div>
 
-          <SliderModule label="Display" value={settings.brightness ?? 80} onChange={(v) => updateSettings({ brightness: v })} />
-          <SliderModule label="Sound" value={settings.volume ?? 65} onChange={(v) => updateSettings({ volume: v })} />
+          <SliderModule label="Display" value={settings.brightness ?? 80} onChange={(v) => updateSettings({ brightness: v })} icon={<SunIconAlt className="w-4 h-4 text-neutral-700" />} />
+          <SliderModule label="Sound" value={settings.volume ?? 65} onChange={(v) => updateSettings({ volume: v })} icon={<Volume2 className="w-4 h-4 text-neutral-700" />} trailing={
+            <button onClick={() => setAirplayOn(v => !v)} className="ml-2 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center shrink-0">
+              <Airplay className="w-4 h-4" />
+            </button>
+          } />
 
-          {/* Now Playing — tied to Apple Music */}
+          {/* Now Playing */}
           <div className="rounded-2xl bg-white/10 p-3 mt-2 flex items-center gap-3">
             <img src={np.cover} alt="" className="w-11 h-11 rounded-lg object-cover" />
             <div className="flex-1 min-w-0">
@@ -94,16 +126,65 @@ const ConnRow = ({ active, onClick, icon, label, sub }: { active?: boolean; onCl
   </button>
 );
 
-const Tile = ({ active, onClick, icon, label, accent }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; accent: string }) => (
-  <button onClick={onClick} className="flex items-center gap-2 px-2.5 rounded-2xl bg-white/10 hover:bg-black/25 transition-colors">
-    <div className={`w-6 h-6 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>{icon}</div>
-    <div className="text-[11.5px] font-medium">{label}</div>
+const SquareTile = ({ active, onClick, icon, label, accent }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; accent: string }) => (
+  <button
+    onClick={onClick}
+    className="rounded-2xl bg-white/10 hover:bg-black/25 transition-colors p-2.5 flex flex-col items-start justify-between aspect-square min-h-[68px]"
+  >
+    <div className={`w-7 h-7 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>{icon}</div>
+    <div className="text-[11px] font-semibold mt-1">{label}</div>
   </button>
 );
 
-const SliderModule = ({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) => (
-  <div className="rounded-2xl bg-white/10 px-4 pt-3 pb-4 mt-2">
-    <div className="text-[12.5px] font-semibold mb-2.5">{label}</div>
-    <AppleSlider value={value} onChange={onChange} />
-  </div>
-);
+// macOS-style pill slider with embedded icon and white "filled" indicator.
+const SliderModule = ({ label, value, onChange, icon, trailing }: { label: string; value: number; onChange: (v: number) => void; icon: React.ReactNode; trailing?: React.ReactNode }) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [drag, setDrag] = useState(false);
+
+  const updateFromX = (clientX: number) => {
+    const el = trackRef.current; if (!el) return;
+    const r = el.getBoundingClientRect();
+    const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    onChange(Math.round(p * 100));
+  };
+
+  useEffect(() => {
+    if (!drag) return;
+    const m = (e: MouseEvent) => updateFromX(e.clientX);
+    const u = () => setDrag(false);
+    window.addEventListener('mousemove', m);
+    window.addEventListener('mouseup', u);
+    return () => { window.removeEventListener('mousemove', m); window.removeEventListener('mouseup', u); };
+  }, [drag]);
+
+  const pct = Math.max(0, Math.min(100, value));
+
+  return (
+    <div className="rounded-2xl bg-white/10 px-4 pt-3 pb-3 mt-2">
+      <div className="text-[12.5px] font-semibold mb-2">{label}</div>
+      <div className="flex items-center gap-2">
+        <div
+          ref={trackRef}
+          onMouseDown={(e) => { setDrag(true); updateFromX(e.clientX); }}
+          className="relative flex-1 h-9 rounded-full overflow-hidden cursor-pointer"
+          style={{ background: 'rgba(255,255,255,0.18)' }}
+        >
+          {/* white fill */}
+          <div
+            className="absolute inset-y-0 left-0 rounded-full"
+            style={{
+              width: `calc(${pct}% + 14px)`,
+              background: '#ffffff',
+              boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
+            }}
+          />
+          {/* embedded leading icon */}
+          <div className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+            {icon}
+          </div>
+        </div>
+        {trailing}
+      </div>
+    </div>
+  );
+};

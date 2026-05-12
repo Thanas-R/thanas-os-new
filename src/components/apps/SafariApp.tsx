@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import {
-  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, Star, X, Home,
-  Share, MoreHorizontal, Loader2,
+  ArrowLeft, ArrowRight, RotateCw, Plus, Lock, X, Home,
+  Loader2,
 } from 'lucide-react';
 import { PROJECTS } from '@/lib/projects';
 import { consumePendingSafariUrl } from '@/lib/installedApps';
@@ -91,13 +91,12 @@ export const SafariApp = () => {
       ? newTab(pending, (() => { try { return new URL(pending).hostname; } catch { return pending; } })())
       : newTab();
   }
-  const { bookmarks, has: hasBookmark, toggle: toggleBookmark } = useBookmarks();
+  const { bookmarks } = useBookmarks();
   const [tabs, setTabs] = useState<Tab[]>([initial.current]);
   const [activeId, setActiveId] = useState(initial.current.id);
   const [addressBar, setAddressBar] = useState(initial.current.url);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showBookmarksBar, setShowBookmarksBar] = useState(true);
-  const [showMenu, setShowMenu] = useState(false);
   const [proxyHtml, setProxyHtml] = useState<Record<string, string>>({});
   const active = tabs.find(t => t.id === activeId)!;
 
@@ -222,7 +221,7 @@ export const SafariApp = () => {
 
         <form
           onSubmit={(e) => { e.preventDefault(); navigate(addressBar); }}
-          className="flex-1 flex items-center gap-2 bg-white dark:bg-neutral-800 rounded-md px-3 py-1 border border-black/5 dark:border-white/10 max-w-2xl mx-auto"
+          className="flex-1 flex items-center gap-3 bg-white dark:bg-neutral-800 rounded-md px-3 py-1 border border-black/5 dark:border-white/10 max-w-[590px] mx-auto"
         >
           {active.loading ? <Loader2 className="w-3 h-3 text-blue-500 animate-spin" /> : <Lock className="w-3 h-3 text-neutral-500" />}
           <input
@@ -231,49 +230,16 @@ export const SafariApp = () => {
             className="flex-1 bg-transparent outline-none text-[13px] text-neutral-800 dark:text-neutral-100 min-w-0"
             placeholder="Search or enter website name"
           />
-          <button
-            type="button"
-            onClick={() => {
-              if (!isFavorites && /^https?:\/\//.test(active.url)) {
-                toggleBookmark({ name: active.title || active.url, url: active.url });
-              }
-            }}
-            className={`p-0.5 ${hasBookmark(active.url) ? 'text-yellow-500' : 'text-neutral-500 hover:text-yellow-500'}`}
-          >
-            <Star className="w-3.5 h-3.5" fill={hasBookmark(active.url) ? 'currentColor' : 'none'} />
-          </button>
         </form>
-
-        <ToolbarBtn onClick={() => navigator.share?.({ url: active.url }).catch(() => {})}><Share className="w-4 h-4" /></ToolbarBtn>
-        <div className="relative">
-          <ToolbarBtn onClick={() => setShowMenu(s => !s)}><MoreHorizontal className="w-4 h-4" /></ToolbarBtn>
-          {showMenu && (
-            <div
-              className="absolute right-0 top-9 w-48 rounded-xl shadow-2xl py-1 z-50 text-[13px]"
-              style={{
-                background: 'rgba(255,255,255,0.7)',
-                backdropFilter: 'blur(40px) saturate(180%)',
-                border: '1px solid rgba(0,0,0,0.08)',
-              }}
-              onMouseLeave={() => setShowMenu(false)}
-            >
-              <MenuItem onClick={() => { addTab(); setShowMenu(false); }}>New Tab</MenuItem>
-              <MenuItem onClick={() => { setShowSidebar(s => !s); setShowMenu(false); }}>{showSidebar ? 'Hide' : 'Show'} Sidebar</MenuItem>
-              <MenuItem onClick={() => { goTo(START_PAGE, 'Favorites'); setShowMenu(false); }}>Home Page</MenuItem>
-              <div className="my-1 border-t border-black/10" />
-              <MenuItem onClick={() => { navigate(active.url); setShowMenu(false); }}>Reload</MenuItem>
-            </div>
-          )}
-        </div>
       </div>
 
       {/* Body: tab sidebar + content */}
       <div className="flex-1 flex overflow-hidden">
         {showSidebar && (
-          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 overflow-auto flex flex-col gap-3">
+          <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 border-r border-black/10 dark:border-white/10 p-2 pt-[34px] overflow-auto flex flex-col gap-3">
             <div>
               <div className="flex items-center justify-between px-2 py-1">
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500">Tabs</div>
+                <div className="text-[12px] font-semibold uppercase tracking-wider text-neutral-500">Tabs</div>
                 <button onClick={addTab} className="p-0.5 hover:bg-black/10 dark:hover:bg-white/10 rounded">
                   <Plus className="w-3.5 h-3.5" />
                 </button>
@@ -282,18 +248,18 @@ export const SafariApp = () => {
                 <div
                   key={t.id}
                   onClick={() => setActiveId(t.id)}
-                  className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-[12.5px] cursor-pointer ${
+                  className={`group flex items-center gap-2 px-2 py-1.5 rounded-md text-[14.5px] cursor-pointer ${
                     t.id === activeId
                       ? 'bg-white dark:bg-neutral-800 shadow-sm text-neutral-900 dark:text-neutral-100'
                       : 'text-neutral-600 dark:text-neutral-400 hover:bg-white/50 dark:hover:bg-neutral-800/50'
                   }`}
                 >
                   {t.loading ? (
-                    <Loader2 className="w-3 h-3 animate-spin shrink-0 text-blue-500" />
+                    <Loader2 className="w-3.5 h-3.5 animate-spin shrink-0 text-blue-500" />
                   ) : t.favicon ? (
-                    <img src={t.favicon} alt="" className="w-3.5 h-3.5 shrink-0" />
+                    <img src={t.favicon} alt="" className="w-4 h-4 shrink-0" />
                   ) : (
-                    <div className="w-3.5 h-3.5 rounded-sm bg-neutral-400/30 shrink-0" />
+                    <div className="w-4 h-4 rounded-sm bg-neutral-400/30 shrink-0" />
                   )}
                   <span className="truncate flex-1">{t.title}</span>
                   {tabs.length > 1 && (
@@ -309,12 +275,12 @@ export const SafariApp = () => {
             </div>
 
             <div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
+              <div className="text-[12px] font-semibold uppercase tracking-wider text-neutral-500 px-2 py-1">Bookmarks</div>
               {bookmarks.map(b => (
                 <button
                   key={b.url}
                   onClick={() => navigate(b.url)}
-                  className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[12.5px] text-left"
+                  className="w-full flex items-center gap-2 px-2 py-1 rounded-md hover:bg-black/5 dark:hover:bg-white/10 text-[14.5px] text-left"
                 >
                   <img src={faviconFor(b.url)} alt="" className="w-4 h-4" />
                   <span className="truncate">{b.name}</span>
@@ -389,11 +355,3 @@ const ToolbarBtn = ({ children, onClick, disabled }: { children: React.ReactNode
   </button>
 );
 
-const MenuItem = ({ children, onClick }: { children: React.ReactNode; onClick: () => void }) => (
-  <button
-    onClick={onClick}
-    className="w-full text-left px-3 py-1.5 hover:bg-blue-500 hover:text-white text-neutral-800"
-  >
-    {children}
-  </button>
-);

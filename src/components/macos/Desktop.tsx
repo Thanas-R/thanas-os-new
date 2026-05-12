@@ -4,7 +4,6 @@ import { Window } from './Window';
 import { Dock } from './Dock';
 import { MenuBar } from './MenuBar';
 import { Spotlight } from './Spotlight';
-import { NowPlayingPill } from './NowPlayingPill';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { UtilityClockWidget } from '@/components/widgets/UtilityClockWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
@@ -91,7 +90,6 @@ export const Desktop = () => {
       </div>
 
       <Spotlight isOpen={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
-      <NowPlayingPill />
       <Dock />
     </div>
   );

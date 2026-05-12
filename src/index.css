@@ -103,6 +103,14 @@ All colors MUST be HSL.
   body {
     @apply bg-background text-foreground overflow-hidden;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+    /* Disable text selection across the OS — feels native and prevents accidental selects on resize */
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  /* But allow selection inside real text inputs / editors */
+  input, textarea, [contenteditable="true"], .allow-select, .allow-select * {
+    user-select: text !important;
+    -webkit-user-select: text !important;
   }
   
   /* macOS scrollbar */

@@ -117,6 +117,55 @@ export const Window = ({ window }: WindowProps) => {
     );
   }
 
+  const chromeMode = app.chromeMode ?? 'default';
+  const integrated = chromeMode === 'integrated';
+  const transparent = chromeMode === 'transparent';
+
+  const TrafficLights = (
+    <div
+      className="flex gap-2"
+      onMouseDown={(e) => e.stopPropagation()}
+    >
+      <button
+        onClick={(e) => { e.stopPropagation(); closeWindow(window.id); }}
+        className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
+        style={{ background: isFocused ? '#FF5F57' : '#555' }}
+        aria-label="Close"
+      >
+        {isFocused && <X className={`w-2 h-2 text-[#9f0000] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          if (window.isMaximized) maximizeWindow(window.id);
+          else minimizeWindow(window.id);
+        }}
+        className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
+        style={{ background: isFocused ? '#FFBD2E' : '#555' }}
+        aria-label="Minimize"
+      >
+        {isFocused && <Minus className={`w-2 h-2 text-[#995700] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
+      </button>
+      {!app.noMaximize && (
+        <button
+          onClick={(e) => { e.stopPropagation(); maximizeWindow(window.id); }}
+          className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
+          style={{ background: isFocused ? '#28C840' : '#555' }}
+          aria-label="Maximize"
+        >
+          {isFocused && <Square className={`w-2 h-2 text-[#006400] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
+        </button>
+      )}
+    </div>
+  );
+
+  const startDrag = (e: React.MouseEvent) => {
+    if (!window.isMaximized) {
+      setIsDragging(true);
+      setDragStart({ x: e.clientX, y: e.clientY });
+    }
+  };
+
   return (
     <div
       ref={windowRef}
@@ -133,69 +182,41 @@ export const Window = ({ window }: WindowProps) => {
       }}
       onMouseDown={() => focusWindow(window.id)}
     >
-      {/* Title Bar */}
-      <div
-        className="flex items-center justify-between px-4 h-10 cursor-move select-none backdrop-blur-md"
-        style={{ 
-          background: 'hsl(var(--macos-window-bg))',
-          borderBottom: '1px solid hsl(var(--macos-glass-border))'
-        }}
-        onMouseDown={(e) => {
-          if (!window.isMaximized) {
-            setIsDragging(true);
-            setDragStart({ x: e.clientX, y: e.clientY });
-          }
-        }}
-      >
-        {/* Traffic Lights */}
-        <div className="flex gap-2">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              closeWindow(window.id);
-            }}
-            className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
-            style={{ background: isFocused ? '#FF5F57' : '#555' }}
-            aria-label="Close"
-          >
-            {isFocused && <X className={`w-2 h-2 text-[#9f0000] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              if (window.isMaximized) {
-                maximizeWindow(window.id); // Un-maximize if maximized
-              } else {
-                minimizeWindow(window.id); // Minimize if not maximized
-              }
-            }}
-            className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
-            style={{ background: isFocused ? '#FFBD2E' : '#555' }}
-            aria-label="Minimize"
-          >
-            {isFocused && <Minus className={`w-2 h-2 text-[#995700] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
-          </button>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              maximizeWindow(window.id);
-            }}
-            className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
-            style={{ background: isFocused ? '#28C840' : '#555' }}
-            aria-label="Maximize"
-          >
-            {isFocused && <Square className={`w-2 h-2 text-[#006400] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
-          </button>
+      {!integrated && (
+        <div
+          className="flex items-center justify-between px-4 h-10 cursor-move select-none backdrop-blur-md"
+          style={{
+            background: transparent ? (app.chromeColor || 'transparent') : 'hsl(var(--macos-window-bg))',
+            borderBottom: transparent ? 'none' : '1px solid hsl(var(--macos-glass-border))',
+          }}
+          onMouseDown={startDrag}
+        >
+          {TrafficLights}
+          {!transparent && (
+            <div className="absolute left-1/2 -translate-x-1/2 text-sm font-medium text-foreground">
+              {app.name}
+            </div>
+          )}
         </div>
+      )}
 
-        {/* Title */}
-        <div className="absolute left-1/2 -translate-x-1/2 text-sm font-medium text-foreground">
-          {app.name}
+      {integrated && (
+        <div
+          className="absolute top-0 left-0 z-40 cursor-move"
+          style={{ width: 80, height: 28 }}
+          onMouseDown={startDrag}
+        >
+          <div className="absolute top-4.5 left-3.5">
+            {TrafficLights}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Content */}
-      <div className="h-[calc(100%-2.5rem)] overflow-auto backdrop-blur-sm" style={{ background: 'hsl(var(--macos-window-bg))' }}>
+      <div
+        className={integrated ? 'h-full overflow-auto' : 'h-[calc(100%-2.5rem)] overflow-auto backdrop-blur-sm'}
+        style={{ background: 'hsl(var(--macos-window-bg))' }}
+      >
         <AppComponent />
       </div>
 

@@ -133,11 +133,28 @@ const ConnRow = ({ active, onClick, icon, label, sub }: { active?: boolean; onCl
   </button>
 );
 
-const SquareTile = ({ active, onClick, icon, label, accent }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; accent: string }) => (
+const SquareTile = ({
+  active,
+  onClick,
+  icon,
+  label,
+  accent
+}: {
+  active?: boolean;
+  onClick: () => void;
+  icon: React.ReactNode;
+  label: string;
+  accent: string;
+}) => (
   <button
     onClick={onClick}
     className="rounded-2xl bg-white/10 hover:bg-black/25 transition-colors p-2.5 flex flex-col items-center justify-center aspect-square min-h-[68px]"
-    <div className={`w-8 h-8 rounded-full flex items-center justify-center ${active ? accent : 'bg-white/15'}`}>
+  >
+    <div
+      className={`w-8 h-8 rounded-full flex items-center justify-center ${
+        active ? accent : 'bg-white/15'
+      }`}
+    >
   {icon}
 </div>
 

@@ -38,7 +38,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
           className="fixed top-9 right-3 z-[300] rounded-[26px] p-3"
           style={{
             width: 320,
-            background: 'rgba(255,255,255,0.3)',
+            background: 'rgba(255,255,255,0.05)',
             color: '#1c1c1e',
             backdropFilter: 'blur(40px) saturate(180%)',
             WebkitBackdropFilter: 'blur(40px) saturate(180%)',

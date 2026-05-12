@@ -18,7 +18,7 @@ export const Window = ({ window }: WindowProps) => {
     updateWindowSize,
     focusedWindowId,
     settings,
-  } = useMacOS();
+  } = useMacOS();  
 
   const windowRef = useRef<HTMLDivElement>(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -209,7 +209,7 @@ export const Window = ({ window }: WindowProps) => {
           <div
   className="absolute"
   style={{
-    top: '14px',
+    top: '16px',
     left: '14px',
   }}
 >

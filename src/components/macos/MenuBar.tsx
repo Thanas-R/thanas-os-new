@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { Search, BatteryCharging, Zap, Bluetooth, Check } from 'lucide-react';
+import { Search, BatteryCharging, Zap, Check } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
+import { IoBluetooth } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
 import turtleLogo from '@/assets/turtle-logo.png';
 import controlCenterIcon from '@/assets/control-centre.svg';
@@ -240,7 +241,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-1 relative">
           <div className="relative">
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <Bluetooth className="w-4 h-4" />
+              <IoBluetooth className="w-4 h-4" />
             </StatusBtn>
             {btOpen && (
               <div className="absolute right-0"><FrostedPanel width={260}>

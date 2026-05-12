@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Bluetooth, Moon, Airplay, Settings as SettingsIcon, SkipBack, Pause } from 'lucide-react';
+import { Moon, Airplay, Settings as SettingsIcon, Pause } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
-import { IoPlay, IoPlayForward } from 'react-icons/io5';
+import { IoPlay, IoPlayForward, IoBluetooth } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { AppleSlider } from '@/components/ui/AppleSlider';
 import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
@@ -50,7 +50,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <ConnRow active={settings.wifi} onClick={() => updateSettings({ wifi: !settings.wifi })}
                 icon={<IoIosWifi className="w-[24px] h-[24px]" />} label="Wi-Fi" sub={settings.wifi ? 'ThanasOS-Net' : 'Off'} />
               <ConnRow active={settings.bluetooth} onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
-                icon={<Bluetooth className="w-[22px] h-[22px]" />} label="Bluetooth" sub={settings.bluetooth ? 'On' : 'Off'} />
+                icon={<IoBluetooth className="w-[22px] h-[22px]" />} label="Bluetooth" sub={settings.bluetooth ? 'On' : 'Off'} />
               <ConnRow active={settings.airdrop} onClick={() => updateSettings({ airdrop: !settings.airdrop })}
                 icon={<img src={airdropIcon} alt="" className="w-[24px] h-[24px] object-contain" style={{ filter: settings.airdrop ? 'none' : 'grayscale(1) brightness(1.4)' }} />}
                 label="AirDrop" sub="Contacts" />
@@ -73,7 +73,6 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="text-[12.5px] font-semibold truncate">{np.title}</div>
               <div className="text-[11px] text-white/65 truncate">{np.artist}</div>
             </div>
-            <button className="p-1.5 rounded-full hover:bg-white/15"><SkipBack className="w-4 h-4" fill="white" /></button>
             <button onClick={() => setNowPlaying({ playing: !np.playing })} className="p-1.5 rounded-full hover:bg-white/15">
               {np.playing ? <Pause className="w-4 h-4" fill="white" /> : <IoPlay className="w-4 h-4" />}
             </button>

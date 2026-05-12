@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface Props {
@@ -15,7 +15,6 @@ const NOTIFS = [
 
 export const NotificationCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
-  const [tab, setTab] = useState<'today' | 'notif'>('notif');
   const time = new Date();
 
   useEffect(() => {
@@ -47,23 +46,11 @@ export const NotificationCenter = ({ open, onClose }: Props) => {
             boxShadow: '0 20px 60px -10px rgba(0,0,0,0.5)',
           }}
         >
-          {/* Big clock */}
-          <div className="text-center mb-3">
+          <div className="text-center mb-4">
             <div className="text-[12px] text-white/70">{time.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}</div>
             <div className="text-[44px] font-light leading-none mt-1">
               {time.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}
             </div>
-          </div>
-
-          {/* Tabs */}
-          <div className="flex bg-white/10 rounded-full p-0.5 text-[12px] mb-3">
-            {(['today','notif'] as const).map(t => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`flex-1 py-1 rounded-full transition ${tab === t ? 'bg-white/20 font-semibold' : 'hover:bg-white/5'}`}
-              >{t === 'today' ? 'Today' : 'Notifications'}</button>
-            ))}
           </div>
 
           <div className="space-y-2">

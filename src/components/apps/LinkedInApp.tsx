@@ -58,7 +58,7 @@ export const LinkedInApp = () => {
                 <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
                 <span className="text-[13px] font-semibold">PES University</span>
               </div>
-
+            </div>
             <div className="mt-3">
               <div className="flex items-center gap-2 flex-wrap">
                 <h1 className="text-[24px] font-bold leading-tight">Thanas R</h1>

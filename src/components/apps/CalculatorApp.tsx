@@ -1,16 +1,13 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Calculator as CalcIcon } from 'lucide-react';
-import { BsBackspace } from 'react-icons/bs';
-import { HiOutlinePlus } from 'react-icons/hi';
-import { HiOutlineMinus } from 'react-icons/hi';
-import { HiOutlineDivide } from 'react-icons/hi2';
-import { RxCross1 } from 'react-icons/rx';
 import { registerAppMenus } from '@/types/macos';
+import { HiOutlineEquals, HiMiniDivide, HiOutlineBackspace, HiOutlinePlus, HiOutlineMinus } from 'react-icons/hi2';
+import { TbPlusMinus } from 'react-icons/tb';
+import { RxCross1 } from 'react-icons/rx';
 
 type Op = '+' | '-' | '*' | '/' | null;
 
 // Fixed-size macOS Calculator. No scroll, no resize, no maximize button.
-// Colors: orange #FF9203, digits #333333, utility #5E5E5E. Inter 400.
+// Colors: orange #FF9203, digits #333333, utility #5E5E5E.
 export const CalculatorApp = () => {
   const [display, setDisplay] = useState('0');
   const [accumulator, setAccumulator] = useState<number | null>(null);
@@ -44,6 +41,16 @@ export const CalculatorApp = () => {
     setOperator(null);
     setWaitingForNew(false);
   }, []);
+
+  const clearEntryOrAll = useCallback(() => {
+    const allClear = display === '0' && accumulator === null && operator === null && !waitingForNew;
+    if (allClear) {
+      clearAll();
+      return;
+    }
+    setDisplay('0');
+    setWaitingForNew(false);
+  }, [display, accumulator, operator, waitingForNew, clearAll]);
 
   const toggleSign = useCallback(() => {
     setDisplay((cur) => (cur.startsWith('-') ? cur.slice(1) : cur === '0' ? cur : '-' + cur));
@@ -123,18 +130,14 @@ export const CalculatorApp = () => {
       else if (e.key === '/') {
         e.preventDefault();
         setOp('/');
-      }
-      else if (e.key === 'Enter' || e.key === '=') {
+      } else if (e.key === 'Enter' || e.key === '=') {
         e.preventDefault();
         equals();
-      }
-      else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
+      } else if (e.key === 'Escape' || e.key === 'c' || e.key === 'C') {
         clearAll();
-      }
-      else if (e.key === 'Backspace') {
+      } else if (e.key === 'Backspace') {
         backspace();
-      }
-      else if (e.key === '%') {
+      } else if (e.key === '%') {
         percent();
       }
     };
@@ -153,6 +156,9 @@ export const CalculatorApp = () => {
     return () => registerAppMenus('calculator', null);
   }, [display, clearAll]);
 
+  const allClear = display === '0' && accumulator === null && operator === null && !waitingForNew;
+  const clearLabel = allClear ? 'AC' : 'C';
+
   return (
     <div
       className="h-full w-full select-none flex flex-col overflow-hidden"
@@ -169,10 +175,10 @@ export const CalculatorApp = () => {
         <div
           className="text-white text-right w-full"
           style={{
-            fontSize: 'clamp(48px, 18vw, 76px)',
+            fontSize: 'clamp(40px, 15vw, 64px)',
             lineHeight: 1,
             letterSpacing: '-0.03em',
-            fontWeight: 300,
+            fontWeight: 500,
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -188,11 +194,11 @@ export const CalculatorApp = () => {
         style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '1fr' }}
       >
         <Key variant="util" onClick={backspace} aria-label="Backspace">
-          <BsBackspace className="w-6 h-6" />
+          <HiOutlineBackspace className="w-7 h-7" />
         </Key>
 
-        <Key variant="util" onClick={toggleSign} aria-label="Toggle sign">
-          <span className="text-[24px] leading-none">+/-</span>
+        <Key variant="util" onClick={clearEntryOrAll} aria-label={clearLabel}>
+          <span className="text-[24px] leading-none">{clearLabel}</span>
         </Key>
 
         <Key variant="util" onClick={percent} aria-label="Percent">
@@ -200,36 +206,38 @@ export const CalculatorApp = () => {
         </Key>
 
         <Key variant="op" onClick={() => setOp('/')} aria-label="Divide">
-          <HiOutlineDivide className="w-7 h-7" />
+          <HiMiniDivide className="w-8 h-8" />
         </Key>
 
         <Key onClick={() => inputDigit('7')}>7</Key>
         <Key onClick={() => inputDigit('8')}>8</Key>
         <Key onClick={() => inputDigit('9')}>9</Key>
         <Key variant="op" onClick={() => setOp('*')} aria-label="Multiply">
-          <RxCross1 className="w-6.5 h-6.5" />
+          <RxCross1 className="w-7 h-7" />
         </Key>
 
         <Key onClick={() => inputDigit('4')}>4</Key>
         <Key onClick={() => inputDigit('5')}>5</Key>
         <Key onClick={() => inputDigit('6')}>6</Key>
         <Key variant="op" onClick={() => setOp('-')} aria-label="Minus">
-          <HiOutlineMinus className="w-7 h-7" />
+          <HiOutlineMinus className="w-8 h-8" />
         </Key>
 
         <Key onClick={() => inputDigit('1')}>1</Key>
         <Key onClick={() => inputDigit('2')}>2</Key>
         <Key onClick={() => inputDigit('3')}>3</Key>
         <Key variant="op" onClick={() => setOp('+')} aria-label="Plus">
-          <HiOutlinePlus className="w-7 h-7" />
+          <HiOutlinePlus className="w-8 h-8" />
         </Key>
 
-        <Key onClick={clearAll} aria-label="All Clear">
-          <CalcIcon className="w-6 h-6" strokeWidth={1.8} />
+        <Key variant="util" onClick={toggleSign} aria-label="Toggle sign">
+          <TbPlusMinus className="w-7.5 h-7.5" />
         </Key>
         <Key onClick={() => inputDigit('0')}>0</Key>
         <Key onClick={inputDecimal}>.</Key>
-        <Key variant="op" onClick={equals} aria-label="Equals">=</Key>
+        <Key variant="op" onClick={equals} aria-label="Equals">
+          <HiOutlineEquals className="w-8 h-8" />
+        </Key>
       </div>
     </div>
   );
@@ -258,8 +266,8 @@ const Key = ({
       className="rounded-full flex items-center justify-center transition-[filter,transform] active:brightness-90 active:scale-[0.97] hover:brightness-110"
       style={{
         ...styles[variant],
-        fontSize: '26px',
-        fontWeight: 400,
+        fontSize: '28px',
+        fontWeight: 500,
         aspectRatio: '1 / 1',
       }}
     >

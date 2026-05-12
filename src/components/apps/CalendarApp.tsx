@@ -224,7 +224,7 @@ export const CalendarApp = () => {
                   setDraft((d) => ({ ...d, startH: h, startM: m }));
                 }}
                 className="w-full h-9 px-3 rounded-md border text-[13px] outline-none"
-                style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text }}
+                style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text , colorScheme: dark ? "dark" : "light" }}
               />
             </div>
             <div>
@@ -237,7 +237,7 @@ export const CalendarApp = () => {
                   setDraft((d) => ({ ...d, endH: h, endM: m }));
                 }}
                 className="w-full h-9 px-3 rounded-md border text-[13px] outline-none"
-                style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text }}
+                style={{ background: tone.input, borderColor: tone.inputBorder, color: tone.text , colorScheme: dark ? "dark" : "light" }}
               />
             </div>
           </div>

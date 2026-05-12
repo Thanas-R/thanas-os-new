@@ -206,9 +206,15 @@ export const Window = ({ window }: WindowProps) => {
           style={{ width: 80, height: 28 }}
           onMouseDown={startDrag}
         >
-          <div className="absolute top-1 left-3.5">
-            {TrafficLights}
-          </div>
+          <div
+  className="absolute"
+  style={{
+    top: '14px',
+    left: '14px',
+  }}
+>
+  {TrafficLights}
+</div>
         </div>
       )}
 

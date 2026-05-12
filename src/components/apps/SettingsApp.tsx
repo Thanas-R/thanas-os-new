@@ -167,7 +167,7 @@ export const SettingsApp = () => {
           <AppleAccountPane />
         </div>
       ) : section === 'general' ? (
-        <div className="flex-1 overflow-auto bg-white dark:bg-neutral-900 thin-scrollbar">
+        <div className="flex-1 min-h-0 bg-white dark:bg-neutral-900">
           <GeneralPane sub={generalSub} setSub={setGeneralSub} batteryLevel={batteryLevel} batteryCharging={batteryCharging} />
         </div>
       ) : (

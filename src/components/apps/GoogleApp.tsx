@@ -301,7 +301,7 @@ export const GoogleApp = () => {
   return (
     <div className="h-full w-full flex flex-col overflow-hidden" style={{ background: tk.bg, color: tk.tabText, fontFamily: 'Roboto, system-ui, sans-serif' }}>
       {/* TAB STRIP */}
-      <div className="flex items-end gap-1.5 px-3 pt-2 shrink-0" style={{ background: tk.frame, height: 42 }}>
+      <div className="flex items-end gap-1.5 pl-20 pr-3 pt-2 shrink-0" style={{ background: tk.frame, height: 42 }}>
         {tabs.map(t => {
           const isActive = t.id === activeId;
           let fav = getFavicon(t.url);

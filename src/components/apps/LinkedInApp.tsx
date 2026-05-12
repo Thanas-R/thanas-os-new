@@ -93,7 +93,7 @@ export const LinkedInApp = () => {
                     background: dark ? '#1d2226' : '#ffffff',
                     color: dark ? '#e8e6e3' : '#1d2226',
                     borderColor: dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
-                    transform: 'translateY(20px)',
+                    transform: 'translateY(30px)',
                   }}
                 >
                   Connect

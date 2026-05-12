@@ -15,10 +15,10 @@ import { getAppMenus, subscribeMenuRegistry, MenuItem, AppMenus } from '@/types/
 interface MenuBarProps { onSpotlightClick?: () => void; }
 interface MenuGroup { label: string; items: MenuItem[]; }
 
-// Battery glyph — body now 22px wide (was 26 → 15% smaller, rounded)
-const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
+// Battery glyph — body 22px wide. Fill turns yellow in Low Power Mode.
+const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charging: boolean; lowPower?: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
-  const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
+  const fillColor = lowPower ? '#FFD60A' : charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
   return (
     <div className="flex items-center gap-1">
       <div className="relative" style={{ width: 22, height: 13 }}>
@@ -183,6 +183,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     return () => document.removeEventListener('mousedown', onDown);
   }, [activeMenu, appleOpen]);
 
+  // Click outside closes any status popover (battery / wifi / bluetooth / volume)
+  useEffect(() => {
+    const anyOpen = batteryOpen || wifiOpen || btOpen || volOpen;
+    if (!anyOpen) return;
+    const onDown = (e: MouseEvent) => { if (!menuBarRef.current?.contains(e.target as Node)) openOnly(null); };
+    setTimeout(() => document.addEventListener('mousedown', onDown), 0);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [batteryOpen, wifiOpen, btOpen, volOpen]);
+
   const formatTime = (d: Date) =>
     d.toLocaleTimeString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true });
 
@@ -241,7 +250,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-1 relative">
           <div className="relative">
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <IoBluetooth className="w-4 h-4" />
+              <IoBluetooth className="w-5 h-5" />
             </StatusBtn>
             {btOpen && (
               <div className="absolute right-0"><FrostedPanel width={260}>
@@ -298,34 +307,27 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
 
           <div className="relative">
             <StatusBtn onClick={() => openOnly(batteryOpen ? null : 'battery')} active={batteryOpen} title="Battery">
-              <IOSBattery level={batteryLevel} charging={batteryCharging} />
+              <IOSBattery level={batteryLevel} charging={batteryCharging} lowPower={!!settings.lowPowerMode} />
             </StatusBtn>
             {batteryOpen && (
-              <div className="absolute right-0"><FrostedPanel width={290}>
-                <div className="flex items-center justify-between mb-2">
-                  <div className="font-semibold flex items-center gap-1.5">Battery {batteryCharging && <BatteryCharging className="w-3.5 h-3.5 text-emerald-400" />}</div>
-                  <div className="text-[12px] text-white/70">{batteryLevel ?? 100}%</div>
+              <div className="absolute right-0"><FrostedPanel width={300}>
+                <div className="flex items-center justify-between mb-1">
+                  <div className="font-semibold text-[14px]">Battery</div>
+                  <div className="text-[13.5px] text-white/85">{batteryLevel ?? 100}%</div>
                 </div>
-                <div className="text-[12px] text-white/70 mb-1">Power Source: {batteryCharging ? 'Power Adapter' : 'Battery'}</div>
-                {batteryCharging && <div className="text-[12px] text-white/70 mb-2">Slow Charger</div>}
+                <div className="text-[12.5px] text-white/65 mb-2">Power Source: {batteryCharging ? 'Power Adapter' : 'Battery'}</div>
                 <div className="h-px bg-white/10 my-1.5" />
-                <div className="text-[12px] font-semibold text-white/85 px-1 mb-1.5">Energy Mode</div>
-                {[
-                  { label: 'Automatic', accent: 'bg-blue-500' },
-                  { label: 'Low Power', accent: 'bg-amber-600' },
-                  { label: 'High Power', accent: 'bg-rose-500' },
-                ].map(m => (
-                  <button key={m.label} className="w-full flex items-center gap-2.5 px-1.5 py-1.5 rounded-md hover:bg-black/40 text-left">
-                    <div className={`w-7 h-4 rounded-[3px] flex items-center justify-center ${m.accent}`}>
-                      <div className="w-1 h-2.5 bg-white/70 rounded-sm absolute" style={{ marginLeft: 22 }} />
-                    </div>
-                    <span className="text-[12.5px]">{m.label}</span>
-                  </button>
-                ))}
-                <div className="h-px bg-white/10 my-1.5" />
-                <div className="text-[11.5px] text-white/55 px-1 mb-1">No Apps Using Significant Energy</div>
-                <div className="h-px bg-white/10 my-1" />
-                <button onClick={() => { openApp('settings'); openOnly(null); }} className="w-full text-left px-2 py-1.5 rounded hover:bg-black/40 text-[12.5px]">Battery Settings…</button>
+                <div className="text-[12.5px] font-semibold text-white/90 px-0.5 mb-1.5">Energy Mode</div>
+                <button
+                  onClick={() => updateSettings({ lowPowerMode: !settings.lowPowerMode })}
+                  className="w-full flex items-center gap-2.5 px-1 py-1.5 rounded-md hover:bg-white/10 text-left"
+                >
+                  <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
+                    <IOSBattery level={20} charging={false} lowPower={true} />
+                  </div>
+                  <span className="text-[13px] flex-1">Low Power</span>
+                  {settings.lowPowerMode && <Check className="w-3.5 h-3.5 text-white/80" />}
+                </button>
               </FrostedPanel></div>
             )}
           </div>

@@ -183,6 +183,13 @@ All colors MUST be HSL.
   }
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
+  .thin-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }
+  .thin-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+  .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+  .thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.22); border-radius: 8px; }
+  .thin-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(0,0,0,0.4); }
+  .dark .thin-scrollbar { scrollbar-color: rgba(255,255,255,0.22) transparent; }
+  .dark .thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.22); }
 }
 
 /* Boot/restart loader (turtle) */

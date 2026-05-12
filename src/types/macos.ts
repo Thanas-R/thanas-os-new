@@ -48,6 +48,7 @@ export interface MacOSSettings {
   airdrop?: boolean;
   focus?: boolean;
   doNotDisturb?: boolean;
+  lowPowerMode?: boolean;
   defaultBrowser?: 'safari' | 'google';
   googleInstalled?: boolean;
 }

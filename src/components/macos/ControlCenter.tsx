@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Slider as SliderPrimitive } from '@base-ui/react/slider';
 import { Moon, Airplay, Sun, Pause } from 'lucide-react';
 import { HiSun } from 'react-icons/hi';
 import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from 'react-icons/io5';
@@ -27,14 +26,18 @@ export const ControlCenter = ({ open, onClose }: Props) => {
 
   useEffect(() => {
     if (!open) return;
+
     const onDown = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) onClose();
     };
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
+
     setTimeout(() => document.addEventListener('mousedown', onDown), 0);
     window.addEventListener('keydown', onKey);
+
     return () => {
       document.removeEventListener('mousedown', onDown);
       window.removeEventListener('keydown', onKey);
@@ -62,6 +65,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
           }}
         >
           <div className="grid grid-cols-2 gap-2 mb-2">
+            {/* LEFT: connectivity stack */}
             <div className="rounded-2xl bg-white/10 p-2.5 flex flex-col gap-1.5">
               <ConnRow
                 active={settings.wifi}
@@ -95,6 +99,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               />
             </div>
 
+            {/* RIGHT: focus on top, two squares on bottom */}
             <div className="grid grid-rows-[auto_auto] gap-2">
               <button
                 onClick={() => updateSettings({ focus: !settings.focus })}
@@ -110,7 +115,9 @@ export const ControlCenter = ({ open, onClose }: Props) => {
 
                 <div className="leading-tight">
                   <div className="text-[12.5px] font-semibold">Focus</div>
-                  <div className="text-[10.5px] text-white/55">{settings.focus ? 'On' : 'Off'}</div>
+                  <div className="text-[10.5px] text-white/55">
+                    {settings.focus ? 'On' : 'Off'}
+                  </div>
                 </div>
               </button>
 
@@ -155,6 +162,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
             }
           />
 
+          {/* Now Playing */}
           <div className="rounded-2xl bg-white/10 p-3 mt-2 flex items-center gap-3">
             <img src={np.cover} alt="" className="w-11 h-11 rounded-lg object-cover" />
             <div className="flex-1 min-w-0">
@@ -239,6 +247,7 @@ const SquareTile = ({
   </button>
 );
 
+// macOS-style pill slider with animated white fill and embedded icon
 const SliderModule = ({
   label,
   value,
@@ -252,31 +261,60 @@ const SliderModule = ({
   icon: React.ReactNode;
   trailing?: React.ReactNode;
 }) => {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+  const pct = clamp(value, 0, 100);
+
+  const updateFromX = (clientX: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const p = clamp((clientX - r.left) / r.width, 0, 1);
+    onChange(Math.round(p * 100));
+  };
+
+  useEffect(() => {
+    if (!dragging) return;
+
+    const onMove = (e: PointerEvent) => updateFromX(e.clientX);
+    const onUp = () => setDragging(false);
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+  }, [dragging]);
+
   return (
     <div className="rounded-2xl bg-white/10 px-3 pt-3 pb-3 mt-2">
       <div className="text-[12.5px] font-semibold mb-2">{label}</div>
 
       <div className="flex items-center gap-2 min-h-[42px]">
-        <SliderPrimitive.Root
-          value={value}
-          min={0}
-          max={100}
-          thumbAlignment="edge"
-          onValueChange={(vals) => onChange(vals[0] ?? 0)}
-          className="flex-1"
+        <div
+          ref={trackRef}
+          onPointerDown={(e) => {
+            setDragging(true);
+            updateFromX(e.clientX);
+          }}
+          className="relative flex-1 h-10 rounded-full overflow-hidden cursor-pointer select-none bg-white/12"
         >
-          <SliderPrimitive.Control className="flex w-full touch-none select-none data-disabled:pointer-events-none">
-            <SliderPrimitive.Track className="relative grow h-9 rounded-full overflow-hidden bg-white/15">
-              <SliderPrimitive.Indicator className="absolute left-[3px] top-[3px] bottom-[3px] rounded-full bg-white transition-[width] duration-150 ease-out" />
+          {/* animated white fill, inset so the gray looks like a border */}
+          <motion.div
+            className="absolute inset-[4px] rounded-full bg-white origin-left"
+            animate={{ scaleX: pct / 100 }}
+            transition={{ type: 'spring', stiffness: 320, damping: 34, mass: 0.5 }}
+          />
 
-              <div className="absolute left-2.5 top-1/2 -translate-y-1/2 z-20 pointer-events-none">
-                {icon}
-              </div>
-
-              <SliderPrimitive.Thumb className="size-5 rounded-full bg-white opacity-0 pointer-events-none" />
-            </SliderPrimitive.Track>
-          </SliderPrimitive.Control>
-        </SliderPrimitive.Root>
+          {/* icon inside the slider */}
+          <div className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+            {icon}
+          </div>
+        </div>
 
         {trailing}
       </div>

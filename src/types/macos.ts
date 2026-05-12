@@ -24,6 +24,13 @@ export interface AppConfig {
   nonResizable?: boolean;
   /** Hide the green traffic light (no maximize). */
   noMaximize?: boolean;
+  /**
+   * 'default' (with title bar + name), 'transparent' (title bar visible w/ chromeColor, no text),
+   * or 'integrated' (no title bar; traffic lights overlaid as floating buttons over the app content).
+   */
+  chromeMode?: 'default' | 'transparent' | 'integrated';
+  /** Background color for the title bar when chromeMode === 'transparent'. */
+  chromeColor?: string;
 }
 
 export interface WindowState {

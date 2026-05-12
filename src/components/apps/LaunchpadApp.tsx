@@ -19,7 +19,7 @@ import appstoreIcon from '@/assets/appstore-icon.png';
 import launchpadIcon from '@/assets/launchpad-icon.png';
 import calculatorNewIcon from '@/assets/calculator-new-icon.png';
 import googleNewIcon from '@/assets/google-icon-new.png';
-import calendarIcon from '@/assets/calendar-icon.png';
+import calendarIcon from '@/assets/calendar-icon-new.png';
 import appleMusicIcon from '@/assets/apple-music-icon.png';
 
 export const APP_ICONS: Record<string, string> = {

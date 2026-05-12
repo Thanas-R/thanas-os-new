@@ -16,9 +16,15 @@ interface MenuBarProps { onSpotlightClick?: () => void; }
 interface MenuGroup { label: string; items: MenuItem[]; }
 
 // Battery glyph — body now 22px wide (was 26 → 15% smaller, rounded)
-const IOSBattery = ({ level, charging }: { level: number | null; charging: boolean }) => {
+const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charging: boolean; lowPower?: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
-  const fillColor = charging ? '#34C952' : pct <= 20 ? '#FE0E09' : '#ffffff';
+  const fillColor = lowPower
+    ? '#FFD60A'
+    : charging
+      ? '#34C952'
+      : pct <= 20
+        ? '#FE0E09'
+        : '#ffffff';
   return (
     <div className="flex items-center gap-1">
       <div className="relative" style={{ width: 22, height: 13 }}>
@@ -240,16 +246,20 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   };
 
   useEffect(() => {
-    if (!activeMenu && !appleOpen) return;
+    if (!activeMenu && !appleOpen && !batteryOpen && !wifiOpen && !btOpen && !volOpen) return;
     const onDown = (e: MouseEvent) => {
       if (!menuBarRef.current?.contains(e.target as Node)) {
         setActiveMenu(null);
         setAppleOpen(false);
+        setBatteryOpen(false);
+        setWifiOpen(false);
+        setBtOpen(false);
+        setVolOpen(false);
       }
     };
     document.addEventListener('mousedown', onDown);
     return () => document.removeEventListener('mousedown', onDown);
-  }, [activeMenu, appleOpen]);
+  }, [activeMenu, appleOpen, batteryOpen, wifiOpen, btOpen, volOpen]);
 
   const formatTime = (d: Date) =>
     d.toLocaleTimeString('en-US', {
@@ -361,7 +371,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <div
             className="relative"
             onMouseEnter={() => openOnly('bt')}
-            onMouseLeave={() => openOnly(null)}
           >
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
               <IoBluetooth style={{ width: 17, height: 17 }} />
@@ -410,7 +419,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <div
             className="relative"
             onMouseEnter={() => openOnly('wifi')}
-            onMouseLeave={() => openOnly(null)}
           >
             <StatusBtn
               onClick={() => openOnly(wifiOpen ? null : 'wifi')}
@@ -475,10 +483,9 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           <div
             className="relative"
             onMouseEnter={() => openOnly('battery')}
-            onMouseLeave={() => openOnly(null)}
           >
             <StatusBtn onClick={() => openOnly(batteryOpen ? null : 'battery')} active={batteryOpen} title="Battery">
-              <IOSBattery level={batteryLevel} charging={batteryCharging} />
+              <IOSBattery level={batteryLevel} charging={batteryCharging} lowPower={settings.lowPowerMode} />
             </StatusBtn>
 
             {batteryOpen && (

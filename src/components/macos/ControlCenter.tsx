@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Airplay, Sun, Pause, Volume2, Sun as SunIconAlt } from 'lucide-react';
+import { Moon, Airplay, Sun, Pause } from 'lucide-react';
+import { HiSun } from 'react-icons/hi';
+import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth } from 'react-icons/io5';
 import { IoIosWifi } from 'react-icons/io';
 import { IoPlay, IoPlayForward, IoBluetooth } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
@@ -98,13 +100,27 @@ export const ControlCenter = ({ open, onClose }: Props) => {
             </div>
           </div>
 
-          <SliderModule label="Display" value={settings.brightness ?? 80} onChange={(v) => updateSettings({ brightness: v })} icon={<SunIconAlt className="w-4 h-4 text-neutral-700" />} />
-          <SliderModule label="Sound" value={settings.volume ?? 65} onChange={(v) => updateSettings({ volume: v })} icon={<Volume2 className="w-4 h-4 text-neutral-700" />} trailing={
-            <button onClick={() => setAirplayOn(v => !v)} className="ml-2 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center shrink-0">
-              <Airplay className="w-4 h-4" />
-            </button>
-          } />
+          <SliderModule
+  label="Display"
+  value={settings.brightness ?? 80}
+  onChange={(v) => updateSettings({ brightness: v })}
+  icon={<HiSun className="w-[15px] h-[15px] text-neutral-700" />}
+/>
 
+<SliderModule
+  label="Sound"
+  value={settings.volume ?? 65}
+  onChange={(v) => updateSettings({ volume: v })}
+  icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700" />}
+  trailing={
+    <button
+      onClick={() => setAirplayOn(v => !v)}
+      className="ml-2 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center shrink-0"
+    >
+      <Airplay className="w-4 h-4" />
+    </button>
+  }
+/>
           {/* Now Playing */}
           <div className="rounded-2xl bg-white/10 p-3 mt-2 flex items-center gap-3">
             <img src={np.cover} alt="" className="w-11 h-11 rounded-lg object-cover" />
@@ -112,10 +128,20 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="text-[12.5px] font-semibold truncate">{np.title}</div>
               <div className="text-[11px] text-white/65 truncate">{np.artist}</div>
             </div>
-            <button onClick={() => setNowPlaying({ playing: !np.playing })} className="p-1.5 rounded-full hover:bg-white/15">
-              {np.playing ? <Pause className="w-4 h-4" fill="white" /> : <IoPlay className="w-4 h-4" />}
-            </button>
-            <button className="p-1.5 rounded-full hover:bg-white/15"><IoPlayForward className="w-4 h-4" /></button>
+            <button className="p-1.5 rounded-full hover:bg-white/15">
+  <IoPlayBack className="w-4 h-4" />
+</button>
+
+<button
+  onClick={() => setNowPlaying({ playing: !np.playing })}
+  className="p-1.5 rounded-full hover:bg-white/15"
+>
+  {np.playing ? <Pause className="w-4 h-4" fill="white" /> : <IoPlay className="w-4 h-4" />}
+</button>
+
+<button className="p-1.5 rounded-full hover:bg-white/15">
+  <IoPlayForward className="w-4 h-4" />
+</button>
           </div>
         </motion.div>
       )}
@@ -165,52 +191,89 @@ const SquareTile = ({
 );
 
 // macOS-style pill slider with embedded icon and white "filled" indicator.
-const SliderModule = ({ label, value, onChange, icon, trailing }: { label: string; value: number; onChange: (v: number) => void; icon: React.ReactNode; trailing?: React.ReactNode }) => {
+const SliderModule = ({
+  label,
+  value,
+  onChange,
+  icon,
+  trailing
+}: {
+  label: string;
+  value: number;
+  onChange: (v: number) => void;
+  icon: React.ReactNode;
+  trailing?: React.ReactNode;
+}) => {
   const trackRef = useRef<HTMLDivElement>(null);
-  const [drag, setDrag] = useState(false);
+  const [dragging, setDragging] = useState(false);
+
+  const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 
   const updateFromX = (clientX: number) => {
-    const el = trackRef.current; if (!el) return;
+    const el = trackRef.current;
+    if (!el) return;
     const r = el.getBoundingClientRect();
-    const p = Math.max(0, Math.min(1, (clientX - r.left) / r.width));
+    const p = clamp((clientX - r.left) / r.width, 0, 1);
     onChange(Math.round(p * 100));
   };
 
   useEffect(() => {
-    if (!drag) return;
-    const m = (e: MouseEvent) => updateFromX(e.clientX);
-    const u = () => setDrag(false);
-    window.addEventListener('mousemove', m);
-    window.addEventListener('mouseup', u);
-    return () => { window.removeEventListener('mousemove', m); window.removeEventListener('mouseup', u); };
-  }, [drag]);
+    if (!dragging) return;
 
-  const pct = Math.max(0, Math.min(100, value));
+    const onMove = (e: PointerEvent) => updateFromX(e.clientX);
+    const onUp = () => setDragging(false);
+
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+
+    return () => {
+      window.removeEventListener('pointermove', onMove);
+      window.removeEventListener('pointerup', onUp);
+    };
+  }, [dragging]);
+
+  const pct = clamp(value, 0, 100);
 
   return (
-    <div className="rounded-2xl bg-white/10 px-4 pt-3 pb-3 mt-2">
+    <div className="rounded-2xl bg-white/10 px-3 pt-3 pb-3 mt-2">
       <div className="text-[12.5px] font-semibold mb-2">{label}</div>
+
       <div className="flex items-center gap-2">
         <div
           ref={trackRef}
-          onMouseDown={(e) => { setDrag(true); updateFromX(e.clientX); }}
-          className="relative flex-1 h-5 rounded-full overflow-hidden cursor-pointer"
+          onPointerDown={(e) => {
+            setDragging(true);
+            updateFromX(e.clientX);
+          }}
+          className="relative flex-1 h-7 rounded-full overflow-hidden cursor-pointer select-none"
           style={{ background: 'rgba(255,255,255,0.18)' }}
         >
-          {/* white fill */}
+          {/* filled part */}
           <div
             className="absolute inset-y-0 left-0 rounded-full"
             style={{
-              width: `calc(${pct}% + 14px)`,
+              width: `calc(${pct}% + 12px)`,
               background: '#ffffff',
               boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
             }}
           />
-          {/* embedded leading icon */}
-          <div className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+
+          {/* icon moved a bit more left */}
+          <div className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
             {icon}
           </div>
+
+          {/* draggable handle */}
+          <div
+            className="absolute top-1/2 -translate-y-1/2 z-20 pointer-events-none"
+            style={{
+              left: `calc(${pct}% - 12px)`,
+            }}
+          >
+            <div className="w-6 h-6 rounded-full bg-white shadow-[0_1px_6px_rgba(0,0,0,0.18)] border border-black/5" />
+          </div>
         </div>
+
         {trailing}
       </div>
     </div>

@@ -148,14 +148,14 @@ export const CalendarApp = () => {
         style={{ borderColor: tone.border, background: tone.headerBg, backdropFilter: 'blur(20px) saturate(180%)' }}
       >
         <div className="flex items-center gap-9 ml-auto">
-          <h2 className="text-[20px] font-semibold tracking-tight">{headerLabel}</h2>
+          <h2 className="text-[13px] font-semibold tracking-tight">{headerLabel}</h2>
           <div className="flex items-center gap-1">
             <button onClick={() => navigate(-1)} className="w-7 h-7 flex items-center justify-center rounded-md text-white hover:bg-white/10"><ChevronLeft className="w-4 h-4" /></button>
             <button onClick={() => navigate(1)} className="w-7 h-7 flex items-center justify-center rounded-md text-white hover:bg-white/10"><ChevronRight className="w-4 h-4" /></button>
           </div>
         </div>
 
-        <div className="flex items-center gap-5 ml-5">
+        <div className="flex items-center gap-5 ml-4">
           <Segmented tone={tone} value={view} onChange={setView} />
           <button
             onClick={() => openCreate(current)}

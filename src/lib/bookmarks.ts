@@ -11,8 +11,10 @@ const DEFAULTS: Bookmark[] = [
   { name: 'Portfolio', url: 'https://thanas.vercel.app' },
   { name: 'GitHub', url: 'https://github.com/Thanas-R' },
   { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanas-r/' },
+  { name: 'YouTube', url: 'https://www.youtube.com' },
+  { name: 'Amazon', url: 'https://www.amazon.com' },
+  { name: 'Reddit', url: 'https://www.reddit.com' },
   { name: 'Apple', url: 'https://www.apple.com' },
-  { name: 'DuckDuckGo', url: 'https://duckduckgo.com' },
   { name: 'Wikipedia', url: 'https://en.wikipedia.org' },
 ];
 

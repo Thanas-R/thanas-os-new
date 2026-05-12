@@ -104,14 +104,14 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   label="Display"
   value={settings.brightness ?? 80}
   onChange={(v) => updateSettings({ brightness: v })}
-  icon={<HiSun className="w-[15px] h-[15px] text-neutral-700" />}
+  icon={<HiSun className="w-[15px] h-[15px] text-neutral-700 opacity-40" />}
 />
 
 <SliderModule
   label="Sound"
   value={settings.volume ?? 65}
   onChange={(v) => updateSettings({ volume: v })}
-  icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700" />}
+  icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700 opacity-40" />}
   trailing={
     <button
       onClick={() => setAirplayOn(v => !v)}
@@ -261,16 +261,6 @@ const SliderModule = ({
           {/* icon moved a bit more left */}
           <div className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
             {icon}
-          </div>
-
-          {/* draggable handle */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 z-20 pointer-events-none"
-            style={{
-              left: `calc(${pct}% - 12px)`,
-            }}
-          >
-            <div className="w-6 h-6 rounded-full bg-white shadow-[0_1px_6px_rgba(0,0,0,0.18)] border border-black/5" />
           </div>
         </div>
 

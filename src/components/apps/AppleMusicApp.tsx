@@ -3,16 +3,18 @@ import { IoPlay, IoPause, IoPlayForward, IoPlayBack } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
 import cradles from '@/assets/cradles-cover.png';
+import encore from '@/assets/album-encore.png';
+import bringitondown from '@/assets/album-bringitondown.png';
+import physical from '@/assets/album-physical.png';
+import cryinglightning from '@/assets/album-cryinglightning.png';
 
 const ARTWORKS = [
   { artist: 'Suburban', song: 'Cradles', img: cradles, tag: 'Top Picks for You' },
-  { artist: 'Eminem', song: 'Mockingbird', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/3/35/The_Eminem_Show.jpg/220px-The_Eminem_Show.jpg', tag: 'Made for You' },
-  { artist: 'Oasis', song: 'Bring It On Down', img: 'https://upload.wikimedia.org/wikipedia/en/thumb/1/16/OasisDefinitelyMaybealbumcover.jpg/220px-OasisDefinitelyMaybealbumcover.jpg', tag: 'Featuring Oasis' },
-  { artist: 'The Weeknd', song: 'Blinding Lights', img: 'https://upload.wikimedia.org/wikipedia/en/e/e6/The_Weeknd_-_Blinding_Lights.png', tag: 'Made for You' },
-  { artist: 'Dua Lipa', song: 'Physical', img: 'https://upload.wikimedia.org/wikipedia/en/3/3b/Dua_Lipa_-_Physical.png', tag: 'Trending' },
-  { artist: 'Arctic Monkeys', song: 'Crying Lightning', img: 'https://upload.wikimedia.org/wikipedia/en/8/8e/Arctic_Monkeys_-_Humbug.png', tag: 'New Music Mix' },
-  { artist: 'Gorillaz', song: 'Dirty Harry', img: 'https://upload.wikimedia.org/wikipedia/en/f/fa/Gorillaz_-_Demon_Days.png', tag: 'Get Up! Mix' },
-  { artist: 'The 1975', song: 'If You\u2019re Too Shy', img: 'https://upload.wikimedia.org/wikipedia/en/f/fa/The_1975_-_Notes_on_a_Conditional_Form.png', tag: 'Made for You' },
+  { artist: 'Eminem', song: 'Mockingbird', img: encore, tag: 'Made for You' },
+  { artist: 'Oasis', song: 'Bring It On Down', img: bringitondown, tag: 'Featuring Oasis' },
+  { artist: 'Dua Lipa', song: 'Physical', img: physical, tag: 'Trending' },
+  { artist: 'Arctic Monkeys', song: 'Crying Lightning', img: cryinglightning, tag: 'New Music Mix' },
+  { artist: 'The Weeknd', song: 'Blinding Lights', img: cradles, tag: 'Made for You' },
 ];
 
 const RECENT = ARTWORKS.slice(0, 6);
@@ -65,13 +67,19 @@ export const AppleMusicApp = () => {
 
       <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '220px 1fr' }}>
         {/* Sidebar */}
-        <aside className="overflow-y-auto px-2 py-3 border-r border-black/10" style={{ background: '#f6f6f6' }}>
+        <aside className="overflow-y-auto thin-scrollbar px-2 py-3 border-r border-black/10" style={{ background: '#f6f6f6' }}>
           <div className="flex items-center gap-1 px-2 pb-2 text-[#fa2d48] font-semibold text-[15px]">
             <MusicIcon className="w-4 h-4" /> Music
           </div>
           <div className="px-2 mb-3">
-            <div className="flex items-center gap-1.5 h-7 rounded border border-black/10 bg-white px-2">
-              <Search className="w-3.5 h-3.5 text-[#fa2d48]" />
+            <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
+              style={{
+                background: 'rgba(255,255,255,0.55)',
+                backdropFilter: 'blur(20px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                border: '1px solid rgba(0,0,0,0.06)',
+              }}>
+              <Search className="w-3.5 h-3.5 text-neutral-500" />
               <input className="bg-transparent outline-none text-[12px] flex-1" placeholder="Search" />
             </div>
           </div>
@@ -103,7 +111,7 @@ export const AppleMusicApp = () => {
         </aside>
 
         {/* Main */}
-        <main className="overflow-y-auto px-7 py-5 bg-white">
+        <main className="overflow-y-auto thin-scrollbar px-7 py-5 bg-white">
           <h1 className="text-[28px] font-bold mb-5">Home</h1>
 
           <div className="text-[14px] font-semibold mb-3">Top Picks for You</div>

@@ -20,6 +20,10 @@ export interface AppConfig {
   defaultSize?: { width: number; height: number };
   minSize?: { width: number; height: number };
   maxSize?: { width: number; height: number };
+  /** Window cannot be resized (hides resize handles). */
+  nonResizable?: boolean;
+  /** Hide the green traffic light (no maximize). */
+  noMaximize?: boolean;
 }
 
 export interface WindowState {

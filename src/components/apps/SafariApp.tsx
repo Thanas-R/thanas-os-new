@@ -91,13 +91,12 @@ export const SafariApp = () => {
       ? newTab(pending, (() => { try { return new URL(pending).hostname; } catch { return pending; } })())
       : newTab();
   }
-  const { bookmarks, has: hasBookmark, toggle: toggleBookmark } = useBookmarks();
+  const { bookmarks } = useBookmarks();
   const [tabs, setTabs] = useState<Tab[]>([initial.current]);
   const [activeId, setActiveId] = useState(initial.current.id);
   const [addressBar, setAddressBar] = useState(initial.current.url);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showBookmarksBar, setShowBookmarksBar] = useState(true);
-  const [showMenu, setShowMenu] = useState(false);
   const [proxyHtml, setProxyHtml] = useState<Record<string, string>>({});
   const active = tabs.find(t => t.id === activeId)!;
 

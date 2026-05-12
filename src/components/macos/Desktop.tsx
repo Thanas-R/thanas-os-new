@@ -53,6 +53,22 @@ export const Desktop = () => {
     });
   }, []);
 
+  // Force every external anchor to open in a new tab
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement)?.closest?.('a') as HTMLAnchorElement | null;
+      if (!a) return;
+      const href = a.getAttribute('href') || '';
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+      // Allow internal app routes (data-internal) to behave normally
+      if (a.dataset.internal === 'true') return;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+    };
+    document.addEventListener('click', onClick, true);
+    return () => document.removeEventListener('click', onClick, true);
+  }, []);
+
   const getBackgroundImage = () => {
     if (settings.wallpaper === 'custom' && settings.customWallpaper) return settings.customWallpaper;
     if (settings.wallpaper.startsWith('data:')) return settings.wallpaper;

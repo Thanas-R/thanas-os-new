@@ -195,7 +195,7 @@ export const Window = ({ window }: WindowProps) => {
         border: '1px solid hsl(var(--macos-glass-border))',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.35), 0 0 1px rgba(255, 255, 255, 0.15) inset',
       }}
-      onMouseDown={() => focusWindow(window.id)}
+      onMouseDown={(e) => { focusWindow(window.id); handleTopRowMouseDown(e); }}
     >
       {!integrated && (
         <div

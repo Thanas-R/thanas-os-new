@@ -1,4 +1,5 @@
 import { Search, Clock, Disc, Music as MusicIcon, Radio, ListMusic, Heart } from 'lucide-react';
+// MusicIcon kept for nav rows (Songs/Artists). Header label icon removed per design.
 import { useMacOS } from '@/contexts/MacOSContext';
 import { TRACKS, playTrack } from '@/lib/nowPlaying';
 import { NowPlayingPill } from '@/components/macos/NowPlayingPill';
@@ -22,9 +23,9 @@ export const AppleMusicApp = () => {
     >
       <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '220px 1fr' }}>
         {/* Sidebar */}
-        <aside className="overflow-y-auto thin-scrollbar px-2 py-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
-          <div className="flex items-center gap-1 px-2 pb-2 font-semibold text-[15px]" style={{ color: accent }}>
-            <MusicIcon className="w-4 h-4" /> Music
+        <aside className="overflow-y-auto no-scrollbar px-2 py-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
+          <div className="px-2 pb-2 font-semibold text-[15px]" style={{ color: accent }}>
+            Music
           </div>
           <div className="px-2 mb-3">
             <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
@@ -63,7 +64,7 @@ export const AppleMusicApp = () => {
         </aside>
 
         {/* Main */}
-        <main className="overflow-y-auto thin-scrollbar px-7 py-5 pb-24" style={{ background: tone.main }}>
+        <main className="overflow-y-auto no-scrollbar px-7 py-5 pb-24" style={{ background: tone.main }}>
           <h1 className="text-[28px] font-bold mb-5">Home</h1>
 
           <div className="text-[14px] font-semibold mb-3">Top Picks for You</div>

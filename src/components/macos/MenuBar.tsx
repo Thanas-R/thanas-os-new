@@ -320,12 +320,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         <div className="flex items-center gap-1 relative">
           <div
             className="relative"
-            onMouseEnter={() => {
-              if (activeMenu || appleOpen) {
-                setActiveMenu(null);
-                setAppleOpen(true);
-              }
-            }}
+            onMouseEnter={() => { setActiveMenu(null); setAppleOpen(true); }}
           >
             <button
               onClick={(e) => {
@@ -344,12 +339,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             <div
               key={m.label}
               className="relative"
-              onMouseEnter={() => {
-                if (activeMenu || appleOpen) {
-                  setAppleOpen(false);
-                  setActiveMenu(m.label);
-                }
-              }}
+              onMouseEnter={() => { setAppleOpen(false); setActiveMenu(m.label); }}
             >
               <button
                 onClick={(e) => {

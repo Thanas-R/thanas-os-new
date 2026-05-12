@@ -25,20 +25,22 @@ export const AppleMusicApp = () => {
         {/* Sidebar */}
         <aside className="overflow-y-auto no-scrollbar px-2 pb-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
           {/* Traffic-light row: leave room on left, Music label to the right */}
-          <div className="pl-[78px] pr-3 pt-3 pb-2 flex justify-end">
+          <div className="w-full pr-3 pt-3 pb-2 flex justify-end">
   <div className="font-semibold text-[15px]" style={{ color: accent }}>
     Music
   </div>
 </div>
           <div className="px-2 mb-3">
-            <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
-              style={{
-                width: '110%',
-                marginLeft: '-5%',
-                background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
-                backdropFilter: 'blur(20px) saturate(180%)',
-                border: `1px solid ${tone.border}`,
-              }}>
+            <div
+  className="flex items-center gap-1.5 h-8 rounded-md px-3 shadow-sm"
+  style={{
+    width: '110%',
+    marginLeft: '-5%',
+    background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
+    backdropFilter: 'blur(20px) saturate(180%)',
+    border: `1px solid ${tone.border}`,
+  }}
+>
               <Search className="w-3.5 h-3.5" style={{ color: tone.sub }} />
               <input className="bg-transparent outline-none text-[12px] flex-1 min-w-0" placeholder="Search" style={{ color: tone.text }} />
             </div>

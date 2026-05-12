@@ -23,19 +23,22 @@ export const AppleMusicApp = () => {
     >
       <div className="flex-1 grid min-h-0" style={{ gridTemplateColumns: '220px 1fr' }}>
         {/* Sidebar */}
-        <aside className="overflow-y-auto no-scrollbar px-2 py-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
-          <div className="px-4 pb-2 font-semibold text-[15px]" style={{ color: accent }}>
-            Music
+        <aside className="overflow-y-auto no-scrollbar px-2 pb-3 border-r" style={{ background: tone.side, borderColor: tone.border }}>
+          {/* Traffic-light row: leave room on left, Music label to the right */}
+          <div className="pl-[78px] pr-2 pt-3 pb-2 flex justify-end">
+            <div className="font-semibold text-[15px]" style={{ color: accent }}>Music</div>
           </div>
           <div className="px-2 mb-3">
             <div className="flex items-center gap-1.5 h-8 rounded-full px-3 shadow-sm"
               style={{
+                width: '110%',
+                marginLeft: '-5%',
                 background: dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)',
                 backdropFilter: 'blur(20px) saturate(180%)',
                 border: `1px solid ${tone.border}`,
               }}>
               <Search className="w-3.5 h-3.5" style={{ color: tone.sub }} />
-              <input className="bg-transparent outline-none text-[12px] flex-1" placeholder="Search" style={{ color: tone.text }} />
+              <input className="bg-transparent outline-none text-[12px] flex-1 min-w-0" placeholder="Search" style={{ color: tone.text }} />
             </div>
           </div>
 
@@ -64,7 +67,7 @@ export const AppleMusicApp = () => {
         </aside>
 
         {/* Main */}
-        <main className="overflow-y-auto no-scrollbar px-7 py-5 pb-24" style={{ background: tone.main }}>
+        <main className="overflow-y-auto no-scrollbar px-7 pt-9 pb-24" style={{ background: tone.main }}>
           <h1 className="text-[28px] font-bold mb-5">Home</h1>
 
           <div className="text-[14px] font-semibold mb-3">Top Picks for You</div>

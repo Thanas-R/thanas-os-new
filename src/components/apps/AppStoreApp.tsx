@@ -163,53 +163,7 @@ export const AppStoreApp = () => {
           </div>
         )}
 
-        {/* Apps section — Google as a standalone app */}
-        {showGoogleCard && (
-          <div className="px-8 pt-6">
-            <h2 className="text-lg font-semibold mb-4">Apps</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex gap-3 p-3 rounded-xl bg-white dark:bg-neutral-900 border border-black/5 dark:border-white/10">
-                <div className="w-14 h-14 rounded-xl bg-white dark:bg-neutral-800 flex items-center justify-center overflow-hidden shrink-0 ring-1 ring-black/5 dark:ring-white/10">
-                  <img src={googleIcon} alt="Google" className="w-10 h-10 object-contain" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <div className="font-semibold truncate">Google</div>
-                      <div className="text-xs text-neutral-500 dark:text-neutral-400 truncate">
-                        Fast, modern web browser by Google. Adds to your dock.
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => (googleInstalled ? uninstallGoogle() : installGoogle())}
-                      className={`shrink-0 px-3 py-1 rounded-full text-xs font-semibold transition-colors flex items-center gap-1 ${
-                        googleInstalled
-                          ? 'bg-neutral-200 dark:bg-neutral-700 text-neutral-700 dark:text-neutral-200 hover:bg-red-100 hover:text-red-700'
-                          : 'bg-blue-500 text-white hover:bg-blue-600'
-                      }`}
-                    >
-                      {googleInstalled ? (
-                        <><Check className="w-3 h-3" /> Installed</>
-                      ) : (
-                        <><Download className="w-3 h-3" /> Get</>
-                      )}
-                    </button>
-                  </div>
-                  {googleInstalled && (
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        onClick={() => openApp('google')}
-                        className="text-[11px] px-2 py-0.5 rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200 text-neutral-700 dark:text-neutral-300 flex items-center gap-1"
-                      >
-                        <ExternalLink className="w-3 h-3" /> Open
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Google ships preinstalled — no install card here. */}
 
         {/* Projects */}
         <div className="px-8 py-6">

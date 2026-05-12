@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Delete, Calculator as CalcIcon } from 'lucide-react';
+import { Calculator as CalcIcon } from 'lucide-react';
+import { BsBackspace } from 'react-icons/bs';
 import { registerAppMenus } from '@/types/macos';
 
 type Op = '+' | '-' | '*' | '/' | null;
@@ -149,10 +150,12 @@ export const CalculatorApp = () => {
         className="px-2.5 pb-3 grid gap-2"
         style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '1fr' }}
       >
-        <Key variant="util" onClick={backspace} aria-label="Backspace"><Delete className="w-5 h-5" strokeWidth={1.6} /></Key>
-        <Key variant="util" onClick={toggleSign} aria-label="Toggle sign">±</Key>
-        <Key variant="util" onClick={percent}>%</Key>
-        <Key variant="op" onClick={() => setOp('/')}>÷</Key>
+        <Key variant="util" onClick={backspace} aria-label="Backspace">
+  <BsBackspace className="w-5 h-5" />
+</Key>
+<Key variant="util" onClick={toggleSign} aria-label="Toggle sign">+/-  </Key>
+<Key variant="util" onClick={percent}>%</Key>
+<Key variant="op" onClick={() => setOp('/')}>÷</Key>
 
         <Key onClick={() => inputDigit('7')}>7</Key>
         <Key onClick={() => inputDigit('8')}>8</Key>
@@ -169,7 +172,7 @@ export const CalculatorApp = () => {
         <Key onClick={() => inputDigit('3')}>3</Key>
         <Key variant="op" onClick={() => setOp('+')}>+</Key>
 
-        <Key onClick={clearAll} aria-label="Clear"><CalcIcon className="w-5 h-5" strokeWidth={1.6} /></Key>
+        <Key onClick={clearAll} aria-label="All Clear">AC</Key>
         <Key onClick={() => inputDigit('0')}>0</Key>
         <Key onClick={inputDecimal}>.</Key>
         <Key variant="op" onClick={equals}>=</Key>

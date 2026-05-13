@@ -79,9 +79,16 @@ export const LaunchpadApp = () => {
     // Launchpad stays open intentionally so users can launch multiple apps.
   };
 
+  const [closing, setClosing] = useState(false);
+
   const dismiss = () => {
-    const lp = windows.find(w => w.appId === 'launchpad');
-    if (lp) closeWindow(lp.id);
+    if (closing) return;
+    setClosing(true);
+    window.dispatchEvent(new Event('launchpad-closing'));
+    window.setTimeout(() => {
+      const lp = windows.find(w => w.appId === 'launchpad');
+      if (lp) closeWindow(lp.id);
+    }, 300);
   };
 
   // ESC to close
@@ -90,11 +97,11 @@ export const LaunchpadApp = () => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [windows]);
+  }, [windows, closing]);
 
   return (
     <div
-      className="h-full w-full flex flex-col"
+      className={`h-full w-full flex flex-col ${closing ? 'launchpad-exit' : ''}`}
       style={{
         background: 'rgba(0,0,0,0.35)',
         backdropFilter: 'blur(60px) saturate(160%)',
@@ -118,8 +125,12 @@ export const LaunchpadApp = () => {
             <button
               key={item.id}
               onClick={() => handleOpen(item)}
-              className="flex flex-col items-center gap-2 group focus:outline-none"
-              style={{ animation: `launchpadItemIn 0.35s cubic-bezier(0.2,0.7,0.2,1) both`, animationDelay: `${idx * 18}ms` }}
+              className={`flex flex-col items-center gap-2 group focus:outline-none ${closing ? 'launchpad-item-exit' : ''}`}
+              style={
+                closing
+                  ? { animationDelay: `${idx * 8}ms` }
+                  : { animation: `launchpadItemIn 0.35s cubic-bezier(0.2,0.7,0.2,1) both`, animationDelay: `${idx * 18}ms` }
+              }
             >
               <div className="w-20 h-20 rounded-2xl overflow-hidden shadow-2xl group-hover:scale-110 group-active:scale-95 transition-transform">
                 {item.icon ? (

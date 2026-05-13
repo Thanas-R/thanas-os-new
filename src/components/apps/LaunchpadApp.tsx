@@ -124,7 +124,7 @@ export const LaunchpadApp = () => {
         />
       </div>
 
-      <div className="flex-1 px-12 pb-2 overflow-hidden">
+      <div className="flex-1 px-12 pt-4 pb-2 overflow-visible">
         <div className="grid grid-cols-7 gap-x-4 gap-y-8 max-w-5xl mx-auto">
           {pageItems.map((item, idx) => (
             <button

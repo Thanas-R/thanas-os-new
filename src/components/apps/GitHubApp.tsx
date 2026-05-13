@@ -181,11 +181,18 @@ export const GitHubApp = () => {
           </div>
 
           {/* Contribution graph card */}
-          <div className="mb-3">
-  <div className="text-[14px] font-semibold">Contribution Activity</div>
+<div
+  className="rounded-lg border p-5"
+  style={{ borderColor: border, background: card }}
+>
+  <div className="mb-3">
+    <div className="text-[14px] font-semibold">
+      Contribution Activity
+    </div>
+  </div>
+
+  <GitHubCalendar username={USERNAME} dark={dark} />
 </div>
-            <GitHubCalendar username={USERNAME} dark={dark} />
-          </div>
 
           {/* Repositories */}
           <div className="rounded-lg border p-5" style={{ borderColor: border, background: card }}>

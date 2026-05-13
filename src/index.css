@@ -231,6 +231,16 @@ All colors MUST be HSL.
   0% { opacity: 0; transform: scale(0.6) translateY(20px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
+@keyframes launchpadItemOut {
+  0% { opacity: 1; transform: scale(1) translateY(0); }
+  100% { opacity: 0; transform: scale(0.55) translateY(24px); }
+}
+.launchpad-exit {
+  animation: launchpadOut 0.30s cubic-bezier(0.4,0,0.6,1) both;
+}
+.launchpad-item-exit {
+  animation: launchpadItemOut 0.28s cubic-bezier(0.4,0,0.6,1) both;
+}
 .menubar-slide {
   transition: transform 0.32s cubic-bezier(0.2,0.7,0.2,1);
 }

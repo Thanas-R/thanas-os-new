@@ -427,7 +427,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               title={online ? 'Online' : 'Offline'}
               className={settings.wifi && online ? '' : 'opacity-60'}
             >
-              <IoIosWifi style={{ width: 17, height: 17 }} />
+              <IoIosWifi style={{ width: 18, height: 18 }} />
             </StatusBtn>
 
             {wifiOpen && (

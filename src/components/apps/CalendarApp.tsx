@@ -536,7 +536,7 @@ const WeekView = ({ current, today, events, onSlotClick, onEventClick, tone, dar
                         key={e.id}
                         onClick={(ev) => { ev.stopPropagation(); onEventClick(e); }}
                         className="absolute inset-x-1 top-0.5 text-[10.5px] px-1.5 py-0.5 rounded truncate"
-                        style={evChip(e.color)}
+                        style={evChip(COLORS_HEX[e.color], dark)}
                       >
                         {e.title}
                       </div>
@@ -577,7 +577,7 @@ const DayView = ({ current, today, events, onSlotClick, onEventClick, tone, dark
                     key={e.id}
                     onClick={(ev) => { ev.stopPropagation(); onEventClick(e); }}
                     className="text-[12px] px-2 py-1 rounded cursor-pointer"
-                    style={evChip(e.color)}
+                    style={evChip(COLORS_HEX[e.color], dark)}
                   >
                     <div className="font-medium">{e.title}</div>
                     <div className="text-[10.5px] opacity-75">

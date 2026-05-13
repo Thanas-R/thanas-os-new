@@ -25,8 +25,20 @@ const wallpapers = {
 export const Desktop = () => {
   const { windows, settings, closeWindow } = useMacOS();
   const [spotlightOpen, setSpotlightOpen] = useState(false);
+  const [launchpadClosing, setLaunchpadClosing] = useState(false);
   const isMobile = useIsMobile();
-  const launchpadOpen = windows.some(w => w.appId === 'launchpad' && !w.isMinimized);
+  const launchpadActuallyOpen = windows.some(w => w.appId === 'launchpad' && !w.isMinimized);
+  const launchpadOpen = launchpadActuallyOpen && !launchpadClosing;
+
+  useEffect(() => {
+    const onClosing = () => setLaunchpadClosing(true);
+    window.addEventListener('launchpad-closing', onClosing);
+    return () => window.removeEventListener('launchpad-closing', onClosing);
+  }, []);
+
+  useEffect(() => {
+    if (!launchpadActuallyOpen) setLaunchpadClosing(false);
+  }, [launchpadActuallyOpen]);
 
   useImagePreloader();
 

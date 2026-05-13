@@ -16,28 +16,92 @@ const MONTHS = ['January','February','March','April','May','June','July','August
 const WEEKDAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 
+// Holidays (India = royal green, US = whitish gray)
 const INDIAN_HOLIDAYS: Record<string, string> = {
   '2025-01-01': "New Year's Day", '2025-01-14': 'Makar Sankranti', '2025-01-26': 'Republic Day',
   '2025-03-14': 'Holi', '2025-03-31': 'Eid al-Fitr', '2025-04-10': 'Mahavir Jayanti',
   '2025-04-14': 'Ambedkar Jayanti', '2025-04-18': 'Good Friday', '2025-05-01': 'Labour Day',
-  '2025-08-15': 'Independence Day (IN)', '2025-08-27': 'Ganesh Chaturthi', '2025-10-02': 'Gandhi Jayanti',
-  '2025-10-20': 'Diwali', '2025-11-05': 'Guru Nanak Jayanti', '2025-12-25': 'Christmas',
+  '2025-08-15': 'Independence Day', '2025-08-27': 'Ganesh Chaturthi', '2025-10-02': 'Gandhi Jayanti',
+  '2025-10-20': 'Diwali', '2025-10-21': 'Govardhan Puja', '2025-10-22': 'Bhai Dooj',
+  '2025-11-05': 'Guru Nanak Jayanti', '2025-12-25': 'Christmas',
   '2026-01-01': "New Year's Day", '2026-01-14': 'Makar Sankranti', '2026-01-26': 'Republic Day',
   '2026-03-04': 'Holi', '2026-03-21': 'Eid al-Fitr', '2026-04-03': 'Good Friday',
-  '2026-04-14': 'Ambedkar Jayanti', '2026-05-01': 'Labour Day', '2026-08-15': 'Independence Day (IN)',
+  '2026-04-14': 'Ambedkar Jayanti', '2026-05-01': 'Labour Day', '2026-08-15': 'Independence Day',
   '2026-08-26': 'Janmashtami', '2026-09-14': 'Ganesh Chaturthi', '2026-10-02': 'Gandhi Jayanti',
   '2026-11-08': 'Diwali', '2026-11-24': 'Guru Nanak Jayanti', '2026-12-25': 'Christmas',
 };
 
 const US_HOLIDAYS: Record<string, string> = {
   '2025-01-01': "New Year's Day", '2025-01-20': 'MLK Day', '2025-02-17': "Presidents' Day",
-  '2025-05-26': 'Memorial Day', '2025-06-19': 'Juneteenth', '2025-07-04': 'Independence Day (US)',
+  '2025-05-26': 'Memorial Day', '2025-06-19': 'Juneteenth', '2025-07-04': 'Independence Day',
   '2025-09-01': 'Labor Day', '2025-10-13': 'Columbus Day', '2025-11-11': 'Veterans Day',
   '2025-11-27': 'Thanksgiving', '2025-12-25': 'Christmas',
   '2026-01-01': "New Year's Day", '2026-01-19': 'MLK Day', '2026-02-16': "Presidents' Day",
-  '2026-05-25': 'Memorial Day', '2026-06-19': 'Juneteenth', '2026-07-04': 'Independence Day (US)',
+  '2026-05-25': 'Memorial Day', '2026-06-19': 'Juneteenth', '2026-07-04': 'Independence Day',
   '2026-09-07': 'Labor Day', '2026-10-12': 'Columbus Day', '2026-11-11': 'Veterans Day',
   '2026-11-26': 'Thanksgiving', '2026-12-25': 'Christmas',
+};
+
+// RCB (Royal Challengers Bengaluru) — IPL 2025 league fixtures (red)
+const RCB_MATCHES: Record<string, string> = {
+  '2025-03-22': 'RCB vs KKR (Kolkata)', '2025-03-28': 'RCB vs CSK (Chennai)',
+  '2025-04-02': 'RCB vs GT (Bengaluru)', '2025-04-07': 'RCB vs MI (Mumbai)',
+  '2025-04-13': 'RCB vs DC (Bengaluru)', '2025-04-18': 'RCB vs PBKS (Bengaluru)',
+  '2025-04-24': 'RCB vs RR (Jaipur)', '2025-05-03': 'RCB vs CSK (Bengaluru)',
+  '2025-05-09': 'RCB vs LSG (Lucknow)', '2025-05-13': 'RCB vs SRH (Hyderabad)',
+  '2025-05-17': 'RCB vs KKR (Bengaluru)', '2025-05-23': 'RCB vs SRH (Bengaluru)',
+  '2025-05-27': 'RCB Qualifier 1', '2025-06-03': 'IPL 2025 Final',
+};
+
+// Real Madrid 2025-26 La Liga & UCL highlights (white)
+const REAL_MADRID_MATCHES: Record<string, string> = {
+  '2025-08-19': 'RM vs Osasuna (La Liga)', '2025-08-24': 'RM vs Real Oviedo',
+  '2025-08-31': 'RM vs Mallorca', '2025-09-13': 'RM vs Real Sociedad',
+  '2025-09-16': 'RM vs Marseille (UCL)', '2025-09-20': 'RM vs Espanyol',
+  '2025-09-23': 'RM vs Levante', '2025-09-27': 'RM vs Atlético (derby)',
+  '2025-10-01': 'RM vs Kairat (UCL)', '2025-10-05': 'RM vs Villarreal',
+  '2025-10-19': 'RM vs Getafe', '2025-10-21': 'RM vs Juventus (UCL)',
+  '2025-10-26': 'El Clásico — RM vs Barcelona', '2025-11-04': 'RM vs Liverpool (UCL)',
+  '2025-11-09': 'RM vs Rayo Vallecano', '2025-11-23': 'RM vs Elche',
+  '2025-11-26': 'RM vs Olympiacos (UCL)', '2025-12-07': 'RM vs Girona',
+  '2025-12-10': 'RM vs Man City (UCL)', '2025-12-14': 'RM vs Alavés',
+  '2025-12-21': 'RM vs Sevilla',
+};
+
+// India national cricket team — major fixtures (blue)
+const INDIA_CRICKET: Record<string, string> = {
+  '2025-08-02': 'IND vs ENG — 5th Test', '2025-10-19': 'IND vs AUS — 1st ODI',
+  '2025-10-23': 'IND vs AUS — 2nd ODI', '2025-10-25': 'IND vs AUS — 3rd ODI',
+  '2025-10-29': 'IND vs AUS — 1st T20I', '2025-10-31': 'IND vs AUS — 2nd T20I',
+  '2025-11-02': 'IND vs AUS — 3rd T20I', '2025-11-06': 'IND vs AUS — 4th T20I',
+  '2025-11-08': 'IND vs AUS — 5th T20I', '2025-11-14': 'IND vs SA — 1st Test',
+  '2025-11-22': 'IND vs SA — 2nd Test', '2025-11-30': 'IND vs SA — 1st ODI',
+  '2025-12-03': 'IND vs SA — 2nd ODI', '2025-12-06': 'IND vs SA — 3rd ODI',
+  '2025-12-09': 'IND vs SA — 1st T20I', '2025-12-11': 'IND vs SA — 2nd T20I',
+  '2025-12-14': 'IND vs SA — 3rd T20I', '2025-12-17': 'IND vs SA — 4th T20I',
+  '2025-12-19': 'IND vs SA — 5th T20I',
+};
+
+type HolidayKind = 'india' | 'usa' | 'rcb' | 'realmadrid' | 'cricket';
+interface OverlayItem { kind: HolidayKind; label: string; }
+
+const HOLIDAY_COLORS: Record<HolidayKind, string> = {
+  india: '#0b6b3a',        // royal green
+  usa: '#c9c9cf',          // whitish gray
+  rcb: '#e11d2a',          // red
+  realmadrid: '#ffffff',   // white
+  cricket: '#2563eb',      // blue
+};
+
+const getOverlays = (d: Date): OverlayItem[] => {
+  const k = dkey(d);
+  const out: OverlayItem[] = [];
+  if (INDIAN_HOLIDAYS[k]) out.push({ kind: 'india', label: INDIAN_HOLIDAYS[k] });
+  if (US_HOLIDAYS[k]) out.push({ kind: 'usa', label: US_HOLIDAYS[k] });
+  if (RCB_MATCHES[k]) out.push({ kind: 'rcb', label: RCB_MATCHES[k] });
+  if (REAL_MADRID_MATCHES[k]) out.push({ kind: 'realmadrid', label: REAL_MADRID_MATCHES[k] });
+  if (INDIA_CRICKET[k]) out.push({ kind: 'cricket', label: INDIA_CRICKET[k] });
+  return out;
 };
 
 const dkey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -63,10 +127,19 @@ const COLORS_HEX: Record<CalEvent['color'], string> = {
   red: '#fa2d48', gray: '#6b7280', green: '#16a34a', blue: '#2563eb', orange: '#ea580c',
 };
 
-const evChip = (c: CalEvent['color']) => {
-  const hex = COLORS_HEX[c];
-  return { background: hex + '26', color: hex, border: `1px solid ${hex}55` };
-};
+// Frosted-glass event chip (Apple-style transparent tint)
+const evChip = (hex: string, dark: boolean) => ({
+  background: dark
+    ? `linear-gradient(180deg, ${hex}40, ${hex}26)`
+    : `linear-gradient(180deg, ${hex}33, ${hex}1f)`,
+  color: dark ? '#fff' : hex,
+  border: `1px solid ${hex}55`,
+  backdropFilter: 'blur(10px) saturate(160%)',
+  WebkitBackdropFilter: 'blur(10px) saturate(160%)',
+  boxShadow: `inset 0 1px 0 ${hex}33`,
+  borderLeft: `3px solid ${hex}`,
+});
+
 
 const seedEvents = (): CalEvent[] => {
   const t = new Date();

@@ -21,7 +21,7 @@ const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charg
   const fillColor = lowPower
     ? '#FFD60A'
     : charging
-      ? '#34C952'
+      ? '#32C04E'
       : pct <= 20
         ? '#FE0E09'
         : '#ffffff';
@@ -319,8 +319,9 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     <>
       <div
         ref={menuBarRef}
-        className="fixed top-0 left-0 right-0 h-7 flex items-center justify-between px-3 z-50 text-[13px] text-white"
+        className="fixed top-0 left-0 right-0 flex items-center justify-between px-3 z-50 text-[12.4px] text-white"
         style={{
+          height: 25,
           background: 'rgba(20,20,25,0.45)',
           backdropFilter: 'blur(28px) saturate(180%)',
           WebkitBackdropFilter: 'blur(28px) saturate(180%)',
@@ -340,7 +341,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               }}
               className={`px-2 py-0.5 rounded hover:bg-black/30 flex items-center ${appleOpen ? 'bg-black/40' : ''}`}
             >
-              <img src={turtleLogo} alt="Logo" className="h-5 w-auto object-contain" />
+              <img src={turtleLogo} alt="Logo" className="h-[18px] w-auto object-contain" />
             </button>
             {appleOpen && renderDropdown(appleMenu)}
           </div>
@@ -357,7 +358,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
                   setAppleOpen(false);
                   setActiveMenu(activeMenu === m.label ? null : m.label);
                 }}
-                className={`px-2.5 py-0.5 rounded hover:bg-black/30 ${idx === 0 ? 'font-semibold' : ''} ${activeMenu === m.label ? 'bg-black/40' : ''}`}
+                className={`px-2.5 py-0.5 rounded hover:bg-black/30 ${idx === 0 ? 'font-semibold text-[12.35px]' : ''} ${activeMenu === m.label ? 'bg-black/40' : ''}`}
               >
                 {m.label}
               </button>

@@ -161,7 +161,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   };
 
   const appleMenu: MenuItem[] = [
-    { label: 'About This Mac', action: () => { openApp('about'); setAppleOpen(false); } },
+    { label: 'About This Mac', action: () => { openApp('settings'); setAppleOpen(false); } },
     { separator: true },
     { label: 'System Settings', action: () => { openApp('settings'); setAppleOpen(false); } },
     { label: 'App Store', action: () => { openApp('appstore'); setAppleOpen(false); } },
@@ -220,7 +220,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       {
         label: appName,
         items: [
-          { label: `About ${appName}`, action: () => openApp('about') },
+          { label: `About ${appName}`, action: () => openApp('settings') },
           { separator: true },
           { label: `Hide ${appName}`, shortcut: '⌘H', action: () => focusActive && closeWindow(focusActive.id) },
           { separator: true },

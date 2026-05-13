@@ -17,18 +17,28 @@ import wallpaperTahoe from '@/assets/wallpaper-tahoe.jpg';
 import wallpaperVineyard from '@/assets/wallpaper-vineyard.jpg';
 import wallpaperCatalina from '@/assets/wallpaper-catalina.jpg';
 import wallpaperValley from '@/assets/wallpaper-valley.jpg';
+import wallpaperMountain from '@/assets/wallpaper-mountain.jpg';
+import wallpaperBigsur from '@/assets/wallpaper-bigsur.jpg';
+import wallpaperSnow from '@/assets/wallpaper-snow.jpg';
+import wallpaperAurora from '@/assets/wallpaper-aurora.jpg';
+import wallpaperCanyon from '@/assets/wallpaper-canyon.jpg';
 import safariIcon from '@/assets/safari-icon.png';
 import googleIcon from '@/assets/google-icon-new.png';
 import profilePhoto from '@/assets/profile-photo-new.jpg';
 
 const wallpapers = [
-  { id: 'wallpaper-1', src: wallpaper1, name: 'Mountain Lake' },
-  { id: 'wallpaper-2', src: wallpaper2, name: 'Misty Valley' },
-  { id: 'wallpaper-3', src: wallpaper3, name: 'Winter Forest' },
   { id: 'wallpaper-tahoe', src: wallpaperTahoe, name: 'Lake Tahoe' },
+  { id: 'wallpaper-bigsur', src: wallpaperBigsur, name: 'Big Sur' },
+  { id: 'wallpaper-mountain', src: wallpaperMountain, name: 'Highlands' },
+  { id: 'wallpaper-aurora', src: wallpaperAurora, name: 'Aurora' },
+  { id: 'wallpaper-snow', src: wallpaperSnow, name: 'Winter Trail' },
+  { id: 'wallpaper-canyon', src: wallpaperCanyon, name: 'Canyon Stars' },
   { id: 'wallpaper-vineyard', src: wallpaperVineyard, name: 'Vineyard Hills' },
   { id: 'wallpaper-catalina', src: wallpaperCatalina, name: 'Catalina' },
   { id: 'wallpaper-valley', src: wallpaperValley, name: 'Painted Valley' },
+  { id: 'wallpaper-1', src: wallpaper1, name: 'Mountain Lake' },
+  { id: 'wallpaper-2', src: wallpaper2, name: 'Misty Valley' },
+  { id: 'wallpaper-3', src: wallpaper3, name: 'Winter Forest' },
 ];
 
 type SectionId =

@@ -63,9 +63,18 @@ export const FinderApp = () => {
   const [view, setView] = useState<View>('icons');
   const [selected, setSelected] = useState<string | null>(null);
   const [openedFile, setOpenedFile] = useState<{ name: string; content: string } | null>(null);
+  const trashed = useTrashed();
+  const { apps } = useMacOS();
 
-  const node = getNode(path);
-  const parts = splitPath(path);
+  useEffect(() => {
+    const fn = () => setPath(TRASH_PATH);
+    window.addEventListener('finder:open-trash', fn);
+    return () => window.removeEventListener('finder:open-trash', fn);
+  }, []);
+
+  const isTrashView = path === TRASH_PATH;
+  const node = isTrashView ? null : getNode(path);
+  const parts = isTrashView ? ['Trash'] : splitPath(path);
 
   const columns: { path: string; node: FsNode | null }[] = [];
   let cum = '';

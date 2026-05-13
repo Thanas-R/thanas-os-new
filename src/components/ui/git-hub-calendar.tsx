@@ -1,21 +1,25 @@
 "use client";
 
-import { useMemo } from "react";
-import { format, subDays, addDays, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay } from "date-fns";
+import { useEffect, useMemo, useState } from "react";
+import { format, subDays, addDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
 
 export interface ContributionDay {
   date: string;
   count: number;
+  level?: 0 | 1 | 2 | 3 | 4;
 }
 
 interface GitHubCalendarProps {
-  data: ContributionDay[];
-  colors?: string[];
+  /** Optional fallback data; if username given we fetch live data. */
+  data?: ContributionDay[];
+  username?: string;
   dark?: boolean;
+  colors?: string[];
 }
 
 export const GitHubCalendar = ({
   data,
+  username,
   dark = true,
   colors,
 }: GitHubCalendarProps) => {
@@ -27,17 +31,38 @@ export const GitHubCalendar = ({
   const startDate = useMemo(() => subDays(today, 364), [today]);
   const weeks = 53;
 
-  const contributionMap = useMemo(() => {
-    const m = new Map<string, number>();
-    data.forEach((d) => m.set(d.date.slice(0, 10), d.count));
-    return m;
-  }, [data]);
+  const [live, setLive] = useState<ContributionDay[] | null>(null);
 
-  const getColor = (count: number) => {
+  useEffect(() => {
+    if (!username) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch(`https://github-contributions-api.jogruber.de/v4/${username}?y=last`);
+        if (!res.ok) return;
+        const json = await res.json();
+        if (!cancelled && Array.isArray(json?.contributions)) {
+          setLive(json.contributions.map((c: any) => ({ date: c.date, count: c.count, level: c.level })));
+        }
+      } catch { /* ignore */ }
+    })();
+    return () => { cancelled = true; };
+  }, [username]);
+
+  const source = live ?? data ?? [];
+
+  const contributionMap = useMemo(() => {
+    const m = new Map<string, { count: number; level: number }>();
+    source.forEach((d) => m.set(d.date.slice(0, 10), { count: d.count, level: d.level ?? 0 }));
+    return m;
+  }, [source]);
+
+  const getColorByLevel = (level: number) => palette[Math.max(0, Math.min(4, level))];
+  const getColorByCount = (count: number) => {
     if (count <= 0) return palette[0];
-    if (count === 1) return palette[1];
-    if (count === 2) return palette[2];
-    if (count === 3) return palette[3];
+    if (count < 3) return palette[1];
+    if (count < 6) return palette[2];
+    if (count < 10) return palette[3];
     return palette[4];
   };
 
@@ -52,18 +77,22 @@ export const GitHubCalendar = ({
       });
 
       weeksArray.push(
-        <div key={i} className="flex flex-col gap-[3px]">
+        <div key={i} className="flex flex-col gap-[3px] flex-1 min-w-0">
           {weekDays.map((day, idx) => {
             const key = format(day, "yyyy-MM-dd");
-            const count = contributionMap.get(key) ?? 0;
-            const color = getColor(count);
+            const entry = contributionMap.get(key);
             const future = day > today;
+            const color = future
+              ? "transparent"
+              : entry
+                ? (entry.level !== undefined ? getColorByLevel(entry.level) : getColorByCount(entry.count))
+                : palette[0];
             return (
               <div
                 key={idx}
-                title={`${count} contributions on ${format(day, "MMM d, yyyy")}`}
-                className="w-[11px] h-[11px] rounded-[2px] transition-transform hover:scale-150"
-                style={{ background: future ? "transparent" : color, opacity: future ? 0.2 : 1 }}
+                title={`${entry?.count ?? 0} contributions on ${format(day, "MMM d, yyyy")}`}
+                className="aspect-square w-full rounded-[2px] transition-transform hover:scale-150"
+                style={{ background: color, opacity: future ? 0 : 1 }}
               />
             );
           })}
@@ -90,26 +119,28 @@ export const GitHubCalendar = ({
     return labels;
   }, [startDate]);
 
-  const dayLabels = ["Mon", "Wed", "Fri"];
-
-  const total = data.reduce((s, d) => s + d.count, 0);
+  const total = source.reduce((s, d) => s + d.count, 0);
 
   return (
     <div className={`w-full ${dark ? "text-neutral-300" : "text-neutral-700"} text-[11px]`}>
       <div className="mb-2 text-[12px] opacity-80">{total} contributions in the last year</div>
-      <div className="flex gap-2">
-        <div className="flex flex-col gap-[3px] pt-[18px]">
+      <div className="flex gap-2 w-full">
+        <div className="flex flex-col gap-[3px] pt-[18px] shrink-0">
           {["", "Mon", "", "Wed", "", "Fri", ""].map((d, i) => (
-            <div key={i} className="h-[11px] leading-[11px] text-[9px] opacity-70">{d}</div>
+            <div key={i} className="aspect-square w-[11px] leading-[11px] text-[9px] opacity-70">{d}</div>
           ))}
         </div>
-        <div className="flex-1 overflow-x-auto">
-          <div className="flex gap-[14px] pl-[2px] mb-1 text-[9px] opacity-70">
-            {monthLabels.map((m, i) => (
-              <span key={i}>{m.label}</span>
-            ))}
+        <div className="flex-1 min-w-0">
+          <div
+            className="grid mb-1 text-[9px] opacity-70 pl-[2px]"
+            style={{ gridTemplateColumns: `repeat(${weeks}, 1fr)` }}
+          >
+            {Array.from({ length: weeks }).map((_, i) => {
+              const lbl = monthLabels.find((m) => m.weekIndex === i);
+              return <span key={i} className="truncate">{lbl?.label ?? ''}</span>;
+            })}
           </div>
-          <div className="flex gap-[3px]">{renderWeeks()}</div>
+          <div className="flex gap-[3px] w-full">{renderWeeks()}</div>
         </div>
       </div>
       <div className="flex items-center justify-end gap-1 mt-2 text-[10px] opacity-80">

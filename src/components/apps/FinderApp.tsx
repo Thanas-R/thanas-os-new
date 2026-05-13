@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, Grid, List, Columns, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, Grid, List, Columns, X, Trash2 } from 'lucide-react';
 import { ROOT, FsNode, HOME, splitPath, getNode } from '@/lib/terminalFs';
 import folderIcon from '@/assets/folder-icon.png';
 import documentIcon from '@/assets/document-icon.png';
+import { useTrashed, restoreApp } from '@/lib/dock';
+import { useMacOS } from '@/contexts/MacOSContext';
+import { APP_ICONS } from '@/components/apps/LaunchpadApp';
 
 const FolderImg = ({ size = 18 }: { size?: number }) => (
   <img src={folderIcon} alt="folder" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
@@ -10,6 +13,8 @@ const FolderImg = ({ size = 18 }: { size?: number }) => (
 const FileImg = ({ size = 18 }: { size?: number }) => (
   <img src={documentIcon} alt="file" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
 );
+
+const TRASH_PATH = '__trash__';
 
 const SIDEBAR = [
   { label: 'Favorites', items: [
@@ -23,6 +28,9 @@ const SIDEBAR = [
   ]},
   { label: 'Locations', items: [
     { name: 'ThanasOS', path: '/', icon: HardDrive },
+  ]},
+  { label: 'System', items: [
+    { name: 'Trash', path: TRASH_PATH, icon: Trash2 },
   ]},
 ];
 

@@ -231,7 +231,7 @@ export const Window = ({ window }: WindowProps) => {
   className="absolute"
   style={{
     top: '16px',
-    left: '14px',
+    left: window.appId === 'maps' ? '30px' : '14px',
   }}
 >
   {TrafficLights}

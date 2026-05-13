@@ -35,21 +35,21 @@ export const MapsApp = () => {
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
 
-  // Init map
+  // Init map (always streets style regardless of theme)
   useEffect(() => {
     if (!mapContainer.current || mapRef.current) return;
     if (!TOKEN) return;
     mapboxgl.accessToken = TOKEN;
     const map = new mapboxgl.Map({
       container: mapContainer.current,
-      style: dark ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12',
+      style: 'mapbox://styles/mapbox/streets-v12',
       center: [77.5946, 12.9716], // Bengaluru
       zoom: 11,
       attributionControl: false,
+      logoPosition: 'bottom-left',
     });
     mapRef.current = map;
 
-    // Get user location
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -63,7 +63,7 @@ export const MapsApp = () => {
       );
     }
     return () => { map.remove(); mapRef.current = null; };
-  }, [dark]);
+  }, []);
 
   // Search (debounced)
   useEffect(() => {
@@ -140,27 +140,35 @@ export const MapsApp = () => {
         </div>
       )}
 
-      <div ref={mapContainer} className="absolute inset-0" />
+      <div ref={mapContainer} className="absolute inset-0 maps-app-container" />
 
-      {/* Floating frosted sidebar */}
+      {/* Floating frosted pill (decorative, like the one in the GitHub app) */}
       <div
-        className="absolute top-3 left-3 w-[320px] max-h-[calc(100%-24px)] rounded-2xl flex flex-col overflow-hidden"
+        className="absolute pointer-events-none"
         style={{
+          top: 10, left: 10, width: 64, height: 28, borderRadius: 999,
+          background: dark ? 'rgba(22,27,34,0.78)' : 'rgba(255,255,255,0.78)',
+          border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
+          backdropFilter: 'blur(18px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(18px) saturate(180%)',
+          zIndex: 5,
+        }}
+      />
+
+      {/* Floating frosted sidebar — sits below the title bar */}
+      <div
+        className="absolute left-3 w-[320px] max-h-[calc(100%-72px)] rounded-2xl flex flex-col overflow-hidden"
+        style={{
+          top: 56,
           background: sidebarBg,
           backdropFilter: 'blur(28px) saturate(180%)',
           WebkitBackdropFilter: 'blur(28px) saturate(180%)',
           border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
           boxShadow: '0 12px 40px rgba(0,0,0,0.18)',
           color: text,
-          paddingTop: 28,
+          paddingTop: 10,
         }}
       >
-        {/* drag handle dots */}
-        <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-60">
-          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
-          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
-          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
-        </div>
 
         <div className="px-3 pb-2">
           <div className="flex items-center gap-2 px-3 h-9 rounded-lg"
@@ -236,7 +244,7 @@ export const MapsApp = () => {
       </div>
 
       {/* Right zoom + locate controls */}
-      <div className="absolute top-3 right-3 flex flex-col gap-2">
+      <div className="absolute top-14 right-3 flex flex-col gap-2 z-10">
         <button onClick={() => mapRef.current?.zoomIn()} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
           style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
           <Plus className="w-4 h-4" />

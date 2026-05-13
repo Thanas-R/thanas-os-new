@@ -3,7 +3,6 @@ import { MacOSProvider } from '@/contexts/MacOSContext';
 import { Desktop } from '@/components/macos/Desktop';
 import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { TechnologiesApp } from '@/components/apps/TechnologiesApp';
-import { ProjectsApp } from '@/components/apps/ProjectsApp';
 import { JourneyApp } from '@/components/apps/JourneyApp';
 import { ContactApp } from '@/components/apps/ContactApp';
 import { GitHubApp } from '@/components/apps/GitHubApp';
@@ -19,17 +18,20 @@ import { CalculatorApp } from '@/components/apps/CalculatorApp';
 import { GoogleApp } from '@/components/apps/GoogleApp';
 import { CalendarApp } from '@/components/apps/CalendarApp';
 import { AppleMusicApp } from '@/components/apps/AppleMusicApp';
+import { MapsApp } from '@/components/apps/MapsApp';
+import { MailApp } from '@/components/apps/MailApp';
 
 import { AppConfig } from '@/types/macos';
 
-// Dock order: finder, launchpad, terminal, about, journey, notes, projects, technologies, safari, google, github, linkedin, contact, calculator, appstore, settings
+// Dock order: finder, launchpad, terminal, journey, notes, maps, mail, technologies, calendar, safari, google, music, github, linkedin, contact, calculator, appstore, settings
 const apps: AppConfig[] = [
   { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
   { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 675 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 750, height: 600 } },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 950, height: 640 }, chromeMode: 'integrated' },
-  { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 750, height: 650 } },
+  { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1100, height: 720 }, chromeMode: 'integrated' },
+  { id: 'mail', name: 'Mail', icon: '✉️', component: MailApp, defaultSize: { width: 1140, height: 740 }, chromeMode: 'integrated' },
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1170, height: 750 }, chromeMode: 'integrated' },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 750 }, chromeMode: 'transparent', chromeColor: '#3B3B3B' },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },

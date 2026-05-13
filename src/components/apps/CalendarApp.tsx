@@ -552,9 +552,9 @@ const WeekView = ({ current, today, events, onSlotClick, onEventClick, tone, dar
   );
 };
 
-const DayView = ({ current, today, events, onSlotClick, onEventClick, tone }: {
+const DayView = ({ current, today, events, onSlotClick, onEventClick, tone, dark }: {
   current: Date; today: Date; events: CalEvent[];
-  onSlotClick: (d: Date, h: number) => void; onEventClick: (e: CalEvent) => void; tone: Tone;
+  onSlotClick: (d: Date, h: number) => void; onEventClick: (e: CalEvent) => void; tone: Tone; dark: boolean;
 }) => {
   const isToday = sameDay(current, today);
   return (

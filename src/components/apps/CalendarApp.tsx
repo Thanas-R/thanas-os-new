@@ -104,8 +104,8 @@ const INDIA_CRICKET: Record<string, string> = {
   '2026-01-11': 'IND vs WI — 1st T20I', '2026-01-13': 'IND vs WI — 2nd T20I',
   '2026-01-16': 'IND vs WI — 3rd T20I', '2026-01-23': 'IND vs NZ — 1st ODI',
   '2026-01-26': 'IND vs NZ — 2nd ODI', '2026-01-29': 'IND vs NZ — 3rd ODI',
-  '2026-02-07': 'IND vs SL — 1st Test', '2026-02-15': 'IND vs SL — 2nd Test',
-  '2026-02-25': 'IND vs PAK (Asia Cup)', '2026-03-08': 'IND vs ENG — 1st Test',
+  '2026-02-05': 'IND vs SL — 1st Test', '2026-02-15': 'IND vs SL — 2nd Test',
+  '2026-02-25': 'IND vs PAK (Asia Cup)', '2026-03-09': 'IND vs ENG — 1st Test',
   '2026-03-16': 'IND vs ENG — 2nd Test', '2026-03-24': 'IND vs ENG — 3rd ODI',
   '2026-04-04': 'IND vs BAN (warm-up)',
   // ICC Men's T20 World Cup 2026 — India fixtures (group stage projections)

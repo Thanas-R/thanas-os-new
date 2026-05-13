@@ -2,9 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Moon, Airplay, Sun, Pause } from 'lucide-react';
 import { HiSun } from 'react-icons/hi';
-import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth } from 'react-icons/io5';
+import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from 'react-icons/io5';
 import { IoIosWifi } from 'react-icons/io';
-import { IoPlay, IoPlayForward, IoBluetooth } from 'react-icons/io5';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
 import airdropIcon from '@/assets/airdrop-icon-new.png';
@@ -149,15 +148,18 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   );
 };
 
-const ConnRow = ({ active, onClick, icon, label, sub }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; sub: string }) => (
-  <button onClick={onClick} className="flex items-center gap-2.5 px-1.5 py-1 rounded-xl transition-colors text-left hover:bg-black/25">
-    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white ${active ? 'bg-blue-500' : 'bg-white/15'}`}>{icon}</div>
-    <div className="leading-tight min-w-0">
-      <div className="text-[12.5px] font-semibold truncate">{label}</div>
-      <div className="text-[10.5px] text-white/55 truncate">{sub}</div>
-    </div>
-  </button>
-);
+const ConnRow = ({ active, onClick, icon, label, sub }: { active?: boolean; onClick: () => void; icon: React.ReactNode; label: string; sub: string }) => {
+  const isToggle = label === 'Wi-Fi' || label === 'Bluetooth';
+  return (
+    <button onClick={onClick} className="flex items-center gap-2.5 px-1.5 py-1 rounded-xl transition-colors text-left hover:bg-black/25">
+      <div className="w-9 h-9 rounded-full flex items-center justify-center text-white" style={{ background: active ? (isToggle ? '#32C04E' : '#3b82f6') : 'rgba(255,255,255,0.15)' }}>{icon}</div>
+      <div className="leading-tight min-w-0">
+        <div className="text-[12.5px] font-semibold truncate">{label}</div>
+        <div className="text-[10.5px] text-white/55 truncate">{sub}</div>
+      </div>
+    </button>
+  );
+};
 
 const SquareTile = ({
   active,

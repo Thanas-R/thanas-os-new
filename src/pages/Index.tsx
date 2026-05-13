@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { MacOSProvider } from '@/contexts/MacOSContext';
 import { Desktop } from '@/components/macos/Desktop';
 import { WelcomeScreen } from '@/components/WelcomeScreen';
-import { AboutApp } from '@/components/apps/AboutApp';
 import { TechnologiesApp } from '@/components/apps/TechnologiesApp';
 import { ProjectsApp } from '@/components/apps/ProjectsApp';
 import { JourneyApp } from '@/components/apps/JourneyApp';
@@ -28,7 +27,6 @@ const apps: AppConfig[] = [
   { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
   { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 675 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
-  { id: 'about', name: 'About Me', icon: '👨‍💻', component: AboutApp, defaultSize: { width: 725, height: 600 } },
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 750, height: 600 } },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 950, height: 640 }, chromeMode: 'integrated' },
   { id: 'projects', name: 'Projects', icon: '💼', component: ProjectsApp, defaultSize: { width: 750, height: 650 } },

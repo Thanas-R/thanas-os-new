@@ -495,7 +495,7 @@ const [lines, setLines] = useState<Line[]>([
   );
 })}
         <div className="flex items-center">
-          <span className="text-emerald-400">thanas@thanasos</span>
+          <span style={{ color: '#32C04E' }}>thanas@thanasos</span>
           <span className="text-white/40 mx-1">:</span>
           <span className="text-sky-400">{prettyPath(cwd)}</span>
           <span className="text-white/70 mx-1">$</span>

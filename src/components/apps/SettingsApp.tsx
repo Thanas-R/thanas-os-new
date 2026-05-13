@@ -334,14 +334,12 @@ export const SettingsApp = () => {
 };
 
 const AppleAccountPane = () => (
-  <div className="px-8 pt-5 pb-10 max-w-2xl">
-    <div className="flex flex-col items-center pt-4 pb-6">
-      <img src={profilePhoto} alt="Thanas R" className="w-20 h-20 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10" />
-      <div>
-        <div className="text-[22px] font-semibold">Thanas R</div>
-        <div className="text-[13px] text-neutral-500">thanas5.rd@gmail.com</div>
-        <div className="text-[12px] text-neutral-500 mt-0.5">Apple Account</div>
-      </div>
+  <div className="px-8 pt-5 pb-10 max-w-2xl mx-auto">
+    <div className="flex flex-col items-center pt-4 pb-6 text-center">
+      <img src={profilePhoto} alt="Thanas R" className="w-20 h-20 rounded-full object-cover ring-1 ring-black/10 dark:ring-white/10 mb-3" />
+      <div className="text-[22px] font-semibold text-center">Thanas R</div>
+      <div className="text-[13px] text-neutral-500 text-center">thanas5.rd@gmail.com</div>
+      <div className="text-[12px] text-neutral-500 mt-0.5 text-center">Apple Account</div>
     </div>
     <Card>
       <KV k="Personal Information" v="Manage" />
@@ -356,8 +354,16 @@ const AppleAccountPane = () => (
     </Card>
     <div className="text-[13px] font-semibold mt-6 mb-2">Devices</div>
     <Card>
-      <KV k="MacBook Air (this device)" v="Online" />
-      <KV k="iPhone 16 Pro" v="Online" />
+      <KV k="MacBook Air M6 (this device)" v="Online" />
+      <KV k="Thanas's iPhone 17" v="This iPhone 17" />
+      <KV k="Thanas's iPhone" v="iPhone 6" />
+      <KV k="iPad" v="iPad Air" />
+      <KV k="iPhone 5" v="iPhone 5" />
+      <KV k="iPhone 8 Plus" v="iPhone 8 Plus" />
+      <KV k="THANAS-LAPTOP" v="Windows" />
+      <KV k="Thanas's iPad" v="iPad" />
+      <KV k="Thanas's iPhone 13 Pro Max" v="iPhone 13 Pro Max" />
+      <KV k="Thanas's iPhone XR" v="iPhone XR" />
     </Card>
   </div>
 );

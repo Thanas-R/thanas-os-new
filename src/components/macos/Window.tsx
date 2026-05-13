@@ -146,7 +146,13 @@ export const Window = ({ window }: WindowProps) => {
       >
         {isFocused && <Minus className={`w-2 h-2 text-[#995700] opacity-0 group-hover:opacity-100 ${settings.reducedMotion ? '' : 'transition-opacity'}`} strokeWidth={2.5} />}
       </button>
-      {!app.noMaximize && (
+      {app.noMaximize ? (
+        <div
+          className="w-3 h-3 rounded-full"
+          style={{ background: '#464B4E' }}
+          aria-label="Maximize disabled"
+        />
+      ) : (
         <button
           onClick={(e) => { e.stopPropagation(); maximizeWindow(window.id); }}
           className={`w-3 h-3 rounded-full flex items-center justify-center group ${settings.reducedMotion ? '' : 'transition-all hover:scale-110'}`}
@@ -242,7 +248,7 @@ export const Window = ({ window }: WindowProps) => {
       </div>
 
       {/* Resize Handles - All Edges */}
-      {!window.isMaximized && (
+      {!window.isMaximized && !app.nonResizable && (
         <>
           {/* Top */}
           <div

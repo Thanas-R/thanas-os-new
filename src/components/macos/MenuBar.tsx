@@ -21,7 +21,7 @@ const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charg
   const fillColor = lowPower
     ? '#FFD60A'
     : charging
-      ? '#34C952'
+      ? '#32C04E'
       : pct <= 20
         ? '#FE0E09'
         : '#ffffff';
@@ -161,7 +161,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   };
 
   const appleMenu: MenuItem[] = [
-    { label: 'About This Mac', action: () => { openApp('about'); setAppleOpen(false); } },
+    { label: 'About This Mac', action: () => { openApp('settings'); setAppleOpen(false); } },
     { separator: true },
     { label: 'System Settings', action: () => { openApp('settings'); setAppleOpen(false); } },
     { label: 'App Store', action: () => { openApp('appstore'); setAppleOpen(false); } },
@@ -220,7 +220,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       {
         label: appName,
         items: [
-          { label: `About ${appName}`, action: () => openApp('about') },
+          { label: `About ${appName}`, action: () => openApp('settings') },
           { separator: true },
           { label: `Hide ${appName}`, shortcut: '⌘H', action: () => focusActive && closeWindow(focusActive.id) },
           { separator: true },
@@ -319,8 +319,9 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     <>
       <div
         ref={menuBarRef}
-        className="fixed top-0 left-0 right-0 h-7 flex items-center justify-between px-3 z-50 text-[13px] text-white"
+        className="fixed top-0 left-0 right-0 flex items-center justify-between px-3 z-50 text-[12.4px] text-white"
         style={{
+          height: 25,
           background: 'rgba(20,20,25,0.45)',
           backdropFilter: 'blur(28px) saturate(180%)',
           WebkitBackdropFilter: 'blur(28px) saturate(180%)',
@@ -340,7 +341,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               }}
               className={`px-2 py-0.5 rounded hover:bg-black/30 flex items-center ${appleOpen ? 'bg-black/40' : ''}`}
             >
-              <img src={turtleLogo} alt="Logo" className="h-5 w-auto object-contain" />
+              <img src={turtleLogo} alt="Logo" className="h-[18px] w-auto object-contain" />
             </button>
             {appleOpen && renderDropdown(appleMenu)}
           </div>
@@ -357,7 +358,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
                   setAppleOpen(false);
                   setActiveMenu(activeMenu === m.label ? null : m.label);
                 }}
-                className={`px-2.5 py-0.5 rounded hover:bg-black/30 ${idx === 0 ? 'font-semibold' : ''} ${activeMenu === m.label ? 'bg-black/40' : ''}`}
+                className={`px-2.5 py-0.5 rounded hover:bg-black/30 ${idx === 0 ? 'font-semibold text-[12.35px]' : ''} ${activeMenu === m.label ? 'bg-black/40' : ''}`}
               >
                 {m.label}
               </button>
@@ -373,7 +374,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             onMouseEnter={() => openOnly('bt')}
           >
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <IoBluetooth style={{ width: 17, height: 17 }} />
+              <IoBluetooth style={{ width: 14, height: 14 }} />
             </StatusBtn>
 
             {btOpen && (
@@ -426,7 +427,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               title={online ? 'Online' : 'Offline'}
               className={settings.wifi && online ? '' : 'opacity-60'}
             >
-              <IoIosWifi className="w-[19.5px] h-[19.5px]" />
+              <IoIosWifi style={{ width: 16, height: 16 }} />
             </StatusBtn>
 
             {wifiOpen && (
@@ -492,7 +493,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <FrostedPanel width={260} align="right" offset={8}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-semibold flex items-center gap-1.5">
-                    Battery {batteryCharging && <BatteryCharging className="w-5 h-5 text-emerald-400" />}
+                    Battery {batteryCharging && <BatteryCharging className="w-5 h-5" style={{ color: '#32C04E' }} />}
                   </div>
                   <div className="text-[12px] text-white/70">{batteryLevel ?? 100}%</div>
                 </div>
@@ -532,15 +533,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           </div>
 
           <StatusBtn onClick={onSpotlightClick} title="Spotlight (⌘K)">
-            <Search className="w-4 h-4" />
+            <Search style={{ width: 13, height: 13 }} />
           </StatusBtn>
 
           <StatusBtn onClick={() => openOnly(ccOpen ? null : 'cc')} active={ccOpen} title="Control Center">
             <img
               src={controlCenterIcon}
               alt="Control Center"
-              className="h-4 w-auto object-contain"
-              style={{ filter: 'brightness(0) invert(1)' }}
+              style={{ height: 13, width: 'auto', filter: 'brightness(0) invert(1)' }}
+              className="object-contain"
             />
           </StatusBtn>
 
@@ -548,7 +549,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             onClick={() => openOnly(notifOpen ? null : 'notif')}
             className={`px-2 py-0.5 rounded hover:bg-black/30 ${notifOpen ? 'bg-black/40' : ''}`}
           >
-            <span className="font-medium">{formatTime(time)}</span>
+            <span style={{ fontWeight: 300, fontFamily: "'Inter', -apple-system, sans-serif" }}>{formatTime(time)}</span>
           </button>
         </div>
       </div>

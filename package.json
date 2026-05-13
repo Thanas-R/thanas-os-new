@@ -61,6 +61,7 @@
     "react-router-dom": "^6.30.1",
     "reactflow": "^11.11.4",
     "recharts": "^2.15.4",
+    "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
     "sonner": "^1.7.4",
     "tailwind-merge": "^2.6.0",

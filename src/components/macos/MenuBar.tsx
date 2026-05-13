@@ -381,7 +381,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <FrostedPanel width={260} align="right" offset={8}>
                 <div className="font-semibold mb-1 flex items-center justify-between">
                   Bluetooth
-                  <span className={`text-[11px] ${settings.bluetooth ? 'text-emerald-400' : 'text-white/50'}`}>
+                  <span className={`text-[11px] ${settings.bluetooth ? 'text-[#32C14E]' : 'text-white/50'}`}>
                     {settings.bluetooth ? 'On' : 'Off'}
                   </span>
                 </div>
@@ -427,14 +427,14 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               title={online ? 'Online' : 'Offline'}
               className={settings.wifi && online ? '' : 'opacity-60'}
             >
-              <IoIosWifi style={{ width: 16, height: 16 }} />
+              <IoIosWifi style={{ width: 16, height: 17 }} />
             </StatusBtn>
 
             {wifiOpen && (
               <FrostedPanel width={280} align="right" offset={8}>
                 <div className="font-semibold mb-1 flex items-center justify-between">
                   Wi-Fi
-                  <span className={`text-[11px] ${settings.wifi ? 'text-emerald-400' : 'text-white/50'}`}>
+                  <span className={`text-[11px] ${settings.wifi ? 'text-[#32C14E]' : 'text-white/50'}`}>
                     {settings.wifi ? 'On' : 'Off'}
                   </span>
                 </div>
@@ -460,7 +460,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
                     className="px-2 py-1 text-[12.5px] flex items-center justify-between hover:bg-black/40 rounded cursor-pointer"
                   >
                     <span className="flex items-center gap-1.5">
-                      {n.current && <Check className="w-3 h-3 text-emerald-400" />}
+                      {n.current && <Check className="w-3 h-3 text-[#32C14E]" />}
                       {n.name}
                     </span>
                     <IoIosWifi className="w-3.5 h-3.5 opacity-70" />

@@ -414,9 +414,9 @@ const Modal = ({ children, title, accent, onClose, tone }: { children: React.Rea
 );
 
 // ───── views ─────
-const MonthView = ({ current, today, events, onCellClick, onEventClick, tone }: {
+const MonthView = ({ current, today, events, onCellClick, onEventClick, tone, dark }: {
   current: Date; today: Date; events: CalEvent[];
-  onCellClick: (d: Date) => void; onEventClick: (e: CalEvent) => void; tone: Tone;
+  onCellClick: (d: Date) => void; onEventClick: (e: CalEvent) => void; tone: Tone; dark: boolean;
 }) => {
   const cells = useMemo(() => {
     const first = new Date(current.getFullYear(), current.getMonth(), 1);
@@ -442,10 +442,9 @@ const MonthView = ({ current, today, events, onCellClick, onEventClick, tone }: 
       </div>
       <div className="flex-1 grid grid-cols-7 grid-rows-6 min-h-0">
         {cells.map((c, i) => {
-          const evs = events.filter((e) => sameDay(e.startTime, c.d)).slice(0, 3);
+          const evs = events.filter((e) => sameDay(e.startTime, c.d)).slice(0, 2);
           const isToday = sameDay(c.d, today);
-          const inH = INDIAN_HOLIDAYS[dkey(c.d)];
-          const usH = US_HOLIDAYS[dkey(c.d)];
+          const overlays = getOverlays(c.d).slice(0, 2);
           return (
             <button
               key={i}
@@ -461,28 +460,47 @@ const MonthView = ({ current, today, events, onCellClick, onEventClick, tone }: 
                 e.currentTarget.style.background = !c.current ? tone.cellAlt : isToday ? 'rgba(250,45,72,0.10)' : tone.cell;
               }}
             >
-              <div className="text-right text-[12.5px]" style={{
-                color: isToday ? '#fa2d48' : c.current ? tone.text : tone.sub,
-                fontWeight: isToday ? 700 : 400,
-              }}>
+              {/* Date number — pinned top-right */}
+              <div
+                className="absolute top-1 right-2 text-[12.5px] leading-none"
+                style={{
+                  color: isToday ? '#fa2d48' : c.current ? tone.text : tone.sub,
+                  fontWeight: isToday ? 700 : 500,
+                }}
+              >
                 {c.d.getDate()}
               </div>
-              {inH && (
-                <div className="text-[10.5px] truncate mt-0.5" style={{ color: COLORS_HEX.green }} title={inH}>• {inH}</div>
-              )}
-              {usH && (
-                <div className="text-[10.5px] truncate" style={{ color: COLORS_HEX.blue }} title={usH}>• {usH}</div>
-              )}
-              <div className="mt-0.5 space-y-0.5">
+              {/* Spacer so content doesn't collide with date */}
+              <div className="h-4" />
+              <div className="space-y-0.5">
+                {overlays.map((o, oi) => (
+                  <div
+                    key={oi}
+                    title={o.label}
+                    className="text-[10px] truncate px-1.5 py-px rounded"
+                    style={evChip(HOLIDAY_COLORS[o.kind], dark)}
+                  >
+                    {o.label}
+                  </div>
+                ))}
                 {evs.map((e) => (
                   <div
                     key={e.id}
                     onClick={(ev) => { ev.stopPropagation(); onEventClick(e); }}
                     className="text-[10.5px] truncate px-1.5 py-px rounded cursor-pointer"
-                    style={evChip(e.color)}
+                    style={evChip(COLORS_HEX[e.color], dark)}
                   >
                     {e.startTime.toLocaleTimeString('en-US', { hour: 'numeric' })} {e.title}
                   </div>
+                ))}
+              </div>
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
                 ))}
               </div>
             </button>

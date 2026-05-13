@@ -9,16 +9,24 @@ const allAssets = import.meta.glob('../assets/*.{png,jpg,jpeg,webp,svg}', {
 
 let preloaded = false;
 
+export const preloadAllAssets = () => {
+  if (preloaded) return;
+  preloaded = true;
+  Object.values(allAssets).forEach((src) => {
+    const img = new Image();
+    img.src = src;
+    img.decoding = 'async';
+    img.decode?.().catch(() => {});
+  });
+  // Warm up the personal site iframe target so Journey opens instantly later
+  try {
+    const link = document.createElement('link');
+    link.rel = 'preconnect';
+    link.href = 'https://thanas.vercel.app';
+    document.head.appendChild(link);
+  } catch { /* ignore */ }
+};
+
 export const useImagePreloader = () => {
-  useEffect(() => {
-    if (preloaded) return;
-    preloaded = true;
-    Object.values(allAssets).forEach((src) => {
-      const img = new Image();
-      img.src = src;
-      img.decoding = 'async';
-      // Try to decode immediately for faster paint later
-      img.decode?.().catch(() => {});
-    });
-  }, []);
+  useEffect(() => { preloadAllAssets(); }, []);
 };

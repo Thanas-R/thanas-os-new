@@ -45,14 +45,24 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
     return saved ? { ...DEFAULT_SETTINGS, ...JSON.parse(saved) } : DEFAULT_SETTINGS;
   });
   const googleInstalled = useGoogleInstalled();
+  const dockOrder = useDockOrder();
+  const trashed = useTrashed();
   const dockItems: DockItem[] = useMemo(() => {
-    const out: DockItem[] = [];
-    apps.forEach(a => {
-      if (a.id === 'google' && !googleInstalled) return;
-      out.push({ appId: a.id });
+    const visible = apps.filter(a => {
+      if (a.id === 'google' && !googleInstalled) return false;
+      if (trashed.includes(a.id)) return false;
+      return true;
     });
-    return out;
-  }, [apps, googleInstalled]);
+    if (dockOrder.length === 0) return visible.map(a => ({ appId: a.id }));
+    const ordered: typeof visible = [];
+    const seen = new Set<string>();
+    dockOrder.forEach(id => {
+      const a = visible.find(v => v.id === id);
+      if (a) { ordered.push(a); seen.add(id); }
+    });
+    visible.forEach(a => { if (!seen.has(a.id)) ordered.push(a); });
+    return ordered.map(a => ({ appId: a.id }));
+  }, [apps, googleInstalled, dockOrder, trashed]);
 
   useEffect(() => {
     localStorage.setItem('macos-settings', JSON.stringify(settings));

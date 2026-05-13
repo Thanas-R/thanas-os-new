@@ -92,15 +92,8 @@ export const LaunchpadApp = () => {
     window.setTimeout(() => {
       const lp = windows.find(w => w.appId === 'launchpad');
       if (lp) closeWindow(lp.id);
-    }, 420);
+    }, 300);
   };
-
-  // External "launchpad-closing" event (e.g. when another app is launched) → animate too
-  useEffect(() => {
-    const onExt = () => setClosing(true);
-    window.addEventListener('launchpad-closing', onExt);
-    return () => window.removeEventListener('launchpad-closing', onExt);
-  }, []);
 
   // ESC to close
   useEffect(() => {

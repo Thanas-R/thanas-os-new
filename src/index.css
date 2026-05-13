@@ -247,3 +247,13 @@ All colors MUST be HSL.
 .menubar-slide-up {
   transform: translateY(-100%);
 }
+
+/* GitHub README markdown rendering */
+.gh-readme table { width: 100%; border-collapse: collapse; }
+.gh-readme table td, .gh-readme table th { vertical-align: top; padding: 6px 12px; border: 0; }
+.gh-readme img { display: inline-block; max-width: 100%; height: auto; vertical-align: middle; }
+.gh-readme p { margin: 0.4em 0; }
+.gh-readme h1 { font-size: 1.6em; font-weight: 600; margin: 0.2em 0 0.6em; }
+.gh-readme a { color: #2f81f7; }
+.gh-readme p[align="left"] img,
+.gh-readme p[align="center"] img { display: inline-block; }

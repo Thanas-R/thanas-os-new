@@ -1,7 +1,6 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useInstalledProjects, useGoogleInstalled } from '@/lib/installedApps';
-import { useTrashed } from '@/lib/dock';
 import { getProject } from '@/lib/projects';
 import { setPendingSafariUrl } from '@/lib/installedApps';
 import finderIcon from '@/assets/finder-icon.png';
@@ -52,7 +51,6 @@ export const LaunchpadApp = () => {
   const { apps, openApp, closeWindow, windows } = useMacOS();
   const installed = useInstalledProjects();
   const googleInstalled = useGoogleInstalled();
-  const trashed = useTrashed();
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
 
@@ -60,7 +58,6 @@ export const LaunchpadApp = () => {
     const core = apps
       .filter(a => a.id !== 'launchpad')
       .filter(a => a.id !== 'google' || googleInstalled)
-      .filter(a => !trashed.includes(a.id))
       .map(a => ({ id: a.id, name: a.name, icon: APP_ICONS[a.id], kind: 'app' as const, url: '' }));
     const projects = installed
       .map(getProject)
@@ -69,7 +66,7 @@ export const LaunchpadApp = () => {
     return [...core, ...projects].filter(i =>
       i.name.toLowerCase().includes(query.toLowerCase())
     );
-  }, [apps, installed, googleInstalled, trashed, query]);
+  }, [apps, installed, googleInstalled, query]);
 
   const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const pageItems = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -124,7 +121,7 @@ export const LaunchpadApp = () => {
         />
       </div>
 
-      <div className="flex-1 px-12 pt-4 pb-2 overflow-visible">
+        <div className="flex-1 px-12 pt-4 pb-2 overflow-visible">
         <div className="grid grid-cols-7 gap-x-4 gap-y-8 max-w-5xl mx-auto">
           {pageItems.map((item, idx) => (
             <button

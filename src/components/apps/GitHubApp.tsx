@@ -168,11 +168,11 @@ export const GitHubApp = () => {
           {/* README card */}
           <div className="rounded-lg border min-w-0 overflow-hidden" style={{ borderColor: border, background: card }}>
             <div
-              className="flex items-center gap-2 px-4 py-2 border-b text-[12px]"
-              style={{ borderColor: border, color: muted, background: dark ? '#0d1117' : '#f6f8fa' }}
-            >
-              <BookOpen className="w-3.5 h-3.5" /> {USERNAME} / README.md
-            </div>
+  className="flex items-center px-4 py-2 border-b text-[12px]"
+  style={{ borderColor: border, color: muted, background: dark ? '#0d1117' : '#f6f8fa' }}
+>
+  {USERNAME} / README.md
+</div>
             <div className="p-6">
               <article className={`gh-readme prose prose-sm max-w-none ${dark ? 'prose-invert' : ''}`}>
                 <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]}>{README_MD}</ReactMarkdown>

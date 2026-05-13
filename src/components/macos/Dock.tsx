@@ -24,25 +24,25 @@ export const Dock = () => {
     
     if (smallerDimension < 480) {
       return {
-        baseSize: Math.max(40, smallerDimension * 0.08),
+        baseSize: Math.max(40, smallerDimension * 0.08) * 0.95,
         maxScale: 1.4,
         effectWidth: smallerDimension * 0.4
       };
     } else if (smallerDimension < 768) {
       return {
-        baseSize: Math.max(48, smallerDimension * 0.07),
+        baseSize: Math.max(48, smallerDimension * 0.07) * 0.95,
         maxScale: 1.5,
         effectWidth: smallerDimension * 0.35
       };
     } else if (smallerDimension < 1024) {
       return {
-        baseSize: Math.max(56, smallerDimension * 0.06),
+        baseSize: Math.max(56, smallerDimension * 0.06) * 0.95,
         maxScale: 1.6,
         effectWidth: smallerDimension * 0.3
       };
     } else {
       return {
-        baseSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
+        baseSize: Math.max(64, Math.min(80, smallerDimension * 0.05)) * 0.95,
         maxScale: 1.8,
         effectWidth: 300
       };

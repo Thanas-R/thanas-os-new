@@ -147,7 +147,7 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
 
             <div
               className="leading-none mt-1"
-              style={{ fontSize: 38, fontWeight: 300, letterSpacing: '-0.02em' }}
+              style={{ fontSize: 38, fontWeight: 400, letterSpacing: '-0.02em' }}
             >
               {current ? `${current.temp}°` : '—'}
             </div>

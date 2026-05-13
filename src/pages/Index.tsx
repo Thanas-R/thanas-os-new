@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { MacOSProvider } from '@/contexts/MacOSContext';
 import { Desktop } from '@/components/macos/Desktop';
-import { WelcomeScreen } from '@/components/WelcomeScreen';
 import { LockScreen } from '@/components/macos/LockScreen';
 import { SleepScreen } from '@/components/macos/SleepScreen';
 import { RestartScreen } from '@/components/macos/RestartScreen';
@@ -45,14 +44,10 @@ const apps: AppConfig[] = [
 ];
 
 const Index = () => {
-  const [showWelcome, setShowWelcome] = useState(true);
-  const [locked, setLocked] = useState(false);
+  // Show lock screen on every fresh page load — gates entry to the OS.
+  const [locked, setLocked] = useState(true);
   const [sleeping, setSleeping] = useState(false);
   const [restarting, setRestarting] = useState(false);
-
-  useEffect(() => {
-    if (sessionStorage.getItem('hasSeenWelcome')) setShowWelcome(false);
-  }, []);
 
   useEffect(() => {
     const onLock = () => setLocked(true);
@@ -74,16 +69,10 @@ const Index = () => {
     };
   }, []);
 
-  const handleEnterSite = () => {
-    sessionStorage.setItem('hasSeenWelcome', 'true');
-    setShowWelcome(false);
-  };
-
   return (
     <MacOSProvider apps={apps}>
       <Desktop />
-      {showWelcome && <WelcomeScreen onEnter={handleEnterSite} />}
-      {locked && !showWelcome && <LockScreen onUnlock={() => setLocked(false)} />}
+      {locked && <LockScreen onUnlock={() => setLocked(false)} />}
       {sleeping && <SleepScreen onWake={() => setSleeping(false)} />}
       {restarting && <RestartScreen onDone={() => { /* handled by timeout */ }} durationMs={10000} />}
     </MacOSProvider>

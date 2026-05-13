@@ -52,6 +52,7 @@ export const LaunchpadApp = () => {
   const { apps, openApp, closeWindow, windows } = useMacOS();
   const installed = useInstalledProjects();
   const googleInstalled = useGoogleInstalled();
+  const trashed = useTrashed();
   const [query, setQuery] = useState('');
   const [page, setPage] = useState(0);
 
@@ -59,6 +60,7 @@ export const LaunchpadApp = () => {
     const core = apps
       .filter(a => a.id !== 'launchpad')
       .filter(a => a.id !== 'google' || googleInstalled)
+      .filter(a => !trashed.includes(a.id))
       .map(a => ({ id: a.id, name: a.name, icon: APP_ICONS[a.id], kind: 'app' as const, url: '' }));
     const projects = installed
       .map(getProject)
@@ -67,7 +69,7 @@ export const LaunchpadApp = () => {
     return [...core, ...projects].filter(i =>
       i.name.toLowerCase().includes(query.toLowerCase())
     );
-  }, [apps, installed, googleInstalled, query]);
+  }, [apps, installed, googleInstalled, trashed, query]);
 
   const pages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
   const pageItems = items.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);

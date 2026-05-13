@@ -27,9 +27,19 @@ const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charg
         : '#ffffff';
   return (
     <div className="flex items-center gap-1">a
-      <div className="relative" style={{ width: 20, height: 12 }}>
+      <div className="relative" style={{ width: 21, height: 13 }}>
         <div className="absolute inset-[1px] rounded-[4px] border border-white/70">
-          <div className="h-full rounded-[1.5px]" style={{ width: `${pct}%`, background: fillColor }} />
+          <div
+  className="absolute rounded-[1.5px]"
+  style={{
+    left: 1,
+    right: 1,
+    top: 1,
+    bottom: 1,
+    width: `${pct}%`,
+    background: fillColor,
+  }}
+/>
         </div>
         <div
           className="absolute top-1/2 -translate-y-1/2"

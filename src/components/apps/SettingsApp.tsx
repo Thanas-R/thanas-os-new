@@ -300,7 +300,8 @@ export const SettingsApp = () => {
                     </button>
                   ))}
                 </div>
-                <div className="px-3 pb-3">
+                <div className="border-t border-black/5 dark:border-white/10 mt-2" />
+                <div className="px-3 pt-4 pb-5 mt-2 flex justify-start">
                   <button
                     onClick={() => fileInputRef.current?.click()}
                     className="text-[12.5px] px-3.5 py-1.5 rounded-md bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-100 ring-1 ring-black/5 dark:ring-white/10 transition-colors"

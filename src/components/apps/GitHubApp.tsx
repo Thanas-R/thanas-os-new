@@ -97,7 +97,7 @@ export const GitHubApp = () => {
           opacity: scrolled ? 1 : 0,
           top: 8,
           left: 8,
-          width: 78,
+          width: 50,
           height: 28,
           borderRadius: 999,
           background: dark ? 'rgba(22,27,34,0.78)' : 'rgba(255,255,255,0.78)',
@@ -118,24 +118,18 @@ export const GitHubApp = () => {
           <div className="text-[20px] mb-3" style={{ color: muted }}>{user?.login || USERNAME}</div>
 
           <div className="flex gap-2 mb-4">
-            <a
-              href={`https://github.com/${USERNAME}`}
-              target="_blank" rel="noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 py-1.5 rounded-md border text-[14px] font-medium transition-colors"
-              style={{ borderColor: border, background: btnBg, color: text }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = btnHover)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
-            >
-              <UserPlus className="w-4 h-4" /> Follow
-            </a>
-            <button
-              className="px-2.5 rounded-md border text-[14px]"
-              style={{ borderColor: border, background: btnBg, color: text }}
-              onMouseEnter={(e) => (e.currentTarget.style.background = btnHover)}
-              onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
-            ><Bell className="w-4 h-4" /></button>
-          </div>
-
+  <a
+    href={`https://github.com/${USERNAME}`}
+    target="_blank"
+    rel="noreferrer"
+    className="flex-1 flex items-center justify-center py-2 rounded-md border text-[14px] font-medium transition-colors"
+    style={{ borderColor: border, background: btnBg, color: text }}
+    onMouseEnter={(e) => (e.currentTarget.style.background = btnHover)}
+    onMouseLeave={(e) => (e.currentTarget.style.background = btnBg)}
+  >
+    Follow
+  </a>
+</div>
           <p className="text-[14px] mb-4 leading-snug">Developer &amp; creative problem-solver. Building thoughtful digital experiences with code</p>
 
           <div className="flex items-center gap-2 text-[14px] mb-3" style={{ color: muted }}>
@@ -153,9 +147,13 @@ export const GitHubApp = () => {
               <a className="hover:underline" style={{ color: accent }} href="https://thanas.vercel.app" target="_blank" rel="noreferrer">thanas.vercel.app</a>
             </div>
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M20.452 4.026A11.5 11.5 0 0 0 3.548 4.026 1.5 1.5 0 0 0 3 5.182v13.636A1.5 1.5 0 0 0 4.5 20.318h4V14.5h-2v-2.5h2v-1.7c0-2.05 1.22-3.18 3.07-3.18.89 0 1.83.16 1.83.16v2.02h-1.03c-1.01 0-1.32.63-1.32 1.27V12h2.25l-.36 2.5h-1.89v5.818h6A1.5 1.5 0 0 0 21 18.818V5.182a1.5 1.5 0 0 0-.548-1.156z"/></svg>
-              <a className="hover:underline" style={{ color: accent }} href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noreferrer">in/thanasr</a>
-            </div>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+    <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM8.339 18.337H5.667v-8.59h2.672v8.59zM7.003 8.574a1.548 1.548 0 1 1 0-3.096 1.548 1.548 0 0 1 0 3.096zm11.335 9.763h-2.669V14.16c0-.996-.018-2.277-1.388-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248h-2.667v-8.59h2.56v1.174h.037c.355-.675 1.227-1.387 2.524-1.387 2.704 0 3.203 1.778 3.203 4.092v4.71z"></path>
+  </svg>
+  <a className="hover:underline" style={{ color: accent }} href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noreferrer">
+    in/thanasr
+  </a>
+</div>
           </div>
 
           <div className="mt-5 pt-4 border-t grid grid-cols-3 gap-2 text-center" style={{ borderColor: border }}>
@@ -199,9 +197,9 @@ export const GitHubApp = () => {
           {/* Repositories */}
           <div className="rounded-lg border p-5" style={{ borderColor: border, background: card }}>
             <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2 text-[14px] font-semibold">
-                <Pin className="w-4 h-4" /> Public repositories
-              </div>
+              <div className="text-[14px] font-semibold">
+  Public repositories
+</div>
               <div className="text-[12px]" style={{ color: muted }}>{repos.length} repos</div>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

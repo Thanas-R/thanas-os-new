@@ -37,7 +37,7 @@ const apps: AppConfig[] = [
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
   { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
   { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1120, height: 750 }, chromeMode: 'integrated' },
-  { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 1200, height: 750 }, chromeMode: 'integrated' },
+  { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 1070, height: 750 }, chromeMode: 'integrated' },
   { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 920, height: 700 }, chromeMode: 'integrated' },
   { id: 'contact', name: 'Contact', icon: '✉️', component: ContactApp, defaultSize: { width: 800, height: 650 }, chromeMode: 'integrated' },
   { id: 'calculator', name: 'Calculator', icon: '🧮', component: CalculatorApp, defaultSize: { width: 300, height: 520 }, nonResizable: true, noMaximize: true, chromeMode: 'integrated' },

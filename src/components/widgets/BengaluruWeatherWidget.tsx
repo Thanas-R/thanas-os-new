@@ -162,7 +162,7 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
                   {conditionLabel(current.weather_code, current.is_day)}
                 </div>
 
-                <div className="text-[12px] text-white/75" style={{ fontWeight: 400 }}>
+                <div className="text-[12px] text-white/75" style={{ fontWeight: 300 }}>
                   H:{current.high}° L:{current.low}°
                 </div>
               </>

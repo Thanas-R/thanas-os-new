@@ -215,11 +215,17 @@ export const Dock = () => {
   };
 
   // Calculate content width
-  const contentWidth = currentPositions.length > 0 
-    ? Math.max(...currentPositions.map((pos, index) => 
+  const baseContentWidth = currentPositions.length > 0
+    ? Math.max(...currentPositions.map((pos, index) =>
         pos + (baseSize * currentScales[index]) / 2
       ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+
+  // Reserve space for separator + trash icon at the right
+  const separatorGap = baseSpacing * 1.5;
+  const separatorWidth = 1;
+  const trashSize = baseSize;
+  const contentWidth = baseContentWidth + separatorGap + separatorWidth + separatorGap + trashSize;
 
   const padding = Math.max(8, baseSize * 0.12);
 

@@ -7,7 +7,7 @@ import { Spotlight } from './Spotlight';
 import { StatsWidget } from '@/components/widgets/StatsWidget';
 import { UtilityClockWidget } from '@/components/widgets/UtilityClockWidget';
 import { CalendarWidget } from '@/components/widgets/CalendarWidget';
-import { WelcomeWidget } from '@/components/widgets/WelcomeWidget';
+import { BengaluruWeatherWidget } from '@/components/widgets/BengaluruWeatherWidget';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
@@ -104,7 +104,7 @@ export const Desktop = () => {
 
       <div className="pt-7 h-full p-8">
         <div className="absolute top-12 left-6 space-y-3">
-          <WelcomeWidget />
+          <BengaluruWeatherWidget />
           <div className="flex gap-3 items-start">
             <UtilityClockWidget size={172} />
             <CalendarWidget />

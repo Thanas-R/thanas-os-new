@@ -5,7 +5,7 @@ import { HiSun } from 'react-icons/hi';
 import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from 'react-icons/io5';
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
+import { useNowPlaying, setNowPlaying, nextTrack, prevTrack } from '@/lib/nowPlaying';
 
 const AirdropSvg = ({ className = '' }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className={className} fill="none">
@@ -58,7 +58,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <ConnRow active={settings.bluetooth} onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
                 icon={<IoBluetooth className="w-[22px] h-[22px]" />} label="Bluetooth" sub={settings.bluetooth ? 'On' : 'Off'} />
               <ConnRow active={settings.airdrop} onClick={() => updateSettings({ airdrop: !settings.airdrop })}
-                icon={<AirdropSvg className="w-[18px] h-[18px]" />}
+                icon={<AirdropSvg className="w-[22px] h-[22px]" />}
                 label="AirDrop" sub="Contacts" />
             </div>
 
@@ -130,7 +130,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="text-[12.5px] font-semibold truncate">{np.title}</div>
               <div className="text-[11px] text-white/65 truncate">{np.artist}</div>
             </div>
-            <button className="p-1.5 rounded-full hover:bg-white/15">
+            <button onClick={prevTrack} className="p-1.5 rounded-full hover:bg-white/15">
   <IoPlayBack className="w-4 h-4" />
 </button>
 
@@ -141,7 +141,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   {np.playing ? <Pause className="w-4 h-4" fill="white" /> : <IoPlay className="w-4 h-4" />}
 </button>
 
-<button className="p-1.5 rounded-full hover:bg-white/15">
+<button onClick={nextTrack} className="p-1.5 rounded-full hover:bg-white/15">
   <IoPlayForward className="w-4 h-4" />
 </button>
           </div>

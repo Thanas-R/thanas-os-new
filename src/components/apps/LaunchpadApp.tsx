@@ -21,6 +21,8 @@ import calculatorNewIcon from '@/assets/calculator-new-icon.png';
 import googleNewIcon from '@/assets/google-icon-new.png';
 import calendarIcon from '@/assets/calendar-icon-new.png';
 import appleMusicIcon from '@/assets/apple-music-icon.png';
+import mapsIcon from '@/assets/maps-icon.png';
+import mailIcon from '@/assets/mail-icon.png';
 
 export const APP_ICONS: Record<string, string> = {
   finder: finderIcon,
@@ -41,6 +43,8 @@ export const APP_ICONS: Record<string, string> = {
   google: googleNewIcon,
   calendar: calendarIcon,
   applemusic: appleMusicIcon,
+  maps: mapsIcon,
+  mail: mailIcon,
 };
 
 const PAGE_SIZE = 28; // 7 cols x 4 rows

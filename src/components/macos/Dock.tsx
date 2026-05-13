@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { APP_ICONS as iconMap } from '@/components/apps/LaunchpadApp';
+import trashIcon from '@/assets/trash-icon.png';
 
 export const Dock = () => {
   const { apps, dockItems, openApp, windows, settings } = useMacOS();
@@ -23,25 +24,25 @@ export const Dock = () => {
     
     if (smallerDimension < 480) {
       return {
-        baseSize: Math.max(40, smallerDimension * 0.08),
+        baseSize: Math.max(40, smallerDimension * 0.08) * 0.95,
         maxScale: 1.4,
         effectWidth: smallerDimension * 0.4
       };
     } else if (smallerDimension < 768) {
       return {
-        baseSize: Math.max(48, smallerDimension * 0.07),
+        baseSize: Math.max(48, smallerDimension * 0.07) * 0.95,
         maxScale: 1.5,
         effectWidth: smallerDimension * 0.35
       };
     } else if (smallerDimension < 1024) {
       return {
-        baseSize: Math.max(56, smallerDimension * 0.06),
+        baseSize: Math.max(56, smallerDimension * 0.06) * 0.95,
         maxScale: 1.6,
         effectWidth: smallerDimension * 0.3
       };
     } else {
       return {
-        baseSize: Math.max(64, Math.min(80, smallerDimension * 0.05)),
+        baseSize: Math.max(64, Math.min(80, smallerDimension * 0.05)) * 0.95,
         maxScale: 1.8,
         effectWidth: 300
       };
@@ -214,11 +215,17 @@ export const Dock = () => {
   };
 
   // Calculate content width
-  const contentWidth = currentPositions.length > 0 
-    ? Math.max(...currentPositions.map((pos, index) => 
+  const baseContentWidth = currentPositions.length > 0
+    ? Math.max(...currentPositions.map((pos, index) =>
         pos + (baseSize * currentScales[index]) / 2
       ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
+
+  // Reserve space for separator + trash icon at the right
+  const separatorGap = baseSpacing * 1.5;
+  const separatorWidth = 1;
+  const trashSize = baseSize;
+  const contentWidth = baseContentWidth + separatorGap + separatorWidth + separatorGap + trashSize;
 
   const padding = Math.max(8, baseSize * 0.12);
 
@@ -351,6 +358,41 @@ export const Dock = () => {
               </div>
             );
           })}
+
+          {/* Separator + Trash */}
+          <div
+            className="absolute"
+            style={{
+              left: `${baseContentWidth + separatorGap}px`,
+              bottom: `${baseSize * 0.1}px`,
+              width: `${separatorWidth}px`,
+              height: `${baseSize * 0.8}px`,
+              background: 'rgba(255,255,255,0.18)',
+              borderRadius: 1,
+            }}
+          />
+          <div
+            className="absolute cursor-pointer flex items-end justify-center"
+            title="Trash"
+            style={{
+              left: `${baseContentWidth + separatorGap + separatorWidth + separatorGap}px`,
+              bottom: 0,
+              width: `${baseSize}px`,
+              height: `${baseSize}px`,
+            }}
+          >
+            <div
+              className="flex items-center justify-center overflow-hidden"
+              style={{
+                width: baseSize,
+                height: baseSize,
+                borderRadius: `${Math.max(12, baseSize * 0.225)}px`,
+                filter: `drop-shadow(0 ${Math.max(1, baseSize * 0.03)}px ${Math.max(2, baseSize * 0.06)}px rgba(0,0,0,0.3))`,
+              }}
+            >
+              <img src={trashIcon} alt="Trash" className="w-full h-full object-contain" />
+            </div>
+          </div>
         </div>
       </div>
     </>

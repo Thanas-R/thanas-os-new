@@ -273,3 +273,9 @@ All colors MUST be HSL.
 .gh-readme blockquote { border-left: 3px solid rgba(127,127,127,.4); padding-left: 12px; color: inherit; opacity: 0.85; margin: 0.4em 0; }
 .gh-readme p[align="left"] img,
 .gh-readme p[align="center"] img { display: inline-block; }
+
+/* Hide Mapbox branding inside Maps app */
+.maps-app-container .mapboxgl-ctrl-logo,
+.maps-app-container .mapboxgl-ctrl-attrib,
+.maps-app-container .mapboxgl-ctrl-bottom-left,
+.maps-app-container .mapboxgl-ctrl-bottom-right { display: none !important; }

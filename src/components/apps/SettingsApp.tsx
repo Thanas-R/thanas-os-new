@@ -380,7 +380,7 @@ const GeneralPane = ({ sub, setSub, batteryLevel, batteryCharging }: { sub: Gene
   const renderAbout = () => (
     <div className="px-8 pt-5 pb-10 max-w-2xl">
       <div className="flex flex-col items-center pb-6">
-        <img src={macStudio} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
+        <img src={profilePhoto} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
         <div className="text-[28px] font-semibold mt-3">ThanasOS</div>
         <div className="text-[13px] text-neutral-500">2026</div>
       </div>

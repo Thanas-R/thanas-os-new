@@ -97,7 +97,7 @@ export const GitHubApp = () => {
           opacity: scrolled ? 1 : 0,
           top: 8,
           left: 8,
-          width: 50,
+          width: 63,
           height: 28,
           borderRadius: 999,
           background: dark ? 'rgba(22,27,34,0.78)' : 'rgba(255,255,255,0.78)',
@@ -147,7 +147,7 @@ export const GitHubApp = () => {
               <a className="hover:underline" style={{ color: accent }} href="https://thanas.vercel.app" target="_blank" rel="noreferrer">thanas.vercel.app</a>
             </div>
             <div className="flex items-center gap-2">
-  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
     <path d="M20 3H4a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1V4a1 1 0 0 0-1-1zM8.339 18.337H5.667v-8.59h2.672v8.59zM7.003 8.574a1.548 1.548 0 1 1 0-3.096 1.548 1.548 0 0 1 0 3.096zm11.335 9.763h-2.669V14.16c0-.996-.018-2.277-1.388-2.277-1.39 0-1.601 1.086-1.601 2.207v4.248h-2.667v-8.59h2.56v1.174h.037c.355-.675 1.227-1.387 2.524-1.387 2.704 0 3.203 1.778 3.203 4.092v4.71z"></path>
   </svg>
   <a className="hover:underline" style={{ color: accent }} href="https://www.linkedin.com/in/thanasr" target="_blank" rel="noreferrer">
@@ -181,23 +181,16 @@ export const GitHubApp = () => {
           </div>
 
           {/* Contribution graph card */}
-          <div className="rounded-lg border p-5" style={{ borderColor: border, background: card }}>
-            <div className="flex items-center justify-between mb-3">
-              <div className="text-[14px] font-semibold">Contribution Activity</div>
-              <a
-                href={`https://github.com/${USERNAME}`}
-                target="_blank" rel="noreferrer"
-                className="text-[12px] hover:underline"
-                style={{ color: accent }}
-              >View on GitHub →</a>
-            </div>
+          <div className="mb-3">
+  <div className="text-[14px] font-semibold">Contribution Activity</div>
+</div>
             <GitHubCalendar username={USERNAME} dark={dark} />
           </div>
 
           {/* Repositories */}
           <div className="rounded-lg border p-5" style={{ borderColor: border, background: card }}>
             <div className="flex items-center justify-between mb-3">
-              <div className="text-[14px] font-semibold">
+              <div className="text-[14px] font-semibold  ml-2">
   Public repositories
 </div>
               <div className="text-[12px]" style={{ color: muted }}>{repos.length} repos</div>

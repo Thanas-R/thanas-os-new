@@ -501,15 +501,6 @@ const MonthView = ({ current, today, events, onCellClick, onEventClick, tone, da
     </div>
   );
 };
-                ))}
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
 
 const WeekView = ({ current, today, events, onSlotClick, onEventClick, tone }: {
   current: Date; today: Date; events: CalEvent[];

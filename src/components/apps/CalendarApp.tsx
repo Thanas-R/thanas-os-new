@@ -241,9 +241,19 @@ export const CalendarApp = () => {
       </div>
 
       <div className="flex-1 min-h-0 overflow-hidden">
-        {view === 'month' && <MonthView tone={tone} current={current} today={today} events={events} onCellClick={openCreate} onEventClick={setSelected} />}
-        {view === 'week' && <WeekView tone={tone} current={current} today={today} events={events} onSlotClick={openCreate} onEventClick={setSelected} />}
-        {view === 'day' && <DayView tone={tone} current={current} today={today} events={events} onSlotClick={openCreate} onEventClick={setSelected} />}
+        {view === 'month' && (
+          <MonthView
+            tone={tone}
+            dark={dark}
+            current={current}
+            today={today}
+            events={events}
+            onCellClick={(d) => { setCurrent(d); setView('day'); }}
+            onEventClick={setSelected}
+          />
+        )}
+        {view === 'week' && <WeekView tone={tone} dark={dark} current={current} today={today} events={events} onSlotClick={openCreate} onEventClick={setSelected} />}
+        {view === 'day' && <DayView tone={tone} dark={dark} current={current} today={today} events={events} onSlotClick={openCreate} onEventClick={setSelected} />}
         {view === 'list' && <ListView tone={tone} current={current} events={events} onEventClick={setSelected} />}
       </div>
 

@@ -57,7 +57,7 @@ const WeatherGlyph = ({
 }) => {
   const style = { color: '#ffffff' };
   const props = { size, style };
-//
+
   if (sunrise) return <BsFillSunriseFill {...props} />;
   if (sunset) return <BsFillSunsetFill {...props} />;
   if (code === 0) return isDay ? <IoSunny {...props} /> : <BsFillMoonStarsFill {...props} />;

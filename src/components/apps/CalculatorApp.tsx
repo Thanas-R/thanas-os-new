@@ -194,49 +194,49 @@ export const CalculatorApp = () => {
         style={{ gridTemplateColumns: 'repeat(4, 1fr)', gridAutoRows: '1fr' }}
       >
         <Key variant="util" onClick={backspace} aria-label="Backspace">
-          <HiOutlineBackspace className="w-7 h-7" />
+          <HiOutlineBackspace style={{ width: 36, height: 36 }} />
         </Key>
 
         <Key variant="util" onClick={clearEntryOrAll} aria-label={clearLabel}>
-          <span className="text-[24px] leading-none">{clearLabel}</span>
+          <span className="text-[30px] leading-none">{clearLabel}</span>
         </Key>
 
         <Key variant="util" onClick={percent} aria-label="Percent">
-          <span className="text-[26px] leading-none">%</span>
+          <span className="text-[32px] leading-none">%</span>
         </Key>
 
         <Key variant="op" onClick={() => setOp('/')} aria-label="Divide">
-          <HiMiniDivide className="w-8 h-8" />
+          <HiMiniDivide style={{ width: 38, height: 38 }} />
         </Key>
 
         <Key onClick={() => inputDigit('7')}>7</Key>
         <Key onClick={() => inputDigit('8')}>8</Key>
         <Key onClick={() => inputDigit('9')}>9</Key>
         <Key variant="op" onClick={() => setOp('*')} aria-label="Multiply">
-          <RxCross1 className="w-7 h-7" />
+          <RxCross1 style={{ width: 32, height: 32 }} />
         </Key>
 
         <Key onClick={() => inputDigit('4')}>4</Key>
         <Key onClick={() => inputDigit('5')}>5</Key>
         <Key onClick={() => inputDigit('6')}>6</Key>
         <Key variant="op" onClick={() => setOp('-')} aria-label="Minus">
-          <HiOutlineMinus className="w-8 h-8" />
+          <HiOutlineMinus style={{ width: 38, height: 38 }} />
         </Key>
 
         <Key onClick={() => inputDigit('1')}>1</Key>
         <Key onClick={() => inputDigit('2')}>2</Key>
         <Key onClick={() => inputDigit('3')}>3</Key>
         <Key variant="op" onClick={() => setOp('+')} aria-label="Plus">
-          <HiOutlinePlus className="w-8 h-8" />
+          <HiOutlinePlus style={{ width: 38, height: 38 }} />
         </Key>
 
         <Key variant="util" onClick={toggleSign} aria-label="Toggle sign">
-          <TbPlusMinus className="w-7.5 h-7.5" />
+          <TbPlusMinus style={{ width: 32, height: 32 }} />
         </Key>
         <Key onClick={() => inputDigit('0')}>0</Key>
         <Key onClick={inputDecimal}>.</Key>
         <Key variant="op" onClick={equals} aria-label="Equals">
-          <HiOutlineEquals className="w-8 h-8" />
+          <HiOutlineEquals style={{ width: 38, height: 38 }} />
         </Key>
       </div>
     </div>
@@ -266,7 +266,7 @@ const Key = ({
       className="rounded-full flex items-center justify-center transition-[filter,transform] active:brightness-90 active:scale-[0.97] hover:brightness-110"
       style={{
         ...styles[variant],
-        fontSize: '28px',
+        fontSize: '34px',
         fontWeight: 500,
         aspectRatio: '1 / 1',
       }}

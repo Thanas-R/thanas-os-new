@@ -149,15 +149,21 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   const customMenus: AppMenus | undefined = focusedApp ? getAppMenus(focusedApp.id) : undefined;
 
   const triggerLoader = (label: string) => {
-    setLoader({ label });
     setAppleOpen(false);
     setActiveMenu(null);
-    setTimeout(() => {
-      if (label === 'Restart' || label === 'Shut Down') {
-        windows.forEach(w => closeWindow(w.id));
-      }
-      setLoader(null);
-    }, 3500);
+    if (label === 'Sleep') {
+      window.dispatchEvent(new CustomEvent('os:sleep'));
+      return;
+    }
+    if (label === 'Restart') {
+      windows.forEach(w => closeWindow(w.id));
+      window.dispatchEvent(new CustomEvent('os:restart'));
+      return;
+    }
+    if (label === 'Lock Screen') {
+      window.dispatchEvent(new CustomEvent('os:lock'));
+      return;
+    }
   };
 
   const appleMenu: MenuItem[] = [
@@ -170,7 +176,6 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
     { separator: true },
     { label: 'Sleep', action: () => triggerLoader('Sleep') },
     { label: 'Restart', action: () => triggerLoader('Restart') },
-    { label: 'Shut Down', action: () => triggerLoader('Shut Down') },
     { separator: true },
     { label: 'Lock Screen', shortcut: '⌃⌘Q', action: () => triggerLoader('Lock Screen') },
   ];

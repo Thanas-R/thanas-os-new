@@ -13,13 +13,19 @@ import { useImagePreloader } from '@/hooks/useImagePreloader';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
-import wallpaper4 from '@/assets/minecraft-valley.jpg';
+import wallpaperTahoe from '@/assets/wallpaper-tahoe.jpg';
+import wallpaperVineyard from '@/assets/wallpaper-vineyard.jpg';
+import wallpaperCatalina from '@/assets/wallpaper-catalina.jpg';
+import wallpaperValley from '@/assets/wallpaper-valley.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,
   'wallpaper-2': wallpaper2,
   'wallpaper-3': wallpaper3,
-  'wallpaper-4': wallpaper4,
+  'wallpaper-tahoe': wallpaperTahoe,
+  'wallpaper-vineyard': wallpaperVineyard,
+  'wallpaper-catalina': wallpaperCatalina,
+  'wallpaper-valley': wallpaperValley,
 };
 
 export const Desktop = () => {

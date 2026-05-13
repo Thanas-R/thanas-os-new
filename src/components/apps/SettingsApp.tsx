@@ -13,17 +13,22 @@ import { AppleSlider } from '@/components/ui/AppleSlider';
 import wallpaper1 from '@/assets/wallpaper-1.jpg';
 import wallpaper2 from '@/assets/wallpaper-2.jpg';
 import wallpaper3 from '@/assets/wallpaper-3.jpg';
-import wallpaper4 from '@/assets/minecraft-valley.jpg';
+import wallpaperTahoe from '@/assets/wallpaper-tahoe.jpg';
+import wallpaperVineyard from '@/assets/wallpaper-vineyard.jpg';
+import wallpaperCatalina from '@/assets/wallpaper-catalina.jpg';
+import wallpaperValley from '@/assets/wallpaper-valley.jpg';
 import safariIcon from '@/assets/safari-icon.png';
 import googleIcon from '@/assets/google-icon-new.png';
 import profilePhoto from '@/assets/profile-photo-new.jpg';
-import macStudio from '@/assets/profile-photo-new.jpg';
 
 const wallpapers = [
   { id: 'wallpaper-1', src: wallpaper1, name: 'Mountain Lake' },
   { id: 'wallpaper-2', src: wallpaper2, name: 'Misty Valley' },
   { id: 'wallpaper-3', src: wallpaper3, name: 'Winter Forest' },
-  { id: 'wallpaper-4', src: wallpaper4, name: 'Minecraft Mountains' },
+  { id: 'wallpaper-tahoe', src: wallpaperTahoe, name: 'Lake Tahoe' },
+  { id: 'wallpaper-vineyard', src: wallpaperVineyard, name: 'Vineyard Hills' },
+  { id: 'wallpaper-catalina', src: wallpaperCatalina, name: 'Catalina' },
+  { id: 'wallpaper-valley', src: wallpaperValley, name: 'Painted Valley' },
 ];
 
 type SectionId =
@@ -286,8 +291,11 @@ export const SettingsApp = () => {
                   ))}
                 </div>
                 <div className="px-3 pb-3">
-                  <button onClick={() => fileInputRef.current?.click()} className="text-[12px] px-3 py-1.5 rounded-md bg-neutral-100 dark:bg-neutral-800 hover:bg-neutral-200">
-                    Choose custom image...
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="text-[12.5px] px-3.5 py-1.5 rounded-md bg-neutral-200 dark:bg-neutral-800 hover:bg-neutral-300 dark:hover:bg-neutral-700 text-neutral-800 dark:text-neutral-100 ring-1 ring-black/5 dark:ring-white/10 transition-colors"
+                  >
+                    Choose Custom Image…
                   </button>
                   <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
                 </div>
@@ -372,7 +380,7 @@ const GeneralPane = ({ sub, setSub, batteryLevel, batteryCharging }: { sub: Gene
   const renderAbout = () => (
     <div className="px-8 pt-5 pb-10 max-w-2xl">
       <div className="flex flex-col items-center pb-6">
-        <img src={macStudio} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
+        <img src={profilePhoto} alt="ThanasOS" className="w-32 h-32 object-contain rounded-2xl" />
         <div className="text-[28px] font-semibold mt-3">ThanasOS</div>
         <div className="text-[13px] text-neutral-500">2026</div>
       </div>

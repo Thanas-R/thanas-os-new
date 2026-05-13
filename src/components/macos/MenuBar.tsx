@@ -493,7 +493,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               <FrostedPanel width={260} align="right" offset={8}>
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-semibold flex items-center gap-1.5">
-                    Battery {batteryCharging && <BatteryCharging className="w-5 h-5 text-emerald-400" />}
+                    Battery {batteryCharging && <BatteryCharging className="w-5 h-5" style={{ color: '#32C04E' }} />}
                   </div>
                   <div className="text-[12px] text-white/70">{batteryLevel ?? 100}%</div>
                 </div>

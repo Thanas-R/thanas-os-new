@@ -16,17 +16,8 @@ interface MenuBarProps { onSpotlightClick?: () => void; }
 interface MenuGroup { label: string; items: MenuItem[]; }
 
 // Battery glyph — body now 22px wide (was 26 → 15% smaller, rounded)
-const IOSBattery = ({
-  level,
-  charging,
-  lowPower,
-}: {
-  level: number | null;
-  charging: boolean;
-  lowPower?: boolean;
-}) => {
+const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charging: boolean; lowPower?: boolean }) => {
   const pct = Math.max(0, Math.min(100, level ?? 100));
-
   const fillColor = lowPower
     ? '#FFD60A'
     : charging
@@ -34,36 +25,16 @@ const IOSBattery = ({
       : pct <= 20
         ? '#FE0E09'
         : '#ffffff';
-
   return (
-    <div className="flex items-center gap-1">
+    <div className="flex items-center gap-1">a
       <div className="relative" style={{ width: 20, height: 12 }}>
-        
-        {/* outline */}
-        <div className="absolute inset-0 rounded-[4px] border border-white/70" />
-
-        {/* fill */}
-        <div
-          className="absolute left-0 top-0 bottom-0 rounded-[3px]"
-          style={{
-            width: `${pct}%`,
-            background: fillColor,
-          }}
-        />
-
-        {/* battery tip */}
+        <div className="absolute inset-[1px] rounded-[4px] border border-white/70">
+          <div className="h-full rounded-[1.5px]" style={{ width: `${pct}%`, background: fillColor }} />
+        </div>
         <div
           className="absolute top-1/2 -translate-y-1/2"
-          style={{
-            right: -2,
-            width: 1.5,
-            height: 5,
-            background: 'rgba(255,255,255,0.7)',
-            borderRadius: 1,
-          }}
+          style={{ right: -2.5, width: 1.5, height: 5, background: 'rgba(255,255,255,0.7)', borderRadius: 1 }}
         />
-
-        {/* charging icon */}
         {charging && (
           <Zap
             fill="white"

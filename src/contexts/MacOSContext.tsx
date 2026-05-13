@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { WindowState, MacOSSettings, DockItem, AppConfig } from '@/types/macos';
 import { useGoogleInstalled } from '@/lib/installedApps';
+import { useDockOrder, useTrashed } from '@/lib/dock';
 
 interface MacOSContextType {
   windows: WindowState[];

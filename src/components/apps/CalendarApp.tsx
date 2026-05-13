@@ -87,7 +87,7 @@ interface OverlayItem { kind: HolidayKind; label: string; }
 
 const HOLIDAY_COLORS: Record<HolidayKind, string> = {
   india: '#0b6b3a',        // royal green
-  usa: '#c9c9cf',          // whitish gray
+  usa: '#eab308',          // yellow
   rcb: '#e11d2a',          // red
   realmadrid: '#ffffff',   // white
   cricket: '#2563eb',      // blue

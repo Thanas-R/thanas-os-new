@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { MacOSProvider } from '@/contexts/MacOSContext';
 import { Desktop } from '@/components/macos/Desktop';
 import { WelcomeScreen } from '@/components/WelcomeScreen';
+import { LockScreen } from '@/components/macos/LockScreen';
+import { SleepScreen } from '@/components/macos/SleepScreen';
+import { RestartScreen } from '@/components/macos/RestartScreen';
 import { TechnologiesApp } from '@/components/apps/TechnologiesApp';
 import { JourneyApp } from '@/components/apps/JourneyApp';
 import { ContactApp } from '@/components/apps/ContactApp';
@@ -19,10 +22,8 @@ import { GoogleApp } from '@/components/apps/GoogleApp';
 import { CalendarApp } from '@/components/apps/CalendarApp';
 import { AppleMusicApp } from '@/components/apps/AppleMusicApp';
 import { MapsApp } from '@/components/apps/MapsApp';
-
 import { AppConfig } from '@/types/macos';
 
-// Dock order: finder, launchpad, terminal, journey, notes, maps, mail, technologies, calendar, safari, google, music, github, linkedin, contact, calculator, appstore, settings
 const apps: AppConfig[] = [
   { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
@@ -45,9 +46,32 @@ const apps: AppConfig[] = [
 
 const Index = () => {
   const [showWelcome, setShowWelcome] = useState(true);
+  const [locked, setLocked] = useState(false);
+  const [sleeping, setSleeping] = useState(false);
+  const [restarting, setRestarting] = useState(false);
 
   useEffect(() => {
     if (sessionStorage.getItem('hasSeenWelcome')) setShowWelcome(false);
+  }, []);
+
+  useEffect(() => {
+    const onLock = () => setLocked(true);
+    const onSleep = () => setSleeping(true);
+    const onRestart = () => {
+      setRestarting(true);
+      setTimeout(() => {
+        setRestarting(false);
+        setLocked(true);
+      }, 10000);
+    };
+    window.addEventListener('os:lock', onLock);
+    window.addEventListener('os:sleep', onSleep);
+    window.addEventListener('os:restart', onRestart);
+    return () => {
+      window.removeEventListener('os:lock', onLock);
+      window.removeEventListener('os:sleep', onSleep);
+      window.removeEventListener('os:restart', onRestart);
+    };
   }, []);
 
   const handleEnterSite = () => {
@@ -59,6 +83,9 @@ const Index = () => {
     <MacOSProvider apps={apps}>
       <Desktop />
       {showWelcome && <WelcomeScreen onEnter={handleEnterSite} />}
+      {locked && !showWelcome && <LockScreen onUnlock={() => setLocked(false)} />}
+      {sleeping && <SleepScreen onWake={() => setSleeping(false)} />}
+      {restarting && <RestartScreen onDone={() => { /* handled by timeout */ }} durationMs={10000} />}
     </MacOSProvider>
   );
 };

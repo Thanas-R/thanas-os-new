@@ -17,6 +17,11 @@ import wallpaperTahoe from '@/assets/wallpaper-tahoe.jpg';
 import wallpaperVineyard from '@/assets/wallpaper-vineyard.jpg';
 import wallpaperCatalina from '@/assets/wallpaper-catalina.jpg';
 import wallpaperValley from '@/assets/wallpaper-valley.jpg';
+import wallpaperMountain from '@/assets/wallpaper-mountain.jpg';
+import wallpaperBigsur from '@/assets/wallpaper-bigsur.jpg';
+import wallpaperSnow from '@/assets/wallpaper-snow.jpg';
+import wallpaperAurora from '@/assets/wallpaper-aurora.jpg';
+import wallpaperCanyon from '@/assets/wallpaper-canyon.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,
@@ -26,6 +31,11 @@ const wallpapers = {
   'wallpaper-vineyard': wallpaperVineyard,
   'wallpaper-catalina': wallpaperCatalina,
   'wallpaper-valley': wallpaperValley,
+  'wallpaper-mountain': wallpaperMountain,
+  'wallpaper-bigsur': wallpaperBigsur,
+  'wallpaper-snow': wallpaperSnow,
+  'wallpaper-aurora': wallpaperAurora,
+  'wallpaper-canyon': wallpaperCanyon,
 };
 
 export const Desktop = () => {

@@ -1,8 +1,11 @@
-import { useState } from 'react';
-import { ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, Grid, List, Columns, X } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronRight, Star, HardDrive, Download, Image as ImageIcon, FileText, Music, Film, Grid, List, Columns, X, Trash2 } from 'lucide-react';
 import { ROOT, FsNode, HOME, splitPath, getNode } from '@/lib/terminalFs';
 import folderIcon from '@/assets/folder-icon.png';
 import documentIcon from '@/assets/document-icon.png';
+import { useTrashed, restoreApp } from '@/lib/dock';
+import { useMacOS } from '@/contexts/MacOSContext';
+import { APP_ICONS } from '@/components/apps/LaunchpadApp';
 
 const FolderImg = ({ size = 18 }: { size?: number }) => (
   <img src={folderIcon} alt="folder" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
@@ -10,6 +13,8 @@ const FolderImg = ({ size = 18 }: { size?: number }) => (
 const FileImg = ({ size = 18 }: { size?: number }) => (
   <img src={documentIcon} alt="file" width={size} height={size} className="object-contain shrink-0" style={{ width: size, height: size }} />
 );
+
+const TRASH_PATH = '__trash__';
 
 const SIDEBAR = [
   { label: 'Favorites', items: [
@@ -23,6 +28,9 @@ const SIDEBAR = [
   ]},
   { label: 'Locations', items: [
     { name: 'ThanasOS', path: '/', icon: HardDrive },
+  ]},
+  { label: 'System', items: [
+    { name: 'Trash', path: TRASH_PATH, icon: Trash2 },
   ]},
 ];
 
@@ -55,9 +63,18 @@ export const FinderApp = () => {
   const [view, setView] = useState<View>('icons');
   const [selected, setSelected] = useState<string | null>(null);
   const [openedFile, setOpenedFile] = useState<{ name: string; content: string } | null>(null);
+  const trashed = useTrashed();
+  const { apps } = useMacOS();
 
-  const node = getNode(path);
-  const parts = splitPath(path);
+  useEffect(() => {
+    const fn = () => setPath(TRASH_PATH);
+    window.addEventListener('finder:open-trash', fn);
+    return () => window.removeEventListener('finder:open-trash', fn);
+  }, []);
+
+  const isTrashView = path === TRASH_PATH;
+  const node = isTrashView ? null : getNode(path);
+  const parts = isTrashView ? ['Trash'] : splitPath(path);
 
   const columns: { path: string; node: FsNode | null }[] = [];
   let cum = '';
@@ -131,17 +148,44 @@ export const FinderApp = () => {
             {parts.length === 0 ? <span>/</span> : parts.map((p, i) => (
               <span key={i} className="flex items-center gap-1">
                 <span className="opacity-60">/</span>
-                <button
-                  onClick={() => setPath('/' + parts.slice(0, i + 1).join('/'))}
-                  className="hover:text-white truncate"
-                >{p}</button>
+                <span className="truncate">{p}</span>
               </span>
             ))}
           </div>
         </div>
 
         <div className="flex-1 overflow-hidden">
-          {view === 'columns' ? (
+          {isTrashView ? (
+            <div className="p-5 overflow-y-auto h-full">
+              {trashed.length === 0 ? (
+                <div className="h-full flex items-center justify-center text-white/40 text-sm">Trash is empty</div>
+              ) : (
+                <div className="grid grid-cols-5 gap-4 content-start">
+                  {trashed.map(id => {
+                    const a = apps.find(x => x.id === id);
+                    if (!a) return null;
+                    const icon = APP_ICONS[id];
+                    return (
+                      <div key={id} className="flex flex-col items-center gap-2 p-3 rounded-lg bg-white/5">
+                        {icon ? (
+                          <img src={icon} alt={a.name} className="w-16 h-16 rounded-2xl object-cover" />
+                        ) : (
+                          <div className="w-16 h-16 rounded-2xl bg-white/10" />
+                        )}
+                        <span className="text-[12px] text-center truncate w-full">{a.name}</span>
+                        <button
+                          onClick={() => restoreApp(id)}
+                          className="text-[11px] px-2.5 py-1 rounded-full bg-blue-500 hover:bg-blue-600 text-white"
+                        >
+                          Put Back
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          ) : view === 'columns' ? (
             <div className="h-full flex overflow-x-auto">
               {columns.map((col, i) => (
                 <div key={i} className="w-52 shrink-0 border-r border-white/10 overflow-y-auto p-1.5">

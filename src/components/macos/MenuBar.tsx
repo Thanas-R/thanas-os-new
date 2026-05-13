@@ -28,7 +28,7 @@ const IOSBattery = ({ level, charging, lowPower }: { level: number | null; charg
   return (
     <div className="flex items-center gap-1">
       <div className="relative" style={{ width: 20, height: 12 }}>
-        <div className="absolute inset-0 rounded-[4px] border border-white/70 box-border px-[1px] py-[2px]">
+        <div className="absolute inset-0 rounded-[4px] border border-white/70" />
           <div className="h-full rounded-[1.5px]" style={{ width: `${pct}%`, background: fillColor }} />
         </div>
         <div
@@ -427,7 +427,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               title={online ? 'Online' : 'Offline'}
               className={settings.wifi && online ? '' : 'opacity-60'}
             >
-              <IoIosWifi style={{ width: 18, height: 18 }} />
+              <IoIosWifi style={{ width: 17, height: 17 }} />
             </StatusBtn>
 
             {wifiOpen && (

@@ -147,7 +147,7 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
 
             <div
               className="leading-none mt-1"
-              style={{ fontSize: 42, fontWeight: 300, letterSpacing: '-0.02em' }}
+              style={{ fontSize: 38, fontWeight: 400, letterSpacing: '-0.02em' }}
             >
               {current ? `${current.temp}°` : '—'}
             </div>
@@ -158,11 +158,11 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
 
             {current && (
               <>
-                <div className="text-[13px]" style={{ fontWeight: 300, letterSpacing: '0.01em' }}>
+                <div className="text-[13px]" style={{ fontWeight: 400, letterSpacing: '0.01em' }}>
                   {conditionLabel(current.weather_code, current.is_day)}
                 </div>
 
-                <div className="text-[12px] text-white/75" style={{ fontWeight: 300 }}>
+                <div className="text-[12px] text-white/75" style={{ fontWeight: 400 }}>
                   H:{current.high}° L:{current.low}°
                 </div>
               </>
@@ -173,18 +173,18 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
         <div className="grid grid-cols-6 gap-1 mt-2">
           {hours.map((h, i) => (
             <div key={i} className="flex flex-col items-center gap-1">
-              <div className="text-[11px] text-white/80" style={{ fontWeight: 300 }}>
+              <div className="text-[11px] text-white/80" style={{ fontWeight: 400 }}>
                 {h.hour}
               </div>
 
               <WeatherGlyph code={h.code} isDay={h.is_day} size={20} sunset={h.isSunset} sunrise={h.isSunrise} />
 
               {!h.isSunset && !h.isSunrise ? (
-                <div className="text-[13px]" style={{ fontWeight: 300 }}>
+                <div className="text-[13px]" style={{ fontWeight: 500 }}>
                   {h.temp}°
                 </div>
               ) : (
-                <div className="text-[11px] text-white/75" style={{ fontWeight: 300 }}>
+                <div className="text-[11px] text-white/75" style={{ fontWeight: 400 }}>
                   {h.isSunset ? 'Set' : 'Rise'}
                 </div>
               )}

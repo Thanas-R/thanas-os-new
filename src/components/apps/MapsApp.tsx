@@ -1,0 +1,291 @@
+import { useEffect, useRef, useState, useCallback } from 'react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import { Search, Pin, Bookmark, BookOpen, Route, MapPin, Clock, X, Navigation, Plus, Minus, ChevronUp } from 'lucide-react';
+import { useMacOS } from '@/contexts/MacOSContext';
+
+const TOKEN = (import.meta.env.VITE_MAPBOX_TOKEN as string | undefined) || '';
+
+interface Suggestion {
+  id: string;
+  name: string;
+  place: string;
+  center: [number, number];
+}
+
+const RECENT_KEY = 'thanasos-maps-recent';
+
+const loadRecent = (): Suggestion[] => {
+  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch { return []; }
+};
+const saveRecent = (list: Suggestion[]) => localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 8)));
+
+export const MapsApp = () => {
+  const { settings } = useMacOS();
+  const dark = settings.theme === 'dark';
+
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const [query, setQuery] = useState('');
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [recent, setRecent] = useState<Suggestion[]>(loadRecent);
+  const [activePin, setActivePin] = useState<Suggestion | null>(null);
+  const [routeInfo, setRouteInfo] = useState<{ distance: number; duration: number } | null>(null);
+  const markerRef = useRef<mapboxgl.Marker | null>(null);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
+  const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
+
+  // Init map
+  useEffect(() => {
+    if (!mapContainer.current || mapRef.current) return;
+    if (!TOKEN) return;
+    mapboxgl.accessToken = TOKEN;
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: dark ? 'mapbox://styles/mapbox/dark-v11' : 'mapbox://styles/mapbox/streets-v12',
+      center: [77.5946, 12.9716], // Bengaluru
+      zoom: 11,
+      attributionControl: false,
+    });
+    mapRef.current = map;
+
+    // Get user location
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const c: [number, number] = [pos.coords.longitude, pos.coords.latitude];
+          setUserLoc(c);
+          map.flyTo({ center: c, zoom: 13, essential: true });
+          userMarkerRef.current = new mapboxgl.Marker({ color: '#2f7df7' }).setLngLat(c).addTo(map);
+        },
+        () => {},
+        { enableHighAccuracy: true, timeout: 6000 }
+      );
+    }
+    return () => { map.remove(); mapRef.current = null; };
+  }, [dark]);
+
+  // Search (debounced)
+  useEffect(() => {
+    if (!query.trim() || !TOKEN) { setSuggestions([]); return; }
+    const t = setTimeout(async () => {
+      try {
+        const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${TOKEN}&autocomplete=true&limit=6${userLoc ? `&proximity=${userLoc.join(',')}` : ''}`;
+        const r = await fetch(url);
+        const j = await r.json();
+        setSuggestions((j.features || []).map((f: any) => ({
+          id: f.id,
+          name: f.text,
+          place: f.place_name,
+          center: f.center,
+        })));
+      } catch { /* ignore */ }
+    }, 250);
+    return () => clearTimeout(t);
+  }, [query, userLoc]);
+
+  const selectSuggestion = useCallback((s: Suggestion) => {
+    if (!mapRef.current) return;
+    setActivePin(s);
+    setQuery(s.name);
+    setSuggestions([]);
+    mapRef.current.flyTo({ center: s.center, zoom: 14, essential: true });
+    if (markerRef.current) markerRef.current.remove();
+    markerRef.current = new mapboxgl.Marker({ color: '#fa2d48' })
+      .setLngLat(s.center)
+      .setPopup(new mapboxgl.Popup({ offset: 24 }).setText(s.place))
+      .addTo(mapRef.current);
+    const next = [s, ...recent.filter((r) => r.id !== s.id)];
+    setRecent(next);
+    saveRecent(next);
+  }, [recent]);
+
+  const directions = useCallback(async () => {
+    if (!activePin || !userLoc || !mapRef.current || !TOKEN) return;
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLoc[0]},${userLoc[1]};${activePin.center[0]},${activePin.center[1]}?geometries=geojson&access_token=${TOKEN}`;
+    const r = await fetch(url);
+    const j = await r.json();
+    const route = j.routes?.[0];
+    if (!route) return;
+    setRouteInfo({ distance: route.distance, duration: route.duration });
+    const map = mapRef.current;
+    if (map.getLayer('route-line')) map.removeLayer('route-line');
+    if (map.getSource('route-src')) map.removeSource('route-src');
+    map.addSource('route-src', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: route.geometry } });
+    map.addLayer({
+      id: 'route-line', type: 'line', source: 'route-src',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: { 'line-color': '#2f7df7', 'line-width': 5, 'line-opacity': 0.9 },
+    });
+    const coords = route.geometry.coordinates as [number, number][];
+    const b = coords.reduce((bb, c) => bb.extend(c as any), new mapboxgl.LngLatBounds(coords[0] as any, coords[0] as any));
+    map.fitBounds(b, { padding: { top: 80, left: 380, right: 60, bottom: 80 } });
+  }, [activePin, userLoc]);
+
+  const sidebarBg = dark ? 'rgba(28,28,30,0.55)' : 'rgba(245,245,247,0.55)';
+  const text = dark ? '#f5f5f7' : '#1c1c1e';
+  const sub = dark ? '#a8a8ad' : '#6b7280';
+  const itemHover = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
+
+  return (
+    <div className="h-full w-full relative overflow-hidden" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
+      {!TOKEN && (
+        <div className="absolute inset-0 z-50 flex items-center justify-center p-8 text-center"
+             style={{ color: text, background: dark ? '#111' : '#f5f5f7' }}>
+          <div className="max-w-md">
+            <MapPin className="w-10 h-10 mx-auto mb-3" style={{ color: '#fa2d48' }} />
+            <h2 className="text-lg font-semibold mb-2">Add your Mapbox token</h2>
+            <p className="text-sm opacity-70">Set the env var <code className="px-1.5 py-0.5 rounded bg-black/20">VITE_MAPBOX_TOKEN</code> in Vercel and redeploy. Then this app will load with directions, search and recents.</p>
+          </div>
+        </div>
+      )}
+
+      <div ref={mapContainer} className="absolute inset-0" />
+
+      {/* Floating frosted sidebar */}
+      <div
+        className="absolute top-3 left-3 w-[320px] max-h-[calc(100%-24px)] rounded-2xl flex flex-col overflow-hidden"
+        style={{
+          background: sidebarBg,
+          backdropFilter: 'blur(28px) saturate(180%)',
+          WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+          border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+          boxShadow: '0 12px 40px rgba(0,0,0,0.18)',
+          color: text,
+          paddingTop: 28,
+        }}
+      >
+        {/* drag handle dots */}
+        <div className="absolute top-2 left-1/2 -translate-x-1/2 flex gap-1.5 opacity-60">
+          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
+          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
+          <span className="w-1 h-1 rounded-full" style={{ background: sub }} />
+        </div>
+
+        <div className="px-3 pb-2">
+          <div className="flex items-center gap-2 px-3 h-9 rounded-lg"
+               style={{ background: dark ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.85)' }}>
+            <Search className="w-4 h-4 opacity-60" />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search Maps"
+              className="bg-transparent flex-1 text-[13px] outline-none"
+              style={{ color: text }}
+            />
+            {query && (
+              <button onClick={() => { setQuery(''); setSuggestions([]); }}>
+                <X className="w-3.5 h-3.5 opacity-60" />
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="overflow-auto thin-scrollbar px-2 pb-3">
+          {suggestions.length > 0 && (
+            <div className="mb-2">
+              {suggestions.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => selectSuggestion(s)}
+                  className="w-full text-left px-3 py-2 rounded-lg flex items-start gap-2"
+                  onMouseEnter={(e) => (e.currentTarget.style.background = itemHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <MapPin className="w-4 h-4 mt-0.5" style={{ color: '#fa2d48' }} />
+                  <div className="min-w-0">
+                    <div className="text-[13px] font-medium truncate">{s.name}</div>
+                    <div className="text-[11px] truncate" style={{ color: sub }}>{s.place}</div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+
+          {suggestions.length === 0 && (
+            <>
+              <div className="text-[10.5px] uppercase tracking-wider mt-2 mb-1 px-3" style={{ color: sub }}>Places</div>
+              <SidebarItem icon={<Pin className="w-4 h-4" />} label="Pinned" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<Bookmark className="w-4 h-4" />} label="Saved Places" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<BookOpen className="w-4 h-4" />} label="Guides" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<Route className="w-4 h-4" />} label="Routes" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<MapPin className="w-4 h-4" />} label="Visited Places" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<Clock className="w-4 h-4" />} label="Recently Added" sub={sub} hover={itemHover} />
+
+              <div className="text-[10.5px] uppercase tracking-wider mt-3 mb-1 px-3" style={{ color: sub }}>Recents</div>
+              {recent.length === 0 ? (
+                <div className="px-3 py-2 text-[12px]" style={{ color: sub }}>No recent searches.</div>
+              ) : recent.map((s) => (
+                <button
+                  key={s.id}
+                  onClick={() => selectSuggestion(s)}
+                  className="w-full text-left px-3 py-2 rounded-lg flex items-start gap-2"
+                  onMouseEnter={(e) => (e.currentTarget.style.background = itemHover)}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                >
+                  <Clock className="w-3.5 h-3.5 mt-0.5 opacity-70" />
+                  <div className="min-w-0">
+                    <div className="text-[13px] truncate">{s.name}</div>
+                    <div className="text-[11px] truncate" style={{ color: sub }}>{s.place}</div>
+                  </div>
+                </button>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Right zoom + locate controls */}
+      <div className="absolute top-3 right-3 flex flex-col gap-2">
+        <button onClick={() => mapRef.current?.zoomIn()} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+          <Plus className="w-4 h-4" />
+        </button>
+        <button onClick={() => mapRef.current?.zoomOut()} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+          <Minus className="w-4 h-4" />
+        </button>
+        <button onClick={() => userLoc && mapRef.current?.flyTo({ center: userLoc, zoom: 14 })} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: '#2f7df7', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+          <Navigation className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* Active pin info */}
+      {activePin && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-md w-[92%] rounded-2xl p-3 flex items-center gap-3"
+             style={{ background: sidebarBg, backdropFilter: 'blur(28px) saturate(180%)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+          <div className="flex-1 min-w-0">
+            <div className="text-[13px] font-semibold truncate">{activePin.name}</div>
+            <div className="text-[11px] truncate" style={{ color: sub }}>
+              {routeInfo
+                ? `${(routeInfo.distance / 1000).toFixed(1)} km · ${Math.round(routeInfo.duration / 60)} min drive`
+                : activePin.place}
+            </div>
+          </div>
+          <button onClick={directions}
+            disabled={!userLoc}
+            className="px-3 h-8 rounded-lg text-[12.5px] font-medium text-white disabled:opacity-50"
+            style={{ background: '#2f7df7' }}>
+            Directions
+          </button>
+          <button onClick={() => { setActivePin(null); setRouteInfo(null); markerRef.current?.remove(); markerRef.current = null;
+            const m = mapRef.current; if (m && m.getLayer('route-line')) { m.removeLayer('route-line'); m.removeSource('route-src'); } }}>
+            <X className="w-4 h-4 opacity-60" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const SidebarItem = ({ icon, label, sub, hover }: { icon: React.ReactNode; label: string; sub: string; hover: string }) => (
+  <button
+    className="w-full text-left px-3 py-1.5 rounded-lg flex items-center gap-3"
+    onMouseEnter={(e) => (e.currentTarget.style.background = hover)}
+    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+  >
+    <span style={{ color: '#2f7df7' }}>{icon}</span>
+    <span className="text-[13px]">{label}</span>
+  </button>
+);

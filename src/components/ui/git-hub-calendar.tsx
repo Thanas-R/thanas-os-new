@@ -24,8 +24,8 @@ export const GitHubCalendar = ({
   colors,
 }: GitHubCalendarProps) => {
   const palette = colors ?? (dark
-    ? ["#161b22", "#0e4429", "#006d32", "#26a641", "#39d353"]
-    : ["#ebedf0", "#9be9a8", "#40c463", "#30a14e", "#216e39"]);
+    ? ["#2A313C", "#0e4429", "#006d32", "#26a641", "#39d353"]
+    : ["#EFF2F5", "#9be9a8", "#40c463", "#30a14e", "#216e39"]);
 
   const today = useMemo(() => new Date(), []);
   const startDate = useMemo(() => subDays(today, 364), [today]);

@@ -59,11 +59,12 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   }, [settings]);
 
   const openApp = (appId: string) => {
-    // If launchpad is open and we're opening a different app, close launchpad first.
+    // If launchpad is open and we're opening a different app, play the close animation first.
     if (appId !== 'launchpad') {
       const lp = windows.find(w => w.appId === 'launchpad' && !w.isMinimized);
       if (lp) {
-        setWindows(prev => prev.filter(w => w.id !== lp.id));
+        window.dispatchEvent(new Event('launchpad-closing'));
+        setTimeout(() => setWindows(prev => prev.filter(w => w.id !== lp.id)), 380);
       }
     }
 

@@ -220,26 +220,28 @@ All colors MUST be HSL.
 }
 
 @keyframes launchpadIn {
-  0% { opacity: 0; transform: scale(1.18); backdrop-filter: blur(0px) saturate(100%); }
+  0% { opacity: 0; transform: scale(1.06); backdrop-filter: blur(0px) saturate(100%); }
   100% { opacity: 1; transform: scale(1); backdrop-filter: blur(60px) saturate(160%); }
 }
 @keyframes launchpadOut {
-  0% { opacity: 1; transform: scale(1); backdrop-filter: blur(60px) saturate(160%); }
-  100% { opacity: 0; transform: scale(1.18); backdrop-filter: blur(0px) saturate(100%); }
+  0% { opacity: 1; transform: scale(1); backdrop-filter: blur(60px) saturate(160%); -webkit-backdrop-filter: blur(60px) saturate(160%); }
+  60% { opacity: 0.5; }
+  100% { opacity: 0; transform: scale(1.04); backdrop-filter: blur(0px) saturate(100%); -webkit-backdrop-filter: blur(0px) saturate(100%); }
 }
 @keyframes launchpadItemIn {
   0% { opacity: 0; transform: scale(0.6) translateY(20px); }
   100% { opacity: 1; transform: scale(1) translateY(0); }
 }
 @keyframes launchpadItemOut {
-  0% { opacity: 1; transform: scale(1) translateY(0); }
-  100% { opacity: 0; transform: scale(0.55) translateY(24px); }
+  0% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); filter: blur(0); }
+  100% { opacity: 0; transform: scale(0.4) translateY(40px) rotate(-4deg); filter: blur(8px); }
 }
 .launchpad-exit {
-  animation: launchpadOut 0.30s cubic-bezier(0.4,0,0.6,1) both;
+  animation: launchpadOut 0.42s cubic-bezier(0.4,0,0.2,1) both;
+  pointer-events: none;
 }
 .launchpad-item-exit {
-  animation: launchpadItemOut 0.28s cubic-bezier(0.4,0,0.6,1) both;
+  animation: launchpadItemOut 0.38s cubic-bezier(0.4,0,0.6,1) both;
 }
 .menubar-slide {
   transition: transform 0.32s cubic-bezier(0.2,0.7,0.2,1);
@@ -249,11 +251,25 @@ All colors MUST be HSL.
 }
 
 /* GitHub README markdown rendering */
-.gh-readme table { width: 100%; border-collapse: collapse; }
-.gh-readme table td, .gh-readme table th { vertical-align: top; padding: 6px 12px; border: 0; }
+.gh-readme { font-size: 14px; line-height: 1.55; }
+.gh-readme table { display: table; width: 100%; border-collapse: collapse; table-layout: fixed; margin: 0.6em 0; }
+.gh-readme thead { display: table-header-group; }
+.gh-readme tbody { display: table-row-group; }
+.gh-readme tr { display: table-row; }
+.gh-readme td, .gh-readme th { display: table-cell; vertical-align: top; padding: 6px 12px; border: 0; }
+.gh-readme th { background: transparent; font-weight: 600; }
 .gh-readme img { display: inline-block; max-width: 100%; height: auto; vertical-align: middle; }
 .gh-readme p { margin: 0.4em 0; }
-.gh-readme h1 { font-size: 1.6em; font-weight: 600; margin: 0.2em 0 0.6em; }
-.gh-readme a { color: #2f81f7; }
+.gh-readme h1, .gh-readme h2, .gh-readme h3 { font-weight: 600; margin: 0.4em 0 0.5em; line-height: 1.25; }
+.gh-readme h1 { font-size: 1.7em; padding-bottom: .3em; border-bottom: 1px solid currentColor; border-color: rgba(127,127,127,.25); }
+.gh-readme h2 { font-size: 1.35em; padding-bottom: .3em; border-bottom: 1px solid rgba(127,127,127,.25); }
+.gh-readme h3 { font-size: 1.1em; }
+.gh-readme a { color: #2f81f7; text-decoration: none; }
+.gh-readme a:hover { text-decoration: underline; }
+.gh-readme hr { border: 0; border-top: 1px solid rgba(127,127,127,.25); margin: 1em 0; }
+.gh-readme ul, .gh-readme ol { padding-left: 1.6em; margin: 0.4em 0; }
+.gh-readme code { background: rgba(127,127,127,.15); padding: 0.1em 0.4em; border-radius: 4px; font-size: 0.9em; }
+.gh-readme pre { background: rgba(127,127,127,.12); padding: 12px; border-radius: 8px; overflow:auto; }
+.gh-readme blockquote { border-left: 3px solid rgba(127,127,127,.4); padding-left: 12px; color: inherit; opacity: 0.85; margin: 0.4em 0; }
 .gh-readme p[align="left"] img,
 .gh-readme p[align="center"] img { display: inline-block; }

@@ -6,9 +6,12 @@ import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from '
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useNowPlaying, setNowPlaying } from '@/lib/nowPlaying';
-import airdropIcon from '@/assets/airdrop-icon-new.png';
 
-if (typeof window !== 'undefined') { const i = new Image(); i.src = airdropIcon; }
+const AirdropSvg = ({ className = '' }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className={className} fill="none">
+    <path fill="currentColor" d="M8 2.6666666666666665a5.333333333333333 5.333333333333333 0 0 0 -2.385333333333333 10.104666666666667 0.6666666666666666 0.6666666666666666 0 0 1 -0.5973333333333333 1.1926666666666665A6.666666666666666 6.666666666666666 0 0 1 1.3333333333333333 8C1.3333333333333333 4.318 4.318 1.3333333333333333 8 1.3333333333333333s6.666666666666666 2.9846666666666666 6.666666666666666 6.666666666666666a6.666666666666666 6.666666666666666 0 0 1 -3.6839999999999997 5.9639999999999995 0.6666666666666666 0.6666666666666666 0 1 1 -0.5973333333333333 -1.1926666666666665A5.333333333333333 5.333333333333333 0 0 0 8 2.6666666666666665Zm0 2.6666666666666665a2.6666666666666665 2.6666666666666665 0 0 0 -1.1926666666666665 5.052666666666666 0.6666666666666666 0.6666666666666666 0 0 1 -0.5966666666666667 1.192 4 4 0 1 1 3.579333333333333 0 0.6666666666666666 0.6666666666666666 0 0 1 -0.5973333333333333 -1.192A2.6666666666666665 2.6666666666666665 0 0 0 8 5.333333333333333Zm-1.3333333333333333 2.6666666666666665a1.3333333333333333 1.3333333333333333 0 1 1 2.6666666666666665 0 1.3333333333333333 1.3333333333333333 0 0 1 -2.6666666666666665 0Z"/>
+  </svg>
+);
 
 interface Props { open: boolean; onClose: () => void; }
 
@@ -55,7 +58,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <ConnRow active={settings.bluetooth} onClick={() => updateSettings({ bluetooth: !settings.bluetooth })}
                 icon={<IoBluetooth className="w-[22px] h-[22px]" />} label="Bluetooth" sub={settings.bluetooth ? 'On' : 'Off'} />
               <ConnRow active={settings.airdrop} onClick={() => updateSettings({ airdrop: !settings.airdrop })}
-                icon={<img src={airdropIcon} alt="" className="w-[24px] h-[24px] object-contain" style={{ filter: settings.airdrop ? 'none' : 'grayscale(1) brightness(1.4)' }} />}
+                icon={<AirdropSvg className="w-[18px] h-[18px]" />}
                 label="AirDrop" sub="Contacts" />
             </div>
 

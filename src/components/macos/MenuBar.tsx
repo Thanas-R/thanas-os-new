@@ -374,7 +374,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             onMouseEnter={() => openOnly('bt')}
           >
             <StatusBtn onClick={() => openOnly(btOpen ? null : 'bt')} active={btOpen} title="Bluetooth">
-              <IoBluetooth style={{ width: 17, height: 17 }} />
+              <IoBluetooth style={{ width: 14, height: 14 }} />
             </StatusBtn>
 
             {btOpen && (
@@ -427,7 +427,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
               title={online ? 'Online' : 'Offline'}
               className={settings.wifi && online ? '' : 'opacity-60'}
             >
-              <IoIosWifi className="w-[19.5px] h-[19.5px]" />
+              <IoIosWifi style={{ width: 16, height: 16 }} />
             </StatusBtn>
 
             {wifiOpen && (
@@ -533,15 +533,15 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
           </div>
 
           <StatusBtn onClick={onSpotlightClick} title="Spotlight (⌘K)">
-            <Search className="w-4 h-4" />
+            <Search style={{ width: 13, height: 13 }} />
           </StatusBtn>
 
           <StatusBtn onClick={() => openOnly(ccOpen ? null : 'cc')} active={ccOpen} title="Control Center">
             <img
               src={controlCenterIcon}
               alt="Control Center"
-              className="h-4 w-auto object-contain"
-              style={{ filter: 'brightness(0) invert(1)' }}
+              style={{ height: 13, width: 'auto', filter: 'brightness(0) invert(1)' }}
+              className="object-contain"
             />
           </StatusBtn>
 
@@ -549,7 +549,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
             onClick={() => openOnly(notifOpen ? null : 'notif')}
             className={`px-2 py-0.5 rounded hover:bg-black/30 ${notifOpen ? 'bg-black/40' : ''}`}
           >
-            <span className="font-medium">{formatTime(time)}</span>
+            <span style={{ fontWeight: 300, fontFamily: "'Inter', -apple-system, sans-serif" }}>{formatTime(time)}</span>
           </button>
         </div>
       </div>

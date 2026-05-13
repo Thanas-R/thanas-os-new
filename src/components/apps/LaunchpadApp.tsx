@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { useInstalledProjects, useGoogleInstalled } from '@/lib/installedApps';
+import { useTrashed } from '@/lib/dock';
 import { getProject } from '@/lib/projects';
 import { setPendingSafariUrl } from '@/lib/installedApps';
 import finderIcon from '@/assets/finder-icon.png';

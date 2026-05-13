@@ -1,6 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import { APP_ICONS as iconMap } from '@/components/apps/LaunchpadApp';
+import trashIcon from '@/assets/trash-icon.png';
 
 export const Dock = () => {
   const { apps, dockItems, openApp, windows, settings } = useMacOS();

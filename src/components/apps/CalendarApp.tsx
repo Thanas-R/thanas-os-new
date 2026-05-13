@@ -42,7 +42,7 @@ const US_HOLIDAYS: Record<string, string> = {
   '2026-11-26': 'Thanksgiving', '2026-12-25': 'Christmas',
 };
 
-// RCB (Royal Challengers Bengaluru) — IPL 2025 league fixtures (red)
+// RCB (Royal Challengers Bengaluru) — IPL fixtures (red)
 const RCB_MATCHES: Record<string, string> = {
   '2025-03-22': 'RCB vs KKR (Kolkata)', '2025-03-28': 'RCB vs CSK (Chennai)',
   '2025-04-02': 'RCB vs GT (Bengaluru)', '2025-04-07': 'RCB vs MI (Mumbai)',
@@ -51,9 +51,17 @@ const RCB_MATCHES: Record<string, string> = {
   '2025-05-09': 'RCB vs LSG (Lucknow)', '2025-05-13': 'RCB vs SRH (Hyderabad)',
   '2025-05-17': 'RCB vs KKR (Bengaluru)', '2025-05-23': 'RCB vs SRH (Bengaluru)',
   '2025-05-27': 'RCB Qualifier 1', '2025-06-03': 'IPL 2025 Final',
+  // IPL 2026 fixtures (tentative)
+  '2026-03-21': 'RCB vs MI (Mumbai)', '2026-03-27': 'RCB vs CSK (Bengaluru)',
+  '2026-04-01': 'RCB vs DC (Delhi)', '2026-04-05': 'RCB vs PBKS (Bengaluru)',
+  '2026-04-11': 'RCB vs RR (Bengaluru)', '2026-04-16': 'RCB vs SRH (Hyderabad)',
+  '2026-04-22': 'RCB vs GT (Ahmedabad)', '2026-04-28': 'RCB vs KKR (Bengaluru)',
+  '2026-05-02': 'RCB vs LSG (Bengaluru)', '2026-05-08': 'RCB vs MI (Bengaluru)',
+  '2026-05-13': 'RCB vs CSK (Chennai)', '2026-05-17': 'RCB vs GT (Bengaluru)',
+  '2026-05-21': 'RCB Qualifier 1', '2026-05-29': 'IPL 2026 Final',
 };
 
-// Real Madrid 2025-26 La Liga & UCL highlights (white)
+// Real Madrid (white) — La Liga & UCL highlights
 const REAL_MADRID_MATCHES: Record<string, string> = {
   '2025-08-19': 'RM vs Osasuna (La Liga)', '2025-08-24': 'RM vs Real Oviedo',
   '2025-08-31': 'RM vs Mallorca', '2025-09-13': 'RM vs Real Sociedad',
@@ -66,6 +74,18 @@ const REAL_MADRID_MATCHES: Record<string, string> = {
   '2025-11-26': 'RM vs Olympiacos (UCL)', '2025-12-07': 'RM vs Girona',
   '2025-12-10': 'RM vs Man City (UCL)', '2025-12-14': 'RM vs Alavés',
   '2025-12-21': 'RM vs Sevilla',
+  // 2026
+  '2026-01-04': 'RM vs Valencia', '2026-01-11': 'RM vs Barcelona (Supercopa)',
+  '2026-01-18': 'RM vs Las Palmas', '2026-01-25': 'RM vs Real Sociedad',
+  '2026-02-01': 'RM vs Atlético (derby)', '2026-02-08': 'RM vs Mallorca',
+  '2026-02-15': 'RM vs Girona', '2026-02-21': 'RM vs Bayern (UCL R16)',
+  '2026-03-01': 'RM vs Sevilla', '2026-03-08': 'RM vs Betis',
+  '2026-03-11': 'RM vs Bayern (UCL R16 leg 2)', '2026-03-15': 'RM vs Villarreal',
+  '2026-04-05': 'RM vs Espanyol', '2026-04-12': 'RM vs Athletic Club',
+  '2026-04-19': 'RM vs Osasuna', '2026-04-26': 'RM vs Celta Vigo',
+  '2026-05-03': 'RM vs Getafe', '2026-05-10': 'El Clásico — RM vs Barcelona',
+  '2026-05-17': 'RM vs Levante', '2026-05-24': 'RM vs Valencia',
+  '2026-05-30': 'UCL Final',
 };
 
 // India national cricket team — major fixtures (blue)
@@ -80,6 +100,21 @@ const INDIA_CRICKET: Record<string, string> = {
   '2025-12-09': 'IND vs SA — 1st T20I', '2025-12-11': 'IND vs SA — 2nd T20I',
   '2025-12-14': 'IND vs SA — 3rd T20I', '2025-12-17': 'IND vs SA — 4th T20I',
   '2025-12-19': 'IND vs SA — 5th T20I',
+  // 2026 (T20 World Cup in India + bilaterals)
+  '2026-01-11': 'IND vs WI — 1st T20I', '2026-01-13': 'IND vs WI — 2nd T20I',
+  '2026-01-16': 'IND vs WI — 3rd T20I', '2026-01-23': 'IND vs NZ — 1st ODI',
+  '2026-01-26': 'IND vs NZ — 2nd ODI', '2026-01-29': 'IND vs NZ — 3rd ODI',
+  '2026-02-07': 'IND vs SL — 1st Test', '2026-02-15': 'IND vs SL — 2nd Test',
+  '2026-02-25': 'IND vs PAK (Asia Cup)', '2026-03-08': 'IND vs ENG — 1st Test',
+  '2026-03-16': 'IND vs ENG — 2nd Test', '2026-03-24': 'IND vs ENG — 3rd ODI',
+  '2026-04-04': 'IND vs BAN (warm-up)',
+  // ICC Men's T20 World Cup 2026 — India fixtures (group stage projections)
+  '2026-02-07': 'T20 WC: IND vs USA', '2026-02-12': 'T20 WC: IND vs Namibia',
+  '2026-02-18': 'T20 WC: IND vs Pakistan', '2026-02-21': 'T20 WC: IND vs Netherlands',
+  '2026-02-26': 'T20 WC: IND vs Super 8', '2026-03-04': 'T20 WC Semi-final',
+  '2026-03-08': 'T20 WC Final',
+  '2026-05-15': 'IND vs SL — 1st T20I (away)', '2026-05-17': 'IND vs SL — 2nd T20I',
+  '2026-05-20': 'IND vs SL — 3rd T20I',
 };
 
 type HolidayKind = 'india' | 'usa' | 'rcb' | 'realmadrid' | 'cricket';

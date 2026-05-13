@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { format, subDays, addDays, startOfWeek, endOfWeek, eachDayOfInterval } from "date-fns";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { format, subDays, addDays, startOfWeek, endOfWeek, eachDayOfInterval, getMonth } from "date-fns";
 
 export interface ContributionDay {
   date: string;
@@ -10,12 +10,14 @@ export interface ContributionDay {
 }
 
 interface GitHubCalendarProps {
-  /** Optional fallback data; if username given we fetch live data. */
   data?: ContributionDay[];
   username?: string;
   dark?: boolean;
   colors?: string[];
 }
+
+const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 
 export const GitHubCalendar = ({
   data,
@@ -31,8 +33,24 @@ export const GitHubCalendar = ({
   const startDate = useMemo(() => subDays(today, 364), [today]);
   const weeks = 53;
 
-  const [live, setLive] = useState<ContributionDay[] | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [cellSize, setCellSize] = useState(12);
+  const gap = 3;
+  const labelColWidth = 28;
 
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ro = new ResizeObserver(() => {
+      const w = containerRef.current?.clientWidth ?? 0;
+      const available = w - labelColWidth - gap;
+      const size = Math.max(8, Math.floor((available - (weeks - 1) * gap) / weeks));
+      setCellSize(size);
+    });
+    ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  const [live, setLive] = useState<ContributionDay[] | null>(null);
   useEffect(() => {
     if (!username) return;
     let cancelled = false;
@@ -66,83 +84,114 @@ export const GitHubCalendar = ({
     return palette[4];
   };
 
-  const renderWeeks = () => {
-    const weeksArray: React.ReactNode[] = [];
-    let currentWeekStart = startOfWeek(startDate, { weekStartsOn: 0 });
-
-    for (let i = 0; i < weeks; i++) {
-      const weekDays = eachDayOfInterval({
-        start: currentWeekStart,
-        end: endOfWeek(currentWeekStart, { weekStartsOn: 0 }),
-      });
-
-      weeksArray.push(
-        <div key={i} className="flex flex-col gap-[3px] flex-1 min-w-0">
-          {weekDays.map((day, idx) => {
-            const key = format(day, "yyyy-MM-dd");
-            const entry = contributionMap.get(key);
-            const future = day > today;
-            const color = future
-              ? "transparent"
-              : entry
-                ? (entry.level !== undefined ? getColorByLevel(entry.level) : getColorByCount(entry.count))
-                : palette[0];
-            return (
-              <div
-                key={idx}
-                title={`${entry?.count ?? 0} contributions on ${format(day, "MMM d, yyyy")}`}
-                className="aspect-square w-full rounded-[2px] transition-transform hover:scale-150"
-                style={{ background: color, opacity: future ? 0 : 1 }}
-              />
-            );
-          })}
-        </div>
-      );
-      currentWeekStart = addDays(currentWeekStart, 7);
-    }
-    return weeksArray;
-  };
-
-  const monthLabels = useMemo(() => {
-    const seen = new Set<string>();
-    const labels: { label: string; weekIndex: number }[] = [];
+  // Build week columns + month label info in one pass
+  const weekCols = useMemo(() => {
+    const cols: { weekStart: Date; days: Date[] }[] = [];
     let cw = startOfWeek(startDate, { weekStartsOn: 0 });
     for (let i = 0; i < weeks; i++) {
-      const m = format(cw, "MMM");
-      const yr = format(cw, "yyyy-MM");
-      if (!seen.has(yr) && cw.getDate() <= 7) {
-        seen.add(yr);
-        labels.push({ label: m, weekIndex: i });
-      }
+      cols.push({
+        weekStart: cw,
+        days: eachDayOfInterval({ start: cw, end: endOfWeek(cw, { weekStartsOn: 0 }) }),
+      });
       cw = addDays(cw, 7);
     }
-    return labels;
+    return cols;
   }, [startDate]);
 
+  // Month labels: place at first week of each month (where day 1 falls within first 7 days of week)
+  const monthLabels = useMemo(() => {
+    const labels: { label: string; weekIndex: number }[] = [];
+    let lastMonth = -1;
+    weekCols.forEach((col, i) => {
+      const m = getMonth(col.weekStart);
+      if (m !== lastMonth) {
+        // Only show if there's enough room before next month label (avoid first week if it's only a few days of prev month)
+        if (i === 0 || labels.length === 0 || i - labels[labels.length - 1].weekIndex >= 3) {
+          labels.push({ label: MONTH_NAMES[m], weekIndex: i });
+          lastMonth = m;
+        } else {
+          lastMonth = m;
+        }
+      }
+    });
+    return labels;
+  }, [weekCols]);
+
   const total = source.reduce((s, d) => s + d.count, 0);
+  const gridWidth = weeks * cellSize + (weeks - 1) * gap;
 
   return (
-    <div className={`w-full ${dark ? "text-neutral-300" : "text-neutral-700"} text-[11px]`}>
+    <div
+      ref={containerRef}
+      className={`w-full ${dark ? "text-neutral-300" : "text-neutral-700"} text-[11px]`}
+    >
       <div className="mb-2 text-[12px] opacity-80">{total} contributions in the last year</div>
-      <div className="flex gap-2 w-full">
-        <div className="flex flex-col gap-[3px] pt-[18px] shrink-0">
-          {["", "Mon", "", "Wed", "", "Fri", ""].map((d, i) => (
-            <div key={i} className="aspect-square w-[11px] leading-[11px] text-[9px] opacity-70">{d}</div>
+
+      <div className="flex" style={{ gap }}>
+        {/* Day labels column */}
+        <div
+          className="flex flex-col shrink-0"
+          style={{ width: labelColWidth, paddingTop: 18, gap }}
+        >
+          {DAY_LABELS.map((d, i) => (
+            <div
+              key={i}
+              className="text-[10px] opacity-70 leading-none flex items-center"
+              style={{ height: cellSize }}
+            >
+              {d}
+            </div>
           ))}
         </div>
-        <div className="flex-1 min-w-0">
-          <div
-            className="grid mb-1 text-[9px] opacity-70 pl-[2px]"
-            style={{ gridTemplateColumns: `repeat(${weeks}, 1fr)` }}
-          >
-            {Array.from({ length: weeks }).map((_, i) => {
-              const lbl = monthLabels.find((m) => m.weekIndex === i);
-              return <span key={i} className="truncate">{lbl?.label ?? ''}</span>;
-            })}
+
+        {/* Grid: month labels + cells */}
+        <div className="min-w-0">
+          {/* Month labels row positioned absolutely */}
+          <div className="relative" style={{ width: gridWidth, height: 14, marginBottom: 4 }}>
+            {monthLabels.map((m, idx) => (
+              <span
+                key={idx}
+                className="absolute text-[10px] opacity-70 leading-none whitespace-nowrap"
+                style={{ left: m.weekIndex * (cellSize + gap), top: 0 }}
+              >
+                {m.label}
+              </span>
+            ))}
           </div>
-          <div className="flex gap-[3px] w-full">{renderWeeks()}</div>
+
+          {/* Cells */}
+          <div className="flex" style={{ gap }}>
+            {weekCols.map((col, i) => (
+              <div key={i} className="flex flex-col" style={{ gap }}>
+                {col.days.map((day, idx) => {
+                  const key = format(day, "yyyy-MM-dd");
+                  const entry = contributionMap.get(key);
+                  const future = day > today;
+                  const color = future
+                    ? "transparent"
+                    : entry
+                      ? (entry.level !== undefined ? getColorByLevel(entry.level) : getColorByCount(entry.count))
+                      : palette[0];
+                  return (
+                    <div
+                      key={idx}
+                      title={`${entry?.count ?? 0} contributions on ${format(day, "MMM d, yyyy")}`}
+                      className="rounded-[2px] transition-transform hover:scale-150"
+                      style={{
+                        width: cellSize,
+                        height: cellSize,
+                        background: color,
+                        opacity: future ? 0 : 1,
+                      }}
+                    />
+                  );
+                })}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
       <div className="flex items-center justify-end gap-1 mt-2 text-[10px] opacity-80">
         <span>Less</span>
         {palette.map((c, i) => (

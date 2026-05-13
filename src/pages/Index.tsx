@@ -27,7 +27,7 @@ const apps: AppConfig[] = [
   { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
   { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 675 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
-  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 950, height: 650 },chromeMode: 'integrated' },
+  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1025, height: 650 },chromeMode: 'integrated' },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 950, height: 640 }, chromeMode: 'integrated' },
   { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1200, height: 720 }, chromeMode: 'integrated' },
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1170, height: 750 }, chromeMode: 'integrated' },

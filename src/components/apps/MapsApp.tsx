@@ -46,7 +46,7 @@ export const MapsApp = () => {
       center: [77.5946, 12.9716], // Bengaluru
       zoom: 11,
       attributionControl: false,
-      logoPosition: 'bottom-left',
+      logoPosition: 'top-left',
     });
     mapRef.current = map;
 
@@ -56,15 +56,55 @@ export const MapsApp = () => {
           const c: [number, number] = [pos.coords.longitude, pos.coords.latitude];
           setUserLoc(c);
           map.flyTo({ center: c, zoom: 13, essential: true });
-          userMarkerRef.current = new mapboxgl.Marker({ color: '#2f7df7' }).setLngLat(c).addTo(map);
+          const userEl = document.createElement('div');
+userEl.style.width = '18px';
+userEl.style.height = '18px';
+userEl.style.borderRadius = '9999px';
+userEl.style.background = '#2f7df7';
+userEl.style.border = '3px solid rgba(255,255,255,0.95)';
+userEl.style.boxShadow = '0 0 0 6px rgba(47,125,247,0.22)';
+userEl.style.boxSizing = 'border-box';
+
+userMarkerRef.current = new mapboxgl.Marker({
+  element: userEl,
+  anchor: 'center',
+})
+  .setLngLat(c)
+  .addTo(map);
         },
         () => {},
         { enableHighAccuracy: true, timeout: 6000 }
       );
     }
-    return () => { map.remove(); mapRef.current = null; };
-  }, []);
+    map.on('load', () => {
+  map.resize();
+});
 
+return () => {
+  map.remove();
+  mapRef.current = null;
+};
+}, []);
+
+useEffect(() => {
+  const map = mapRef.current;
+  if (!map || !mapContainer.current) return;
+
+  const resize = () => map.resize();
+
+  const ro = new ResizeObserver(resize);
+  ro.observe(mapContainer.current);
+
+  window.addEventListener('resize', resize);
+
+  setTimeout(resize, 100);
+
+  return () => {
+    ro.disconnect();
+    window.removeEventListener('resize', resize);
+  };
+}, []);
+  
   // Search (debounced)
   useEffect(() => {
     if (!query.trim() || !TOKEN) { setSuggestions([]); return; }
@@ -122,13 +162,13 @@ export const MapsApp = () => {
     map.fitBounds(b, { padding: { top: 80, left: 380, right: 60, bottom: 80 } });
   }, [activePin, userLoc]);
 
-  const sidebarBg = dark ? 'rgba(28,28,30,0.55)' : 'rgba(245,245,247,0.55)';
+  const sidebarBg = dark ? 'rgba(28,28,30,0.75)' : 'rgba(245,245,247,0.75)';
   const text = dark ? '#f5f5f7' : '#1c1c1e';
   const sub = dark ? '#a8a8ad' : '#6b7280';
   const itemHover = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
 
   return (
-    <div className="h-full w-full relative overflow-hidden" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
+    <div className="absolute inset-0 w-full h-full relative overflow-hidden" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
       {!TOKEN && (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-8 text-center"
              style={{ color: text, background: dark ? '#111' : '#f5f5f7' }}>
@@ -140,13 +180,13 @@ export const MapsApp = () => {
         </div>
       )}
 
-      <div ref={mapContainer} className="absolute inset-0 maps-app-container" />
+      <div ref={mapContainer} className="absolute inset-0 w-full h-full maps-app-container" />
 
       {/* Floating frosted pill (decorative, like the one in the GitHub app) */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: 10, left: 10, width: 64, height: 28, borderRadius: 999,
+          top: 8, left: 7, width:100 , height: 28, borderRadius: 999,
           background: dark ? 'rgba(22,27,34,0.78)' : 'rgba(255,255,255,0.78)',
           border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
           backdropFilter: 'blur(18px) saturate(180%)',
@@ -200,7 +240,6 @@ export const MapsApp = () => {
                   onMouseEnter={(e) => (e.currentTarget.style.background = itemHover)}
                   onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
                 >
-                  <MapPin className="w-4 h-4 mt-0.5" style={{ color: '#fa2d48' }} />
                   <div className="min-w-0">
                     <div className="text-[13px] font-medium truncate">{s.name}</div>
                     <div className="text-[11px] truncate" style={{ color: sub }}>{s.place}</div>
@@ -213,12 +252,12 @@ export const MapsApp = () => {
           {suggestions.length === 0 && (
             <>
               <div className="text-[10.5px] uppercase tracking-wider mt-2 mb-1 px-3" style={{ color: sub }}>Places</div>
-              <SidebarItem icon={<Pin className="w-4 h-4" />} label="Pinned" sub={sub} hover={itemHover} />
-              <SidebarItem icon={<Bookmark className="w-4 h-4" />} label="Saved Places" sub={sub} hover={itemHover} />
-              <SidebarItem icon={<BookOpen className="w-4 h-4" />} label="Guides" sub={sub} hover={itemHover} />
-              <SidebarItem icon={<Route className="w-4 h-4" />} label="Routes" sub={sub} hover={itemHover} />
-              <SidebarItem icon={<MapPin className="w-4 h-4" />} label="Visited Places" sub={sub} hover={itemHover} />
-              <SidebarItem icon={<Clock className="w-4 h-4" />} label="Recently Added" sub={sub} hover={itemHover} />
+              <SidebarItem icon={<Pin className="w-4 h-4" />} label="Pinned" hover={itemHover} text={text} />
+<SidebarItem icon={<Bookmark className="w-4 h-4" />} label="Saved Places" hover={itemHover} text={text} />
+<SidebarItem icon={<BookOpen className="w-4 h-4" />} label="Guides" hover={itemHover} text={text} />
+<SidebarItem icon={<Route className="w-4 h-4" />} label="Routes" hover={itemHover} text={text} />
+<SidebarItem icon={<MapPin className="w-4 h-4" />} label="Visited Places" hover={itemHover} text={text} />
+<SidebarItem icon={<Clock className="w-4 h-4" />} label="Recently Added" hover={itemHover} text={text} />
 
               <div className="text-[10.5px] uppercase tracking-wider mt-3 mb-1 px-3" style={{ color: sub }}>Recents</div>
               {recent.length === 0 ? (
@@ -253,10 +292,18 @@ export const MapsApp = () => {
           style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
           <Minus className="w-4 h-4" />
         </button>
-        <button onClick={() => userLoc && mapRef.current?.flyTo({ center: userLoc, zoom: 14 })} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
-          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: '#2f7df7', border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
-          <Navigation className="w-4 h-4" />
-        </button>
+        <button
+  onClick={() => userLoc && mapRef.current?.flyTo({ center: userLoc, zoom: 14 })}
+  className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+  style={{
+    background: sidebarBg,
+    backdropFilter: 'blur(20px)',
+    color: text,
+    border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+  }}
+>
+  <Navigation className="w-4 h-4" />
+</button>
       </div>
 
       {/* Active pin info */}
@@ -279,7 +326,7 @@ export const MapsApp = () => {
           </button>
           <button onClick={() => { setActivePin(null); setRouteInfo(null); markerRef.current?.remove(); markerRef.current = null;
             const m = mapRef.current; if (m && m.getLayer('route-line')) { m.removeLayer('route-line'); m.removeSource('route-src'); } }}>
-            <X className="w-4 h-4 opacity-60" />
+            <X className="w-4 h-4 opacity-78" />
           </button>
         </div>
       )}
@@ -287,13 +334,23 @@ export const MapsApp = () => {
   );
 };
 
-const SidebarItem = ({ icon, label, sub, hover }: { icon: React.ReactNode; label: string; sub: string; hover: string }) => (
+const SidebarItem = ({
+  icon,
+  label,
+  hover,
+  text,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  hover: string;
+  text: string;
+}) => (
   <button
     className="w-full text-left px-3 py-1.5 rounded-lg flex items-center gap-3"
     onMouseEnter={(e) => (e.currentTarget.style.background = hover)}
     onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
   >
-    <span style={{ color: '#2f7df7' }}>{icon}</span>
+    <span style={{ color: text }}>{icon}</span>
     <span className="text-[13px]">{label}</span>
   </button>
 );

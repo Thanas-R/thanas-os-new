@@ -358,6 +358,41 @@ export const Dock = () => {
               </div>
             );
           })}
+
+          {/* Separator + Trash */}
+          <div
+            className="absolute"
+            style={{
+              left: `${baseContentWidth + separatorGap}px`,
+              bottom: `${baseSize * 0.1}px`,
+              width: `${separatorWidth}px`,
+              height: `${baseSize * 0.8}px`,
+              background: 'rgba(255,255,255,0.18)',
+              borderRadius: 1,
+            }}
+          />
+          <div
+            className="absolute cursor-pointer flex items-end justify-center"
+            title="Trash"
+            style={{
+              left: `${baseContentWidth + separatorGap + separatorWidth + separatorGap}px`,
+              bottom: 0,
+              width: `${baseSize}px`,
+              height: `${baseSize}px`,
+            }}
+          >
+            <div
+              className="flex items-center justify-center overflow-hidden"
+              style={{
+                width: baseSize,
+                height: baseSize,
+                borderRadius: `${Math.max(12, baseSize * 0.225)}px`,
+                filter: `drop-shadow(0 ${Math.max(1, baseSize * 0.03)}px ${Math.max(2, baseSize * 0.06)}px rgba(0,0,0,0.3))`,
+              }}
+            >
+              <img src={trashIcon} alt="Trash" className="w-full h-full object-contain" />
+            </div>
+          </div>
         </div>
       </div>
     </>

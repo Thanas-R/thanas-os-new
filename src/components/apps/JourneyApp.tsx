@@ -24,7 +24,7 @@ export const JourneyApp = () => {
       <div
         className="absolute pointer-events-none"
         style={{
-          top: 8, left: 8, width: 64, height: 22, borderRadius: 999,
+          top: 10, left: 8, width: 64, height: 22, borderRadius: 999,
           background: 'rgba(22,27,34,0.78)',
           border: '1px solid rgba(255,255,255,0.10)',
           backdropFilter: 'blur(18px) saturate(180%)',

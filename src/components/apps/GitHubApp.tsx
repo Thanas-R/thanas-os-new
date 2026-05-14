@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
-import { MapPin, Link as LinkIcon, Building2, Users, BookOpen, GitFork, Star, UserPlus, Bell, Pin } from 'lucide-react';
+import { MapPin, Link as LinkIcon, Building2, Users, BookOpen, GitFork, Star, UserPlus, Bell, Pin, type LucideIcon } from 'lucide-react';
 import { GitHubCalendar } from '@/components/ui/git-hub-calendar';
 import { README_MD } from '@/lib/githubContributions';
 import { useMacOS } from '@/contexts/MacOSContext';
@@ -250,7 +250,7 @@ export const GitHubApp = () => {
   );
 };
 
-const Stat = ({ icon: Icon, label, value }: { icon: any; label: string; value?: number }) => (
+const Stat = ({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value?: number }) => (
   <div>
     <div className="flex items-center justify-center gap-1 text-[11px] opacity-70"><Icon className="w-3 h-3" />{label}</div>
     <div className="text-[15px] font-semibold mt-0.5">{value ?? '—'}</div>

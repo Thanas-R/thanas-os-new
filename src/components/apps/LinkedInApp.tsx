@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import { ThumbsUp, MessageSquare, Repeat2, ShieldCheck, Award, GraduationCap } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 import linkedinPhoto from '@/assets/linkedin-profile-new.jpg';
@@ -53,7 +54,7 @@ export const LinkedInApp = () => {
           <div className="px-6 pb-5 -mt-14 relative">
             <div
               className="w-32 h-32 rounded-full overflow-hidden ring-4 shadow-md"
-              style={{ background: t.card, ['--tw-ring-color' as any]: t.card }}
+              style={{ background: t.card, '--tw-ring-color': t.card } as CSSProperties}
             >
               <img src={linkedinPhoto} alt="Thanas R" className="w-full h-full object-cover" />
             </div>

@@ -6,6 +6,17 @@ import { NowPlayingPill } from '@/components/macos/NowPlayingPill';
 
 const TAGS = ['Top Picks for You', 'Made for You', 'Featuring Oasis', 'Trending', 'New Music Mix', 'Made for You'];
 
+type MusicTone = {
+  page: string;
+  side: string;
+  main: string;
+  text: string;
+  sub: string;
+  border: string;
+  sideHover: string;
+  selected: string;
+};
+
 export const AppleMusicApp = () => {
   const { settings } = useMacOS();
   const dark = settings.theme === 'dark';
@@ -109,11 +120,11 @@ export const AppleMusicApp = () => {
   );
 };
 
-const NavTitle = ({ children, tone }: { children: React.ReactNode; tone: any }) => (
+const NavTitle = ({ children, tone }: { children: React.ReactNode; tone: MusicTone }) => (
   <h3 className="text-[10.5px] uppercase tracking-wider mt-4 mb-1.5 px-2 font-semibold" style={{ color: tone.sub }}>{children}</h3>
 );
 const NavGroup = ({ children }: { children: React.ReactNode }) => <ul className="space-y-px">{children}</ul>;
-const NavItem = ({ children, icon, selected, tone }: { children: React.ReactNode; icon?: React.ReactNode; selected?: boolean; tone: any; accent: string }) => (
+const NavItem = ({ children, icon, selected, tone }: { children: React.ReactNode; icon?: React.ReactNode; selected?: boolean; tone: MusicTone; accent: string }) => (
   <li>
     <a
       href="#"

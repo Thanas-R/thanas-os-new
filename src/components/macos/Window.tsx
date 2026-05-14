@@ -38,7 +38,13 @@ export const Window = ({ window }: WindowProps) => {
       if (isDragging) {
         const deltaX = e.clientX - dragStart.x;
         const deltaY = e.clientY - dragStart.y;
-        const newX = Math.max(0, Math.min(globalThis.window.innerWidth - window.size.width, window.position.x + deltaX));
+        const zoom = 0.9;
+const usableWidth = window.innerWidth / zoom;
+
+const newX = Math.max(
+  0,
+  Math.min(usableWidth - window.size.width, ...)
+);
         // Always allow dragging to bottom
         const newY = Math.max(28, Math.min(globalThis.window.innerHeight - window.size.height - 2, window.position.y + deltaY));
         updateWindowPosition(window.id, { x: newX, y: newY });
@@ -54,7 +60,8 @@ export const Window = ({ window }: WindowProps) => {
 
         if (resizeDirection.includes('e')) {
           newWidth = Math.max(app.minSize?.width || 400, resizeStart.width + deltaX);
-          newWidth = Math.min(newWidth, globalThis.window.innerWidth - resizeStart.posX );
+          const usableWidth = window.innerWidth / 0.9;
+newWidth = Math.min(newWidth, usableWidth - resizeStart.posX);
         }
         if (resizeDirection.includes('w')) {
           const maxWidth = Math.min(app.minSize?.width || 400, resizeStart.width - deltaX);

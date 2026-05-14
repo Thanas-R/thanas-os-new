@@ -1,4 +1,13 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+
+declare global {
+  interface Window {
+    gsap?: {
+      to: (target: Element | null, vars: Record<string, unknown>) => void;
+    };
+  }
+}
+
 import { useMacOS } from '@/contexts/MacOSContext';
 import { APP_ICONS as iconMap } from '@/components/apps/LaunchpadApp';
 import trashIcon from '@/assets/trash-icon.png';
@@ -140,7 +149,7 @@ export const Dock = () => {
     if (scalesNeedUpdate || positionsNeedUpdate || mouseX !== null) {
       animationFrameRef.current = requestAnimationFrame(animateToTarget);
     }
-  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions]);
+  }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions, maxScale, settings.reducedMotion]);
 
   // Start/stop animation loop
   useEffect(() => {
@@ -194,8 +203,8 @@ export const Dock = () => {
 
   const handleAppClick = (appId: string, index: number) => {
     if (iconRefs.current[index] && !settings.reducedMotion) {
-      if (typeof window !== 'undefined' && (window as any).gsap) {
-        const gsap = (window as any).gsap;
+      if (typeof window !== 'undefined' && window.gsap) {
+        const gsap = window.gsap;
         const bounceHeight = currentScales[index] > 1.3 ? -baseSize * 0.2 : -baseSize * 0.15;
         
         gsap.to(iconRefs.current[index], {

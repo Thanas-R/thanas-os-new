@@ -28,9 +28,7 @@ export const Window = ({ window }: WindowProps) => {
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0, posX: 0, posY: 0 });
 
   const app = apps.find(a => a.id === window.appId);
-  if (!app) return null;
-
-  const AppComponent = app.component;
+  const AppComponent = app?.component;
   const isFocused = focusedWindowId === window.id;
 
   useEffect(() => {
@@ -96,8 +94,9 @@ export const Window = ({ window }: WindowProps) => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, isResizing, dragStart, resizeStart, window, app, updateWindowPosition, updateWindowSize]);
+  }, [isDragging, isResizing, dragStart, resizeStart, resizeDirection, window, app, updateWindowPosition, updateWindowSize]);
 
+  if (!app || !AppComponent) return null;
   if (window.isMinimized) return null;
 
   // Launchpad: fullscreen blurred overlay covering even the menu bar; only dock stays visible above it.

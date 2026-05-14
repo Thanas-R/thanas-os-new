@@ -192,12 +192,12 @@ export const GoogleApp = () => {
             e.preventDefault(); window.parent.postMessage({type:'gnav',url:u.toString()},'*');
           }catch(_){}
         },true);
-      })();<\/script>`;
+      })();</script>`;
       content = content.replace(/<\/body>/i, interceptor + '</body>');
       if (!/<\/body>/i.test(content)) content += interceptor;
       const m = content.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
       let title = norm;
-      try { title = m ? m[1].trim() : new URL(norm).hostname; } catch {}
+      try { title = m ? m[1].trim() : new URL(norm).hostname; } catch { title = norm; }
       updateTab(id, { loading: false, content, title });
     } catch {
       updateTab(id, {
@@ -285,7 +285,7 @@ export const GoogleApp = () => {
       ],
     });
     return () => registerAppMenus('google', null);
-  }, [active.id, light, showBookmarks, updateSettings]);
+  }, [active.id, light, showBookmarks, updateSettings, closeTab, reload]);
 
   // Theme tokens (Chrome dark default)
   const tk = light ? {

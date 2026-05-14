@@ -110,15 +110,16 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
   }, []);
 
   useEffect(() => {
-    const nav: any = navigator;
+    type BatteryManager = EventTarget & { level: number; charging: boolean };
+    const nav = navigator as Navigator & { getBattery?: () => Promise<BatteryManager> };
     if (!nav.getBattery) return;
-    let battery: any;
+    let battery: BatteryManager | undefined;
     const update = () => {
       if (!battery) return;
       setBatteryLevel(Math.round(battery.level * 100));
       setBatteryCharging(!!battery.charging);
     };
-    nav.getBattery().then((b: any) => {
+    nav.getBattery().then((b) => {
       battery = b;
       update();
       b.addEventListener('levelchange', update);

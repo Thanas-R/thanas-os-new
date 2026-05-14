@@ -27,6 +27,7 @@ import wallpaperDolomites from '@/assets/wallpaper-dolomites.jpg';
 import wallpaperVestrahorn from '@/assets/wallpaper-vestrahorn.jpg';
 import wallpaperAnnapurna from '@/assets/wallpaper-annapurna.jpg';
 import wallpaperAlps from '@/assets/wallpaper-alps.jpg';
+import wallpaperCat from '@/assets/wallpaper-cat.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,
@@ -46,6 +47,7 @@ const wallpapers = {
   'wallpaper-vestrahorn': wallpaperVestrahorn,
   'wallpaper-annapurna': wallpaperAnnapurna,
   'wallpaper-alps': wallpaperAlps,
+  'wallpaper-cat': wallpaperCat,
 };
 
 export const Desktop = () => {

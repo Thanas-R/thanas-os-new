@@ -10,243 +10,199 @@ export const BLOG_POSTS: BlogPost[] = [
   {
     id: 'welcome',
     title: 'Welcome to ThanasOS',
-    date: '2026-05-09',
-    preview: 'A macOS-inspired portfolio built with React, Vite and Tailwind.',
+    date: '2026-05-14',
+    preview: 'The best web iteration of macOS online.',
     content: `# Welcome to **ThanasOS**
 
-> *"A portfolio that boots like a desktop."*
+> *"The best web iteration of macOS online."*
 
-Hey, I'm **Thanas**. This isn't just a website — it's a **fully working macOS desktop** rebuilt in your browser.
-
----
-
-## What's inside
-
-- A real **dock** with cosine-curve magnification
-- **Spotlight** search (try \`⌘K\`) with goo-filter chips
-- **Launchpad** with all installed apps
-- A simulated **Terminal** with a virtual filesystem
-- **Safari** + **Chrome** that race three CORS proxies
-- **App Store** to install and uninstall projects
+ThanasOS is a faithful, fully interactive recreation of macOS, rebuilt from the ground up for the browser. No iframes. No screenshots. Real components, real windows, real animations.
 
 ---
 
-## Quick tour
+## What this site is
 
-1. Hit \`⌘K\` to open **Spotlight**
-2. Open **Launchpad** from the dock
-3. Launch **Terminal** and type \`status\`
-4. Open **Safari** and click any of the **Favorites** tiles
+This is not a portfolio with a macOS skin. It is a working desktop shell with:
+
+- A real window manager (drag, resize from any edge, focus, maximize, minimize)
+- A magnifying dock with live indicators
+- Per-app menus that change as you focus different apps
+- Spotlight search across every app, setting, note and project
+- Launchpad, Control Center, Notification Center, Lock Screen, Sleep Screen
+- Light and dark themes with brightness, reduced motion and 18 wallpapers
 
 ---
 
-## The stack
+## Built from scratch
 
-\`\`\`ts
-React 18 · TypeScript · Vite
-TailwindCSS · framer-motion · lucide-react
-liquid-glass tokens via oklch
-\`\`\`
+Every widget on the desktop was hand-built for this project:
 
-> Designed around the new **liquid glass** aesthetic — every surface is a *lens*, not a wall.
-`,
+| Widget | Built from |
+|--------|------------|
+| Analog Utility Clock | Custom CSS keyframes, no library |
+| Bengaluru Weather | Live API, custom render |
+| Calendar | Pure React grid |
+| Stats | Battery API, navigator timing |
+| Now Playing Pill | Custom menu-bar surface |
+
+---
+
+## What works right now
+
+Everything you can click. Open Terminal and type \`status\`. Open Safari and load a real site through the proxy race. Drop a wallpaper into Settings. Lock the screen with Ctrl Cmd Q. Search anything with Cmd plus K.
+
+---
+
+## What is coming
+
+- Reorderable dock with drag-and-drop
+- A working Trash bin where closed windows can be restored
+- Mission Control, Stage Manager and more apps
+
+> ThanasOS will keep growing. Treat it as a long-running attempt to make the most complete macOS recreation that lives in a tab.`,
   },
   {
-    id: 'liquid-glass',
-    title: 'On Liquid Glass',
-    date: '2026-05-08',
-    preview: 'Notes on translucency, blur and the new macOS aesthetic.',
-    content: `# On **Liquid Glass**
+    id: 'features',
+    title: 'Every Feature Worth Knowing',
+    date: '2026-05-13',
+    preview: 'A deep tour of what is on this desktop.',
+    content: `# Every Feature **Worth Knowing**
 
-The whole design system rests on a single idea:
-
-> Every surface is a **lens**, not a wall.
+A long, honest list of what ThanasOS does today.
 
 ---
 
-## The recipe
+## Window manager
 
-\`\`\`css
-backdrop-filter: blur(80px) saturate(180%);
-background: rgba(255, 255, 255, 0.08);
-border: 1px solid rgba(255, 255, 255, 0.18);
-box-shadow:
-  0 25px 50px -12px rgba(0, 0, 0, 0.35),
-  0 0 1px rgba(255, 255, 255, 0.15) inset;
-\`\`\`
+- Drag from the title bar
+- Drag from the empty top strip on integrated apps (Maps, Music, Settings)
+- Resize from every edge and every corner
+- Maximize fits exactly between the menu bar and the dock
+- Z-order updates when you click a window
+- Esc closes the focused window
 
-Layered transparencies + saturation = depth without weight.
+## Dock
+
+- Cosine-curve magnification (the only curve that feels right)
+- Live indicators under open apps
+- Click an open app to minimize it back to the dock
+- Auto-hide can be turned on in Settings
+
+## Menu bar
+
+- Apple menu with About, Settings, App Store, Force Quit All, Sleep, Restart, Lock
+- Each app publishes its own File, Edit, View, Window menus
+- Live Wi-Fi, Bluetooth, Battery, Volume status with popovers
+- Control Center and Notification Center on the right
+- Auto-closes any open dropdown when your cursor leaves by 180px
+
+## Spotlight
+
+- Cmd plus K to open
+- Fuzzy search apps, settings panes, notes and projects
+- Goo-filter chip morph for category buttons
+
+## Theming
+
+- Light and dark with semantic tokens
+- Brightness slider that filters the wallpaper
+- Reduced motion toggle
+
+## Cursors
+
+ThanasOS uses the macOS glove cursor system based on the apple_cursor project (ful1e5). You get the right cursor for default, pointer, open hand, closed hand, text, help and not-allowed states.
 
 ---
 
-## Where it lives
-
-| Surface       | Blur  | Saturation | Bg α |
-|---------------|-------|------------|------|
-| Menu bar      | 40px  | 200%       | 0.55 |
-| Dock          | 80px  | 180%       | 0.65 |
-| Control Center| 40px  | 180%       | 0.55 |
-| Window chrome | 80px  | 180%       | 0.45 |
-| Spotlight     | 40px  | 200%       | 0.50 |
-
----
-
-## Visual weight (relative)
-
-\`\`\`
-Dock           ████████████████████  100%
-Window         █████████████         65%
-Control Center ████████████          60%
-Menu bar       ████████              40%
-Spotlight      █████████             45%
-\`\`\`
-
-The trick: keep \`saturation\` high so the wallpaper colors *bleed through* — that's what sells the "glass" feeling.
-`,
+> If something on this desktop feels missing, it is probably on the roadmap.`,
   },
   {
-    id: 'building-terminal',
-    title: 'Building a Browser Terminal',
-    date: '2026-05-07',
-    preview: 'How the simulated shell in ThanasOS works.',
-    content: `# Building a **Browser Terminal**
+    id: 'how-built',
+    title: 'How ThanasOS Was Built',
+    date: '2026-05-12',
+    preview: 'The architecture behind the shell.',
+    content: `# How ThanasOS Was **Built**
 
-There's no real shell in the browser, so the Terminal is a tiny **command interpreter** with a virtual filesystem.
-
----
-
-## Architecture
+ThanasOS is roughly three layers, all in one React app.
 
 \`\`\`
-┌─────────────┐    parse     ┌──────────────┐    mutate
-│ <input>     │ ───────────▶ │ command bus  │ ───────────▶  virtual FS
-└─────────────┘              └──────────────┘
-       ▲                            │
-       │ history                    │ stdout
-       └────────── <pre> lines ◀────┘
+  +--------------------------------------+
+  |  Apps  (Safari, Notes, Terminal...)  |
+  +--------------------------------------+
+  |  Shell (Dock, MenuBar, Spotlight,    |
+  |         ControlCenter, Window)       |
+  +--------------------------------------+
+  |  MacOSContext  (windows, settings,   |
+  |                 dock, openApp)       |
+  +--------------------------------------+
 \`\`\`
 
 ---
 
-## Supported commands
+## The window manager
 
-- \`ls\`, \`cd\`, \`pwd\`, \`cat\`, \`tree\`
-- \`echo\`, \`clear\`, \`history\`, \`grep\`, \`head\`, \`tail\`, \`wc\`, \`find\`
-- \`whoami\`, \`date\`, \`uname\`, \`env\`, \`which\`
-- \`open <app>\` to launch any app
-- \`status\` — full system summary
-- \`neofetch\` — the obligatory ASCII brag
+\`MacOSContext\` owns the array of open windows. Each window is just an object with id, appId, position, size, zIndex, isMinimized, isMaximized. The \`Window\` component reads its own state from context and renders the chrome plus the app component inside.
 
-Type \`help\` to see them all.
+## Per-app menus
+
+Each app can call \`registerAppMenus(appId, menus)\` to publish its own File, Edit, View, Window menu. The menu bar reads the focused app's id and renders that app's menus dynamically.
+
+## The default browser
+
+You can install a second browser (Google Chrome) from the App Store. The system has an \`openUrl\` helper that routes through whichever browser you set as default in Settings. Every external link in the app is intercepted at the document level and forced to open in a new tab.
+
+## Spotlight index
+
+\`spotlightIndex.ts\` exports a flat list of searchable items. Apps register entries by id and category. The Spotlight component does fuzzy matching with simple ranking.
+
+## Virtual filesystem
+
+\`terminalFs.ts\` builds an in-memory tree of folders and files. The Terminal app interprets commands against it. \`ls\`, \`cd\`, \`tree\`, \`cat\`, \`find\`, \`grep\`, \`head\`, \`tail\`, \`wc\`, \`open\` and more all work.
 
 ---
 
-## Why bother?
+## What I would do differently
 
-Because a portfolio that says *"check out my CLI work"* but ships a static page is just talk.
-This one **boots, runs, and responds**.
-`,
+If I started again I would lift the dock-magnification math into a hook, ship Mission Control as a first-class feature instead of an afterthought, and design the menu registry as a context provider from day one.
+
+> The cleanest decision was making every app a plain React component. No iframes, no postMessage glue. Just components.`,
   },
   {
-    id: 'arch-tour',
-    title: 'A Tour of the Architecture',
-    date: '2026-05-06',
-    preview: 'The pieces under the hood — windows, dock, contexts.',
-    content: `# A Tour of the **Architecture**
+    id: 'roadmap',
+    title: 'What is Coming Next',
+    date: '2026-05-11',
+    preview: 'Future improvements and unfinished ideas.',
+    content: `# What is **Coming Next**
 
-ThanasOS is roughly **three layers**:
-
-\`\`\`
-  ┌──────────────────────────────────────┐
-  │  Apps  (Safari, Notes, Terminal…)    │
-  ├──────────────────────────────────────┤
-  │  Shell (Dock, MenuBar, Spotlight,    │
-  │         ControlCenter, Window)       │
-  ├──────────────────────────────────────┤
-  │  MacOSContext  (windows, settings,   │
-  │                 dock, openApp)       │
-  └──────────────────────────────────────┘
-\`\`\`
+ThanasOS is a long-running project. Here is what is planned.
 
 ---
 
-## Lines of code, by layer
+## Near term
 
-\`\`\`
-Apps          ████████████████████████  ~3,800 LOC
-Shell         ██████████                ~1,600 LOC
-Context/Lib   ████                        ~700 LOC
-Widgets       ███                         ~500 LOC
-\`\`\`
+| Feature | Status |
+|---------|--------|
+| Reorderable Dock with persisted order | Planned |
+| Working Trash Bin (closed windows can be restored) | Planned |
+| Mission Control with Cmd plus Up | Planned |
+| Stage Manager side stack | Planned |
+| More apps (Photos, Reminders, Stickies, Preview) | Planned |
 
----
+## Medium term
 
-## Where features live
+- Real folder system inside Finder with drag-and-drop
+- Live and animated wallpapers
+- A theme builder for user-defined accent colors
+- Multi-display simulation
 
-| Feature              | File |
-|----------------------|------|
-| Window manager       | \`contexts/MacOSContext.tsx\` |
-| Dock magnification   | \`components/macos/Dock.tsx\` |
-| Spotlight (goo-morph)| \`components/macos/Spotlight.tsx\` |
-| Control Center tiles | \`components/macos/ControlCenter.tsx\` |
-| Browser proxies      | \`components/apps/SafariApp.tsx\` |
+## Long term
 
----
-
-> The cleanest decision was making **every app a plain React component**.
-> No iframes, no postMessage glue (except for Chrome's link interception). Just components.
-`,
-  },
-  {
-    id: 'design-decisions',
-    title: 'Design Decisions That Survived',
-    date: '2026-05-05',
-    preview: 'What I kept, what I cut, and why.',
-    content: `# Design Decisions That **Survived**
-
-Every project has a graveyard. Here's what made it out alive.
+- Shareable session URLs (open the OS with apps already arranged)
+- Plugin API so anyone can ship their own app for ThanasOS
+- A real local-first store for notes, files and settings
 
 ---
 
-## Kept
-
-- **Cosine magnification** for the dock — the only curve that *feels right*
-- **Goo-filter** Spotlight chips — they morph instead of pop
-- **Three-proxy race** for the browsers — fastest one wins
-- **Per-app menu registry** — every app publishes its own File/Edit/View menus
-
-## Cut
-
-- ~~A real desktop file system~~ — too much work for too little payoff
-- ~~Drag-to-folder in Launchpad~~ — added complexity, no signal
-- ~~A separate Control Panel app~~ — folded into Settings
-
----
-
-## What changed my mind most
-
-The biggest shift was **dropping iframes** for internal apps.
-Iframes felt "real" but killed every nice interaction:
-- no shared state
-- no shared theme
-- no real keyboard shortcuts
-
-Plain React components won everywhere.
-
----
-
-## Stack share (rough)
-
-\`\`\`
-TypeScript   ████████████████████████  90%
-CSS/Tailwind ████                      15%
-Markdown     █                          3%
-SVG          █                          2%
-\`\`\`
-
----
-
-> The best feature is the one nobody notices because it just works.
-`,
+> If you want to help build any of these, the repo is open.`,
   },
 ];

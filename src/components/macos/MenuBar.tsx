@@ -270,11 +270,11 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       // Treat anything within 320px below the menubar (typical dropdown extent)
       // and within the bar's x-range (+40px) as still "near" — don't close.
       const inXBand = e.clientX >= rect.left - 40 && e.clientX <= rect.right + 40;
-      const inYBand = e.clientY <= rect.bottom + 320 && e.clientY >= rect.top - 20;
+      const inYBand = e.clientY <= rect.bottom + 90 && e.clientY >= rect.top - 20;
       if (inXBand && inYBand) return;
       const dx = Math.max(rect.left - e.clientX, e.clientX - rect.right, 0);
       const dy = Math.max(rect.top - e.clientY, e.clientY - rect.bottom, 0);
-      if (Math.hypot(dx, dy) > 40) {
+      if (Math.hypot(dx, dy) > 20) {
         setActiveMenu(null);
         setAppleOpen(false);
         setBatteryOpen(false);

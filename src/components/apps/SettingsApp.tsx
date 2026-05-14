@@ -469,7 +469,7 @@ const KV = ({ k, v }: { k: string; v: string }) => (
   </div>
 );
 
-const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: LucideIcon; tint: string; active: boolean; onClick: () => void }) => (
+const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: React.ComponentType<{ className?: string }>; tint: string; active: boolean; onClick: () => void }) => (
   <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[14px] transition-colors ${
     active ? 'bg-neutral-300/70 dark:bg-neutral-700/60 text-neutral-900 dark:text-neutral-100'
            : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'

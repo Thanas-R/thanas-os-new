@@ -274,7 +274,7 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
       if (inXBand && inYBand) return;
       const dx = Math.max(rect.left - e.clientX, e.clientX - rect.right, 0);
       const dy = Math.max(rect.top - e.clientY, e.clientY - rect.bottom, 0);
-      if (Math.hypot(dx, dy) > 120) {
+      if (Math.hypot(dx, dy) > 90) {
         setActiveMenu(null);
         setAppleOpen(false);
         setBatteryOpen(false);

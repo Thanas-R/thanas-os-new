@@ -5,6 +5,7 @@ import { Search, Pin, Bookmark, BookOpen, Route, MapPin, Clock, X, Navigation, P
 import { useMacOS } from '@/contexts/MacOSContext';
 
 const TOKEN = (import.meta.env.VITE_MAPBOX_TOKEN as string | undefined) || '';
+const DEFAULT_CENTER: [number, number] = [77.5435, 12.9945]; // Basaveshwarnagar area, Bengaluru
 
 interface Suggestion {
   id: string;
@@ -40,7 +41,7 @@ export const MapsApp = () => {
   const [routeInfo, setRouteInfo] = useState<{ distance: number; duration: number } | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
   const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
+  const [userLoc, setUserLoc] = useState<[number, number] | null>(DEFAULT_CENTER);
 
   // Init map (always streets style regardless of theme)
   useEffect(() => {
@@ -50,43 +51,18 @@ export const MapsApp = () => {
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
-      center: [77.5946, 12.9716], // Bengaluru
+      center: DEFAULT_CENTER,
       zoom: 11,
       attributionControl: false,
       logoPosition: 'top-left',
     });
     mapRef.current = map;
 
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const c: [number, number] = [pos.coords.longitude, pos.coords.latitude];
-          setUserLoc(c);
-          map.flyTo({ center: c, zoom: 13, essential: true });
-          const userEl = document.createElement('div');
-userEl.style.width = '18px';
-userEl.style.height = '18px';
-userEl.style.borderRadius = '9999px';
-userEl.style.background = '#2f7df7';
-userEl.style.border = '3px solid rgba(255,255,255,0.95)';
-userEl.style.boxShadow = '0 0 0 6px rgba(47,125,247,0.22)';
-userEl.style.boxSizing = 'border-box';
-
-userMarkerRef.current = new mapboxgl.Marker({
-  element: userEl,
-  anchor: 'center',
-})
-  .setLngLat(c)
-  .addTo(map);
-        },
-        () => {},
-        { enableHighAccuracy: true, timeout: 6000 }
-      );
-    }
+    
     map.on('load', () => {
-  map.resize();
+  requestAnimationFrame(() => map.resize());
+  setTimeout(() => map.resize(), 100);
 });
-
 return () => {
   map.remove();
   mapRef.current = null;
@@ -179,7 +155,7 @@ useEffect(() => {
   const itemHover = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
 
   return (
-    <div className="absolute inset-0 w-full h-full relative overflow-hidden" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
+    <div className="absolute inset-0 w-full h-full relative overflow-hidden min-w-0 min-h-0" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
       {!TOKEN && (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-8 text-center"
              style={{ color: text, background: dark ? '#111' : '#f5f5f7' }}>
@@ -191,7 +167,7 @@ useEffect(() => {
         </div>
       )}
 
-      <div ref={mapContainer} className="absolute inset-0 w-full h-full maps-app-container" />
+      <div ref={mapContainer} className="absolute inset-0 w-full h-full min-w-0 min-h-0 maps-app-container" />
 
       {/* Floating frosted pill (decorative, like the one in the GitHub app) */}
       <div

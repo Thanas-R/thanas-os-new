@@ -49,8 +49,10 @@ export const TimeWidget = () => {
       style={{
         width: 172,
         height: 172,
-        background: "#1a1a1a",
-        border: "1px solid rgba(255,255,255,0.08)",
+        background: "rgba(255,255,255,0.08)",
+backdropFilter: "blur(20px)",
+WebkitBackdropFilter: "blur(20px)",
+border: "1px solid rgba(255,255,255,0.12)",
       }}
     >
       <svg viewBox="0 0 100 100" className="w-[140px] h-[140px]">

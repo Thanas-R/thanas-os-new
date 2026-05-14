@@ -95,24 +95,9 @@ export const StatsWidget = ({
 
   return (
     <div
-  className={cn('rounded-3xl overflow-hidden shadow-xl', className)}
-  style={{
-    width: 356,
-
-    background: 'rgba(28, 28, 32, 0.55)',
-    border: '1px solid rgba(255,255,255,0.08)',
-
-    backdropFilter: 'blur(40px) saturate(180%)',
-    WebkitBackdropFilter: 'blur(40px) saturate(180%)',
-
-    boxShadow:
-      '0 10px 30px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.08)',
-
-    transform: 'translateZ(0)',
-    willChange: 'transform',
-    isolation: 'isolate',
-  }}
->
+      className={cn('rounded-3xl overflow-hidden liquid-glass-card', className)}
+      style={{ width: 356 }}
+    >
       <div className="px-4 py-3">
         <div className="flex items-center gap-5">
           <div

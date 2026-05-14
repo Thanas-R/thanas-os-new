@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
 import { IoCloudySharp, IoPartlySunny, IoSunny, IoMoon, IoRainy, IoThunderstorm } from 'react-icons/io5';
 import {
@@ -71,11 +71,15 @@ const WeatherGlyph = ({
   return <IoRainy {...props} />;
 };
 
-export const BengaluruWeatherWidget = ({ className }: { className?: string }) => {
+export const BengaluruWeatherWidget = memo(({ className }: { className?: string }) => {
   const [current, setCurrent] = useState<CurrentWeather | null>(null);
   const [hours, setHours] = useState<HourSlot[]>([]);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
+    if (hasLoadedRef.current) return;
+    hasLoadedRef.current = true;
+
     const url =
       'https://api.open-meteo.com/v1/forecast?latitude=12.9716&longitude=77.5946&current=temperature_2m,is_day,weather_code&hourly=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min,sunset,sunrise&timezone=Asia%2FKolkata&forecast_days=2';
 
@@ -135,10 +139,11 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
 
   return (
     <div
-      className={cn('rounded-3xl overflow-hidden liquid-glass-card text-white', className)}
+      className={cn('glass-stable-shell rounded-3xl overflow-hidden text-white', className)}
       style={{ width: 356, fontFamily: "'Inter', -apple-system, sans-serif" }}
     >
-      <div className="px-4 pt-3 pb-2.5">
+      <div className="glass-stable-backdrop liquid-glass-card" />
+      <div className="glass-stable-content px-4 pt-3 pb-2.5">
         <div className="flex items-start justify-between">
           <div>
             <div className="text-[14px]" style={{ fontWeight: 500, letterSpacing: '0.01em' }}>
@@ -194,4 +199,4 @@ export const BengaluruWeatherWidget = ({ className }: { className?: string }) =>
       </div>
     </div>
   );
-};
+});

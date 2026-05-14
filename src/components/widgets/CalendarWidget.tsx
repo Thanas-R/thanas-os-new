@@ -27,8 +27,10 @@ export const CalendarWidget = () => {
       style={{
         width: 172,
         height: 172,
-        background: 'rgba(28, 28, 32, 0.75)',
+        background: 'rgba(28, 28, 32, 0.55)',
         border: '1px solid rgba(255,255,255,0.06)',
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
       }}
     >
       <div className="text-[11.75px] font-semibold tracking-wider mb-1 pl-1.5" style={{ color: '#FF453A' }}>

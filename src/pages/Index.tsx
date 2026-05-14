@@ -26,23 +26,23 @@ import { MapsApp } from '@/components/apps/MapsApp';
 import { AppConfig } from '@/types/macos';
 
 const apps: AppConfig[] = [
-  { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
+  { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 930, height: 600 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
-  { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 675 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
-  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1025, height: 650 }, chromeMode: 'integrated' },
-  { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 950, height: 640 }, chromeMode: 'integrated' },
-  { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1200, height: 720 }, chromeMode: 'integrated' },
-  { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1170, height: 750 }, chromeMode: 'integrated' },
-  { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1100, height: 750 }, chromeMode: 'transparent', chromeColor: '#3B3B3B' },
-  { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
-  { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1100, height: 870 }, chromeMode: 'integrated' },
-  { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1120, height: 750 }, chromeMode: 'integrated' },
-  { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 1070, height: 750 }, chromeMode: 'integrated' },
-  { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 920, height: 700 }, chromeMode: 'integrated' },
-  { id: 'contact', name: 'Contact', icon: '✉️', component: ContactApp, defaultSize: { width: 800, height: 650 }, chromeMode: 'integrated' },
+  { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 870, height: 775 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
+  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1200, height: 825 }, chromeMode: 'integrated' },
+  { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 1100, height: 780 }, chromeMode: 'integrated' },
+  { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1250, height: 820 }, chromeMode: 'integrated' },
+  { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1300, height: 900 }, chromeMode: 'integrated' },
+  { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1370, height: 950 }, chromeMode: 'transparent', chromeColor: '#3B3B3B' },
+  { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1380, height: 1070 }, chromeMode: 'integrated' },
+  { id: 'google', name: 'Google', icon: 'G', component: GoogleApp, defaultSize: { width: 1380, height: 1070 }, chromeMode: 'integrated' },
+  { id: 'applemusic', name: 'Music', icon: '🎵', component: AppleMusicApp, defaultSize: { width: 1320, height: 950 }, chromeMode: 'integrated' },
+  { id: 'github', name: 'GitHub', icon: '🐙', component: GitHubApp, defaultSize: { width: 1070, height: 930 }, chromeMode: 'integrated' },
+  { id: 'linkedin', name: 'LinkedIn', icon: '💼', component: LinkedInApp, defaultSize: { width: 1080, height: 880 }, chromeMode: 'integrated' },
+  { id: 'contact', name: 'Contact', icon: '✉️', component: ContactApp, defaultSize: { width: 850, height: 750 }, chromeMode: 'integrated' },
   { id: 'calculator', name: 'Calculator', icon: '🧮', component: CalculatorApp, defaultSize: { width: 300, height: 520 }, nonResizable: true, noMaximize: true, chromeMode: 'integrated' },
   { id: 'appstore', name: 'App Store', icon: '🛍️', component: AppStoreApp, defaultSize: { width: 1100, height: 680 }, chromeMode: 'integrated' },
-  { id: 'settings', name: 'Settings', icon: '⚙️', component: SettingsApp, defaultSize: { width: 900, height: 720 }, chromeMode: 'integrated' },
+  { id: 'settings', name: 'Settings', icon: '⚙️', component: SettingsApp, defaultSize: { width: 1000, height: 790 }, chromeMode: 'integrated' },
 ];
 
 const VISITED_KEY = 'thanasos-visited-v1';

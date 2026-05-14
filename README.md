@@ -23,7 +23,7 @@ Built and maintained by **Thanas R**.
   <img src="src/assets/desktop-screenshot.png" alt="ThanasOS preview" width="70%">
 </a>
 
-[GitHub](https://github.com/thanas-r) · [LinkedIn](https://www.linkedin.com/in/thanas-r/) · [Personal Site](https://thanas.vercel.app/)
+[GitHub](https://github.com/thanas-r) · [LinkedIn](https://www.linkedin.com/in/thanas-r/) · [Portfolio](https://thanas.vercel.app/) · [Old-Version](https://thanas-old.vercel.app/) 
 
 
 ## Table of Contents
@@ -131,7 +131,6 @@ The desktop widgets are not third-party libraries. Each one was built specifical
 | Icons | lucide-react and react-icons |
 | Markdown | react-markdown plus remark-gfm |
 | Maps | Mapbox GL JS |
-| Backend | Lovable Cloud server functions for the contact form |
 | Hosting | Vercel |
 
 ## Architecture

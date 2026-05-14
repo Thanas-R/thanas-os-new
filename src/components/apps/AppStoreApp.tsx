@@ -99,7 +99,7 @@ export const AppStoreApp = () => {
     <div className="h-full w-full flex bg-neutral-50 dark:bg-neutral-950 text-neutral-900 dark:text-neutral-100">
       {/* Sidebar */}
       <aside className="w-56 shrink-0 bg-neutral-100/80 dark:bg-neutral-900/60 backdrop-blur-xl border-r border-black/5 dark:border-white/10 flex flex-col">
-        <div className="px-3 pt-[38px] pb-2 border-b border-black/5 dark:border-white/10">
+        <div className="px-3 pt-[44px] pb-2 border-b border-black/5 dark:border-white/10">
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-white dark:bg-neutral-800 shadow-sm">
             <Search className="w-3.5 h-3.5 text-neutral-400" />
             <input

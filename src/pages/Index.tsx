@@ -76,6 +76,10 @@ const Index = () => {
   }, []);
 
   useEffect(() => {
+    document.documentElement.classList.toggle('is-mobile', isMobile);
+  }, [isMobile]);
+
+  useEffect(() => {
     const onResize = () => setIsMobile(detectIsMobile());
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);

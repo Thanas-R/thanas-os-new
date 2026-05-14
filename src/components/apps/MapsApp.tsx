@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { Search, Pin, Bookmark, BookOpen, Route, MapPin, Clock, X, Navigation, Plus, Minus, ChevronUp } from 'lucide-react';
+import { Search, Pin, Bookmark, BookOpen, Route, MapPin, Clock, X, Navigation, Plus, Minus } from 'lucide-react';
 import { useMacOS } from '@/contexts/MacOSContext';
 
 const TOKEN = (import.meta.env.VITE_MAPBOX_TOKEN as string | undefined) || '';
@@ -24,9 +24,15 @@ interface MapboxFeature {
 const RECENT_KEY = 'thanasos-maps-recent';
 
 const loadRecent = (): Suggestion[] => {
-  try { return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]'); } catch { return []; }
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY) || '[]');
+  } catch {
+    return [];
+  }
 };
-const saveRecent = (list: Suggestion[]) => localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 8)));
+
+const saveRecent = (list: Suggestion[]) =>
+  localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 8)));
 
 export const MapsApp = () => {
   const { settings } = useMacOS();
@@ -34,20 +40,21 @@ export const MapsApp = () => {
 
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
+
   const [query, setQuery] = useState('');
   const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
   const [recent, setRecent] = useState<Suggestion[]>(loadRecent);
   const [activePin, setActivePin] = useState<Suggestion | null>(null);
   const [routeInfo, setRouteInfo] = useState<{ distance: number; duration: number } | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
-  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
-  const [userLoc, setUserLoc] = useState<[number, number] | null>(DEFAULT_CENTER);
+  const [userLoc] = useState<[number, number] | null>(DEFAULT_CENTER);
 
-  // Init map (always streets style regardless of theme)
+  // Init map
   useEffect(() => {
-    if (!mapContainer.current || mapRef.current) return;
-    if (!TOKEN) return;
+    if (!mapContainer.current || mapRef.current || !TOKEN) return;
+
     mapboxgl.accessToken = TOKEN;
+
     const map = new mapboxgl.Map({
       container: mapContainer.current,
       style: 'mapbox://styles/mapbox/streets-v12',
@@ -56,114 +63,123 @@ export const MapsApp = () => {
       attributionControl: false,
       logoPosition: 'top-left',
     });
+
     mapRef.current = map;
 
-   map.on('load', () => {
-
     const resize = () => {
-  requestAnimationFrame(() => map.resize());
-};
+      requestAnimationFrame(() => {
+        map.resize();
+      });
+    };
 
-const ro = new ResizeObserver(() => {
-  resize();
-});
+    map.on('load', () => {
+      resize();
+      setTimeout(resize, 50);
+      setTimeout(resize, 200);
+      setTimeout(resize, 500);
+    });
 
-ro.observe(mapContainer.current);
+    const el = mapContainer.current;
+    let ro: ResizeObserver | null = null;
 
-window.addEventListener('resize', resize);
+    if (el && typeof ResizeObserver !== 'undefined') {
+      ro = new ResizeObserver(() => resize());
+      ro.observe(el);
+    }
 
-// 🔥 important extra stabilizers
-setTimeout(resize, 100);
-setTimeout(resize, 400);
+    window.addEventListener('resize', resize);
 
-return () => {
-  ro.disconnect();
-  window.removeEventListener('resize', resize);
-};
-   
-return () => {
-  map.remove();
-  mapRef.current = null;
-};
-}, []);
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener('resize', resize);
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
 
-useEffect(() => {
-  const map = mapRef.current;
-  if (!map || !mapContainer.current) return;
-
-  const resize = () => map.resize();
-
-  const ro = new ResizeObserver(resize);
-  ro.observe(mapContainer.current);
-
-  window.addEventListener('resize', resize);
-
-  setTimeout(resize, 100);
-
-  return () => {
-    ro.disconnect();
-    window.removeEventListener('resize', resize);
-  };
-}, []);
-  
   // Search (debounced)
   useEffect(() => {
-    if (!query.trim() || !TOKEN) { setSuggestions([]); return; }
+    if (!query.trim() || !TOKEN) {
+      setSuggestions([]);
+      return;
+    }
+
     const t = setTimeout(async () => {
       try {
         const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${TOKEN}&autocomplete=true&limit=6${userLoc ? `&proximity=${userLoc.join(',')}` : ''}`;
         const r = await fetch(url);
         const j = await r.json();
         const features = Array.isArray(j.features) ? (j.features as MapboxFeature[]) : [];
-        setSuggestions(features.map((f) => ({
-          id: f.id,
-          name: f.text,
-          place: f.place_name,
-          center: f.center,
-        })));
-      } catch { /* ignore */ }
+
+        setSuggestions(
+          features.map((f) => ({
+            id: f.id,
+            name: f.text,
+            place: f.place_name,
+            center: f.center,
+          }))
+        );
+      } catch {
+        // ignore
+      }
     }, 250);
+
     return () => clearTimeout(t);
   }, [query, userLoc]);
 
-  const selectSuggestion = useCallback((s: Suggestion) => {
-    if (!mapRef.current) return;
-    setActivePin(s);
-    setQuery(s.name);
-    setSuggestions([]);
-    mapRef.current.flyTo({ center: s.center, zoom: 14, essential: true });
-    if (markerRef.current) markerRef.current.remove();
-    markerRef.current = new mapboxgl.Marker({ color: '#fa2d48' })
-      .setLngLat(s.center)
-      .setPopup(new mapboxgl.Popup({ offset: 24 }).setText(s.place))
-      .addTo(mapRef.current);
-    const next = [s, ...recent.filter((r) => r.id !== s.id)];
-    setRecent(next);
-    saveRecent(next);
-  }, [recent]);
+  const selectSuggestion = useCallback(
+    (s: Suggestion) => {
+      if (!mapRef.current) return;
+
+      setActivePin(s);
+      setQuery(s.name);
+      setSuggestions([]);
+
+      mapRef.current.flyTo({ center: s.center, zoom: 14, essential: true });
+
+      if (markerRef.current) markerRef.current.remove();
+      markerRef.current = new mapboxgl.Marker({ color: '#fa2d48' })
+        .setLngLat(s.center)
+        .setPopup(new mapboxgl.Popup({ offset: 24 }).setText(s.place))
+        .addTo(mapRef.current);
+
+      const next = [s, ...recent.filter((r) => r.id !== s.id)];
+      setRecent(next);
+      saveRecent(next);
+    },
+    [recent]
+  );
 
   const directions = useCallback(async () => {
     if (!activePin || !userLoc || !mapRef.current || !TOKEN) return;
+
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${userLoc[0]},${userLoc[1]};${activePin.center[0]},${activePin.center[1]}?geometries=geojson&access_token=${TOKEN}`;
     const r = await fetch(url);
     const j = await r.json();
     const route = j.routes?.[0];
     if (!route) return;
+
     setRouteInfo({ distance: route.distance, duration: route.duration });
+
     const map = mapRef.current;
     if (map.getLayer('route-line')) map.removeLayer('route-line');
     if (map.getSource('route-src')) map.removeSource('route-src');
-    map.addSource('route-src', { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: route.geometry } });
+
+    map.addSource('route-src', {
+      type: 'geojson',
+      data: { type: 'Feature', properties: {}, geometry: route.geometry },
+    });
+
     map.addLayer({
-      id: 'route-line', type: 'line', source: 'route-src',
+      id: 'route-line',
+      type: 'line',
+      source: 'route-src',
       layout: { 'line-cap': 'round', 'line-join': 'round' },
       paint: { 'line-color': '#2f7df7', 'line-width': 5, 'line-opacity': 0.9 },
     });
+
     const coords = route.geometry.coordinates as [number, number][];
-    const b = coords.reduce(
-      (bb, c) => bb.extend(c),
-      new mapboxgl.LngLatBounds(coords[0], coords[0])
-    );
+    const b = coords.reduce((bb, c) => bb.extend(c), new mapboxgl.LngLatBounds(coords[0], coords[0]));
     map.fitBounds(b, { padding: { top: 80, left: 380, right: 60, bottom: 80 } });
   }, [activePin, userLoc]);
 
@@ -173,34 +189,45 @@ useEffect(() => {
   const itemHover = dark ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.05)';
 
   return (
-    <div className="absolute inset-0 w-full h-full relative overflow-hidden min-w-0 min-h-0" style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}>
+    <div
+      className="absolute inset-0 w-full h-full relative overflow-hidden min-w-0 min-h-0"
+      style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}
+    >
       {!TOKEN && (
-        <div className="absolute inset-0 z-50 flex items-center justify-center p-8 text-center"
-             style={{ color: text, background: dark ? '#111' : '#f5f5f7' }}>
+        <div
+          className="absolute inset-0 z-50 flex items-center justify-center p-8 text-center"
+          style={{ color: text, background: dark ? '#111' : '#f5f5f7' }}
+        >
           <div className="max-w-md">
             <MapPin className="w-10 h-10 mx-auto mb-3" style={{ color: '#fa2d48' }} />
             <h2 className="text-lg font-semibold mb-2">Add your Mapbox token</h2>
-            <p className="text-sm opacity-70">Set the env var <code className="px-1.5 py-0.5 rounded bg-black/20">VITE_MAPBOX_TOKEN</code> in Vercel and redeploy. Then this app will load with directions, search and recents.</p>
+            <p className="text-sm opacity-70">
+              Set the env var <code className="px-1.5 py-0.5 rounded bg-black/20">VITE_MAPBOX_TOKEN</code> in Vercel and redeploy.
+            </p>
           </div>
         </div>
       )}
 
       <div className="absolute inset-0 overflow-hidden">
-  <div
-    ref={mapContainer}
-    className="w-full h-full"
-    style={{
-      position: 'absolute',
-      inset: 0,
-    }}
-  />
-</div>
-      
-      {/* Floating frosted pill (decorative, like the one in the GitHub app) */}
+        <div
+          ref={mapContainer}
+          className="absolute inset-0"
+          style={{
+            width: '100%',
+            height: '100%',
+          }}
+        />
+      </div>
+
+      {/* Floating frosted pill */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: 8, left: 7, width:100 , height: 28, borderRadius: 999,
+          top: 8,
+          left: 7,
+          width: 100,
+          height: 28,
+          borderRadius: 999,
           background: dark ? 'rgba(22,27,34,0.78)' : 'rgba(255,255,255,0.78)',
           border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'}`,
           backdropFilter: 'blur(18px) saturate(180%)',
@@ -209,7 +236,7 @@ useEffect(() => {
         }}
       />
 
-      {/* Floating frosted sidebar — sits below the title bar */}
+      {/* Sidebar */}
       <div
         className="absolute left-3 w-[320px] max-h-[calc(100%-72px)] rounded-2xl flex flex-col overflow-hidden"
         style={{
@@ -223,10 +250,11 @@ useEffect(() => {
           paddingTop: 10,
         }}
       >
-
         <div className="px-3 pb-2">
-          <div className="flex items-center gap-2 px-3 h-9 rounded-lg"
-               style={{ background: dark ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.85)' }}>
+          <div
+            className="flex items-center gap-2 px-3 h-9 rounded-lg"
+            style={{ background: dark ? 'rgba(255,255,255,0.10)' : 'rgba(255,255,255,0.85)' }}
+          >
             <Search className="w-4 h-4 opacity-60" />
             <input
               value={query}
@@ -236,7 +264,12 @@ useEffect(() => {
               style={{ color: text }}
             />
             {query && (
-              <button onClick={() => { setQuery(''); setSuggestions([]); }}>
+              <button
+                onClick={() => {
+                  setQuery('');
+                  setSuggestions([]);
+                }}
+              >
                 <X className="w-3.5 h-3.5 opacity-60" />
               </button>
             )}
@@ -256,7 +289,9 @@ useEffect(() => {
                 >
                   <div className="min-w-0">
                     <div className="text-[13px] font-medium truncate">{s.name}</div>
-                    <div className="text-[11px] truncate" style={{ color: sub }}>{s.place}</div>
+                    <div className="text-[11px] truncate" style={{ color: sub }}>
+                      {s.place}
+                    </div>
                   </div>
                 </button>
               ))}
@@ -265,32 +300,42 @@ useEffect(() => {
 
           {suggestions.length === 0 && (
             <>
-              <div className="text-[10.5px] uppercase tracking-wider mt-2 mb-1 px-3" style={{ color: sub }}>Places</div>
+              <div className="text-[10.5px] uppercase tracking-wider mt-2 mb-1 px-3" style={{ color: sub }}>
+                Places
+              </div>
               <SidebarItem icon={<Pin className="w-4 h-4" />} label="Pinned" hover={itemHover} text={text} />
-<SidebarItem icon={<Bookmark className="w-4 h-4" />} label="Saved Places" hover={itemHover} text={text} />
-<SidebarItem icon={<BookOpen className="w-4 h-4" />} label="Guides" hover={itemHover} text={text} />
-<SidebarItem icon={<Route className="w-4 h-4" />} label="Routes" hover={itemHover} text={text} />
-<SidebarItem icon={<MapPin className="w-4 h-4" />} label="Visited Places" hover={itemHover} text={text} />
-<SidebarItem icon={<Clock className="w-4 h-4" />} label="Recently Added" hover={itemHover} text={text} />
+              <SidebarItem icon={<Bookmark className="w-4 h-4" />} label="Saved Places" hover={itemHover} text={text} />
+              <SidebarItem icon={<BookOpen className="w-4 h-4" />} label="Guides" hover={itemHover} text={text} />
+              <SidebarItem icon={<Route className="w-4 h-4" />} label="Routes" hover={itemHover} text={text} />
+              <SidebarItem icon={<MapPin className="w-4 h-4" />} label="Visited Places" hover={itemHover} text={text} />
+              <SidebarItem icon={<Clock className="w-4 h-4" />} label="Recently Added" hover={itemHover} text={text} />
 
-              <div className="text-[10.5px] uppercase tracking-wider mt-3 mb-1 px-3" style={{ color: sub }}>Recents</div>
+              <div className="text-[10.5px] uppercase tracking-wider mt-3 mb-1 px-3" style={{ color: sub }}>
+                Recents
+              </div>
               {recent.length === 0 ? (
-                <div className="px-3 py-2 text-[12px]" style={{ color: sub }}>No recent searches.</div>
-              ) : recent.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => selectSuggestion(s)}
-                  className="w-full text-left px-3 py-2 rounded-lg flex items-start gap-2"
-                  onMouseEnter={(e) => (e.currentTarget.style.background = itemHover)}
-                  onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
-                >
-                  <Clock className="w-3.5 h-3.5 mt-0.5 opacity-70" />
-                  <div className="min-w-0">
-                    <div className="text-[13px] truncate">{s.name}</div>
-                    <div className="text-[11px] truncate" style={{ color: sub }}>{s.place}</div>
-                  </div>
-                </button>
-              ))}
+                <div className="px-3 py-2 text-[12px]" style={{ color: sub }}>
+                  No recent searches.
+                </div>
+              ) : (
+                recent.map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => selectSuggestion(s)}
+                    className="w-full text-left px-3 py-2 rounded-lg flex items-start gap-2"
+                    onMouseEnter={(e) => (e.currentTarget.style.background = itemHover)}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+                  >
+                    <Clock className="w-3.5 h-3.5 mt-0.5 opacity-70" />
+                    <div className="min-w-0">
+                      <div className="text-[13px] truncate">{s.name}</div>
+                      <div className="text-[11px] truncate" style={{ color: sub }}>
+                        {s.place}
+                      </div>
+                    </div>
+                  </button>
+                ))
+              )}
             </>
           )}
         </div>
@@ -298,32 +343,55 @@ useEffect(() => {
 
       {/* Right zoom + locate controls */}
       <div className="absolute top-14 right-3 flex flex-col gap-2 z-10">
-        <button onClick={() => mapRef.current?.zoomIn()} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
-          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+        <button
+          onClick={() => mapRef.current?.zoomIn()}
+          className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{
+            background: sidebarBg,
+            backdropFilter: 'blur(20px)',
+            color: text,
+            border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+          }}
+        >
           <Plus className="w-4 h-4" />
         </button>
-        <button onClick={() => mapRef.current?.zoomOut()} className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
-          style={{ background: sidebarBg, backdropFilter: 'blur(20px)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+        <button
+          onClick={() => mapRef.current?.zoomOut()}
+          className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{
+            background: sidebarBg,
+            backdropFilter: 'blur(20px)',
+            color: text,
+            border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+          }}
+        >
           <Minus className="w-4 h-4" />
         </button>
         <button
-  onClick={() => userLoc && mapRef.current?.flyTo({ center: userLoc, zoom: 14 })}
-  className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
-  style={{
-    background: sidebarBg,
-    backdropFilter: 'blur(20px)',
-    color: text,
-    border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
-  }}
->
-  <Navigation className="w-4 h-4" />
-</button>
+          onClick={() => userLoc && mapRef.current?.flyTo({ center: userLoc, zoom: 14 })}
+          className="w-9 h-9 rounded-lg flex items-center justify-center shadow"
+          style={{
+            background: sidebarBg,
+            backdropFilter: 'blur(20px)',
+            color: text,
+            border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+          }}
+        >
+          <Navigation className="w-4 h-4" />
+        </button>
       </div>
 
       {/* Active pin info */}
       {activePin && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-md w-[92%] rounded-2xl p-3 flex items-center gap-3"
-             style={{ background: sidebarBg, backdropFilter: 'blur(28px) saturate(180%)', color: text, border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}` }}>
+        <div
+          className="absolute bottom-4 left-1/2 -translate-x-1/2 max-w-md w-[92%] rounded-2xl p-3 flex items-center gap-3"
+          style={{
+            background: sidebarBg,
+            backdropFilter: 'blur(28px) saturate(180%)',
+            color: text,
+            border: `1px solid ${dark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)'}`,
+          }}
+        >
           <div className="flex-1 min-w-0">
             <div className="text-[13px] font-semibold truncate">{activePin.name}</div>
             <div className="text-[11px] truncate" style={{ color: sub }}>
@@ -332,14 +400,27 @@ useEffect(() => {
                 : activePin.place}
             </div>
           </div>
-          <button onClick={directions}
+          <button
+            onClick={directions}
             disabled={!userLoc}
             className="px-3 h-8 rounded-lg text-[12.5px] font-medium text-white disabled:opacity-50"
-            style={{ background: '#2f7df7' }}>
+            style={{ background: '#2f7df7' }}
+          >
             Directions
           </button>
-          <button onClick={() => { setActivePin(null); setRouteInfo(null); markerRef.current?.remove(); markerRef.current = null;
-            const m = mapRef.current; if (m && m.getLayer('route-line')) { m.removeLayer('route-line'); m.removeSource('route-src'); } }}>
+          <button
+            onClick={() => {
+              setActivePin(null);
+              setRouteInfo(null);
+              markerRef.current?.remove();
+              markerRef.current = null;
+              const m = mapRef.current;
+              if (m && m.getLayer('route-line')) {
+                m.removeLayer('route-line');
+                m.removeSource('route-src');
+              }
+            }}
+          >
             <X className="w-4 h-4 opacity-78" />
           </button>
         </div>

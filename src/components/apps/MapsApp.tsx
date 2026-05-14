@@ -58,11 +58,29 @@ export const MapsApp = () => {
     });
     mapRef.current = map;
 
-    
-    map.on('load', () => {
+   map.on('load', () => {
+
+    const resize = () => {
   requestAnimationFrame(() => map.resize());
-  setTimeout(() => map.resize(), 100);
+};
+
+const ro = new ResizeObserver(() => {
+  resize();
 });
+
+ro.observe(mapContainer.current);
+
+window.addEventListener('resize', resize);
+
+// 🔥 important extra stabilizers
+setTimeout(resize, 100);
+setTimeout(resize, 400);
+
+return () => {
+  ro.disconnect();
+  window.removeEventListener('resize', resize);
+};
+   
 return () => {
   map.remove();
   mapRef.current = null;

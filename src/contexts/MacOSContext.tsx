@@ -37,6 +37,7 @@ const DEFAULT_SETTINGS: MacOSSettings = {
 };
 
 export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: AppConfig[] }) => {
+  const desktopScale = 0.9;
   const [windows, setWindows] = useState<WindowState[]>([]);
   const [focusedWindowId, setFocusedWindowId] = useState<string | null>(null);
   const [settings, setSettings] = useState<MacOSSettings>(() => {
@@ -92,8 +93,8 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
 
     const menuBarHeight = 28;
     const dockHeight = 100;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
+    const vw = window.innerWidth / desktopScale;
+    const vh = window.innerHeight / desktopScale;
     const availableHeight = vh - menuBarHeight - dockHeight;
     const availableWidth = vw - 40;
 
@@ -162,9 +163,10 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
         } else {
           // Maximize: store current position/size and go fullscreen
           // If dock is auto-hide, use full height; otherwise leave space for dock
+          const maxWidth = window.innerWidth / desktopScale;
           const maxHeight = settings.dockAutoHide 
-            ? window.innerHeight - 28 
-            : window.innerHeight - 28 - 86;
+            ? window.innerHeight / desktopScale - 28 
+            : window.innerHeight / desktopScale - 28 - 86;
           
           return {
             ...w,
@@ -172,7 +174,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
             preMaximizePosition: w.position,
             preMaximizeSize: w.size,
             position: { x: 0, y: 28 },
-            size: { width: window.innerWidth, height: maxHeight },
+            size: { width: maxWidth, height: maxHeight },
           };
         }
       })

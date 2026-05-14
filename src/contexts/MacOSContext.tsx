@@ -164,7 +164,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
           // If dock is auto-hide, use full height; otherwise leave space for dock
           const maxHeight = settings.dockAutoHide 
             ? window.innerHeight - 28 
-            : window.innerHeight - 28 - 80;
+            : window.innerHeight - 28 - 86;
           
           return {
             ...w,

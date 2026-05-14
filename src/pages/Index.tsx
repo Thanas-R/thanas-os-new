@@ -56,7 +56,7 @@ const Index = () => {
   const [isMobile, setIsMobile] = useState(detectIsMobile);
   const [showHello, setShowHello] = useState(() => {
     if (typeof window === 'undefined') return false;
-    return !localStorage.getItem(VISITED_KEY);
+    return !sessionStorage.getItem(VISITED_KEY);
   });
   const [locked, setLocked] = useState(true);
   const [relocking, setRelocking] = useState(false); // animate lock screen back IN
@@ -112,7 +112,7 @@ const Index = () => {
   }, []);
 
   const finishHello = () => {
-    localStorage.setItem(VISITED_KEY, '1');
+    sessionStorage.setItem(VISITED_KEY, '1');
     setShowHello(false);
   };
 

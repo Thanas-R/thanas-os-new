@@ -219,6 +219,9 @@ All colors MUST be HSL.
       0 8px 32px rgba(0, 0, 0, 0.18),
       inset 0 1px 0 rgba(255, 255, 255, 0.25),
       inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+      transform: translateZ(0);
+will-change: transform;
+isolation: isolate;
   }
   .liquid-glass-dark {
     background: linear-gradient(
@@ -233,6 +236,9 @@ All colors MUST be HSL.
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.45),
       inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      transform: translateZ(0);
+will-change: transform;
+isolation: isolate;
   }
   .liquid-glass-card {
     background: rgba(28, 28, 32, 0.55);
@@ -242,6 +248,9 @@ All colors MUST be HSL.
     box-shadow:
       0 10px 30px rgba(0, 0, 0, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      transform: translateZ(0);
+will-change: transform;
+isolation: isolate;
   }
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }

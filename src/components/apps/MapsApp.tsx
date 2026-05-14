@@ -48,51 +48,63 @@ export const MapsApp = () => {
   const [routeInfo, setRouteInfo] = useState<{ distance: number; duration: number } | null>(null);
   const markerRef = useRef<mapboxgl.Marker | null>(null);
   const [userLoc] = useState<[number, number] | null>(DEFAULT_CENTER);
+  const [mapReady, setMapReady] = useState(false);
 
-  // Init map
+  // Init map — wait for the container to settle (window open animation)
+  // before creating the Mapbox instance so it boots at the final size.
   useEffect(() => {
     if (!mapContainer.current || mapRef.current || !TOKEN) return;
 
     mapboxgl.accessToken = TOKEN;
+    const el = mapContainer.current;
+    let map: mapboxgl.Map | null = null;
+    let ro: ResizeObserver | null = null;
+    let stableTimer: number | null = null;
+    let lastW = 0;
+    let lastH = 0;
 
-    const map = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/streets-v12',
-      center: DEFAULT_CENTER,
-      zoom: 11,
-      attributionControl: false,
-      logoPosition: 'top-left',
-    });
-
-    mapRef.current = map;
-
-    const resize = () => {
-      requestAnimationFrame(() => {
-        map.resize();
+    const initMap = () => {
+      if (mapRef.current || !mapContainer.current) return;
+      map = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/streets-v12',
+        center: DEFAULT_CENTER,
+        zoom: 11,
+        attributionControl: false,
+        logoPosition: 'top-left',
+        fadeDuration: 0,
       });
+      mapRef.current = map;
+
+      const resize = () => map?.resize();
+      map.once('idle', () => setMapReady(true));
+
+      if (typeof ResizeObserver !== 'undefined') {
+        ro?.disconnect();
+        ro = new ResizeObserver(() => requestAnimationFrame(resize));
+        ro.observe(el);
+      }
+      window.addEventListener('resize', resize);
     };
 
-    map.on('load', () => {
-      resize();
-      setTimeout(resize, 50);
-      setTimeout(resize, 200);
-      setTimeout(resize, 500);
-    });
-
-    const el = mapContainer.current;
-    let ro: ResizeObserver | null = null;
-
-    if (el && typeof ResizeObserver !== 'undefined') {
-      ro = new ResizeObserver(() => resize());
-      ro.observe(el);
-    }
-
-    window.addEventListener('resize', resize);
+    // Poll container size until it stops changing for ~100ms, then init.
+    const waitForStableSize = () => {
+      const r = el.getBoundingClientRect();
+      if (r.width === lastW && r.height === lastH && r.width > 0 && r.height > 0) {
+        initMap();
+        return;
+      }
+      lastW = r.width;
+      lastH = r.height;
+      stableTimer = window.setTimeout(waitForStableSize, 80);
+    };
+    waitForStableSize();
 
     return () => {
+      if (stableTimer) clearTimeout(stableTimer);
       ro?.disconnect();
-      window.removeEventListener('resize', resize);
-      map.remove();
+      window.removeEventListener('resize', () => map?.resize());
+      map?.remove();
       mapRef.current = null;
     };
   }, []);
@@ -215,6 +227,8 @@ export const MapsApp = () => {
           style={{
             width: '100%',
             height: '100%',
+            opacity: mapReady ? 1 : 0,
+            transition: 'opacity 180ms ease-out',
           }}
         />
       </div>

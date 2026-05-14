@@ -194,7 +194,7 @@ export const Window = ({ window }: WindowProps) => {
         left: window.isMaximized ? 0 : window.position.x,
         top: window.isMaximized ? 28 : window.position.y,
         right: window.isMaximized ? 0 : undefined,
-        bottom: window.isMaximized ? 80 : undefined,
+        bottom: window.isMaximized ? 86 : undefined,
         width: window.isMaximized ? undefined : window.size.width,
         height: window.isMaximized ? undefined : window.size.height,
         zIndex: window.zIndex,

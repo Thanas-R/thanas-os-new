@@ -26,28 +26,28 @@ export const MobileFallback = () => {
         .mobile-fallback main {
           position: relative; z-index: 2; min-height: 100vh;
           display: flex; flex-direction: column; align-items: center;
-          justify-content: flex-start; padding: 7vh 20px 32px; text-align: center; gap: 22px;
+          justify-content: flex-start; padding: 5vh 18px 24px; text-align: center; gap: 16px;
         }
         .mobile-fallback h1 {
           font-family: 'Fraunces', serif; font-weight: 900;
-          font-size: clamp(30px, 8vw, 46px); line-height: 1.04;
+          font-size: clamp(24px, 6.8vw, 38px); line-height: 1.05;
           letter-spacing: -0.025em; margin: 0; padding: 0 8px; color: #fafafa;
         }
         .mobile-fallback h1 .ital { font-style: italic; font-weight: 400; color: #d8d8d8; }
         .mobile-fallback .lead {
-          font-family: 'Inter', sans-serif; font-size: clamp(15px, 3.6vw, 17px);
-          font-weight: 500; color: #b8b8b8; max-width: 480px;
+          font-family: 'Inter', sans-serif; font-size: clamp(13px, 3.2vw, 15px);
+          font-weight: 500; color: #b8b8b8; max-width: 460px;
           margin: 0; line-height: 1.55;
         }
         .mobile-fallback .desktop-cta {
-          font-family: 'Inter', sans-serif; font-size: clamp(13px, 3.4vw, 15px);
-          color: #888; margin-top: 4px;
+          font-family: 'Inter', sans-serif; font-size: clamp(12px, 3vw, 14px);
+          color: #888; margin-top: 2px;
         }
         .mobile-fallback .desktop-cta .mono {
           font-family: 'JetBrains Mono', monospace; font-size: 0.92em;
           background: rgba(255,255,255,0.08); padding: 2px 7px; border-radius: 6px; color: #fafafa;
         }
-        .mobile-fallback .mac-wrap { width: 100%; max-width: 380px; color: #1a1a1a; display: flex; justify-content: center; }
+        .mobile-fallback .mac-wrap { width: 100%; max-width: 320px; color: #1a1a1a; display: flex; justify-content: center; }
         .mobile-fallback .mac-wrap svg { width: 100%; height: auto; display: block; }
       `}</style>
       <div className="dots" />

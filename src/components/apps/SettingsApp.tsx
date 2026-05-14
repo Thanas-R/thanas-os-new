@@ -27,6 +27,7 @@ import wallpaperDolomites from '@/assets/wallpaper-dolomites.jpg';
 import wallpaperVestrahorn from '@/assets/wallpaper-vestrahorn.jpg';
 import wallpaperAnnapurna from '@/assets/wallpaper-annapurna.jpg';
 import wallpaperAlps from '@/assets/wallpaper-alps.jpg';
+import wallpaperCat from '@/assets/wallpaper-cat.jpg';
 import safariIcon from '@/assets/safari-icon.png';
 import googleIcon from '@/assets/google-icon-new.png';
 import profilePhoto from '@/assets/profile-photo-new.jpg';
@@ -39,6 +40,7 @@ const wallpapers = [
   { id: 'wallpaper-vestrahorn', src: wallpaperVestrahorn, name: 'Vestrahorn' },
   { id: 'wallpaper-annapurna', src: wallpaperAnnapurna, name: 'Annapurna Night' },
   { id: 'wallpaper-alps', src: wallpaperAlps, name: 'Swiss Alps' },
+  { id: 'wallpaper-cat', src: wallpaperCat, name: 'Curious Cat' },
   { id: 'wallpaper-bigsur', src: wallpaperBigsur, name: 'Big Sur' },
   { id: 'wallpaper-aurora', src: wallpaperAurora, name: 'Aurora' },
   { id: 'wallpaper-snow', src: wallpaperSnow, name: 'Winter Trail' },

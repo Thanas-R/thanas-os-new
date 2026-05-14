@@ -190,7 +190,7 @@ export const MapsApp = () => {
 
   return (
     <div
-      className="absolute inset-0 w-full h-full relative overflow-hidden min-w-0 min-h-0"
+      className="relative w-full h-full overflow-hidden min-w-0 min-h-0"
       style={{ background: dark ? '#1c1c1e' : '#e8eef3' }}
     >
       {!TOKEN && (

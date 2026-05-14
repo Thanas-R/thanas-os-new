@@ -57,17 +57,6 @@ export const RestartScreen = ({ onDone, durationMs = 10000 }: Props) => {
   );
 };
 
-const Spinner = () => (
-  <div className="mac-spinner">
-    {Array.from({ length: 12 }).map((_, i) => (
-      <div
-        key={i}
-        className="blade"
-        style={{ transform: `rotate(${i * 30}deg)`, animationDelay: `${i * 0.083}s` }}
-      />
-    ))}
-  </div>
-);
 
 export const MacSpinner = ({ size = 32, color = '#69717d' }: { size?: number; color?: string }) => (
   <>

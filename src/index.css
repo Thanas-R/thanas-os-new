@@ -151,11 +151,6 @@ All colors MUST be HSL.
     cursor: var(--thanasos-cursor-notallowed) !important;
   }
 
-  /* Default 90% zoom-out so the whole UI fits comfortably on smaller screens. */
-  html:not(.is-mobile) {
-    zoom: 0.9;
-  }
-
   * {
     @apply border-border;
   }

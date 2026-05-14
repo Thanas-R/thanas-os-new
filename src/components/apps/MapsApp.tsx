@@ -167,8 +167,17 @@ useEffect(() => {
         </div>
       )}
 
-      <div ref={mapContainer} className="absolute inset-0 w-full h-full min-w-0 min-h-0 maps-app-container" />
-
+      <div className="absolute inset-0 overflow-hidden">
+  <div
+    ref={mapContainer}
+    className="w-full h-full"
+    style={{
+      position: 'absolute',
+      inset: 0,
+    }}
+  />
+</div>
+      
       {/* Floating frosted pill (decorative, like the one in the GitHub app) */}
       <div
         className="absolute pointer-events-none"

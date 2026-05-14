@@ -31,7 +31,7 @@ const apps: AppConfig[] = [
   { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 870, height: 775 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
   { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1200, height: 825 }, chromeMode: 'integrated' },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 1100, height: 780 }, chromeMode: 'integrated' },
-  { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 900, height: 650 }, chromeMode: 'integrated' },
+  { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1150, height: 790 }, chromeMode: 'integrated' },
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1300, height: 900 }, chromeMode: 'integrated' },
   { id: 'technologies', name: 'VS Code', icon: '⚙️', component: TechnologiesApp, defaultSize: { width: 1370, height: 950 }, chromeMode: 'transparent', chromeColor: '#3B3B3B' },
   { id: 'safari', name: 'Safari', icon: '🧭', component: SafariApp, defaultSize: { width: 1380, height: 1070 }, chromeMode: 'integrated' },

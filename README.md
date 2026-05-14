@@ -20,7 +20,7 @@ ThanasOS started as a portfolio. It grew into something else: a long, deliberate
 Built and maintained by **Thanas R**.
 
 <a href="https://thanas-os.vercel.app">
-  <img src="src/assets/desktop-screenshot.png" alt="ThanasOS preview" width="70%">
+  <img src="src/assets/desktop-screenshot.png" alt="ThanasOS preview" width="80%">
 </a>
 
 [GitHub](https://github.com/thanas-r) · [LinkedIn](https://www.linkedin.com/in/thanas-r/) · [Portfolio](https://thanas.vercel.app/) · [Old-Version](https://thanas-old.vercel.app/) 

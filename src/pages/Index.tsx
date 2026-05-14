@@ -4,6 +4,8 @@ import { Desktop } from '@/components/macos/Desktop';
 import { LockScreen } from '@/components/macos/LockScreen';
 import { SleepScreen } from '@/components/macos/SleepScreen';
 import { RestartScreen } from '@/components/macos/RestartScreen';
+import { HelloIntro } from '@/components/macos/HelloIntro';
+import { MobileFallback } from '@/components/MobileFallback';
 import { TechnologiesApp } from '@/components/apps/TechnologiesApp';
 import { JourneyApp } from '@/components/apps/JourneyApp';
 import { ContactApp } from '@/components/apps/ContactApp';
@@ -27,7 +29,7 @@ const apps: AppConfig[] = [
   { id: 'finder', name: 'Finder', icon: '📁', component: FinderApp, defaultSize: { width: 850, height: 550 }, chromeMode: 'integrated' },
   { id: 'launchpad', name: 'Launchpad', icon: '🚀', component: LaunchpadApp, defaultSize: { width: 1000, height: 700 } },
   { id: 'terminal', name: 'Terminal', icon: '💻', component: TerminalApp, defaultSize: { width: 750, height: 675 }, chromeMode: 'transparent', chromeColor: '#1d1f21' },
-  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1025, height: 650 },chromeMode: 'integrated' },
+  { id: 'journey', name: 'Journey', icon: '🚀', component: JourneyApp, defaultSize: { width: 1025, height: 650 }, chromeMode: 'integrated' },
   { id: 'notes', name: 'Notes', icon: '📒', component: NotesApp, defaultSize: { width: 950, height: 640 }, chromeMode: 'integrated' },
   { id: 'maps', name: 'Maps', icon: '🗺️', component: MapsApp, defaultSize: { width: 1200, height: 720 }, chromeMode: 'integrated' },
   { id: 'calendar', name: 'Calendar', icon: '📅', component: CalendarApp, defaultSize: { width: 1170, height: 750 }, chromeMode: 'integrated' },
@@ -43,14 +45,50 @@ const apps: AppConfig[] = [
   { id: 'settings', name: 'Settings', icon: '⚙️', component: SettingsApp, defaultSize: { width: 900, height: 720 }, chromeMode: 'integrated' },
 ];
 
+const VISITED_KEY = 'thanasos-visited-v1';
+
+const detectIsMobile = () => {
+  if (typeof window === 'undefined') return false;
+  return window.innerWidth < 768 || /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
+};
+
 const Index = () => {
-  // Show lock screen on every fresh page load — gates entry to the OS.
+  const [isMobile, setIsMobile] = useState(detectIsMobile);
+  const [showHello, setShowHello] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem(VISITED_KEY);
+  });
   const [locked, setLocked] = useState(true);
+  const [relocking, setRelocking] = useState(false); // animate lock screen back IN
   const [sleeping, setSleeping] = useState(false);
   const [restarting, setRestarting] = useState(false);
 
+  // System theme detection — respects user's OS preference unless they've set one
   useEffect(() => {
-    const onLock = () => setLocked(true);
+    try {
+      const saved = localStorage.getItem('macos-settings');
+      if (saved && JSON.parse(saved).theme) return; // user already chose
+    } catch { /* ignore */ }
+    const prefersDark = window.matchMedia?.('(prefers-color-scheme: dark)').matches;
+    const cur = JSON.parse(localStorage.getItem('macos-settings') || '{}');
+    localStorage.setItem('macos-settings', JSON.stringify({ ...cur, theme: prefersDark ? 'dark' : 'light' }));
+    document.documentElement.classList.toggle('dark', prefersDark);
+  }, []);
+
+  useEffect(() => {
+    const onResize = () => setIsMobile(detectIsMobile());
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  useEffect(() => {
+    const onLock = () => {
+      // Reverse-swipe: render lock screen sliding down from top
+      setRelocking(true);
+      setLocked(true);
+      // Clear flag so subsequent unlocks behave normally
+      setTimeout(() => setRelocking(false), 750);
+    };
     const onSleep = () => setSleeping(true);
     const onRestart = () => {
       setRestarting(true);
@@ -69,12 +107,20 @@ const Index = () => {
     };
   }, []);
 
+  const finishHello = () => {
+    localStorage.setItem(VISITED_KEY, '1');
+    setShowHello(false);
+  };
+
+  if (isMobile) return <MobileFallback />;
+
   return (
     <MacOSProvider apps={apps}>
       <Desktop />
-      {locked && <LockScreen onUnlock={() => setLocked(false)} />}
+      {locked && <LockScreen onUnlock={() => setLocked(false)} enterFromTop={relocking} />}
       {sleeping && <SleepScreen onWake={() => setSleeping(false)} />}
       {restarting && <RestartScreen onDone={() => { /* handled by timeout */ }} durationMs={10000} />}
+      {showHello && <HelloIntro onDone={finishHello} />}
     </MacOSProvider>
   );
 };

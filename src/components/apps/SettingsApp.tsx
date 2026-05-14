@@ -22,14 +22,24 @@ import wallpaperBigsur from '@/assets/wallpaper-bigsur.jpg';
 import wallpaperSnow from '@/assets/wallpaper-snow.jpg';
 import wallpaperAurora from '@/assets/wallpaper-aurora.jpg';
 import wallpaperCanyon from '@/assets/wallpaper-canyon.jpg';
+import wallpaperViaduct from '@/assets/wallpaper-viaduct.jpg';
+import wallpaperDolomites from '@/assets/wallpaper-dolomites.jpg';
+import wallpaperVestrahorn from '@/assets/wallpaper-vestrahorn.jpg';
+import wallpaperAnnapurna from '@/assets/wallpaper-annapurna.jpg';
+import wallpaperAlps from '@/assets/wallpaper-alps.jpg';
 import safariIcon from '@/assets/safari-icon.png';
 import googleIcon from '@/assets/google-icon-new.png';
 import profilePhoto from '@/assets/profile-photo-new.jpg';
 
 const wallpapers = [
-  { id: 'wallpaper-tahoe', src: wallpaperTahoe, name: 'Lake Tahoe' },
-  { id: 'wallpaper-bigsur', src: wallpaperBigsur, name: 'Big Sur' },
   { id: 'wallpaper-mountain', src: wallpaperMountain, name: 'Highlands' },
+  { id: 'wallpaper-tahoe', src: wallpaperTahoe, name: 'Lake Tahoe' },
+  { id: 'wallpaper-viaduct', src: wallpaperViaduct, name: 'Glenfinnan Viaduct' },
+  { id: 'wallpaper-dolomites', src: wallpaperDolomites, name: 'Dolomites' },
+  { id: 'wallpaper-vestrahorn', src: wallpaperVestrahorn, name: 'Vestrahorn' },
+  { id: 'wallpaper-annapurna', src: wallpaperAnnapurna, name: 'Annapurna Night' },
+  { id: 'wallpaper-alps', src: wallpaperAlps, name: 'Swiss Alps' },
+  { id: 'wallpaper-bigsur', src: wallpaperBigsur, name: 'Big Sur' },
   { id: 'wallpaper-aurora', src: wallpaperAurora, name: 'Aurora' },
   { id: 'wallpaper-snow', src: wallpaperSnow, name: 'Winter Trail' },
   { id: 'wallpaper-canyon', src: wallpaperCanyon, name: 'Canyon Stars' },

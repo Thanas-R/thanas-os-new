@@ -22,6 +22,11 @@ import wallpaperBigsur from '@/assets/wallpaper-bigsur.jpg';
 import wallpaperSnow from '@/assets/wallpaper-snow.jpg';
 import wallpaperAurora from '@/assets/wallpaper-aurora.jpg';
 import wallpaperCanyon from '@/assets/wallpaper-canyon.jpg';
+import wallpaperViaduct from '@/assets/wallpaper-viaduct.jpg';
+import wallpaperDolomites from '@/assets/wallpaper-dolomites.jpg';
+import wallpaperVestrahorn from '@/assets/wallpaper-vestrahorn.jpg';
+import wallpaperAnnapurna from '@/assets/wallpaper-annapurna.jpg';
+import wallpaperAlps from '@/assets/wallpaper-alps.jpg';
 
 const wallpapers = {
   'wallpaper-1': wallpaper1,
@@ -36,6 +41,11 @@ const wallpapers = {
   'wallpaper-snow': wallpaperSnow,
   'wallpaper-aurora': wallpaperAurora,
   'wallpaper-canyon': wallpaperCanyon,
+  'wallpaper-viaduct': wallpaperViaduct,
+  'wallpaper-dolomites': wallpaperDolomites,
+  'wallpaper-vestrahorn': wallpaperVestrahorn,
+  'wallpaper-annapurna': wallpaperAnnapurna,
+  'wallpaper-alps': wallpaperAlps,
 };
 
 export const Desktop = () => {

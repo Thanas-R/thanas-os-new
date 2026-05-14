@@ -54,7 +54,7 @@ export const Window = ({ window }: WindowProps) => {
 
         if (resizeDirection.includes('e')) {
           newWidth = Math.max(app.minSize?.width || 400, resizeStart.width + deltaX);
-          newWidth = Math.min(newWidth, globalThis.window.innerWidth - resizeStart.posX);
+          newWidth = Math.min(newWidth, globalThis.window.innerWidth - resizeStart.posX + 12);
         }
         if (resizeDirection.includes('w')) {
           const maxWidth = Math.min(app.minSize?.width || 400, resizeStart.width - deltaX);
@@ -66,7 +66,7 @@ export const Window = ({ window }: WindowProps) => {
         if (resizeDirection.includes('s')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height + deltaY);
           // Always allow resizing to bottom
-          newHeight = Math.min(newHeight, globalThis.window.innerHeight - resizeStart.posY - 2);
+          newHeight = Math.min(newHeight, globalThis.window.innerHeight - resizeStart.posY + 6);
         }
         if (resizeDirection.includes('n')) {
           newHeight = Math.max(app.minSize?.height || 300, resizeStart.height - deltaY);

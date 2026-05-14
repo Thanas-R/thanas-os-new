@@ -16,6 +16,12 @@ interface GitHubCalendarProps {
   colors?: string[];
 }
 
+interface ContributionApiDay {
+  date: string;
+  count: number;
+  level?: 0 | 1 | 2 | 3 | 4;
+}
+
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const DAY_LABELS = ["", "Mon", "", "Wed", "", "Fri", ""];
 
@@ -60,14 +66,14 @@ export const GitHubCalendar = ({
         if (!res.ok) return;
         const json = await res.json();
         if (!cancelled && Array.isArray(json?.contributions)) {
-          setLive(json.contributions.map((c: any) => ({ date: c.date, count: c.count, level: c.level })));
+          setLive((json.contributions as ContributionApiDay[]).map((c) => ({ date: c.date, count: c.count, level: c.level })));
         }
       } catch { /* ignore */ }
     })();
     return () => { cancelled = true; };
   }, [username]);
 
-  const source = live ?? data ?? [];
+  const source = useMemo(() => live ?? data ?? [], [live, data]);
 
   const contributionMap = useMemo(() => {
     const m = new Map<string, { count: number; level: number }>();

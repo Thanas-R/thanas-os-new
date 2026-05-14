@@ -30,7 +30,7 @@ export const preloadAllAssets = () => {
         link.rel = 'preload';
         link.as = 'image';
         link.href = url;
-        link.fetchPriority = 'high';
+        link.setAttribute('fetchpriority', 'high');
         document.head.appendChild(link);
       } catch { /* ignore */ }
     }

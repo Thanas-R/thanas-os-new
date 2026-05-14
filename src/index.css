@@ -212,8 +212,8 @@ All colors MUST be HSL.
       rgba(255, 255, 255, 0.06) 50%,
       rgba(255, 255, 255, 0.12) 100%
     );
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
     border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow:
       0 8px 32px rgba(0, 0, 0, 0.18),
@@ -230,8 +230,8 @@ isolation: isolate;
       rgba(20, 20, 25, 0.35) 50%,
       rgba(20, 20, 25, 0.5) 100%
     );
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(20px) saturate(145%);
+    -webkit-backdrop-filter: blur(20px) saturate(145%);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow:
       0 12px 40px rgba(0, 0, 0, 0.45),
@@ -242,8 +242,8 @@ isolation: isolate;
   }
   .liquid-glass-card {
     background: rgba(28, 28, 32, 0.55);
-    backdrop-filter: blur(50px) saturate(190%);
-    -webkit-backdrop-filter: blur(50px) saturate(190%);
+    backdrop-filter: blur(25px) saturate(150%);
+    -webkit-backdrop-filter: blur(25px) saturate(150%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow:
       0 10px 30px rgba(0, 0, 0, 0.4),

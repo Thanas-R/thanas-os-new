@@ -1,4 +1,4 @@
-# ThanasOS
+# ThanasOS [macOS - web]
 
 ![React](https://img.shields.io/badge/React-18-000000?style=flat-square&logo=react)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
@@ -19,9 +19,12 @@ ThanasOS started as a portfolio. It grew into something else: a long, deliberate
 
 Built and maintained by **Thanas R**.
 
+<a href="https://thanas-os.vercel.app">
+  <img src="src/assets/desktop-screenshot.png" alt="ThanasOS preview" width="70%">
+</a>
+
 [GitHub](https://github.com/thanas-r) · [LinkedIn](https://www.linkedin.com/in/thanas-r/) · [Personal Site](https://thanas.vercel.app/)
 
----
 
 ## Table of Contents
 

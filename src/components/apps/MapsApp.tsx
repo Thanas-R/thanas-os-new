@@ -13,6 +13,13 @@ interface Suggestion {
   center: [number, number];
 }
 
+interface MapboxFeature {
+  id: string;
+  text: string;
+  place_name: string;
+  center: [number, number];
+}
+
 const RECENT_KEY = 'thanasos-maps-recent';
 
 const loadRecent = (): Suggestion[] => {
@@ -113,7 +120,8 @@ useEffect(() => {
         const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(query)}.json?access_token=${TOKEN}&autocomplete=true&limit=6${userLoc ? `&proximity=${userLoc.join(',')}` : ''}`;
         const r = await fetch(url);
         const j = await r.json();
-        setSuggestions((j.features || []).map((f: any) => ({
+        const features = Array.isArray(j.features) ? (j.features as MapboxFeature[]) : [];
+        setSuggestions(features.map((f) => ({
           id: f.id,
           name: f.text,
           place: f.place_name,
@@ -158,7 +166,10 @@ useEffect(() => {
       paint: { 'line-color': '#2f7df7', 'line-width': 5, 'line-opacity': 0.9 },
     });
     const coords = route.geometry.coordinates as [number, number][];
-    const b = coords.reduce((bb, c) => bb.extend(c as any), new mapboxgl.LngLatBounds(coords[0] as any, coords[0] as any));
+    const b = coords.reduce(
+      (bb, c) => bb.extend(c),
+      new mapboxgl.LngLatBounds(coords[0], coords[0])
+    );
     map.fitBounds(b, { padding: { top: 80, left: 380, right: 60, bottom: 80 } });
   }, [activePin, userLoc]);
 

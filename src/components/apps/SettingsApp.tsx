@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Search, Bluetooth, Battery, HardDrive, Lock as LockIcon, ChevronRight, Bell,
   Volume2, Moon, Clock, Globe, RefreshCw, Settings as SettingsIcon, Eye, Layout, Palette, Compass,
-  Sun, Star, ArrowDownToLine, Languages, Database, Share2, Keyboard, Gauge, User,
+  Sun, Star, ArrowDownToLine, Languages, Database, Share2, Keyboard, Gauge, User, type LucideIcon,
 } from 'lucide-react';
 import { IoIosWifi } from 'react-icons/io';
 import airdropImg from '@/assets/airdrop-icon-new.png';
@@ -78,7 +78,7 @@ const SIDEBAR_BOTTOM = [
   { id: 'browser', label: 'Default Browser', icon: Compass, tint: '#0a84ff' },
 ] as const;
 
-const GENERAL_ITEMS: { id: GeneralSubsection; label: string; icon: any; tint: string }[] = [
+const GENERAL_ITEMS: { id: GeneralSubsection; label: string; icon: LucideIcon; tint: string }[] = [
   { id: 'about', label: 'About', icon: SettingsIcon, tint: '#0a84ff' },
   { id: 'software', label: 'Software Update', icon: RefreshCw, tint: '#8e8e93' },
   { id: 'storage', label: 'Storage', icon: HardDrive, tint: '#8e8e93' },
@@ -104,11 +104,12 @@ export const SettingsApp = () => {
 
   // Battery API
   useEffect(() => {
-    const nav: any = navigator;
+    type BatteryManager = EventTarget & { level: number; charging: boolean };
+    const nav = navigator as Navigator & { getBattery?: () => Promise<BatteryManager> };
     if (!nav.getBattery) return;
-    let battery: any;
+    let battery: BatteryManager | undefined;
     const update = () => { if (battery) { setBatteryLevel(Math.round(battery.level * 100)); setBatteryCharging(!!battery.charging); } };
-    nav.getBattery().then((b: any) => { battery = b; update(); b.addEventListener('levelchange', update); b.addEventListener('chargingchange', update); });
+    nav.getBattery().then((b) => { battery = b; update(); b.addEventListener('levelchange', update); b.addEventListener('chargingchange', update); });
   }, []);
 
   // Spotlight handoff
@@ -132,7 +133,7 @@ export const SettingsApp = () => {
     }
   };
 
-  const allNav = [...SIDEBAR_TOP, ...SIDEBAR_MID, ...SIDEBAR_BOTTOM];
+  const allNav = useMemo(() => [...SIDEBAR_TOP, ...SIDEBAR_MID, ...SIDEBAR_BOTTOM], []);
   const filteredSidebar = useMemo(
     () => allNav.filter(n => !query || n.label.toLowerCase().includes(query.toLowerCase())),
     [query, allNav]
@@ -468,7 +469,7 @@ const KV = ({ k, v }: { k: string; v: string }) => (
   </div>
 );
 
-const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: any; tint: string; active: boolean; onClick: () => void }) => (
+const NavRow = ({ label, icon: I, tint, active, onClick }: { label: string; icon: LucideIcon; tint: string; active: boolean; onClick: () => void }) => (
   <button onClick={onClick} className={`w-full flex items-center gap-2.5 px-2 py-1.5 rounded-md text-[14px] transition-colors ${
     active ? 'bg-neutral-300/70 dark:bg-neutral-700/60 text-neutral-900 dark:text-neutral-100'
            : 'text-neutral-700 dark:text-neutral-300 hover:bg-neutral-200/70 dark:hover:bg-neutral-800/60'

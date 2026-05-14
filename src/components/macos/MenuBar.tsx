@@ -263,8 +263,32 @@ export const MenuBar = ({ onSpotlightClick }: MenuBarProps) => {
         setVolOpen(false);
       }
     };
+    // Auto-close when cursor moves far away from the menu bar / open dropdown
+    const onMove = (e: MouseEvent) => {
+      if (!menuBarRef.current) return;
+      const rect = menuBarRef.current.getBoundingClientRect();
+      // Treat anything within 320px below the menubar (typical dropdown extent)
+      // and within the bar's x-range (+40px) as still "near" — don't close.
+      const inXBand = e.clientX >= rect.left - 40 && e.clientX <= rect.right + 40;
+      const inYBand = e.clientY <= rect.bottom + 320 && e.clientY >= rect.top - 20;
+      if (inXBand && inYBand) return;
+      const dx = Math.max(rect.left - e.clientX, e.clientX - rect.right, 0);
+      const dy = Math.max(rect.top - e.clientY, e.clientY - rect.bottom, 0);
+      if (Math.hypot(dx, dy) > 220) {
+        setActiveMenu(null);
+        setAppleOpen(false);
+        setBatteryOpen(false);
+        setWifiOpen(false);
+        setBtOpen(false);
+        setVolOpen(false);
+      }
+    };
     document.addEventListener('mousedown', onDown);
-    return () => document.removeEventListener('mousedown', onDown);
+    document.addEventListener('mousemove', onMove);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('mousemove', onMove);
+    };
   }, [activeMenu, appleOpen, batteryOpen, wifiOpen, btOpen, volOpen]);
 
   const formatTime = (d: Date) =>

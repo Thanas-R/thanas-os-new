@@ -119,8 +119,11 @@ export const Desktop = () => {
       style={{
         backgroundImage: `url(${getBackgroundImage()})`,
         backgroundSize: 'cover',
-        backgroundPosition: 'center',
+        backgroundPosition: 'center center',
         backgroundRepeat: 'no-repeat',
+        imageRendering: 'auto',
+        backfaceVisibility: 'hidden',
+        transform: 'translateZ(0)',
         filter: settings.brightness != null ? `brightness(${0.5 + (settings.brightness / 100) * 0.6})` : undefined,
       }}
     >

@@ -194,7 +194,7 @@ export const Window = ({ window }: WindowProps) => {
         left: window.isMaximized ? 0 : window.position.x,
         top: window.isMaximized ? 28 : window.position.y,
         width: window.isMaximized ? '100vw' : window.size.width,
-        height: window.isMaximized ? 'calc(100vh - 38px)' : window.size.height,
+        height: window.isMaximized ? 'calc(100vh - 28px - 110px)' : window.size.height,
         zIndex: window.zIndex,
         background: 'hsl(var(--macos-glass))',
         border: '1px solid hsl(var(--macos-glass-border))',

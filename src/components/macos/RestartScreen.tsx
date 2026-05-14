@@ -32,11 +32,8 @@ export const RestartScreen = ({ onDone, durationMs = 10000 }: Props) => {
             className="absolute inset-0 flex flex-col items-center justify-center"
           >
             <img src={turtleLogo} alt="ThanasOS" className="w-28 h-28 object-contain opacity-95" />
-            <div className="mt-12">
-              <Spinner />
-            </div>
             <div
-              className="mt-10 w-[260px] h-[3px] rounded-full bg-white/15 overflow-hidden"
+              className="mt-12 w-[260px] h-[3px] rounded-full bg-white/15 overflow-hidden"
               style={{ position: 'relative' }}
             >
               <div
@@ -60,17 +57,6 @@ export const RestartScreen = ({ onDone, durationMs = 10000 }: Props) => {
   );
 };
 
-const Spinner = () => (
-  <div className="mac-spinner">
-    {Array.from({ length: 12 }).map((_, i) => (
-      <div
-        key={i}
-        className="blade"
-        style={{ transform: `rotate(${i * 30}deg)`, animationDelay: `${i * 0.083}s` }}
-      />
-    ))}
-  </div>
-);
 
 export const MacSpinner = ({ size = 32, color = '#69717d' }: { size?: number; color?: string }) => (
   <>

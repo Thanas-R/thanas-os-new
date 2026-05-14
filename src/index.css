@@ -243,45 +243,6 @@ All colors MUST be HSL.
       0 10px 30px rgba(0, 0, 0, 0.4),
       inset 0 1px 0 rgba(255, 255, 255, 0.08);
   }
-  .backdrop-blur-macos,
-  .backdrop-blur-macos-heavy,
-  .liquid-glass,
-  .liquid-glass-dark,
-  .liquid-glass-card {
-    isolation: isolate;
-    contain: paint;
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .glass-stable-shell {
-    position: relative;
-    isolation: isolate;
-    contain: paint;
-    overflow: hidden;
-    transform: translateZ(0);
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .glass-stable-backdrop {
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-    pointer-events: none;
-    border-radius: inherit;
-    contain: paint;
-    transform: translateZ(0);
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-  }
-  .glass-stable-content {
-    position: relative;
-    z-index: 1;
-    contain: layout paint;
-    transform: translateZ(0);
-  }
   .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
   .no-scrollbar::-webkit-scrollbar { display: none; width: 0; height: 0; }
   .thin-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(0,0,0,0.25) transparent; }

@@ -55,6 +55,7 @@ export const Desktop = () => {
   const [spotlightOpen, setSpotlightOpen] = useState(false);
   const [launchpadClosing, setLaunchpadClosing] = useState(false);
   const isMobile = useIsMobile();
+  const desktopScale = isMobile ? 1 : 0.9;
   const launchpadActuallyOpen = windows.some(w => w.appId === 'launchpad' && !w.isMinimized);
   const launchpadOpen = launchpadActuallyOpen && !launchpadClosing;
 
@@ -129,6 +130,15 @@ export const Desktop = () => {
         filter: settings.brightness != null ? `brightness(${0.5 + (settings.brightness / 100) * 0.6})` : undefined,
       }}
     >
+      <div
+        className="absolute left-0 top-0 overflow-hidden"
+        style={{
+          width: `${100 / desktopScale}%`,
+          height: `${100 / desktopScale}%`,
+          transform: `scale(${desktopScale})`,
+          transformOrigin: 'top left',
+        }}
+      >
       <div className={`menubar-slide ${launchpadOpen ? 'menubar-slide-up' : ''}`}>
         <MenuBar onSpotlightClick={() => setSpotlightOpen(true)} />
       </div>
@@ -150,6 +160,7 @@ export const Desktop = () => {
 
       <Spotlight isOpen={spotlightOpen} onClose={() => setSpotlightOpen(false)} />
       <Dock />
+      </div>
     </div>
   );
 };

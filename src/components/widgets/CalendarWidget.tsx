@@ -27,7 +27,7 @@ export const CalendarWidget = () => {
       style={{
         width: 172,
         height: 172,
-        background: rgba(28, 28, 32, 0.55);
+        background: 'rgba(28, 28, 32, 0.75)',
         border: '1px solid rgba(255,255,255,0.06)',
       }}
     >

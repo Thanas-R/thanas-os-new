@@ -23,12 +23,11 @@ export const CalendarWidget = () => {
 
   return (
     <div
-      className="rounded-3xl p-3 select-none shadow-xl"
+      className="rounded-3xl p-3 select-none liquid-glass-card"
       style={{
         width: 172,
         height: 172,
-        background: '#1D1D1F',
-        border: '1px solid rgba(255,255,255,0.06)',
+        background: 'rgba(28, 28, 32, 0.55)',
       }}
     >
       <div className="text-[11.75px] font-semibold tracking-wider mb-1 pl-1.5" style={{ color: '#FF453A' }}>

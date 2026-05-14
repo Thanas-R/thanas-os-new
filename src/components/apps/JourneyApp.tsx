@@ -1,26 +1,24 @@
 import { useState, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import { MacSpinner } from '@/components/macos/RestartScreen';
 
 const SITE_URL = 'https://thanas.vercel.app/';
 
 export const JourneyApp = () => {
   const [loading, setLoading] = useState(true);
 
-  // Iframe load may not fire instantly; hide loader after timeout regardless
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 4000);
     return () => clearTimeout(t);
   }, []);
 
   return (
-    <div className="absolute inset-0 w-full h-full overflow-hidden bg-white">
+    <div className="absolute inset-0 w-full h-full overflow-hidden bg-white dark:bg-neutral-900">
       {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-white z-10">
-          <Loader2 className="w-6 h-6 animate-spin text-neutral-400" />
+        <div className="absolute inset-0 flex items-center justify-center bg-white dark:bg-neutral-900 z-10">
+          <MacSpinner size={42} color="#69717d" />
         </div>
       )}
 
-      {/* Floating frosted pill behind traffic lights — like GitHub app */}
       <div
         className="absolute pointer-events-none"
         style={{

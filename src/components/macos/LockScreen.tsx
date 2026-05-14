@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useImagePreloader } from '@/hooks/useImagePreloader';
-import wallpaperLock from '@/assets/wallpaper-2.jpg';
+import wallpaperLock from '@/assets/wallpaper-tahoe.jpg';
 
-interface Props { onUnlock: () => void; }
+interface Props {
+  onUnlock: () => void;
+  /** When true, animate IN from above (used when re-locking from desktop) */
+  enterFromTop?: boolean;
+}
 
-export const LockScreen = ({ onUnlock }: Props) => {
-  // Warm caches while the lock screen sits idle
+export const LockScreen = ({ onUnlock, enterFromTop = false }: Props) => {
   useImagePreloader();
   const [now, setNow] = useState(new Date());
   const [exiting, setExiting] = useState(false);
@@ -29,42 +32,27 @@ export const LockScreen = ({ onUnlock }: Props) => {
   return (
     <motion.div
       className="fixed inset-0 z-[9998] select-none cursor-pointer overflow-hidden"
-      initial={{ y: 0 }}
+      initial={{ y: enterFromTop ? '-100%' : 0 }}
       animate={{ y: exiting ? '-100%' : 0 }}
       transition={{ duration: 0.7, ease: [0.7, 0, 0.3, 1] }}
       onClick={unlock}
       style={{ backgroundColor: '#000' }}
     >
-      {/* Full-bleed wallpaper as <img> to avoid any bottom bleed/gap */}
       <img
         src={wallpaperLock}
         alt=""
         className="absolute inset-0 w-full h-full object-cover pointer-events-none"
         draggable={false}
       />
-
-      {/* Subtle vignette for legibility */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{ background: 'linear-gradient(180deg, rgba(0,0,0,0.20) 0%, rgba(0,0,0,0) 30%, rgba(0,0,0,0) 70%, rgba(0,0,0,0.35) 100%)' }}
       />
-
       <div className="relative z-10 h-full w-full flex flex-col">
         <div className="flex-1 flex flex-col items-center justify-start pt-[14vh] text-white pointer-events-none">
-          <div
-            className="text-[18px] tracking-wide opacity-95"
-            style={{ fontFamily: "'Inter', -apple-system, sans-serif", fontWeight: 400 }}
-          >
-            {date}
-          </div>
-          <div
-            className="text-[140px] leading-none mt-1 tracking-tight"
-            style={{ fontFamily: "'Inter', -apple-system, sans-serif", fontWeight: 300 }}
-          >
-            {time}
-          </div>
+          <div className="text-[18px] tracking-wide opacity-95" style={{ fontFamily: "'Inter', -apple-system, sans-serif", fontWeight: 400 }}>{date}</div>
+          <div className="text-[140px] leading-none mt-1 tracking-tight" style={{ fontFamily: "'Inter', -apple-system, sans-serif", fontWeight: 300 }}>{time}</div>
         </div>
-
         <div className="pb-20 flex justify-center">
           <motion.button
             onClick={(e) => { e.stopPropagation(); unlock(); }}

@@ -21,27 +21,16 @@ export const CalendarWidget = () => {
     return days;
   }, [todayYear, todayMonth]);
 
-return (
-  <div
-  className="rounded-3xl p-3 select-none shadow-xl"
-  style={{
-    width: 172,
-    height: 172,
-
-    background: 'rgba(28, 28, 32, 0.55)',
-
-    backdropFilter: 'blur(50px) saturate(190%)',
-    WebkitBackdropFilter: 'blur(50px) saturate(190%)',
-
-    boxShadow: `
-      0 12px 40px rgba(0, 0, 0, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12)
-    `,
-
-    border: '1px solid rgba(255,255,255,0.06)',
-  }}
->
-  
+  return (
+    <div
+      className="rounded-3xl p-3 select-none shadow-xl"
+      style={{
+        width: 172,
+        height: 172,
+        background: '#1D1D1F',
+        border: '1px solid rgba(255,255,255,0.06)',
+      }}
+    >
       <div className="text-[11.75px] font-semibold tracking-wider mb-1 pl-1.5" style={{ color: '#FF453A' }}>
         {monthName}
       </div>

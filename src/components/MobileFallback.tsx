@@ -26,7 +26,7 @@ export const MobileFallback = () => {
         .mobile-fallback main {
           position: relative; z-index: 2; min-height: 100vh;
           display: flex; flex-direction: column; align-items: center;
-          justify-content: center; padding: 5vh 18px 24px; text-align: center; gap: 16px;transform: translateY(20px);
+          justify-content: center; padding: 5vh 18px 24px; text-align: center; gap: 16px;
         }
         .mobile-fallback h1 {
           font-family: 'Fraunces', serif; font-weight: 900;

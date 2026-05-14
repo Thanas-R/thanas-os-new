@@ -9,6 +9,7 @@ import {
   touch,
   rm,
   writeFile,
+  type FsNode,
 } from '@/lib/terminalFs';
 
 interface Line {
@@ -254,7 +255,7 @@ const [lines, setLines] = useState<Line[]>([
         if (!args[0]) { print('find: missing name'); break; }
         const needle = args[0];
         const out: string[] = [];
-        const walk = (path: string, node: any) => {
+        const walk = (path: string, node: FsNode) => {
           if (path.includes(needle)) out.push(path);
           if (node.type === 'dir') {
             for (const [n, c] of Object.entries(node.children)) {
@@ -269,7 +270,7 @@ const [lines, setLines] = useState<Line[]>([
       }
       case 'tree': {
         const out: string[] = [];
-        const walk = (node: any, prefix: string) => {
+        const walk = (node: FsNode, prefix: string) => {
           if (node.type !== 'dir') return;
           const ks = Object.keys(node.children);
           ks.forEach((k, i) => {
@@ -305,7 +306,7 @@ const [lines, setLines] = useState<Line[]>([
       case 'status': {
         const openWins = windows.filter(w => !w.isMinimized).length;
         const minWins = windows.filter(w => w.isMinimized).length;
-        const mem = (performance as any).memory;
+        const mem = (performance as Performance & { memory?: { usedJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
         const memLine = mem ? `Memory:    ${(mem.usedJSHeapSize / 1048576).toFixed(1)} MB / ${(mem.jsHeapSizeLimit / 1048576).toFixed(0)} MB` : 'Memory:    n/a';
         const upMs = performance.now();
         const m = Math.floor(upMs / 60000), s = Math.floor((upMs % 60000) / 1000);

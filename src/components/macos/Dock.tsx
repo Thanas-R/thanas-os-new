@@ -372,8 +372,7 @@ export const Dock = () => {
             }}
           />
           <div
-            className="absolute cursor-pointer flex items-end justify-center"
-            title="Trash"
+            className="absolute cursor-pointer flex items-end justify-center group"
             style={{
               left: `${baseContentWidth + separatorGap + separatorWidth + separatorGap}px`,
               bottom: 0,
@@ -391,6 +390,10 @@ export const Dock = () => {
               }}
             >
               <img src={trashIcon} alt="Trash" className="w-full h-full object-contain" />
+            </div>
+            {/* Tooltip */}
+            <div className="absolute -top-12 backdrop-blur-macos-heavy bg-[hsl(var(--macos-glass))] px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap border border-[hsl(var(--macos-glass-border))] shadow-macos-glass opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+              Trash
             </div>
           </div>
         </div>

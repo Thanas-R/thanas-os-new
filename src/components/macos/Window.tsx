@@ -251,12 +251,12 @@ newWidth = Math.min(newWidth, usableWidth - resizeStart.posX);
       )}
 
       {/* Content */}
-<div
-  className="h-full w-full min-h-0 overflow-hidden"
-  style={{ background: 'hsl(var(--macos-window-bg))' }}
->
-  <AppComponent />
-</div>
+      <div
+        className={integrated ? 'h-full overflow-auto' : 'h-[calc(100%-2.5rem)] overflow-auto backdrop-blur-sm'}
+        style={{ background: 'hsl(var(--macos-window-bg))' }}
+      >
+        <AppComponent />
+      </div>
 
       {/* Resize Handles - All Edges */}
       {!window.isMaximized && !app.nonResizable && (

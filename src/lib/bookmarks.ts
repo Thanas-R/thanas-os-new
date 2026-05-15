@@ -10,7 +10,7 @@ const KEY = 'thanasos.bookmarks';
 const DEFAULTS: Bookmark[] = [
   { name: 'Portfolio', url: 'https://thanas.vercel.app' },
   { name: 'GitHub', url: 'https://github.com/Thanas-R' },
-  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanas-r/' },
+  { name: 'LinkedIn', url: 'https://www.linkedin.com/in/thanasr/' },
   { name: 'YouTube', url: 'https://www.youtube.com' },
   { name: 'Amazon', url: 'https://www.amazon.com' },
   { name: 'Reddit', url: 'https://www.reddit.com' },

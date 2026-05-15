@@ -12,9 +12,7 @@ import innovationLabLogo from '@/assets/innovation-lab-logo.png';
 // Reliable cross-window opener — using onClick + window.open ensures the
 // link always opens in a new tab even when the parent macOS Window swallows
 // default <a> navigation behaviour.
-const openExternal = (url: string) => (e: React.MouseEvent) => {
-  e.preventDefault();
-  e.stopPropagation();
+const openExternal = (url: string) => {
   window.open(url, '_blank', 'noopener,noreferrer');
 };
 
@@ -51,16 +49,26 @@ export const LinkedInApp = () => {
     { lang: 'Kannada', level: 'Native or bilingual proficiency' },
   ];
 
-  const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
-      onClick={openExternal(href)}
-      style={{ color: t.link }}
-      className="hover:underline cursor-pointer"
-    >{children}</a>
-  );
+const A = ({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) => (
+  <span
+    role="link"
+    tabIndex={0}
+    onClick={() => openExternal(href)}
+    onKeyDown={(e) => {
+      if (e.key === 'Enter') openExternal(href);
+    }}
+    style={{ color: t.link }}
+    className="hover:underline cursor-pointer"
+  >
+    {children}
+  </span>
+);
 
   return (
     <div className="min-h-full pb-10" style={{ background: t.page, color: t.text }}>
@@ -97,9 +105,9 @@ export const LinkedInApp = () => {
                 <div className="text-[13px] font-semibold mt-2" style={{ color: t.link }}>98 connections</div>
               </div>
 
-              <div className="flex flex-col items-end gap-2 shrink-0 pt-1">
+             <div className="flex flex-col items-end gap-4 shrink-0 pt-1">
   <div className="flex items-center gap-2 min-w-[220px]">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-md">
       <img
         src={pesLogo}
         alt="PES University"
@@ -113,7 +121,7 @@ export const LinkedInApp = () => {
   </div>
 
   <div className="flex items-center gap-2 min-w-[220px]">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-md">
       <img
         src={innovationLabLogo}
         alt="The Innovation Lab"

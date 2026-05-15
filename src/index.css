@@ -333,3 +333,13 @@ All colors MUST be HSL.
 .maps-app-container .mapboxgl-ctrl-attrib,
 .maps-app-container .mapboxgl-ctrl-bottom-left,
 .maps-app-container .mapboxgl-ctrl-bottom-right { display: none !important; }
+
+   @keyframes calc-digit-wobble {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+@keyframes spotlight-pop {
+  0%   { transform: scale(0.6); opacity: 0; }
+  60%  { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}

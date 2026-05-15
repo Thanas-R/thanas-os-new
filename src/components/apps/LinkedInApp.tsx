@@ -105,9 +105,9 @@ const A = ({
                 <div className="text-[13px] font-semibold mt-2" style={{ color: t.link }}>98 connections</div>
               </div>
 
-             <div className="flex flex-col items-end gap-4 shrink-0 pt-1">
-  <div className="flex items-center gap-2 min-w-[220px] ml-4">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-[3px]">
+             <div className="flex flex-col items-end gap-4 shrink-0 pt-1 translate-x-4">
+  <div className="flex items-center gap-2 min-w-[220px]">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-[4px]">
       <img
         src={pesLogo}
         alt="PES University"
@@ -121,7 +121,7 @@ const A = ({
   </div>
 
   <div className="flex items-center gap-2 min-w-[220px]">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-[3px]">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-[4px]">
       <img
         src={innovationLabLogo}
         alt="The Innovation Lab"

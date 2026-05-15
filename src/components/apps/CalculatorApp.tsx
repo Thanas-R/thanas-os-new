@@ -184,7 +184,25 @@ export const CalculatorApp = () => {
             whiteSpace: 'nowrap',
           }}
         >
-          {display}
+          {(() => {
+            const wobble = display === '67' || display === '69';
+            if (!wobble) return display;
+            return (
+              <span style={{ display: 'inline-block' }}>
+                {display.split('').map((ch, i) => (
+                  <span
+                    key={i}
+                    style={{
+                      display: 'inline-block',
+                      animation: `calc-digit-wobble 0.9s ease-in-out infinite`,
+                      animationDelay: `${i * 0.12}s`,
+                      animationDirection: i % 2 === 0 ? 'normal' : 'reverse',
+                    }}
+                  >{ch}</span>
+                ))}
+              </span>
+            );
+          })()}
         </div>
       </div>
 

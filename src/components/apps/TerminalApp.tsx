@@ -79,6 +79,37 @@ const [lines, setLines] = useState<Line[]>([
 
     const [rawName, ...args] = cmd.split(/\s+/);
     const name = rawName.toLowerCase();
+
+    // ── Easter eggs (matched on the full command, before the switch) ──
+    const full = cmd.toLowerCase();
+    const eggs: Record<string, () => void> = {
+      'sudo make me a sandwich': () => { print('Okay. 🥪  (opening the original xkcd…)'); window.open('https://xkcd.com/149/', '_blank', 'noopener,noreferrer'); },
+      'sudo make sandwich':      () => { print('Okay. 🥪  (opening the original xkcd…)'); window.open('https://xkcd.com/149/', '_blank', 'noopener,noreferrer'); },
+      'make me a sandwich':      () => print('What? Make it yourself.\n(hint: try `sudo`)'),
+      'rickroll':                () => { print('Now streaming a totally normal song...'); window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank', 'noopener,noreferrer'); },
+      'play music':              () => { print('Now streaming a totally normal song...'); window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank', 'noopener,noreferrer'); },
+      'matrix':                  () => print(Array.from({ length: 12 }, () => Array.from({ length: 60 }, () => (Math.random() > 0.5 ? '1' : '0')).join('')).join('\n') + '\n\nWake up, Neo…'),
+      'hello':                   () => print('Well hello there, friend 👋'),
+      'hi':                      () => print('Well hello there, friend 👋'),
+      'coffee':                  () => print('☕  brewing... done. (try `chai` for the good stuff)'),
+      'tea':                     () => print('☕  brewing... done. (try `chai` for the good stuff)'),
+      'chai':                    () => print('☕✨ a perfect cup of masala chai materializes on your desk.'),
+      'do a barrel roll':        () => { document.body.style.transition = 'transform 1.2s ease-in-out'; document.body.style.transform = 'rotate(360deg)'; setTimeout(() => { document.body.style.transform = ''; }, 1300); print('🌀 weeeeee'); },
+      'the answer':              () => print('42. Always 42. Don\'t panic.'),
+      'meaning of life':         () => print('42. Always 42. Don\'t panic.'),
+      '42':                      () => print('42. Always 42. Don\'t panic.'),
+      'rm -rf /':                () => print('💥 BOOM. Just kidding. I would never.\n(But seriously, never run that command on a real machine.)'),
+      'rm -rf /*':               () => print('💥 BOOM. Just kidding. I would never.\n(But seriously, never run that command on a real machine.)'),
+      'sl':                      () => print('     ____\n  __/    |____\n |_______|___|\n   o-o    o-o     CHOO CHOO 🚂'),
+      'konami':                  () => print('🎮 Cheat code accepted. +30 lives. Try the Trash.'),
+      'up up down down':         () => print('🎮 Cheat code accepted. +30 lives. Try the Trash.'),
+    };
+    if (eggs[full]) { eggs[full](); return; }
+    if (full.startsWith('hack ')) {
+      print(`Initializing hack on ${full.slice(5)}...\n[##########] 100%\nAccess granted.\nJust kidding. Don't.`);
+      return;
+    }
+
     switch (name) {
       case 'help':
         print([

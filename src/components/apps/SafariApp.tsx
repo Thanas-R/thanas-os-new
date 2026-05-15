@@ -21,53 +21,7 @@ interface Tab {
 const START_PAGE = 'thanasos://favorites';
 const SEARCH_PAGE = 'https://duckduckgo.com/?q=';
 
-const PROJECT_HOSTS = new Set(
-  PROJECTS.map(p => { try { return new URL(p.liveUrl).hostname; } catch { return ''; } }).filter(Boolean)
-);
-const isProjectHost = (url: string) => {
-  try { return PROJECT_HOSTS.has(new URL(url).hostname); } catch { return false; }
-};
-
-const PROXIES = (url: string) => [
-  `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
-  `https://corsproxy.io/?${encodeURIComponent(url)}`,
-  `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(url)}`,
-];
-
 // Bookmarks now live in localStorage via useBookmarks()
-
-const PRANK_DOC = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900;1,400&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-<style>
-*,*::before,*::after{box-sizing:border-box}html,body{margin:0;padding:0;height:100%;overflow:hidden}
-body{font-family:'Inter',sans-serif;background:#0d0d10;color:#f5f5f5;-webkit-font-smoothing:antialiased}
-.dots{position:fixed;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1.2px,transparent 1.4px);background-size:22px 22px;z-index:0;pointer-events:none}
-.fade{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 55% 50% at 50% 50%,rgba(13,13,16,0.6) 0%,rgba(13,13,16,0.3) 60%,rgba(13,13,16,0) 85%);backdrop-filter:blur(6px)}
-main{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transform:scale(0.9)}
-.kicker{font-family:'Caveat',cursive;font-size:clamp(24px,3vw,34px);color:#cfcfcf;transform:rotate(-3deg);display:inline-block;margin-bottom:-6px}
-h1{font-family:'Fraunces',serif;font-weight:900;font-size:clamp(34px,5.4vw,68px);line-height:.98;letter-spacing:-.03em;margin:8px 0 22px;color:#fff}
-h1 .ital{font-style:italic;font-weight:400;color:#d8d8d8}
-h1 .accent{background:linear-gradient(180deg,transparent 62%,#fff177 62%,#fff177 92%,transparent 92%);padding:0 6px;color:#0a0a0a}
-.lead{font-size:clamp(14px,1.1vw,16px);color:#bdbdbd;max-width:560px;margin:0 auto 12px;line-height:1.6}
-.sub{font-family:'Caveat',cursive;font-size:clamp(18px,1.6vw,22px);color:#a0a0a0;margin:4px 0 26px}
-.discord{display:inline-flex;align-items:center;gap:14px;background:#fff;color:#0a0a0a;text-decoration:none;padding:13px 20px;border-radius:14px;font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:500}
-.discord .label{font-family:'Inter',sans-serif;font-size:11px;color:#777;text-transform:uppercase;letter-spacing:.18em;margin-right:4px;border-right:1px solid #d4d4d4;padding-right:12px}
-.socials{margin-top:24px;display:flex;gap:22px;justify-content:center}
-.socials a{color:#a8a8a8;text-decoration:none;font-size:13px}.socials a:hover{color:#fff}
-</style></head><body>
-<div class="dots"></div><div class="fade"></div>
-<main><div>
-<span class="kicker">well, well, well...</span>
-<h1><span class="ital">Haha, looks like i</span><br/><span class="accent">sniped your domain</span></h1>
-<p class="lead">no worries though, this is just a friendly reminder to secure your domains early.</p>
-<p class="sub">send me a dm and i'll hand it back, free of charge :)</p>
-<a class="discord" href="https://discord.com" target="_blank" rel="noreferrer"><span class="label">DISCORD</span>DarkSpacePirate</a>
-<div class="socials">
-<a href="https://github.com/Thanas-R" target="_blank" rel="noreferrer">github</a>
-<a href="https://thanas.vercel.app" target="_blank" rel="noreferrer">portfolio</a>
-<a href="https://www.linkedin.com/in/thanas-r" target="_blank" rel="noreferrer">linkedin</a>
-</div>
-</div></main></body></html>`;
 
 const isUrlLike = (s: string) => /^[a-z]+:\/\//i.test(s) || /^[\w-]+(\.[\w-]+)+(\/.*)?$/i.test(s);
 
@@ -97,7 +51,6 @@ export const SafariApp = () => {
   const [addressBar, setAddressBar] = useState(initial.current.url);
   const [showSidebar, setShowSidebar] = useState(true);
   const [showBookmarksBar, setShowBookmarksBar] = useState(true);
-  const [proxyHtml, setProxyHtml] = useState<Record<string, string>>({});
   const active = tabs.find(t => t.id === activeId)!;
 
   useEffect(() => { setAddressBar(active.url); }, [active.url, activeId]);
@@ -151,37 +104,7 @@ export const SafariApp = () => {
     });
   };
 
-  // Proxy/fetch race for non-iframeable, non-project external pages
   const isFavorites = active.url === START_PAGE;
-  const isExternalNonProject = !isFavorites && /^https?:\/\//.test(active.url) && !isProjectHost(active.url) && !active.url.startsWith(SEARCH_PAGE);
-
-  useEffect(() => {
-    if (!isExternalNonProject) return;
-    const target = active.url;
-    if (proxyHtml[target]) { updateActive({ loading: false }); return; }
-    let cancelled = false;
-    updateActive({ loading: true });
-    const race = new Promise<string>((resolve, reject) => {
-      let pending = PROXIES(target).length;
-      PROXIES(target).forEach(p => {
-        fetch(p, { method: 'GET' })
-          .then(r => r.ok ? r.text() : Promise.reject(r.status))
-          .then(t => resolve(t))
-          .catch(() => { pending -= 1; if (pending === 0) reject(new Error('all proxies failed')); });
-      });
-    });
-    race
-      .then(text => {
-        if (cancelled) return;
-        // Inject base href so relative assets resolve
-        const withBase = text.replace(/<head[^>]*>/i, m => `${m}<base href="${target}"/>`);
-        setProxyHtml(prev => ({ ...prev, [target]: withBase }));
-        updateActive({ loading: false });
-      })
-      .catch(() => { if (!cancelled) updateActive({ loading: false }); });
-    return () => { cancelled = true; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active.url, isExternalNonProject]);
 
   // Iframe load → flip loading off
   const onIframeLoad = () => updateActive({ loading: false });
@@ -305,38 +228,15 @@ export const SafariApp = () => {
                 ))}
               </div>
             </div>
-          ) : isExternalNonProject ? (
-            proxyHtml[active.url] ? (
-              <iframe
-                key={active.url + '-proxy'}
-                title={active.title}
-                srcDoc={proxyHtml[active.url]}
-                className="w-full h-full border-0 bg-white"
-                onLoad={onIframeLoad}
-                sandbox="allow-scripts allow-forms allow-popups"
-              />
-            ) : active.loading ? (
-              <div className="h-full flex flex-col items-center justify-center gap-3 text-neutral-500">
-                <Loader2 className="w-6 h-6 animate-spin text-blue-500" />
-                <div className="text-[13px]">Loading {(() => { try { return new URL(active.url).hostname; } catch { return active.url; } })()}…</div>
-              </div>
-            ) : (
-              <iframe
-                key={active.url + '-prank'}
-                title="domain-expansion"
-                srcDoc={PRANK_DOC}
-                className="w-full h-full border-0 bg-white"
-                onLoad={onIframeLoad}
-              />
-            )
           ) : (
             <iframe
               key={active.url}
               src={active.url}
               title={active.title}
               className="w-full h-full border-0 bg-white"
-              sandbox="allow-scripts allow-same-origin allow-forms allow-popups"
+              sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox"
               onLoad={onIframeLoad}
+              referrerPolicy="no-referrer-when-downgrade"
             />
           )}
         </div>

@@ -7,6 +7,16 @@ import pesLogo from '@/assets/pes-logo.png';
 import allenLogo from '@/assets/allen-logo.png';
 import sriVaniLogo from '@/assets/sri-vani-logo.png';
 import virdisProject from '@/assets/virdis-project.png';
+import innovationLabLogo from '@/assets/innovation-lab-logo.png';
+
+// Reliable cross-window opener — using onClick + window.open ensures the
+// link always opens in a new tab even when the parent macOS Window swallows
+// default <a> navigation behaviour.
+const openExternal = (url: string) => (e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+  window.open(url, '_blank', 'noopener,noreferrer');
+};
 
 export const LinkedInApp = () => {
   const { settings, openApp } = useMacOS();
@@ -42,7 +52,14 @@ export const LinkedInApp = () => {
   ];
 
   const A = ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href} target="_blank" rel="noopener noreferrer" style={{ color: t.link }} className="hover:underline">{children}</a>
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={openExternal(href)}
+      style={{ color: t.link }}
+      className="hover:underline cursor-pointer"
+    >{children}</a>
   );
 
   return (
@@ -85,20 +102,13 @@ export const LinkedInApp = () => {
                   <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
                   <span className="text-[15px] font-semibold">PES University</span>
                 </div>
-                <a
-                  href="https://www.linkedin.com/in/thanasr"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center px-5 h-9 rounded-full text-[14px] font-semibold border"
-                  style={{
-                    background: dark ? '#1d2226' : '#ffffff',
-                    color: dark ? '#e8e6e3' : '#1d2226',
-                    borderColor: dark ? 'rgba(255,255,255,0.25)' : 'rgba(0,0,0,0.25)',
-                    transform: 'translateY(40px)',
-                  }}
                 >
-                  Connect
-                </a>
+                >
+                <div className="flex items-center gap-2">
+                  <img src={innovationLabLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
+                  <span className="text-[15px] font-semibold">The Innovation Lab</span>
+                </div>
+               
               </div>
             </div>
           </div>
@@ -129,7 +139,7 @@ export const LinkedInApp = () => {
           <div className="p-5">
             <div className="flex items-baseline justify-between">
               <h2 className="text-[20px] font-semibold">Activity</h2>
-              <div className="text-[13px] font-semibold" style={{ color: t.link }}>101 followers</div>
+              <div className="text-[13px] font-semibold" style={{ color: t.link }}>108 followers</div>
             </div>
             <div className="mt-4 rounded-lg border p-4" style={{ borderColor: t.divider }}>
               <div className="flex items-start gap-3">
@@ -142,8 +152,8 @@ export const LinkedInApp = () => {
                 </div>
               </div>
               <div className="text-[14px] mt-2 space-y-2">
-                <p>Our team made it to the final round of the SustainX hackathon, finishing in the top 6 at an event hosted by <span style={{ color: t.link }}>Solaris PESU</span> at PESU EC Campus</p>
-                <p>Along with <span style={{ color: t.link }}>Tanay S</span> and <span style={{ color: t.link }}>Vajjhala Sai Muralidhar</span>, we built "Virdis", a satellite powered platform for agricultural and land analytics that helps users analyze regions and get automated, visual crop planning insights based on real geospatial data and databases</p>
+                <p>Our team made it to the final round of the SustainX hackathon, finishing in the top 6 at an event hosted by <A href="https://www.linkedin.com/company/solaris-pesu-ecc/">Solaris PESU</A> at PESU EC Campus</p>
+                <p>Along with <A href="https://www.linkedin.com/in/tanay-s-8a46b0390/">Tanay S</A> and <A href="https://www.linkedin.com/in/vajjhala-sai-muralidhar-8712b13a8/">Vajjhala Sai Muralidhar</A>, we built "Virdis", a satellite powered platform for agricultural and land analytics that helps users analyze regions and get automated, visual crop planning insights based on real geospatial data and databases</p>
                 <p>Would love for you to check it out:</p>
                 <p>Live demo: <A href="https://virdis.vercel.app">https://virdis.vercel.app</A></p>
                 <p>GitHub Repository: <A href="https://github.com/Thanas-R/Virdis">https://github.com/Thanas-R/Virdis</A></p>

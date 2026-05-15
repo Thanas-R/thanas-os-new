@@ -5,7 +5,7 @@ import { playTrack, preloadTrackLibrary, useNowPlaying, useTrackLibrary } from '
 import type { Track } from '@/lib/nowPlaying';
 import { NowPlayingPill } from '@/components/macos/NowPlayingPill';
 
-const TAGS = ['Top Pick', 'Viral', 'Replay', 'Essential', 'Anime OP', 'Radio Hit'];
+const TAGS = ['Top Pick', 'Fun', 'Viral', 'Essential', 'Replay', 'Radio Hit','Discover'];
 
 type MusicTone = {
   page: string;
@@ -45,7 +45,7 @@ export const AppleMusicApp = () => {
 
   const englishTracks = visibleTracks.filter((track) => track.category !== 'Japanese / Anime');
   const japaneseTracks = visibleTracks.filter((track) => track.category === 'Japanese / Anime');
-  const topPicks = visibleTracks.slice(0, 8);
+  const topPicks = visibleTracks.slice(0, 7);
 
   return (
     <div

@@ -75,30 +75,41 @@ export const Dock = () => {
   }, [getResponsiveConfig]);
 
   // Authentic macOS cosine-based magnification algorithm
-const calculateTargetMagnification = useCallback(
-  (mousePosition: number | null) => {
-    if (mousePosition === null) {
-      return dockItems.map(() => minScale);
+  const calculateTargetMagnification = useCallback((mousePosition: number | null) => {
+  if (mousePosition === null) {
+    return dockItems.map(() => minScale);
+  }
+
+  return dockItems.map((_, index) => {
+
+    // USE LIVE POSITION INSTEAD OF STATIC GRID
+    const liveCenter =
+      currentPositions[index] ??
+      ((index * (baseSize + baseSpacing)) + (baseSize / 2));
+
+    const distance = Math.abs(mousePosition - liveCenter);
+
+    if (distance > effectWidth / 2) {
+      return minScale;
     }
 
-    return dockItems.map((_, index) => {
-      const actualCenter = currentPositions[index] ?? (index * (baseSize + baseSpacing) + baseSize / 2);
-      const minX = mousePosition - effectWidth / 2;
-      const maxX = mousePosition + effectWidth / 2;
+    // Smooth falloff
+    const normalized = distance / (effectWidth / 2);
 
-      if (actualCenter < minX || actualCenter > maxX) {
-        return minScale;
-      }
+    // Native-like cosine curve
+    const scaleFactor = (Math.cos(normalized * Math.PI) + 1) / 2;
 
-      const theta = ((actualCenter - minX) / effectWidth) * 2 * Math.PI;
-      const cappedTheta = Math.min(Math.max(theta, 0), 2 * Math.PI);
-      const scaleFactor = (1 - Math.cos(cappedTheta)) / 2;
-
-      return minScale + scaleFactor * (maxScale - minScale);
-    });
-  },
-  [dockItems, currentPositions, baseSize, baseSpacing, effectWidth, maxScale, minScale]
-);
+    return minScale + scaleFactor * (maxScale - minScale);
+  });
+}, [
+  dockItems,
+  currentPositions,
+  baseSize,
+  baseSpacing,
+  effectWidth,
+  maxScale,
+  minScale
+]);
 
   // Calculate positions based on current scales
   const calculatePositions = useCallback((scales: number[]) => {

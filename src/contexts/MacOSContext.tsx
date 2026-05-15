@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react';
 import { WindowState, MacOSSettings, DockItem, AppConfig } from '@/types/macos';
 import { useGoogleInstalled } from '@/lib/installedApps';
+import { setPlayerVolume } from '@/lib/nowPlaying';
 
 interface MacOSContextType {
   windows: WindowState[];
@@ -57,6 +58,7 @@ export const MacOSProvider = ({ children, apps }: { children: ReactNode; apps: A
   useEffect(() => {
     localStorage.setItem('macos-settings', JSON.stringify(settings));
     document.documentElement.classList.toggle('dark', settings.theme === 'dark');
+    setPlayerVolume(settings.volume ?? 65);
   }, [settings]);
 
   const openApp = (appId: string) => {

@@ -61,8 +61,10 @@ export const Dock = () => {
   const [config, setConfig] = useState(getResponsiveConfig);
   const { baseSize, maxScale, effectWidth } = config;
   const minScale = 1.0;
+  // More breathing room between dock icons, closer to native macOS
   const baseSpacing = Math.max(8, baseSize * 0.18);
 
+  // Update config on window resize
   useEffect(() => {
     const handleResize = () => {
       setConfig(getResponsiveConfig());
@@ -72,6 +74,7 @@ export const Dock = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, [getResponsiveConfig]);
 
+  // Authentic macOS cosine-based magnification algorithm
   const calculateTargetMagnification = useCallback((mousePosition: number | null) => {
     if (mousePosition === null) {
       return dockItems.map(() => minScale);
@@ -94,6 +97,7 @@ export const Dock = () => {
     });
   }, [dockItems, baseSize, baseSpacing, effectWidth, maxScale, minScale]);
 
+  // Calculate positions based on current scales
   const calculatePositions = useCallback((scales: number[]) => {
     let currentX = 0;
     
@@ -105,6 +109,7 @@ export const Dock = () => {
     });
   }, [baseSize, baseSpacing]);
 
+  // Initialize scales and positions
   useEffect(() => {
     const initialScales = dockItems.map(() => minScale);
     const initialPositions = calculatePositions(initialScales);
@@ -112,6 +117,7 @@ export const Dock = () => {
     setCurrentPositions(initialPositions);
   }, [dockItems, calculatePositions, minScale, config]);
 
+  // Animation loop
   const animateToTarget = useCallback(() => {
     const targetScales = calculateTargetMagnification(mouseX);
     const targetPositions = calculatePositions(targetScales);
@@ -121,6 +127,7 @@ export const Dock = () => {
       return prevScales.map((currentScale, index) => {
         const diff = targetScales[index] - currentScale;
         const next = currentScale + (diff * lerpFactor);
+        // Clamp to avoid overshoot and jitter
         return Math.max(minScale, Math.min(maxScale, next));
       });
     });
@@ -144,6 +151,7 @@ export const Dock = () => {
     }
   }, [mouseX, calculateTargetMagnification, calculatePositions, currentScales, currentPositions, maxScale, settings.reducedMotion]);
 
+  // Start/stop animation loop
   useEffect(() => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current);
@@ -159,6 +167,7 @@ export const Dock = () => {
     };
   }, [animateToTarget, currentScales.length]);
 
+  // Throttled mouse movement handler
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     if (settings.reducedMotion) return;
     
@@ -214,12 +223,14 @@ export const Dock = () => {
     openApp(appId);
   };
 
+  // Calculate content width
   const baseContentWidth = currentPositions.length > 0
     ? Math.max(...currentPositions.map((pos, index) =>
         pos + (baseSize * currentScales[index]) / 2
       ))
     : (dockItems.length * (baseSize + baseSpacing)) - baseSpacing;
 
+  // Reserve space for separator + trash icon at the right
   const separatorGap = baseSpacing * 1.5;
   const separatorWidth = 1;
   const trashSize = baseSize;
@@ -229,6 +240,7 @@ export const Dock = () => {
 
   return (
     <>
+      {/* Hover trigger for auto-hide dock */}
       {settings.dockAutoHide && (
         <div 
           className="fixed bottom-0 left-0 right-0 w-full h-24 z-40"
@@ -300,7 +312,7 @@ export const Dock = () => {
                   zIndex: Math.round(scale * 10)
                 }}
               >
-                <div
+              <div
                   className="flex items-center justify-center overflow-hidden"
                   style={{
                     width: scaledSize,
@@ -323,6 +335,7 @@ export const Dock = () => {
                   )}
                 </div>
 
+                {/* Active Indicator */}
                 {isOpen && (
                   <div
                     className="absolute -bottom-1 w-1 h-1 rounded-full"
@@ -330,6 +343,7 @@ export const Dock = () => {
                   />
                 )}
                 
+                {/* Minimized Indicator */}
                 {isMinimized && !isOpen && (
                   <div
                     className="absolute -bottom-1 w-1 h-1 rounded-full"
@@ -337,18 +351,32 @@ export const Dock = () => {
                   />
                 )}
 
+                {/* Badge */}
                 {item.badge && item.badge > 0 && (
                   <div className="absolute -top-1 -right-1 bg-destructive text-destructive-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center">
                     {item.badge > 9 ? '9+' : item.badge}
                   </div>
                 )}
+
+                {/* Tooltip */}
+                
+                )}
               </div>
             );
           })}
 
+          {/* Separator + Trash */}
           <div
             className="absolute"
             style={{
+              left: `${baseContentWidth + separatorGap}px`,
+              bottom: `${baseSize * 0.1}px`,
+              width: `${separatorWidth}px`,
+              height: `${baseSize * 0.8}px`,
+              background: 'rgba(255,255,255,0.18)',
+              borderRadius: 1,
+            }}
+          />
           <div
   className="absolute cursor-pointer flex items-end justify-center group"
   onClick={() => {
@@ -372,6 +400,7 @@ export const Dock = () => {
             >
               <img src={trashIcon} alt="Trash" className="w-full h-full object-contain" />
             </div>
+
           </div>
         </div>
       </div>

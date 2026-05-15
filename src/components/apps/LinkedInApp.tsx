@@ -107,7 +107,7 @@ const A = ({
 
              <div className="flex flex-col items-end gap-4 shrink-0 pt-1">
   <div className="flex items-center gap-2 min-w-[220px]">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-md">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-sm">
       <img
         src={pesLogo}
         alt="PES University"
@@ -115,13 +115,13 @@ const A = ({
       />
     </div>
 
-    <span className="text-[15px] font-semibold leading-none">
+    <span className="text-[14px] font-semibold leading-none">
       PES University
     </span>
   </div>
 
   <div className="flex items-center gap-2 min-w-[220px]">
-    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-md">
+    <div className="w-7 h-7 flex items-center justify-center shrink-0 overflow-hidden rounded-sm">
       <img
         src={innovationLabLogo}
         alt="The Innovation Lab"
@@ -129,7 +129,7 @@ const A = ({
       />
     </div>
 
-    <span className="text-[15px] font-semibold leading-none">
+    <span className="text-[14px] font-semibold leading-none">
       The Innovation Lab
     </span>
   </div>

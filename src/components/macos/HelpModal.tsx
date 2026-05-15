@@ -15,8 +15,8 @@ export const HelpModal = ({ open, onClose }: { open: boolean; onClose: () => voi
         <a href="https://github.com/Thanas-R" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10">
           <Github className="w-4 h-4" /><span className="text-sm">github.com/Thanas-R</span>
         </a>
-        <a href="https://www.linkedin.com/in/thanas-r/" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10">
-          <Linkedin className="w-4 h-4" /><span className="text-sm">linkedin.com/in/thanas-r</span>
+        <a href="https://www.linkedin.com/in/thanasr/" target="_blank" rel="noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10">
+          <Linkedin className="w-4 h-4" /><span className="text-sm">linkedin.com/in/thanasr</span>
         </a>
         <a href="mailto:thanasr.work@gmail.com" className="flex items-center gap-3 px-3 py-2 rounded-xl bg-white/5 hover:bg-white/10">
           <Mail className="w-4 h-4" /><span className="text-sm">thanasr.work@gmail.com</span>

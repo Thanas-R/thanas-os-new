@@ -17,12 +17,6 @@ interface Tab {
 
 const HOMEPAGE = 'about:home';
 const PRANK_URL = 'about:prank';
-const PROXIES = [
-  { url: 'https://corsproxy.io/?', type: 'raw' as const },
-  { url: 'https://api.codetabs.com/v1/proxy?quest=', type: 'raw' as const },
-  { url: 'https://api.allorigins.win/get?url=', type: 'json' as const },
-];
-
 const PRANK_DOC = `<!DOCTYPE html><html><head><meta charset="utf-8"/><title>well, well, well...</title>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Fraunces:ital,wght@0,400;0,900&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
@@ -81,42 +75,12 @@ const normalizeUrl = (input: string): string => {
   return `https://www.google.com/search?q=${encodeURIComponent(s)}`;
 };
 
-const escapeHtml = (s: string) => (s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-
 const getFavicon = (url: string): string => {
   if (!url || url.startsWith('about:')) return '';
   const fav = DEFAULT_FAVORITES.find(f => url.startsWith(f.url));
   if (fav) return fav.icon;
   try { return `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}&sz=32`; } catch { return ''; }
 };
-
-const fetchWithTimeout = async (resource: string, timeout = 4500) => {
-  const controller = new AbortController();
-  const id = setTimeout(() => controller.abort(), timeout);
-  try {
-    const res = await fetch(resource, { signal: controller.signal });
-    return res;
-  } finally { clearTimeout(id); }
-};
-
-const raceProxies = (targetUrl: string): Promise<string> =>
-  new Promise<string>((resolve, reject) => {
-    let remaining = PROXIES.length;
-    let settled = false;
-    PROXIES.forEach(async (p) => {
-      try {
-        const res = await fetchWithTimeout(p.url + encodeURIComponent(targetUrl));
-        if (!res.ok) throw new Error('status ' + res.status);
-        let text = '';
-        if (p.type === 'json') { const json = await res.json(); text = json.contents; }
-        else { text = await res.text(); }
-        if (!text || text.length < 50) throw new Error('empty');
-        if (!settled) { settled = true; resolve(text); }
-      } catch {
-        if (--remaining === 0 && !settled) reject(new Error('all proxies failed'));
-      }
-    });
-  });
 
 const newTab = (url = HOMEPAGE): Tab => ({
   id: 't-' + Math.random().toString(36).slice(2, 9),
@@ -148,65 +112,22 @@ export const GoogleApp = () => {
     setTabs(prev => prev.map(t => t.id === id ? { ...t, ...patch } : t));
   }, []);
 
-  const navigate = useCallback(async (id: string, url: string, pushHistory = true) => {
+  const navigate = useCallback((id: string, url: string, pushHistory = true) => {
     const norm = normalizeUrl(url);
     setTabs(prev => prev.map(t => {
       if (t.id !== id) return t;
+      let title = norm === HOMEPAGE ? 'New Tab' : 'Loading…';
+      if (norm !== HOMEPAGE && norm !== PRANK_URL) {
+        try { title = new URL(norm).hostname.replace(/^www\./, ''); } catch { /* ignore */ }
+      }
+      const content = norm === PRANK_URL ? PRANK_DOC : undefined;
       if (pushHistory) {
         const hist = t.history.slice(0, t.histIdx + 1).concat(norm);
-        return { ...t, url: norm, loading: true, history: hist, histIdx: hist.length - 1, content: undefined, title: norm === HOMEPAGE ? 'New Tab' : 'Loading…' };
+        return { ...t, url: norm, loading: false, history: hist, histIdx: hist.length - 1, content, title };
       }
-      return { ...t, url: norm, loading: true, content: undefined, title: norm === HOMEPAGE ? 'New Tab' : 'Loading…' };
+      return { ...t, url: norm, loading: false, content, title };
     }));
-
-    if (norm === HOMEPAGE) {
-      updateTab(id, { loading: false, title: 'New Tab' });
-      return;
-    }
-    if (norm === PRANK_URL) {
-      updateTab(id, { loading: false, content: PRANK_DOC, title: 'well, well, well…' });
-      return;
-    }
-
-    try {
-      let content = await raceProxies(norm);
-      if (!content.toLowerCase().includes('<base')) {
-        if (content.toLowerCase().includes('<head')) {
-          content = content.replace(/<head[^>]*>/i, m => `${m}<base href="${norm}" target="_self">`);
-        } else {
-          content = `<base href="${norm}" target="_self">` + content;
-        }
-      }
-      // Inject link interceptor: route clicks to parent so we can navigate via proxy
-      const interceptor = `<script>(function(){
-        document.addEventListener('click',function(e){
-          var a=e.target&&e.target.closest&&e.target.closest('a');
-          if(!a||!a.href) return;
-          if(a.target==='_blank'){ e.preventDefault(); window.parent.postMessage({type:'gnav',url:a.href},'*'); return; }
-          e.preventDefault(); window.parent.postMessage({type:'gnav',url:a.href},'*');
-        },true);
-        document.addEventListener('submit',function(e){
-          var f=e.target; if(!f||f.tagName!=='FORM') return;
-          try{ var u=new URL(f.action||location.href); var fd=new FormData(f);
-            fd.forEach(function(v,k){u.searchParams.set(k,v);});
-            e.preventDefault(); window.parent.postMessage({type:'gnav',url:u.toString()},'*');
-          }catch(_){}
-        },true);
-      })();</script>`;
-      content = content.replace(/<\/body>/i, interceptor + '</body>');
-      if (!/<\/body>/i.test(content)) content += interceptor;
-      const m = content.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
-      let title = norm;
-      try { title = m ? m[1].trim() : new URL(norm).hostname; } catch { title = norm; }
-      updateTab(id, { loading: false, content, title });
-    } catch {
-      updateTab(id, {
-        loading: false,
-        title: 'Connection Failed',
-        content: `<!doctype html><html><body style="font-family:Roboto,sans-serif;background:${light ? '#fff' : '#202124'};color:${light ? '#202124' : '#e8eaed'};display:flex;align-items:center;justify-content:center;height:100vh;margin:0;"><div style="background:${light ? '#f1f3f4' : '#292a2d'};padding:40px;border-radius:8px;text-align:center;max-width:500px;"><h2 style="margin:0 0 12px;">This site can't be reached</h2><p style="opacity:0.7;"><b>${escapeHtml(norm)}</b> took too long to respond.</p></div></body></html>`,
-      });
-    }
-  }, [light, updateTab]);
+  }, []);
 
   // Listen for nav messages from iframe
   useEffect(() => {
@@ -443,14 +364,19 @@ export const GoogleApp = () => {
           <iframe
             key={active.id + ':' + active.histIdx}
             srcDoc={active.content}
-            sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-modals"
+            sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-modals allow-popups-to-escape-sandbox"
             className="w-full h-full border-0 bg-white"
             title={active.title}
           />
         ) : (
-          <div className="flex items-center justify-center h-full" style={{ color: tk.inactive }}>
-            <div className="w-8 h-8 rounded-full border-2 animate-spin" style={{ borderColor: tk.border, borderTopColor: tk.accent }} />
-          </div>
+          <iframe
+            key={active.id + ':' + active.histIdx + ':live'}
+            src={active.url}
+            sandbox="allow-forms allow-scripts allow-popups allow-same-origin allow-modals allow-popups-to-escape-sandbox"
+            className="w-full h-full border-0 bg-white"
+            title={active.title}
+            referrerPolicy="no-referrer"
+          />
         )}
       </div>
 

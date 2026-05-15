@@ -81,16 +81,19 @@ export const ContactApp = () => {
             <Field
               label="mobile"
               value="+91 91419 44808"
+              href="tel:+919141944808"
               right={<Phone className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="email"
               value="thanas5.rd@gmail.com"
+              href="mailto:thanas5.rd@gmail.com"
               right={<Mail className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="discord"
               value="DarkSpacePirate"
+              href="https://discord.com/users/677174403859087378"
               right={<DiscordIcon className="w-5 h-5 text-yellow-400" />}
             />
           </GlassPanel>
@@ -102,16 +105,19 @@ export const ContactApp = () => {
             <Field
               label="linkedin"
               value="linkedin.com/in/thanasr"
+              href="https://www.linkedin.com/in/thanasr/"
               right={<LinkedInIcon className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="github"
               value="github.com/Thanas-R"
+              href="https://github.com/Thanas-R"
               right={<GitHubIcon className="w-5 h-5 text-yellow-400" />}
             />
             <Field
               label="portfolio"
               value="thanas.vercel.app"
+              href="https://thanas.vercel.app"
               right={<PortfolioIcon className="w-5 h-5 text-yellow-400" />}
             />
           </GlassPanel>
@@ -165,12 +171,19 @@ const Field = ({
   label,
   value,
   right,
+  href,
 }: {
   label: string;
   value: string;
   right?: ReactNode;
+  href?: string;
 }) => (
-  <div className="flex items-center gap-3 px-4 py-3">
+  <a
+    href={href}
+    target={href?.startsWith('http') ? '_blank' : undefined}
+    rel="noreferrer"
+    className="flex items-center gap-3 px-4 py-3 hover:bg-white/5 transition-colors"
+  >
     <div className="flex-1 min-w-0">
       <div className="text-[13px] text-yellow-400 font-medium leading-tight mb-0.5">
         {label}
@@ -178,7 +191,7 @@ const Field = ({
       <div className="text-[18px] leading-tight truncate">{value}</div>
     </div>
     {right}
-  </div>
+  </a>
 );
 
 const DiscordIcon = ({ className = '' }: { className?: string }) => (

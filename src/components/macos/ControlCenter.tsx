@@ -5,7 +5,7 @@ import { HiSun } from 'react-icons/hi';
 import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from 'react-icons/io5';
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
-import { useNowPlaying, setNowPlaying, nextTrack, prevTrack } from '@/lib/nowPlaying';
+import { useNowPlaying, togglePlay, nextTrack, prevTrack } from '@/lib/nowPlaying';
 
 const AirdropSvg = ({ className = '' }: { className?: string }) => (
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" className={className} fill="none">
@@ -135,7 +135,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
 </button>
 
 <button
-  onClick={() => setNowPlaying({ playing: !np.playing })}
+  onClick={() => togglePlay()}
   className="p-1.5 rounded-full hover:bg-white/15"
 >
   {np.playing ? <Pause className="w-4 h-4" fill="white" /> : <IoPlay className="w-4 h-4" />}

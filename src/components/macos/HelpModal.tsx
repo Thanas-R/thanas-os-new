@@ -35,7 +35,7 @@ export const HelpModal = ({ open, onClose }: { open: boolean; onClose: () => voi
         <div>· Type <code className="px-1 bg-white/10 rounded">rickroll</code> if you trust me. (You shouldn't.)</div>
         <div>· There's a <code className="px-1 bg-white/10 rounded">.secrets</code> folder. Find it.</div>
         <div>· Run <code className="px-1 bg-white/10 rounded">hack &lt;target&gt;</code> in Terminal for instant l33t status.</div>
-        div>· Type 67 in the Calculator.</div>
+        <div>· Type 67 in the Calculator.</div>
       </div>
     </div>
   </FrostedModal>

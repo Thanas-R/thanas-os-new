@@ -1,5 +1,5 @@
 // Music player powered by the public iTunes Search API.
-// Returns 30-second preview URLs (AAC) that we play via an HTMLAudioElement.
+// Returns 30-second preview URLs (AAC) that we play via a singleton HTMLAudioElement.
 import { useEffect, useState } from 'react';
 import cradlesCover from '@/assets/cradles-cover.png';
 import encoreCover from '@/assets/album-encore.png';
@@ -12,6 +12,9 @@ export interface Track {
   artist: string;
   cover: string;
   previewUrl?: string;
+  album?: string;
+  category?: 'English Mix' | 'Japanese / Anime';
+  searchTerm?: string;
 }
 
 export interface NowPlaying extends Track {
@@ -21,13 +24,60 @@ export interface NowPlaying extends Track {
   currentTime: number; // seconds
 }
 
-// Initial seed; replaced with live iTunes data on first load.
+const fallbackCovers = [
+  cradlesCover,
+  physicalCover,
+  cryinglightningCover,
+  bringitondownCover,
+  encoreCover,
+];
+
+const seedTrack = (
+  title: string,
+  artist: string,
+  category: Track['category'],
+  index: number,
+  searchTerm = `${title} ${artist}`,
+): Track => ({
+  title,
+  artist,
+  category,
+  searchTerm,
+  cover: fallbackCovers[index % fallbackCovers.length],
+});
+
+// Curated preview library. Artwork + preview URLs are hydrated from iTunes on load.
 export const TRACKS: Track[] = [
-  { title: 'Cradles', artist: 'Sub Urban', cover: cradlesCover },
-  { title: 'Mockingbird', artist: 'Eminem', cover: encoreCover },
-  { title: 'Bring It On Down', artist: 'Oasis', cover: bringitondownCover },
-  { title: 'Physical', artist: 'Dua Lipa', cover: physicalCover },
-  { title: 'Crying Lightning', artist: 'Arctic Monkeys', cover: cryinglightningCover },
+  seedTrack('Cradles', 'Sub Urban', 'English Mix', 0),
+  seedTrack('Crab Rave', 'Noisestorm', 'English Mix', 1),
+  seedTrack('Blinding Lights', 'The Weeknd', 'English Mix', 2),
+  seedTrack('Levitating', 'Dua Lipa', 'English Mix', 3),
+  seedTrack('bad guy', 'Billie Eilish', 'English Mix', 4),
+  seedTrack('Viva La Vida', 'Coldplay', 'English Mix', 5),
+  seedTrack('Mr. Brightside', 'The Killers', 'English Mix', 6),
+  seedTrack('Seven Nation Army', 'The White Stripes', 'English Mix', 7),
+  seedTrack('Feel Good Inc.', 'Gorillaz', 'English Mix', 8),
+  seedTrack('Numb', 'LINKIN PARK', 'English Mix', 9),
+  seedTrack('Lose Yourself', 'Eminem', 'English Mix', 10),
+  seedTrack('Believer', 'Imagine Dragons', 'English Mix', 11),
+  seedTrack('Counting Stars', 'OneRepublic', 'English Mix', 12),
+  seedTrack('Bring It On Down', 'Oasis', 'English Mix', 13),
+  seedTrack('Physical', 'Dua Lipa', 'English Mix', 14),
+  seedTrack('Crying Lightning', 'Arctic Monkeys', 'English Mix', 15),
+  seedTrack('Idol', 'YOASOBI', 'Japanese / Anime', 16, 'Idol YOASOBI Oshi no Ko'),
+  seedTrack('Racing Into The Night', 'YOASOBI', 'Japanese / Anime', 17, 'Yoru ni Kakeru YOASOBI'),
+  seedTrack('Gurenge', 'LiSA', 'Japanese / Anime', 18, 'Gurenge LiSA Demon Slayer'),
+  seedTrack('Blue Bird', 'Ikimonogakari', 'Japanese / Anime', 19, 'Blue Bird Ikimonogakari Naruto'),
+  seedTrack('Silhouette', 'KANA-BOON', 'Japanese / Anime', 20, 'Silhouette KANA-BOON Naruto'),
+  seedTrack('unravel', 'TK from Ling tosite sigure', 'Japanese / Anime', 21, 'unravel TK from Ling tosite sigure Tokyo Ghoul'),
+  seedTrack('Kaikai Kitan', 'Eve', 'Japanese / Anime', 22, 'Kaikai Kitan Eve Jujutsu Kaisen'),
+  seedTrack('KICK BACK', 'Kenshi Yonezu', 'Japanese / Anime', 23, 'KICK BACK Kenshi Yonezu Chainsaw Man'),
+  seedTrack('Sparkle', 'RADWIMPS', 'Japanese / Anime', 24, 'Sparkle RADWIMPS Your Name'),
+  seedTrack('Again', 'YUI', 'Japanese / Anime', 25, 'Again YUI Fullmetal Alchemist Brotherhood'),
+  seedTrack("A Cruel Angel's Thesis", 'Yoko Takahashi', 'Japanese / Anime', 26, "A Cruel Angel's Thesis Yoko Takahashi Evangelion"),
+  seedTrack('Hikaru Nara', 'Goose house', 'Japanese / Anime', 27, 'Hikaru Nara Goose house Your Lie in April'),
+  seedTrack('Crossing Field', 'LiSA', 'Japanese / Anime', 28, 'Crossing Field LiSA Sword Art Online'),
+  seedTrack('The Rumbling', 'SiM', 'Japanese / Anime', 29, 'The Rumbling SiM Attack on Titan'),
 ];
 
 let state: NowPlaying = {
@@ -39,7 +89,11 @@ let state: NowPlaying = {
 };
 
 const subs = new Set<() => void>();
+const librarySubs = new Set<() => void>();
 const notify = () => subs.forEach((fn) => fn());
+const notifyLibrary = () => librarySubs.forEach((fn) => fn());
+
+let playerVolume = 0.65;
 
 // ---- Singleton audio element (browser-only) ----
 let audio: HTMLAudioElement | null = null;
@@ -49,9 +103,16 @@ const getAudio = (): HTMLAudioElement | null => {
     audio = new Audio();
     audio.preload = 'metadata';
     audio.crossOrigin = 'anonymous';
+    audio.volume = playerVolume;
+    audio.addEventListener('loadedmetadata', () => {
+      if (!audio) return;
+      const dur = Number.isFinite(audio.duration) ? audio.duration : 30;
+      state = { ...state, duration: dur };
+      notify();
+    });
     audio.addEventListener('timeupdate', () => {
       if (!audio) return;
-      const dur = audio.duration || 30;
+      const dur = Number.isFinite(audio.duration) ? audio.duration : state.duration || 30;
       state = {
         ...state,
         currentTime: audio.currentTime,
@@ -67,92 +128,132 @@ const getAudio = (): HTMLAudioElement | null => {
   return audio;
 };
 
+const updateTrackInLibrary = (track: Track, patch: Partial<Track>) => {
+  const index = TRACKS.findIndex((t) => t.title === track.title && t.artist === track.artist);
+  const next = { ...track, ...patch };
+  if (index >= 0) {
+    TRACKS[index] = { ...TRACKS[index], ...patch };
+    notifyLibrary();
+    return TRACKS[index];
+  }
+  return next;
+};
+
 // ---- iTunes Search ----
 const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
-    const r = await fetch(`https://itunes.apple.com/search?media=music&limit=1&term=${encodeURIComponent(term)}`);
-    const j = await r.json();
-    const item = j.results?.[0];
-    if (!item) return null;
-    const cover = (item.artworkUrl100 || '').replace('100x100', '600x600');
-    return { title: item.trackName, artist: item.artistName, cover, previewUrl: item.previewUrl };
-  } catch { return null; }
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=10&term=${encodeURIComponent(term)}`;
+    const response = await fetch(url);
+    const json = await response.json();
+    const item = json.results?.find((result: { previewUrl?: string }) => Boolean(result.previewUrl)) ?? json.results?.[0];
+    if (!item?.previewUrl) return null;
+    const cover = (item.artworkUrl100 || '').replace('100x100bb', '600x600bb').replace('100x100', '600x600');
+    return {
+      title: item.trackName,
+      artist: item.artistName,
+      album: item.collectionName,
+      cover,
+      previewUrl: item.previewUrl,
+    };
+  } catch {
+    return null;
+  }
 };
 
-// Enrich the seed list once at startup so previews are available.
+const resolvePlayableTrack = async (track: Track) => {
+  if (track.previewUrl) return track;
+  const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+  if (!result?.previewUrl) return track;
+  return updateTrackInLibrary(track, result);
+};
+
+// Enrich the seed list once at startup so previews + artwork are available.
 let enriched = false;
 const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
   enriched = true;
+
   await Promise.all(
-    TRACKS.map(async (t, i) => {
-      const r = await searchITunes(`${t.title} ${t.artist}`);
-      if (r?.previewUrl) {
-        TRACKS[i] = { ...t, previewUrl: r.previewUrl, cover: r.cover || t.cover };
-        if (state.title === t.title && state.artist === t.artist) {
-          state = { ...state, ...TRACKS[i] };
-          notify();
-        }
+    TRACKS.map(async (track) => {
+      const resolved = await resolvePlayableTrack(track);
+      if (state.title === track.title && state.artist === track.artist) {
+        state = { ...state, ...resolved };
+        notify();
       }
-    })
+    }),
   );
+  notifyLibrary();
 };
+
 if (typeof window !== 'undefined') {
-  setTimeout(() => { enrichTracks(); }, 0);
+  setTimeout(() => { void enrichTracks(); }, 0);
 }
 
+export const preloadTrackLibrary = () => { void enrichTracks(); };
 export const getNowPlaying = () => state;
 
-export const playTrack = async (t: Track) => {
-  state = { ...state, ...t, playing: true, progress: 0, currentTime: 0 };
+export const setPlayerVolume = (value: number) => {
+  playerVolume = Math.max(0, Math.min(1, value / 100));
+  const player = getAudio();
+  if (player) player.volume = playerVolume;
+};
+
+export const playTrack = async (track: Track) => {
+  state = { ...state, ...track, playing: false, progress: 0, currentTime: 0, duration: 30 };
   notify();
-  const a = getAudio();
-  if (!a) return;
-  let url = t.previewUrl;
-  if (!url) {
-    const r = await searchITunes(`${t.title} ${t.artist}`);
-    if (r?.previewUrl) {
-      url = r.previewUrl;
-      const idx = TRACKS.findIndex((x) => x.title === t.title && x.artist === t.artist);
-      if (idx >= 0) TRACKS[idx] = { ...TRACKS[idx], previewUrl: url, cover: r.cover || TRACKS[idx].cover };
-      state = { ...state, previewUrl: url, cover: r.cover || state.cover };
-      notify();
-    }
+
+  const player = getAudio();
+  if (!player) return;
+
+  const resolved = await resolvePlayableTrack(track);
+  if (!resolved.previewUrl) {
+    state = { ...state, ...resolved, playing: false };
+    notify();
+    return;
   }
-  if (url) {
-    a.src = url;
-    try { await a.play(); } catch { /* autoplay blocked */ }
+
+  state = { ...state, ...resolved, playing: true, progress: 0, currentTime: 0, duration: 30 };
+  notify();
+  player.src = resolved.previewUrl;
+  player.currentTime = 0;
+  player.volume = playerVolume;
+
+  try {
+    await player.play();
+  } catch {
+    state = { ...state, playing: false };
+    notify();
   }
 };
 
 export const togglePlay = async () => {
-  const a = getAudio();
-  if (!a) return;
-  if (!a.src && state.previewUrl) a.src = state.previewUrl;
-  if (!a.src) {
-    // Lazy-load the current track's preview
-    const r = await searchITunes(`${state.title} ${state.artist}`);
-    if (r?.previewUrl) {
-      a.src = r.previewUrl;
-      state = { ...state, previewUrl: r.previewUrl };
-      notify();
-    }
+  const player = getAudio();
+  if (!player) return;
+
+  if (!player.src) {
+    await playTrack(state);
+    return;
   }
-  if (a.paused) { try { await a.play(); } catch { /* ignore */ } }
-  else { a.pause(); }
+
+  if (player.paused) {
+    try { await player.play(); } catch { /* ignore browser gesture restrictions */ }
+  } else {
+    player.pause();
+  }
 };
 
 export const seekTo = (fraction: number) => {
-  const a = getAudio();
-  if (!a) return;
-  const dur = a.duration || state.duration || 30;
-  a.currentTime = Math.max(0, Math.min(dur, fraction * dur));
+  const player = getAudio();
+  if (!player) return;
+  const dur = Number.isFinite(player.duration) ? player.duration : state.duration || 30;
+  player.currentTime = Math.max(0, Math.min(dur, fraction * dur));
 };
 
 const currentIndex = () => {
-  const i = TRACKS.findIndex((t) => t.title === state.title && t.artist === state.artist);
+  const i = TRACKS.findIndex((track) => track.title === state.title && track.artist === state.artist);
   return i < 0 ? 0 : i;
 };
+
 export const nextTrack = () => { void playTrack(TRACKS[(currentIndex() + 1) % TRACKS.length]); };
 export const prevTrack = () => { void playTrack(TRACKS[(currentIndex() - 1 + TRACKS.length) % TRACKS.length]); };
 
@@ -164,4 +265,15 @@ export const useNowPlaying = (): NowPlaying => {
     return () => { subs.delete(fn); };
   }, []);
   return state;
+};
+
+export const useTrackLibrary = (): Track[] => {
+  const [, force] = useState(0);
+  useEffect(() => {
+    const fn = () => force((n) => n + 1);
+    librarySubs.add(fn);
+    void enrichTracks();
+    return () => { librarySubs.delete(fn); };
+  }, []);
+  return TRACKS;
 };

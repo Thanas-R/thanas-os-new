@@ -1,14 +1,13 @@
 // Floating now-playing controller — used inside the Apple Music app only.
 // Rounded square pill (not full-pill), reduced transparency, working seek slider,
 // horizontally centered on the RIGHT half of the app window (i.e. centered over the main pane).
-import { useState } from 'react';
-import { useNowPlaying, togglePlay, nextTrack, prevTrack } from '@/lib/nowPlaying';
+import { useNowPlaying, togglePlay, nextTrack, prevTrack, seekTo } from '@/lib/nowPlaying';
 import { IoPlay, IoPlayForward, IoPlayBack } from 'react-icons/io5';
 import { Pause, Heart } from 'lucide-react';
 
 export const NowPlayingPill = ({ dark = false }: { dark?: boolean }) => {
   const np = useNowPlaying();
-  const [progress, setProgress] = useState(34);
+  const progress = Math.max(0, Math.min(100, (np.progress || 0) * 100));
 
   const bg = dark ? 'rgba(28,28,32,0.95)' : 'rgba(255,255,255,0.95)';
   const txt = dark ? '#fff' : '#1c1c1e';
@@ -43,8 +42,8 @@ export const NowPlayingPill = ({ dark = false }: { dark?: boolean }) => {
           <div className="absolute top-0 left-0 h-full rounded-full" style={{ width: `${progress}%`, background: accent }} />
           <input
             type="range"
-            min={0} max={100} value={progress}
-            onChange={(e) => setProgress(Number(e.target.value))}
+            min={0} max={1000} value={Math.round(progress * 10)}
+            onChange={(e) => seekTo(Number(e.target.value) / 1000)}
             className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
           />
         </div>

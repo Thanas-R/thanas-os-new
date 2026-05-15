@@ -327,15 +327,7 @@ export const GoogleApp = () => {
           )}
         </div>
       </div>
-    @keyframes calc-digit-wobble {
-  0%, 100% { transform: translateY(0); }
-  50%      { transform: translateY(-6px); }
-}
-@keyframes spotlight-pop {
-  0%   { transform: scale(0.6); opacity: 0; }
-  60%  { transform: scale(1.08); opacity: 1; }
-  100% { transform: scale(1); opacity: 1; }
-}
+
       {/* BOOKMARKS BAR */}
       {showBookmarks && (
         <div className="flex items-center gap-1 px-3 py-1.5 shrink-0 overflow-x-auto" style={{ background: tk.toolbar }}>

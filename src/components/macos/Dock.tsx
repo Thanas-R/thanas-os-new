@@ -97,7 +97,7 @@ export const Dock = () => {
       }
 
       return dockItems.map((_, index) => {
-        // Keep the hover centers stable so the dock does not drift as it animates.
+        // Keep the hover center stable so the dock does not drift as it animates.
         const staticCenter = index * (baseSize + baseSpacing) + baseSize / 2;
         const distance = Math.abs(mousePosition - staticCenter);
 
@@ -114,7 +114,7 @@ export const Dock = () => {
     [dockItems, baseSize, baseSpacing, effectWidth, maxScale, minScale]
   );
 
-  // Initialize or reset refs when the dock items or sizing changes.
+  // Initialize refs when dock items or sizing changes.
   useEffect(() => {
     const initialScales = dockItems.map(() => minScale);
     const initialPositions = calculatePositions(initialScales);
@@ -168,7 +168,7 @@ export const Dock = () => {
       cancelAnimationFrame(animationFrameRef.current);
     }
 
-    if (positionsRef.current.length > 0) {
+    if (scalesRef.current.length > 0) {
       animationFrameRef.current = requestAnimationFrame(animateToTarget);
     }
 
@@ -193,7 +193,7 @@ export const Dock = () => {
 
       if (dockRef.current) {
         const rect = dockRef.current.getBoundingClientRect();
-        // Subtract the dock padding so mouseX matches the inner icon layout.
+        // Mouse position relative to the dock's inner layout.
         setMouseX(e.clientX - rect.left - padding);
       }
     },
@@ -239,22 +239,18 @@ export const Dock = () => {
     openApp(appId);
   };
 
-  const baseContentWidth =
-    positionsRef.current.length > 0
-      ? Math.max(
-          ...positionsRef.current.map(
-            (pos, index) => pos + (baseSize * (scalesRef.current[index] || 1)) / 2
-          )
-        )
-      : dockItems.length > 0
-        ? dockItems.length * (baseSize + baseSpacing) - baseSpacing
-        : 0;
-
+  // Static dock width so the whole dock does not recenter while animating.
   const separatorGap = baseSpacing * 1.5;
   const separatorWidth = 1;
   const trashSize = baseSize;
-  const contentWidth =
-    baseContentWidth + separatorGap + separatorWidth + separatorGap + trashSize;
+
+  const staticDockWidth =
+    dockItems.length * baseSize +
+    Math.max(0, dockItems.length - 1) * baseSpacing +
+    separatorGap +
+    separatorWidth +
+    separatorGap +
+    trashSize;
 
   return (
     <>
@@ -268,14 +264,14 @@ export const Dock = () => {
       <div
         ref={dockRef}
         className={`fixed bottom-2 left-1/2 -translate-x-1/2 backdrop-blur-macos-heavy rounded-3xl shadow-macos-glass z-[70] ${
-          settings.reducedMotion ? '' : 'transition-all duration-500 ease-out'
+          settings.reducedMotion ? '' : 'transition-opacity duration-500 ease-out'
         } ${
           settings.dockAutoHide && !isDockVisible
             ? 'translate-y-full opacity-0 pointer-events-none'
             : 'translate-y-0 opacity-100'
         }`}
         style={{
-          width: `${contentWidth + padding * 2}px`,
+          width: `${staticDockWidth + padding * 2}px`,
           background: 'rgba(45, 45, 45, 0.2)',
           borderRadius: `${Math.max(12, baseSize * 0.4)}px`,
           border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -400,10 +396,11 @@ export const Dock = () => {
             );
           })}
 
+          {/* Separator */}
           <div
             className="absolute"
             style={{
-              left: `${baseContentWidth + separatorGap}px`,
+              left: `${dockItems.length * baseSize + Math.max(0, dockItems.length - 1) * baseSpacing + separatorGap}px`,
               bottom: `${baseSize * 0.1}px`,
               width: `${separatorWidth}px`,
               height: `${baseSize * 0.8}px`,
@@ -412,10 +409,11 @@ export const Dock = () => {
             }}
           />
 
+          {/* Trash */}
           <div
             className="absolute cursor-pointer flex items-end justify-center group"
             style={{
-              left: `${baseContentWidth + separatorGap + separatorWidth + separatorGap}px`,
+              left: `${dockItems.length * baseSize + Math.max(0, dockItems.length - 1) * baseSpacing + separatorGap + separatorWidth + separatorGap}px`,
               bottom: 0,
               width: `${baseSize}px`,
               height: `${baseSize}px`,

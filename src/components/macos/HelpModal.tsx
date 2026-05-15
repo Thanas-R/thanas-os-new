@@ -26,8 +26,17 @@ export const HelpModal = ({ open, onClose }: { open: boolean; onClose: () => voi
 
     <div className="mt-5 p-3 rounded-xl bg-white/5 text-xs text-white/70">
       <div className="flex items-center gap-2 mb-1"><Coffee className="w-3.5 h-3.5" /><b>Easter eggs</b></div>
-      Try typing <code className="px-1 bg-white/10 rounded">sudo make sandwich</code> in the Terminal,
-      or visit a domain you don't own in Safari…
+      <div className="space-y-1.5 mt-1.5">
+        <div>· The <b>Trash</b> doesn't just delete things. Click it.</div>
+        <div>· The Terminal has opinions about <i>sandwiches</i>. And cheat codes. And chai.</div>
+        <div>· Try <code className="px-1 bg-white/10 rounded">matrix</code>, <code className="px-1 bg-white/10 rounded">do a barrel roll</code>, or <code className="px-1 bg-white/10 rounded">42</code> in Terminal.</div>
+        <div>· Some Finder folders have <i>more</i> files than they look. Peek inside hidden ones.</div>
+        <div>· The <b>Calendar</b> widget is clickable. So is everything else, basically.</div>
+        <div>· Type <code className="px-1 bg-white/10 rounded">rickroll</code> if you trust me. (You shouldn't.)</div>
+        <div>· There's a <code className="px-1 bg-white/10 rounded">.secrets</code> folder. Find it.</div>
+        <div>· Run <code className="px-1 bg-white/10 rounded">hack &lt;target&gt;</code> in Terminal for instant l33t status.</div>
+        div>· Type 67 in the Calculator.</div>
+      </div>
     </div>
   </FrostedModal>
 );

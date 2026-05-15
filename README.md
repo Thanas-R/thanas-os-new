@@ -82,7 +82,7 @@ Each app is a real React component, not an iframe and not a screenshot. They sha
 | Calculator | Standard calculator |
 | Settings | Full preferences panel: wallpaper, theme, dock, brightness, sound, network, default browser |
 | About | About this Mac with live device info |
-| Apple Music | Now-playing pill, playlists, embedded audio |
+| Apple Music | Searchable mixed English/Japanese/anime library, iTunes preview playback, playlists, synced seek and volume controls |
 | GitHub | Live contribution graph, repos, stats |
 | LinkedIn | Profile, experience, projects |
 | Journey | Personal timeline embed |
@@ -116,6 +116,8 @@ The desktop widgets are not third-party libraries. Each one was built specifical
 - Internal `openUrl` routes through the user's chosen default browser
 - Spotlight search indexed across apps, settings keys, projects, notes
 - Auto-closing menu bar dropdowns when the cursor moves more than 180px away
+- Apple Music streams real 30-second preview audio from the public iTunes catalog, including Crab Rave, English hits, YOASOBI, and anime essentials
+- Music volume stays synchronized between the Apple Music now-playing row and Control Center sound slider
 - Wallpaper preloading and decode for crisp render
 - Battery API integration for real charge level
 - Online and offline events surfaced in the menu bar

@@ -98,18 +98,28 @@ export const LinkedInApp = () => {
               </div>
 
               <div className="flex flex-col items-end gap-2 shrink-0 pt-1">
-                <div className="flex items-center gap-2">
-                  <img src={pesLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-                  <span className="text-[15px] font-semibold">PES University</span>
-                </div>
-                >
-                >
-                <div className="flex items-center gap-2">
-                  <img src={innovationLabLogo} alt="PES" className="w-7 h-7 rounded object-contain" />
-                  <span className="text-[15px] font-semibold">The Innovation Lab</span>
-                </div>
-               
-              </div>
+  <div className="flex items-center gap-2">
+    <img
+      src={pesLogo}
+      alt="PES University"
+      className="w-7 h-7 rounded object-contain"
+    />
+    <span className="text-[15px] font-semibold">
+      PES University
+    </span>
+  </div>
+
+  <div className="flex items-center gap-2">
+    <img
+      src={innovationLabLogo}
+      alt="The Innovation Lab"
+      className="w-7 h-7 rounded object-contain"
+    />
+    <span className="text-[15px] font-semibold">
+      The Innovation Lab
+    </span>
+  </div>
+</div>
             </div>
           </div>
         </Card>

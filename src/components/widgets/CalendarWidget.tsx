@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { useMacOS } from "@/contexts/MacOSContext";
 
 export const CalendarWidget = () => {
+  const { openApp } = useMacOS();
   const istOffset = 5.5 * 60 * 60 * 1000;
   const utc = Date.now() + new Date().getTimezoneOffset() * 60000;
   const istNow = new Date(utc + istOffset);
@@ -22,8 +24,9 @@ export const CalendarWidget = () => {
   }, [todayYear, todayMonth]);
 
   return (
-    <div
-      className="rounded-3xl p-3 select-none shadow-xl"
+    <button
+      onClick={() => openApp('calendar')}
+      className="rounded-3xl p-3 select-none shadow-xl text-left hover:brightness-110 transition"
       style={{
         width: 172,
         height: 172,
@@ -59,6 +62,6 @@ export const CalendarWidget = () => {
 </div>
         ))}
       </div>
-    </div>
+    </button>
   );
 };

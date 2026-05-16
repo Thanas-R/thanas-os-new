@@ -248,35 +248,35 @@ const SliderModule = ({
       <div className="text-[12.5px] font-semibold mb-2">{label}</div>
 
       <div className="flex items-center gap-2 min-h-[36px]">
-        <div
-          ref={trackRef}
-          onPointerDown={(e) => {
-            (e.target as Element).setPointerCapture?.(e.pointerId);
-            setDragging(true);
-            updateFromX(e.clientX);
-          }}
-          className="relative flex-1 h-7 rounded-full cursor-pointer select-none"
-          style={{ background: 'rgba(255,255,255,0.18)' }}
-        >
-          {/* filled track */}
-          <div
-            className="absolute top-0 bottom-0 left-0 rounded-full"
-            style={{
-              width: `calc(${pct}% + 11px)`,
-              maxWidth: '100%',
-              background: '#ffffff',
-              boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
-            }}
-          />
+  <div
+    ref={trackRef}
+    onPointerDown={(e) => {
+      (e.target as Element).setPointerCapture?.(e.pointerId);
+      setDragging(true);
+      updateFromX(e.clientX);
+    }}
+    className="relative flex-1 h-7 rounded-full cursor-pointer select-none"
+    style={{ background: 'rgba(255,255,255,0.18)' }}
+  >
+    {/* filled track */}
+    <div
+      className="absolute top-0 bottom-0 left-0 rounded-full"
+      style={{
+        width: `calc(${pct}% + 11px)`,
+        maxWidth: '100%',
+        background: '#ffffff',
+        boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
+      }}
+    />
 
-          {/* icon pinned inside the filled portion on the left */}
-          <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
-            {icon}
-          </div>
+    {/* icon pinned inside the filled portion */}
+    <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+      {icon}
+    </div>
+  </div>
 
-
-        {trailing}
-      </div>
+  {trailing}
+</div>
     </div>
   );
 };

@@ -169,7 +169,7 @@ const preloadImage = (src: string) =>
 
 const searchITunes = async (term: string, originalTrack?: Track): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=4&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
 
     if (!response.ok) return null;
@@ -189,85 +189,67 @@ const searchITunes = async (term: string, originalTrack?: Track): Promise<Partia
     const wantedTitle = normalize(originalTrack?.title ?? '');
     const wantedArtist = normalize(originalTrack?.artist ?? '');
 
-    const best =
-      results.find((r: any) => {
-        if (!r.previewUrl || !r.artworkUrl100) return false;
+const best =
+  results.find((r: any) => {
+    if (!r.previewUrl || !r.artworkUrl100) return false;
 
-        const trackName = normalize(r.trackName ?? '');
-        const artistName = normalize(r.artistName ?? '');
+    const trackName = normalize(r.trackName ?? '');
+    const artistName = normalize(r.artistName ?? '');
 
-        const titleMatch = wantedTitle && trackName.includes(wantedTitle);
-        const artistMatch = wantedArtist && artistName.includes(wantedArtist);
+    const titleMatch =
+      wantedTitle &&
+      trackName.includes(wantedTitle);
 
-        return titleMatch && artistMatch;
-      }) ||
-      results.find((r: any) => r.previewUrl && r.artworkUrl100);
+    const artistMatch =
+      wantedArtist &&
+      artistName.includes(wantedArtist);
 
-    if (!best?.previewUrl) return null;
-
-    const cover = (best.artworkUrl100 || '')
-      .replace('100x100bb', '600x600bb')
-      .replace('100x100', '600x600');
-
-    return {
-      album: best.collectionName,
-      cover,
-      previewUrl: best.previewUrl,
-      resolved: true,
-    };
-  } catch {
-    return null;
-  }
-};
+    return titleMatch || artistMatch;
+  }) ||
+  results.find(
+    (r: any) => r.previewUrl && r.artworkUrl100
+  );
 
 let enriched = false;
 
 const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
-
   enriched = true;
 
-  for (const [index, track] of TRACKS.entries()) {
-    if (track.resolved) continue;
+  const batchSize = 6; // limit concurrent calls
 
-    const result = await searchITunes(
-      track.searchTerm || `${track.title} ${track.artist}`,
-      track
-    );
+  for (let i = 0; i < TRACKS.length; i += batchSize) {
+    const batch = TRACKS.slice(i, i + batchSize);
 
-    if (result?.previewUrl) {
-      // preload album image BEFORE UI update
-      if (result.cover) {
-        await preloadImage(result.cover);
-      }
+    await Promise.all(
+      batch.map(async (track, idx) => {
+        const realIndex = i + idx;
 
-      TRACKS[index] = {
-        ...TRACKS[index],
-        ...result,
-      };
+        if (TRACKS[realIndex].resolved) return;
 
-      notifyLibrary();
+        const result = await searchITunes(
+          track.searchTerm || `${track.title} ${track.artist}`,
+          track
+        );
 
-      // update current playing state too
-      if (
-        state.title === track.title &&
-        state.artist === track.artist
-      ) {
-        state = {
-          ...state,
+        if (!result?.previewUrl) return;
+
+        // DON'T block UI on image preload
+        if (result.cover) preloadImage(result.cover);
+
+        TRACKS[realIndex] = {
+          ...TRACKS[realIndex],
           ...result,
         };
 
-        notify();
-      }
-    }
-
-    // avoid Apple API throttling
-    await new Promise((r) => setTimeout(r, 120));
+        notifyLibrary();
+      })
+    );
   }
 
   notifyLibrary();
 };
+
 if (typeof window !== 'undefined') setTimeout(() => { void enrichTracks(); }, 0);
 
 export const preloadTrackLibrary = () => { void enrichTracks(); };
@@ -286,7 +268,7 @@ export const playTrack = async (track: Track) => {
 
   let resolved: Track = track;
 
-  // resolve track from iTunes if needed
+  // instantly resolve from iTunes
   if (!resolved.previewUrl || !resolved.resolved) {
     const r = await searchITunes(
       track.searchTerm || `${track.title} ${track.artist}`,
@@ -294,17 +276,17 @@ export const playTrack = async (track: Track) => {
     );
 
     if (r?.previewUrl) {
-      // preload album cover FIRST
-      if (r.cover) {
-        await preloadImage(r.cover);
-      }
-
       resolved = {
         ...track,
         ...r,
       };
 
-      // update library cache
+      // preload image in background
+      if (r.cover) {
+        preloadImage(r.cover);
+      }
+
+      // cache result
       const idx = TRACKS.findIndex(
         (t) =>
           t.title === track.title &&
@@ -322,7 +304,7 @@ export const playTrack = async (track: Track) => {
     }
   }
 
-  // stop if still unresolved
+  // failed resolve
   if (!resolved.previewUrl) {
     state = {
       ...state,
@@ -333,7 +315,7 @@ export const playTrack = async (track: Track) => {
     return;
   }
 
-  // update UI ONLY after image is ready
+  // update UI IMMEDIATELY
   state = {
     ...state,
     ...resolved,
@@ -345,7 +327,7 @@ export const playTrack = async (track: Track) => {
 
   notify();
 
-  // now start audio
+  // start audio immediately
   player.src = resolved.previewUrl;
   player.currentTime = 0;
   player.volume = playerVolume;

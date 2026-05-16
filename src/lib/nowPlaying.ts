@@ -2,7 +2,7 @@
 // Each track is verified against iTunes before being exposed to the UI —
 // only tracks with a real 30-second preview + real album art are shown.
 import { useEffect, useState } from 'react';
-import cradlesCover from '@/assets/cradles-cover.png';
+import cradlesCover from '@/assets/image-asset.jpg';
 
 export type Category =
   | 'English Mix'
@@ -44,7 +44,6 @@ const seed = (
   category,
   searchTerm: searchTerm || `${title} ${artist}`,
   cover: cradlesCover,
-  resolved: false,
 });
 
 // Curated library — every entry is a well-known song that returns a result
@@ -154,14 +153,12 @@ const getAudio = (): HTMLAudioElement | null => {
     audio.preload = 'metadata';
     audio.crossOrigin = 'anonymous';
     audio.volume = playerVolume;
-
     audio.addEventListener('loadedmetadata', () => {
       if (!audio) return;
       const dur = Number.isFinite(audio.duration) ? audio.duration : 30;
       state = { ...state, duration: dur };
       notify();
     });
-
     audio.addEventListener('timeupdate', () => {
       if (!audio) return;
       const dur = Number.isFinite(audio.duration) ? audio.duration : state.duration || 30;
@@ -173,16 +170,13 @@ const getAudio = (): HTMLAudioElement | null => {
       };
       notify();
     });
-
     audio.addEventListener('ended', () => {
       nextTrack();
     });
-
     audio.addEventListener('play', () => {
       state = { ...state, playing: true };
       notify();
     });
-
     audio.addEventListener('pause', () => {
       state = { ...state, playing: false };
       notify();
@@ -201,16 +195,17 @@ const preloadImage = (src: string) =>
 
 const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=4&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
     if (!response.ok) return null;
 
     const json = await response.json();
     const results = json.results ?? [];
+
     if (!results.length) return null;
 
-    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100) || results[0];
-    if (!best?.previewUrl || !best?.artworkUrl100) return null;
+    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100);
+    if (!best?.previewUrl) return null;
 
     const cover = (best.artworkUrl100 || '')
       .replace('100x100bb', '600x600bb')
@@ -227,65 +222,43 @@ const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   }
 };
 
-let enrichmentStarted = false;
-const inFlight = new Set<number>();
-
-const resolveTrack = async (index: number): Promise<void> => {
-  if (inFlight.has(index)) return;
-
-  const track = TRACKS[index];
-  if (!track || track.resolved) return;
-
-  inFlight.add(index);
-  try {
-    const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
-
-    if (!result?.previewUrl) return;
-
-    if (result.cover) void preloadImage(result.cover);
-
-    TRACKS[index] = {
-      ...TRACKS[index],
-      ...result,
-      resolved: true,
-    };
-
-    notifyLibrary();
-
-    if (state.title === track.title && state.artist === track.artist) {
-      state = {
-        ...state,
-        ...TRACKS[index],
-      };
-      notify();
-    }
-  } finally {
-    inFlight.delete(index);
-  }
-};
+let enriched = false;
 
 const enrichTracks = async () => {
-  if (enrichmentStarted || typeof window === 'undefined') return;
-  enrichmentStarted = true;
+  if (enriched || typeof window === 'undefined') return;
+  enriched = true;
 
   const batchSize = 6;
 
   for (let i = 0; i < TRACKS.length; i += batchSize) {
-    const count = Math.min(batchSize, TRACKS.length - i);
+    const batch = TRACKS.slice(i, i + batchSize);
 
     await Promise.all(
-      Array.from({ length: count }, (_, offset) => resolveTrack(i + offset))
+      batch.map(async (track, idx) => {
+        const realIndex = i + idx;
+        if (TRACKS[realIndex].resolved) return;
+
+        const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+        if (!result?.previewUrl) return;
+
+        if (result.cover) preloadImage(result.cover);
+
+        TRACKS[realIndex] = {
+          ...TRACKS[realIndex],
+          ...result,
+        };
+
+        notifyLibrary();
+      })
     );
   }
 
   notifyLibrary();
 };
 
-if (typeof window !== 'undefined') {
-  setTimeout(() => {
-    void enrichTracks();
-  }, 0);
-}
+if (typeof window !== 'undefined') setTimeout(() => {
+  void enrichTracks();
+}, 0);
 
 export const preloadTrackLibrary = () => {
   void enrichTracks();
@@ -312,10 +285,11 @@ export const playTrack = async (track: Track) => {
       resolved = {
         ...track,
         ...r,
-        resolved: true,
       };
 
-      if (r.cover) void preloadImage(r.cover);
+      if (r.cover) {
+        preloadImage(r.cover);
+      }
 
       const idx = TRACKS.findIndex(
         (t) => t.title === track.title && t.artist === track.artist
@@ -325,17 +299,8 @@ export const playTrack = async (track: Track) => {
         TRACKS[idx] = {
           ...TRACKS[idx],
           ...r,
-          resolved: true,
         };
         notifyLibrary();
-
-        if (state.title === track.title && state.artist === track.artist) {
-          state = {
-            ...state,
-            ...TRACKS[idx],
-          };
-          notify();
-        }
       }
     }
   }
@@ -378,12 +343,10 @@ export const playTrack = async (track: Track) => {
 export const togglePlay = async () => {
   const player = getAudio();
   if (!player) return;
-
   if (!player.src) {
     await playTrack(state);
     return;
   }
-
   if (player.paused) {
     try {
       await player.play();
@@ -398,7 +361,6 @@ export const togglePlay = async () => {
 export const seekTo = (fraction: number) => {
   const player = getAudio();
   if (!player) return;
-
   const dur = Number.isFinite(player.duration) ? player.duration : state.duration || 30;
   player.currentTime = Math.max(0, Math.min(dur, fraction * dur));
 };

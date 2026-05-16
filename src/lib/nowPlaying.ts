@@ -157,9 +157,19 @@ const getAudio = (): HTMLAudioElement | null => {
   return audio;
 };
 
+const preloadImage = (src: string) =>
+  new Promise<void>((resolve) => {
+    const img = new Image();
+
+    img.onload = () => resolve();
+    img.onerror = () => resolve();
+
+    img.src = src;
+  });
+
 const searchITunes = async (term: string, originalTrack?: Track): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=25&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
 
     if (!response.ok) return null;
@@ -211,8 +221,10 @@ const searchITunes = async (term: string, originalTrack?: Track): Promise<Partia
 };
 
 let enriched = false;
+
 const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
+
   enriched = true;
 
   for (const [index, track] of TRACKS.entries()) {
@@ -224,21 +236,38 @@ const enrichTracks = async () => {
     );
 
     if (result?.previewUrl) {
-      TRACKS[index] = { ...TRACKS[index], ...result };
+      // preload album image BEFORE UI update
+      if (result.cover) {
+        await preloadImage(result.cover);
+      }
+
+      TRACKS[index] = {
+        ...TRACKS[index],
+        ...result,
+      };
+
       notifyLibrary();
 
-      if (state.title === track.title && state.artist === track.artist) {
-        state = { ...state, ...result };
+      // update current playing state too
+      if (
+        state.title === track.title &&
+        state.artist === track.artist
+      ) {
+        state = {
+          ...state,
+          ...result,
+        };
+
         notify();
       }
     }
 
+    // avoid Apple API throttling
     await new Promise((r) => setTimeout(r, 120));
   }
 
   notifyLibrary();
 };
-
 if (typeof window !== 'undefined') setTimeout(() => { void enrichTracks(); }, 0);
 
 export const preloadTrackLibrary = () => { void enrichTracks(); };
@@ -259,10 +288,26 @@ export const playTrack = async (track: Track) => {
   if (!resolved.previewUrl) {
     const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
     if (r?.previewUrl) {
-      resolved = { ...track, ...r };
-      const idx = TRACKS.findIndex((t) => t.title === track.title && t.artist === track.artist);
-      if (idx >= 0) { TRACKS[idx] = { ...TRACKS[idx], ...r }; notifyLibrary(); }
-    }
+  // preload album art before updating UI
+  if (r.cover) {
+    await preloadImage(r.cover);
+  }
+
+  resolved = { ...track, ...r };
+
+  const idx = TRACKS.findIndex(
+    (t) => t.title === track.title && t.artist === track.artist
+  );
+
+  if (idx >= 0) {
+    TRACKS[idx] = {
+      ...TRACKS[idx],
+      ...r,
+    };
+
+    notifyLibrary();
+  }
+}
   }
   if (!resolved.previewUrl) { state = { ...state, playing: false }; notify(); return; }
   state = { ...state, ...resolved, playing: true, progress: 0, currentTime: 0, duration: 30 };

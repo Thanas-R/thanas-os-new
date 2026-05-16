@@ -58,8 +58,8 @@ export const TRACKS: Track[] = [
 
   // Indie / Rock
   seed('Mr. Brightside', 'The Killers', 'Indie / Rock'),
-  seed('Feel Good Inc.', 'Gorillaz', 'Indie / Rock'),
   seed('Seven Nation Army', 'The White Stripes', 'Indie / Rock'),
+  seed('Feel Good Inc.', 'Gorillaz', 'Indie / Rock'),
   seed('Believer', 'Imagine Dragons', 'Indie / Rock'),
   seed('Do I Wanna Know?', 'Arctic Monkeys', 'Indie / Rock'),
   seed('Bohemian Rhapsody', 'Queen', 'Indie / Rock'),
@@ -157,36 +157,85 @@ const getAudio = (): HTMLAudioElement | null => {
   return audio;
 };
 
-const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
+const searchITunes = async (term: string, originalTrack?: Track): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=10&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
+
+    if (!response.ok) return null;
+
     const json = await response.json();
-    const item = json.results?.find((result: { previewUrl?: string; artworkUrl100?: string }) => Boolean(result.previewUrl && result.artworkUrl100));
-    if (!item?.previewUrl) return null;
-    const cover = (item.artworkUrl100 || '').replace('100x100bb', '600x600bb').replace('100x100', '600x600');
-    return { album: item.collectionName, cover, previewUrl: item.previewUrl, resolved: true };
-  } catch { return null; }
+    const results = json.results ?? [];
+
+    if (!results.length) return null;
+
+    const normalize = (s: string) =>
+      s
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const wantedTitle = normalize(originalTrack?.title ?? '');
+    const wantedArtist = normalize(originalTrack?.artist ?? '');
+
+    const best =
+      results.find((r: any) => {
+        if (!r.previewUrl || !r.artworkUrl100) return false;
+
+        const trackName = normalize(r.trackName ?? '');
+        const artistName = normalize(r.artistName ?? '');
+
+        const titleMatch = wantedTitle && trackName.includes(wantedTitle);
+        const artistMatch = wantedArtist && artistName.includes(wantedArtist);
+
+        return titleMatch && artistMatch;
+      }) ||
+      results.find((r: any) => r.previewUrl && r.artworkUrl100);
+
+    if (!best?.previewUrl) return null;
+
+    const cover = (best.artworkUrl100 || '')
+      .replace('100x100bb', '600x600bb')
+      .replace('100x100', '600x600');
+
+    return {
+      album: best.collectionName,
+      cover,
+      previewUrl: best.previewUrl,
+      resolved: true,
+    };
+  } catch {
+    return null;
+  }
 };
 
 let enriched = false;
 const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
   enriched = true;
-  await Promise.all(
-    TRACKS.map(async (track, index) => {
-      if (track.resolved) return;
-      const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
-      if (result?.previewUrl) {
-        TRACKS[index] = { ...TRACKS[index], ...result };
-        notifyLibrary();
-        if (state.title === track.title && state.artist === track.artist) {
-          state = { ...state, ...result };
-          notify();
-        }
+
+  for (const [index, track] of TRACKS.entries()) {
+    if (track.resolved) continue;
+
+    const result = await searchITunes(
+      track.searchTerm || `${track.title} ${track.artist}`,
+      track
+    );
+
+    if (result?.previewUrl) {
+      TRACKS[index] = { ...TRACKS[index], ...result };
+      notifyLibrary();
+
+      if (state.title === track.title && state.artist === track.artist) {
+        state = { ...state, ...result };
+        notify();
       }
-    }),
-  );
+    }
+
+    await new Promise((r) => setTimeout(r, 120));
+  }
+
   notifyLibrary();
 };
 

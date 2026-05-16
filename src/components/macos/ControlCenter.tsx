@@ -89,7 +89,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="grid grid-cols-2 gap-2">
                 <SquareTile
                   active={airplayOn}
-                  onClick={() => { setAirplayOn(true); window.open('https://github.com/Thanas-R', '_blank', 'noopener,noreferrer'); }}
+                  onClick={() => { setAirplayOn(true); window.open('https://github.com/sponsors/Thanas-R', '_blank', 'noopener,noreferrer'); }}
                   icon={<FaApplePay className="w-5 h-5" />}
                   label="Apple Pay"
                   accent="bg-blue-500"

@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Moon, Airplay, Sun, Pause } from 'lucide-react';
+import { Moon, Airplay, Pause } from 'lucide-react';
 import { HiSun } from 'react-icons/hi';
+import { CgDarkMode } from 'react-icons/cg';
+import { FaApplePay } from 'react-icons/fa';
 import { IoVolumeMedium, IoPlayBack, IoPlayForward, IoBluetooth, IoPlay } from 'react-icons/io5';
 import { IoIosWifi } from 'react-icons/io';
 import { useMacOS } from '@/contexts/MacOSContext';
@@ -19,6 +21,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const { settings, updateSettings } = useMacOS();
   const [airplayOn, setAirplayOn] = useState(false);
+  const [soundAirplayOn, setSoundAirplayOn] = useState(false);
   const np = useNowPlaying();
 
   useEffect(() => {
@@ -86,15 +89,15 @@ export const ControlCenter = ({ open, onClose }: Props) => {
               <div className="grid grid-cols-2 gap-2">
                 <SquareTile
                   active={airplayOn}
-                  onClick={() => setAirplayOn(v => !v)}
-                  icon={<Airplay className="w-4 h-4" />}
-                  label="AirPlay"
+                  onClick={() => { setAirplayOn(true); window.open('https://github.com/Thanas-R', '_blank', 'noopener,noreferrer'); }}
+                  icon={<FaApplePay className="w-5 h-5" />}
+                  label="Apple Pay"
                   accent="bg-blue-500"
                 />
                 <SquareTile
                   active={!isDark}
                   onClick={() => updateSettings({ theme: isDark ? 'light' : 'dark' })}
-                  icon={isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                  icon={<CgDarkMode className="w-4 h-4" />}
                   label={isDark ? 'Light' : 'Dark'}
                   accent="bg-amber-500"
                 />
@@ -116,8 +119,12 @@ export const ControlCenter = ({ open, onClose }: Props) => {
   icon={<IoVolumeMedium className="w-[16px] h-[16px] text-neutral-700 opacity-50" />}
   trailing={
     <button
-      onClick={() => setAirplayOn(v => !v)}
-      className="ml-2 w-9 h-9 rounded-full bg-white/15 hover:bg-white/25 flex items-center justify-center shrink-0"
+      onClick={() => setSoundAirplayOn(v => !v)}
+      className="ml-2 w-9 h-9 rounded-full flex items-center justify-center shrink-0 transition-colors"
+      style={{
+        background: soundAirplayOn ? '#3b82f6' : 'rgba(255,255,255,0.15)',
+        color: soundAirplayOn ? '#fff' : '#fff',
+      }}
     >
       <Airplay className="w-4 h-4" />
     </button>
@@ -244,27 +251,29 @@ const SliderModule = ({
         <div
           ref={trackRef}
           onPointerDown={(e) => {
+            (e.target as Element).setPointerCapture?.(e.pointerId);
             setDragging(true);
             updateFromX(e.clientX);
           }}
-          className="relative flex-1 h-7 rounded-full overflow-hidden cursor-pointer select-none"
+          className="relative flex-1 h-7 rounded-full cursor-pointer select-none"
           style={{ background: 'rgba(255,255,255,0.18)' }}
         >
-          {/* filled part */}
+          {/* filled track */}
           <div
-            className="absolute inset-y-0 left-0 rounded-full"
+            className="absolute top-0 bottom-0 left-0 rounded-full"
             style={{
-              width: `calc(${pct}% + 12px)`,
+              width: `calc(${pct}% + 11px)`,
+              maxWidth: '100%',
               background: '#ffffff',
               boxShadow: '0 0 0 1px rgba(0,0,0,0.05)',
             }}
           />
 
-          {/* icon moved a bit more left */}
-          <div className="absolute left-1.5 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+          {/* icon pinned inside the filled portion on the left */}
+          <div className="absolute left-2 top-1/2 -translate-y-1/2 z-10 pointer-events-none">
             {icon}
           </div>
-        </div>
+
 
         {trailing}
       </div>

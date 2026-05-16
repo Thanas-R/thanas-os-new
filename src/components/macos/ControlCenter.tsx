@@ -91,7 +91,7 @@ export const ControlCenter = ({ open, onClose }: Props) => {
                   active={airplayOn}
                   onClick={() => { setAirplayOn(true); window.open('https://github.com/sponsors/Thanas-R', '_blank', 'noopener,noreferrer'); }}
                   icon={<FaApplePay className="w-5 h-5" />}
-                  label="Apple Pay"
+                  label="Sponsor"
                   accent="bg-blue-500"
                 />
                 <SquareTile

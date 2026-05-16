@@ -11,10 +11,10 @@ export const NowPlayingPill = ({ dark = false }: { dark?: boolean }) => {
   const progress = Math.max(0, Math.min(100, (np.progress || 0) * 100));
   const volume = Math.max(0, Math.min(100, settings.volume ?? 65));
 
-  const bg = dark ? 'rgba(28,28,32,0.95)' : 'rgba(255,255,255,0.95)';
+  const bg = dark ? 'rgba(28,28,32,0.55)' : 'rgba(255,255,255,0.55)';
   const txt = dark ? '#fff' : '#1c1c1e';
-  const sub = dark ? 'rgba(255,255,255,0.65)' : 'rgba(0,0,0,0.55)';
-  const border = dark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.08)';
+  const sub = dark ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)';
+  const border = dark ? 'rgba(255,255,255,0.12)' : 'rgba(255,255,255,0.55)';
   const btnHover = dark ? 'hover:bg-white/15' : 'hover:bg-black/10';
   const trackBg = dark ? 'rgba(255,255,255,0.18)' : 'rgba(0,0,0,0.10)';
   const accent = '#fa2d48';
@@ -28,8 +28,8 @@ export const NowPlayingPill = ({ dark = false }: { dark?: boolean }) => {
         width: 'min(720px, calc(100% - 240px))',
         background: bg,
         color: txt,
-        backdropFilter: 'blur(28px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(28px) saturate(180%)',
+        backdropFilter: 'blur(40px) saturate(180%)',
+        WebkitBackdropFilter: 'blur(40px) saturate(180%)',
         border: `1px solid ${border}`,
         boxShadow: '0 14px 38px rgba(0,0,0,0.22), inset 0 1px 0 rgba(255,255,255,0.18)',
       }}

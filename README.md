@@ -259,8 +259,8 @@ supabase/
 ## Run Locally
 
 ```bash
-git clone https://github.com/thanas-r/ThanasOS-liquid
-cd ThanasOS-liquid
+git clone https://github.com/thanas-r/Thanas-OS
+cd Thanas-OS
 npm install
 npm run dev
 ```

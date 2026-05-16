@@ -169,7 +169,7 @@ const preloadImage = (src: string) =>
 
 const searchITunes = async (term: string, originalTrack?: Track): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=25&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
 
     if (!response.ok) return null;
@@ -280,42 +280,86 @@ export const setPlayerVolume = (value: number) => {
 };
 
 export const playTrack = async (track: Track) => {
-  state = { ...state, ...track, playing: false, progress: 0, currentTime: 0, duration: 30 };
-  notify();
   const player = getAudio();
+
   if (!player) return;
+
   let resolved: Track = track;
-  if (!resolved.previewUrl) {
-    const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+
+  // resolve track from iTunes if needed
+  if (!resolved.previewUrl || !resolved.resolved) {
+    const r = await searchITunes(
+      track.searchTerm || `${track.title} ${track.artist}`,
+      track
+    );
+
     if (r?.previewUrl) {
-  // preload album art before updating UI
-  if (r.cover) {
-    await preloadImage(r.cover);
+      // preload album cover FIRST
+      if (r.cover) {
+        await preloadImage(r.cover);
+      }
+
+      resolved = {
+        ...track,
+        ...r,
+      };
+
+      // update library cache
+      const idx = TRACKS.findIndex(
+        (t) =>
+          t.title === track.title &&
+          t.artist === track.artist
+      );
+
+      if (idx >= 0) {
+        TRACKS[idx] = {
+          ...TRACKS[idx],
+          ...r,
+        };
+
+        notifyLibrary();
+      }
+    }
   }
 
-  resolved = { ...track, ...r };
-
-  const idx = TRACKS.findIndex(
-    (t) => t.title === track.title && t.artist === track.artist
-  );
-
-  if (idx >= 0) {
-    TRACKS[idx] = {
-      ...TRACKS[idx],
-      ...r,
+  // stop if still unresolved
+  if (!resolved.previewUrl) {
+    state = {
+      ...state,
+      playing: false,
     };
 
-    notifyLibrary();
+    notify();
+    return;
   }
-}
-  }
-  if (!resolved.previewUrl) { state = { ...state, playing: false }; notify(); return; }
-  state = { ...state, ...resolved, playing: true, progress: 0, currentTime: 0, duration: 30 };
+
+  // update UI ONLY after image is ready
+  state = {
+    ...state,
+    ...resolved,
+    playing: true,
+    progress: 0,
+    currentTime: 0,
+    duration: 30,
+  };
+
   notify();
+
+  // now start audio
   player.src = resolved.previewUrl;
   player.currentTime = 0;
   player.volume = playerVolume;
-  try { await player.play(); } catch { state = { ...state, playing: false }; notify(); }
+
+  try {
+    await player.play();
+  } catch {
+    state = {
+      ...state,
+      playing: false,
+    };
+
+    notify();
+  }
 };
 
 export const togglePlay = async () => {

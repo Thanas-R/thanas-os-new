@@ -193,18 +193,47 @@ const preloadImage = (src: string) =>
     img.src = src;
   });
 
-const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
+const searchITunes = async (
+  term: string,
+  originalTrack?: Track
+): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=2&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=10&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
     if (!response.ok) return null;
 
     const json = await response.json();
     const results = json.results ?? [];
-
     if (!results.length) return null;
 
-    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100);
+    const normalize = (s: string) =>
+      s
+        .toLowerCase()
+        .replace(/[^\w\s]/g, '')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+    const wantedTitle = normalize(originalTrack?.title ?? '');
+    const wantedArtist = normalize(originalTrack?.artist ?? '');
+
+    const scored = results
+      .filter((r: any) => r.previewUrl && r.artworkUrl100)
+      .map((r: any) => {
+        const trackName = normalize(r.trackName ?? '');
+        const artistName = normalize(r.artistName ?? '');
+
+        let score = 0;
+        if (wantedTitle && trackName.includes(wantedTitle)) score += 2;
+        if (wantedArtist && artistName.includes(wantedArtist)) score += 2;
+        if (wantedTitle && trackName === wantedTitle) score += 1;
+        if (wantedArtist && artistName === wantedArtist) score += 1;
+
+        return { r, score };
+      })
+      .sort((a, b) => b.score - a.score);
+
+    const best = scored[0]?.r || results.find((r: any) => r.previewUrl && r.artworkUrl100);
+
     if (!best?.previewUrl) return null;
 
     const cover = (best.artworkUrl100 || '')
@@ -228,7 +257,7 @@ const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
   enriched = true;
 
-  const batchSize = 6;
+  const batchSize = 5;
 
   for (let i = 0; i < TRACKS.length; i += batchSize) {
     const batch = TRACKS.slice(i, i + batchSize);
@@ -238,7 +267,11 @@ const enrichTracks = async () => {
         const realIndex = i + idx;
         if (TRACKS[realIndex].resolved) return;
 
-        const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+        const result = await searchITunes(
+          track.searchTerm || `${track.title} ${track.artist}`,
+          track
+        );
+
         if (!result?.previewUrl) return;
 
         if (result.cover) preloadImage(result.cover);
@@ -251,14 +284,18 @@ const enrichTracks = async () => {
         notifyLibrary();
       })
     );
+
+    await new Promise((r) => setTimeout(r, 250));
   }
 
   notifyLibrary();
 };
 
-if (typeof window !== 'undefined') setTimeout(() => {
-  void enrichTracks();
-}, 0);
+if (typeof window !== 'undefined') {
+  setTimeout(() => {
+    void enrichTracks();
+  }, 0);
+}
 
 export const preloadTrackLibrary = () => {
   void enrichTracks();
@@ -279,7 +316,10 @@ export const playTrack = async (track: Track) => {
   let resolved: Track = track;
 
   if (!resolved.previewUrl || !resolved.resolved) {
-    const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+    const r = await searchITunes(
+      track.searchTerm || `${track.title} ${track.artist}`,
+      track
+    );
 
     if (r?.previewUrl) {
       resolved = {

@@ -33,8 +33,17 @@ export interface NowPlaying extends Track {
   currentTime: number;
 }
 
-const seed = (title: string, artist: string, category: Category, searchTerm?: string): Track => ({
-  title, artist, category, searchTerm: searchTerm || `${title} ${artist}`, cover: cradlesCover,
+const seed = (
+  title: string,
+  artist: string,
+  category: Category,
+  searchTerm?: string
+): Track => ({
+  title,
+  artist,
+  category,
+  searchTerm: searchTerm || `${title} ${artist}`,
+  cover: cradlesCover,
 });
 
 // Curated library — every entry is a well-known song that returns a result
@@ -121,7 +130,13 @@ export const TRACKS: Track[] = [
   seed('Time', 'Hans Zimmer', 'Movie Themes', 'Time Hans Zimmer Inception'),
 ];
 
-let state: NowPlaying = { ...TRACKS[0], playing: false, progress: 0, duration: 30, currentTime: 0 };
+let state: NowPlaying = {
+  ...TRACKS[0],
+  playing: false,
+  progress: 0,
+  duration: 30,
+  currentTime: 0,
+};
 
 const subs = new Set<() => void>();
 const librarySubs = new Set<() => void>();
@@ -147,12 +162,25 @@ const getAudio = (): HTMLAudioElement | null => {
     audio.addEventListener('timeupdate', () => {
       if (!audio) return;
       const dur = Number.isFinite(audio.duration) ? audio.duration : state.duration || 30;
-      state = { ...state, currentTime: audio.currentTime, duration: dur, progress: dur ? audio.currentTime / dur : 0 };
+      state = {
+        ...state,
+        currentTime: audio.currentTime,
+        duration: dur,
+        progress: dur ? audio.currentTime / dur : 0,
+      };
       notify();
     });
-    audio.addEventListener('ended', () => { nextTrack(); });
-    audio.addEventListener('play', () => { state = { ...state, playing: true }; notify(); });
-    audio.addEventListener('pause', () => { state = { ...state, playing: false }; notify(); });
+    audio.addEventListener('ended', () => {
+      nextTrack();
+    });
+    audio.addEventListener('play', () => {
+      state = { ...state, playing: true };
+      notify();
+    });
+    audio.addEventListener('pause', () => {
+      state = { ...state, playing: false };
+      notify();
+    });
   }
   return audio;
 };
@@ -160,18 +188,15 @@ const getAudio = (): HTMLAudioElement | null => {
 const preloadImage = (src: string) =>
   new Promise<void>((resolve) => {
     const img = new Image();
-
     img.onload = () => resolve();
     img.onerror = () => resolve();
-
     img.src = src;
   });
 
-const searchITunes = async (term: string, originalTrack?: Track): Promise<Partial<Track> | null> => {
+const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
     const url = `https://itunes.apple.com/search?media=music&entity=song&limit=4&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
-
     if (!response.ok) return null;
 
     const json = await response.json();
@@ -179,36 +204,23 @@ const searchITunes = async (term: string, originalTrack?: Track): Promise<Partia
 
     if (!results.length) return null;
 
-    const normalize = (s: string) =>
-      s
-        .toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
+    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100);
+    if (!best?.previewUrl) return null;
 
-    const wantedTitle = normalize(originalTrack?.title ?? '');
-    const wantedArtist = normalize(originalTrack?.artist ?? '');
+    const cover = (best.artworkUrl100 || '')
+      .replace('100x100bb', '600x600bb')
+      .replace('100x100', '600x600');
 
-const best =
-  results.find((r: any) => {
-    if (!r.previewUrl || !r.artworkUrl100) return false;
-
-    const trackName = normalize(r.trackName ?? '');
-    const artistName = normalize(r.artistName ?? '');
-
-    const titleMatch =
-      wantedTitle &&
-      trackName.includes(wantedTitle);
-
-    const artistMatch =
-      wantedArtist &&
-      artistName.includes(wantedArtist);
-
-    return titleMatch || artistMatch;
-  }) ||
-  results.find(
-    (r: any) => r.previewUrl && r.artworkUrl100
-  );
+    return {
+      album: best.collectionName,
+      cover,
+      previewUrl: best.previewUrl,
+      resolved: true,
+    };
+  } catch {
+    return null;
+  }
+};
 
 let enriched = false;
 
@@ -216,7 +228,7 @@ const enrichTracks = async () => {
   if (enriched || typeof window === 'undefined') return;
   enriched = true;
 
-  const batchSize = 6; // limit concurrent calls
+  const batchSize = 6;
 
   for (let i = 0; i < TRACKS.length; i += batchSize) {
     const batch = TRACKS.slice(i, i + batchSize);
@@ -224,17 +236,11 @@ const enrichTracks = async () => {
     await Promise.all(
       batch.map(async (track, idx) => {
         const realIndex = i + idx;
-
         if (TRACKS[realIndex].resolved) return;
 
-        const result = await searchITunes(
-          track.searchTerm || `${track.title} ${track.artist}`,
-          track
-        );
-
+        const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
         if (!result?.previewUrl) return;
 
-        // DON'T block UI on image preload
         if (result.cover) preloadImage(result.cover);
 
         TRACKS[realIndex] = {
@@ -250,9 +256,14 @@ const enrichTracks = async () => {
   notifyLibrary();
 };
 
-if (typeof window !== 'undefined') setTimeout(() => { void enrichTracks(); }, 0);
+if (typeof window !== 'undefined') setTimeout(() => {
+  void enrichTracks();
+}, 0);
 
-export const preloadTrackLibrary = () => { void enrichTracks(); };
+export const preloadTrackLibrary = () => {
+  void enrichTracks();
+};
+
 export const getNowPlaying = () => state;
 
 export const setPlayerVolume = (value: number) => {
@@ -263,17 +274,12 @@ export const setPlayerVolume = (value: number) => {
 
 export const playTrack = async (track: Track) => {
   const player = getAudio();
-
   if (!player) return;
 
   let resolved: Track = track;
 
-  // instantly resolve from iTunes
   if (!resolved.previewUrl || !resolved.resolved) {
-    const r = await searchITunes(
-      track.searchTerm || `${track.title} ${track.artist}`,
-      track
-    );
+    const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
 
     if (r?.previewUrl) {
       resolved = {
@@ -281,16 +287,12 @@ export const playTrack = async (track: Track) => {
         ...r,
       };
 
-      // preload image in background
       if (r.cover) {
         preloadImage(r.cover);
       }
 
-      // cache result
       const idx = TRACKS.findIndex(
-        (t) =>
-          t.title === track.title &&
-          t.artist === track.artist
+        (t) => t.title === track.title && t.artist === track.artist
       );
 
       if (idx >= 0) {
@@ -298,24 +300,20 @@ export const playTrack = async (track: Track) => {
           ...TRACKS[idx],
           ...r,
         };
-
         notifyLibrary();
       }
     }
   }
 
-  // failed resolve
   if (!resolved.previewUrl) {
     state = {
       ...state,
       playing: false,
     };
-
     notify();
     return;
   }
 
-  // update UI IMMEDIATELY
   state = {
     ...state,
     ...resolved,
@@ -327,7 +325,6 @@ export const playTrack = async (track: Track) => {
 
   notify();
 
-  // start audio immediately
   player.src = resolved.previewUrl;
   player.currentTime = 0;
   player.volume = playerVolume;
@@ -339,7 +336,6 @@ export const playTrack = async (track: Track) => {
       ...state,
       playing: false,
     };
-
     notify();
   }
 };
@@ -347,9 +343,19 @@ export const playTrack = async (track: Track) => {
 export const togglePlay = async () => {
   const player = getAudio();
   if (!player) return;
-  if (!player.src) { await playTrack(state); return; }
-  if (player.paused) { try { await player.play(); } catch { /* ignore */ } }
-  else { player.pause(); }
+  if (!player.src) {
+    await playTrack(state);
+    return;
+  }
+  if (player.paused) {
+    try {
+      await player.play();
+    } catch {
+      // ignore
+    }
+  } else {
+    player.pause();
+  }
 };
 
 export const seekTo = (fraction: number) => {
@@ -360,21 +366,31 @@ export const seekTo = (fraction: number) => {
 };
 
 const playable = () => TRACKS.filter((t) => t.previewUrl);
+
 const currentIndex = () => {
   const list = playable();
   const i = list.findIndex((track) => track.title === state.title && track.artist === state.artist);
   return i < 0 ? 0 : i;
 };
 
-export const nextTrack = () => { const list = playable(); if (list.length) void playTrack(list[(currentIndex() + 1) % list.length]); };
-export const prevTrack = () => { const list = playable(); if (list.length) void playTrack(list[(currentIndex() - 1 + list.length) % list.length]); };
+export const nextTrack = () => {
+  const list = playable();
+  if (list.length) void playTrack(list[(currentIndex() + 1) % list.length]);
+};
+
+export const prevTrack = () => {
+  const list = playable();
+  if (list.length) void playTrack(list[(currentIndex() - 1 + list.length) % list.length]);
+};
 
 export const useNowPlaying = (): NowPlaying => {
   const [, force] = useState(0);
   useEffect(() => {
     const fn = () => force((n) => n + 1);
     subs.add(fn);
-    return () => { subs.delete(fn); };
+    return () => {
+      subs.delete(fn);
+    };
   }, []);
   return state;
 };
@@ -386,7 +402,9 @@ export const useTrackLibrary = (): Track[] => {
     const fn = () => force((n) => n + 1);
     librarySubs.add(fn);
     void enrichTracks();
-    return () => { librarySubs.delete(fn); };
+    return () => {
+      librarySubs.delete(fn);
+    };
   }, []);
   return TRACKS;
 };

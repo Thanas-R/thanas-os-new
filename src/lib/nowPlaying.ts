@@ -195,7 +195,7 @@ const preloadImage = (src: string) =>
 
 const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=4&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=10&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
     if (!response.ok) return null;
 

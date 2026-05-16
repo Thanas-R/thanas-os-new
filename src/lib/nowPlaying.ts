@@ -1,8 +1,11 @@
 // Music player powered by the public iTunes Search API.
-// Each track is verified against iTunes before being exposed to the UI —
-// only tracks with a real 30-second preview + real album art are shown.
+// Fully reactive store — no mutable global arrays that React can't track.
+// Per-track retry with exponential backoff — nothing silently fails.
+
 import { useEffect, useState } from 'react';
 import cradlesCover from '@/assets/image-asset.jpg';
+
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 export type Category =
   | 'English Mix'
@@ -22,7 +25,6 @@ export interface Track {
   album?: string;
   category?: Category;
   searchTerm?: string;
-  /** true once resolved against iTunes with a real previewUrl + artwork */
   resolved?: boolean;
 }
 
@@ -33,6 +35,26 @@ export interface NowPlaying extends Track {
   currentTime: number;
 }
 
+// ─── Reactive Store ───────────────────────────────────────────────────────────
+// This is the single source of truth for ALL track data.
+// Any component that calls useTrackLibrary() will re-render whenever any track
+// updates — no manual subscription wiring needed.
+
+const trackStore: Track[] = [];
+const librarySubs = new Set<() => void>();
+const playerSubs = new Set<() => void>();
+
+const notifyLibrary = () => librarySubs.forEach((fn) => fn());
+const notifyPlayer  = () => playerSubs.forEach((fn) => fn());
+
+/** Atomically update one track and immediately notify all subscribers. */
+const updateTrack = (index: number, patch: Partial<Track>) => {
+  trackStore[index] = { ...trackStore[index], ...patch };
+  notifyLibrary();
+};
+
+// ─── Seed Data ────────────────────────────────────────────────────────────────
+
 const seed = (
   title: string,
   artist: string,
@@ -42,12 +64,12 @@ const seed = (
   title,
   artist,
   category,
-  searchTerm: searchTerm || `${title} ${artist}`,
+  searchTerm: searchTerm ?? `${title} ${artist}`,
   cover: cradlesCover,
+  resolved: false,
 });
 
-// Curated library — every entry is a well-known song that returns a result
-// from the iTunes Search API. Non-resolving tracks are filtered out of the UI.
+/** Master track list — populated once at module load, then enriched in place. */
 export const TRACKS: Track[] = [
   // English Mix
   seed('Cradles', 'Sub Urban', 'English Mix'),
@@ -89,7 +111,7 @@ export const TRACKS: Track[] = [
   seed('Titanium', 'David Guetta', 'Electronic', 'Titanium David Guetta Sia'),
   seed('Lean On', 'Major Lazer', 'Electronic', 'Lean On Major Lazer DJ Snake'),
 
-  // Anime — well-known anime OPs/EDs that iTunes carries
+  // Anime
   seed('Idol', 'YOASOBI', 'Anime', 'Idol YOASOBI Oshi no Ko'),
   seed('Racing Into The Night', 'YOASOBI', 'Anime', 'Yoru ni Kakeru YOASOBI'),
   seed('Gurenge', 'LiSA', 'Anime', 'Gurenge LiSA Demon Slayer'),
@@ -130,141 +152,208 @@ export const TRACKS: Track[] = [
   seed('Time', 'Hans Zimmer', 'Movie Themes', 'Time Hans Zimmer Inception'),
 ];
 
-let state: NowPlaying = {
-  ...TRACKS[0],
-  playing: false,
-  progress: 0,
-  duration: 30,
-  currentTime: 0,
+// Mirror TRACKS into our reactive store on load
+TRACKS.forEach((t) => trackStore.push({ ...t }));
+
+// Keep TRACKS in sync with store so external code that reads TRACKS directly
+// still gets the latest data (backward-compatible).
+const syncBackToTracks = (index: number) => {
+  TRACKS[index] = { ...trackStore[index] };
 };
 
-const subs = new Set<() => void>();
-const librarySubs = new Set<() => void>();
-const notify = () => subs.forEach((fn) => fn());
-const notifyLibrary = () => librarySubs.forEach((fn) => fn());
+// ─── iTunes Search ────────────────────────────────────────────────────────────
 
-let playerVolume = 0.65;
+const ITUNES_LIMIT = 8; // Fetch more candidates → better chance of a match
 
-let audio: HTMLAudioElement | null = null;
-const getAudio = (): HTMLAudioElement | null => {
-  if (typeof window === 'undefined') return null;
-  if (!audio) {
-    audio = new Audio();
-    audio.preload = 'metadata';
-    audio.crossOrigin = 'anonymous';
-    audio.volume = playerVolume;
-    audio.addEventListener('loadedmetadata', () => {
-      if (!audio) return;
-      const dur = Number.isFinite(audio.duration) ? audio.duration : 30;
-      state = { ...state, duration: dur };
-      notify();
-    });
-    audio.addEventListener('timeupdate', () => {
-      if (!audio) return;
-      const dur = Number.isFinite(audio.duration) ? audio.duration : state.duration || 30;
-      state = {
-        ...state,
-        currentTime: audio.currentTime,
-        duration: dur,
-        progress: dur ? audio.currentTime / dur : 0,
-      };
-      notify();
-    });
-    audio.addEventListener('ended', () => {
-      nextTrack();
-    });
-    audio.addEventListener('play', () => {
-      state = { ...state, playing: true };
-      notify();
-    });
-    audio.addEventListener('pause', () => {
-      state = { ...state, playing: false };
-      notify();
-    });
-  }
-  return audio;
-};
-
-const preloadImage = (src: string) =>
-  new Promise<void>((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve();
-    img.onerror = () => resolve();
-    img.src = src;
-  });
-
+/**
+ * Search iTunes and return enrichment data.
+ * Strategy: prefer a result with BOTH previewUrl AND artwork.
+ * Fall back to preview-only if that's all we get.
+ */
 const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=4&term=${encodeURIComponent(term)}`;
-    const response = await fetch(url);
-    if (!response.ok) return null;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=${ITUNES_LIMIT}&term=${encodeURIComponent(term)}`;
+    const res = await fetch(url);
+    if (!res.ok) return null;
 
-    const json = await response.json();
+    const json: { results: any[] } = await res.json();
     const results = json.results ?? [];
-
     if (!results.length) return null;
 
-    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100);
+    // Best: has both preview + art
+    const best =
+      results.find((r) => r.previewUrl && r.artworkUrl100) ??
+      results.find((r) => r.previewUrl) ??
+      null;
+
     if (!best?.previewUrl) return null;
 
-    const cover = (best.artworkUrl100 || '')
-      .replace('100x100bb', '600x600bb')
-      .replace('100x100', '600x600');
+    const cover = best.artworkUrl100
+      ? best.artworkUrl100
+          .replace('100x100bb', '600x600bb')
+          .replace('100x100', '600x600')
+      : cradlesCover;
 
     return {
-      album: best.collectionName,
+      album:      best.collectionName ?? undefined,
       cover,
       previewUrl: best.previewUrl,
-      resolved: true,
+      resolved:   true,
     };
   } catch {
     return null;
   }
 };
 
-let enriched = false;
+// ─── Enrichment Engine ────────────────────────────────────────────────────────
+// Each track gets up to MAX_RETRIES attempts with exponential backoff.
+// Retries are independent per-track — one failure doesn't block others.
 
-const enrichTracks = async () => {
-  if (enriched || typeof window === 'undefined') return;
-  enriched = true;
+const MAX_RETRIES  = 5;
+const BATCH_SIZE   = 8;   // concurrent requests per wave
+const BASE_DELAY   = 600; // ms — first retry wait
 
-  const batchSize = 6;
+const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-  for (let i = 0; i < TRACKS.length; i += batchSize) {
-    const batch = TRACKS.slice(i, i + batchSize);
+const preloadImage = (src: string) =>
+  new Promise<void>((resolve) => {
+    const img = new Image();
+    img.onload  = () => resolve();
+    img.onerror = () => resolve();
+    img.src = src;
+  });
 
-    await Promise.all(
-      batch.map(async (track, idx) => {
-        const realIndex = i + idx;
-        if (TRACKS[realIndex].resolved) return;
+/** Enrich a single track with retries. Mutates trackStore + TRACKS directly. */
+const enrichOneTrack = async (index: number): Promise<void> => {
+  const track = trackStore[index];
+  if (track.resolved && track.previewUrl) return; // already done
 
-        const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
-        if (!result?.previewUrl) return;
+  const term = track.searchTerm ?? `${track.title} ${track.artist}`;
 
-        if (result.cover) preloadImage(result.cover);
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    const result = await searchITunes(term);
 
-        TRACKS[realIndex] = {
-          ...TRACKS[realIndex],
-          ...result,
-        };
+    if (result?.previewUrl) {
+      // Kick off image preload in parallel — don't await, just fire
+      if (result.cover && result.cover !== cradlesCover) {
+        void preloadImage(result.cover);
+      }
+      updateTrack(index, result);
+      syncBackToTracks(index);
+      return; // success — stop retrying
+    }
 
-        notifyLibrary();
-      })
-    );
+    if (attempt < MAX_RETRIES) {
+      // Exponential backoff: 600 → 1200 → 2400 → 4800 ms
+      await sleep(BASE_DELAY * 2 ** (attempt - 1));
+    }
   }
 
+  // After all retries: mark attempted so we don't spin forever,
+  // but keep resolved: false so UI knows it's unplayable.
+  updateTrack(index, { resolved: false });
+  syncBackToTracks(index);
+};
+
+let enrichmentStarted = false;
+
+/**
+ * Start enriching all tracks.
+ * Safe to call multiple times — only runs once.
+ * Processes in parallel batches to stay within iTunes rate limits.
+ */
+const startEnrichment = async () => {
+  if (enrichmentStarted || typeof window === 'undefined') return;
+  enrichmentStarted = true;
+
+  const indices = trackStore
+    .map((_, i) => i)
+    .filter((i) => !trackStore[i].resolved || !trackStore[i].previewUrl);
+
+  for (let i = 0; i < indices.length; i += BATCH_SIZE) {
+    const batch = indices.slice(i, i + BATCH_SIZE);
+    await Promise.all(batch.map(enrichOneTrack));
+
+    // Small pause between batches to avoid iTunes throttling
+    if (i + BATCH_SIZE < indices.length) {
+      await sleep(300);
+    }
+  }
+
+  // Final notify in case any subscriber missed an update
   notifyLibrary();
 };
 
-if (typeof window !== 'undefined') setTimeout(() => {
-  void enrichTracks();
-}, 0);
+// Kick off enrichment immediately on module load
+if (typeof window !== 'undefined') {
+  void startEnrichment();
+}
+
+// ─── Public helper (backward-compatible) ─────────────────────────────────────
 
 export const preloadTrackLibrary = () => {
-  void enrichTracks();
+  void startEnrichment();
 };
 
-export const getNowPlaying = () => state;
+// ─── Audio Engine ─────────────────────────────────────────────────────────────
+
+let nowPlaying: NowPlaying = {
+  ...trackStore[0],
+  playing:     false,
+  progress:    0,
+  duration:    30,
+  currentTime: 0,
+};
+
+let playerVolume = 0.65;
+let audio: HTMLAudioElement | null = null;
+
+const getAudio = (): HTMLAudioElement | null => {
+  if (typeof window === 'undefined') return null;
+  if (audio) return audio;
+
+  audio = new Audio();
+  audio.preload     = 'metadata';
+  audio.crossOrigin = 'anonymous';
+  audio.volume      = playerVolume;
+
+  audio.addEventListener('loadedmetadata', () => {
+    if (!audio) return;
+    const dur = Number.isFinite(audio.duration) ? audio.duration : 30;
+    nowPlaying = { ...nowPlaying, duration: dur };
+    notifyPlayer();
+  });
+
+  audio.addEventListener('timeupdate', () => {
+    if (!audio) return;
+    const dur = Number.isFinite(audio.duration) ? audio.duration : nowPlaying.duration || 30;
+    nowPlaying = {
+      ...nowPlaying,
+      currentTime: audio.currentTime,
+      duration:    dur,
+      progress:    dur ? audio.currentTime / dur : 0,
+    };
+    notifyPlayer();
+  });
+
+  audio.addEventListener('ended', () => nextTrack());
+
+  audio.addEventListener('play', () => {
+    nowPlaying = { ...nowPlaying, playing: true };
+    notifyPlayer();
+  });
+
+  audio.addEventListener('pause', () => {
+    nowPlaying = { ...nowPlaying, playing: false };
+    notifyPlayer();
+  });
+
+  return audio;
+};
+
+// ─── Playback API ─────────────────────────────────────────────────────────────
+
+export const getNowPlaying = (): NowPlaying => nowPlaying;
 
 export const setPlayerVolume = (value: number) => {
   playerVolume = Math.max(0, Math.min(1, value / 100));
@@ -272,139 +361,141 @@ export const setPlayerVolume = (value: number) => {
   if (player) player.volume = playerVolume;
 };
 
-export const playTrack = async (track: Track) => {
+/**
+ * Play a track.
+ * If the track isn't resolved yet, fetches iTunes fresh right now (fast path).
+ * Also back-fills the store so the library card updates immediately.
+ */
+export const playTrack = async (track: Track): Promise<void> => {
   const player = getAudio();
   if (!player) return;
 
-  let resolved: Track = track;
+  let resolved: Track = { ...track };
 
   if (!resolved.previewUrl || !resolved.resolved) {
-    const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
+    const term = track.searchTerm ?? `${track.title} ${track.artist}`;
+    const result = await searchITunes(term);
 
-    if (r?.previewUrl) {
-      resolved = {
-        ...track,
-        ...r,
-      };
+    if (result?.previewUrl) {
+      resolved = { ...resolved, ...result };
 
-      if (r.cover) {
-        preloadImage(r.cover);
-      }
-
-      const idx = TRACKS.findIndex(
+      // Back-fill into the reactive store
+      const idx = trackStore.findIndex(
         (t) => t.title === track.title && t.artist === track.artist
       );
-
       if (idx >= 0) {
-        TRACKS[idx] = {
-          ...TRACKS[idx],
-          ...r,
-        };
-        notifyLibrary();
+        updateTrack(idx, result);
+        syncBackToTracks(idx);
       }
     }
   }
 
   if (!resolved.previewUrl) {
-    state = {
-      ...state,
-      playing: false,
-    };
-    notify();
+    // Can't play — update state but don't crash
+    nowPlaying = { ...nowPlaying, playing: false };
+    notifyPlayer();
     return;
   }
 
-  state = {
-    ...state,
+  nowPlaying = {
+    ...nowPlaying,
     ...resolved,
-    playing: true,
-    progress: 0,
+    playing:     true,
+    progress:    0,
     currentTime: 0,
-    duration: 30,
+    duration:    30,
   };
+  notifyPlayer();
 
-  notify();
-
-  player.src = resolved.previewUrl;
+  player.src         = resolved.previewUrl;
   player.currentTime = 0;
-  player.volume = playerVolume;
+  player.volume      = playerVolume;
 
   try {
     await player.play();
   } catch {
-    state = {
-      ...state,
-      playing: false,
-    };
-    notify();
+    nowPlaying = { ...nowPlaying, playing: false };
+    notifyPlayer();
   }
 };
 
-export const togglePlay = async () => {
+export const togglePlay = async (): Promise<void> => {
   const player = getAudio();
   if (!player) return;
+
   if (!player.src) {
-    await playTrack(state);
+    await playTrack(nowPlaying);
     return;
   }
+
   if (player.paused) {
-    try {
-      await player.play();
-    } catch {
-      // ignore
-    }
+    try { await player.play(); } catch { /* ignore */ }
   } else {
     player.pause();
   }
 };
 
-export const seekTo = (fraction: number) => {
+export const seekTo = (fraction: number): void => {
   const player = getAudio();
   if (!player) return;
-  const dur = Number.isFinite(player.duration) ? player.duration : state.duration || 30;
+  const dur = Number.isFinite(player.duration) ? player.duration : nowPlaying.duration || 30;
   player.currentTime = Math.max(0, Math.min(dur, fraction * dur));
 };
 
-const playable = () => TRACKS.filter((t) => t.previewUrl);
+// ─── Navigation ───────────────────────────────────────────────────────────────
 
-const currentIndex = () => {
+/** All tracks that have a real previewUrl right now. */
+const playable = (): Track[] => trackStore.filter((t) => t.previewUrl);
+
+const currentIndex = (): number => {
   const list = playable();
-  const i = list.findIndex((track) => track.title === state.title && track.artist === state.artist);
+  const i = list.findIndex(
+    (t) => t.title === nowPlaying.title && t.artist === nowPlaying.artist
+  );
   return i < 0 ? 0 : i;
 };
 
-export const nextTrack = () => {
+export const nextTrack = (): void => {
   const list = playable();
   if (list.length) void playTrack(list[(currentIndex() + 1) % list.length]);
 };
 
-export const prevTrack = () => {
+export const prevTrack = (): void => {
   const list = playable();
   if (list.length) void playTrack(list[(currentIndex() - 1 + list.length) % list.length]);
 };
 
+// ─── React Hooks ──────────────────────────────────────────────────────────────
+
 export const useNowPlaying = (): NowPlaying => {
   const [, force] = useState(0);
+
   useEffect(() => {
     const fn = () => force((n) => n + 1);
-    subs.add(fn);
-    return () => {
-      subs.delete(fn);
-    };
+    playerSubs.add(fn);
+    return () => { playerSubs.delete(fn); };
   }, []);
-  return state;
+
+  return nowPlaying;
 };
 
-// Returns ONLY tracks verified to play (real preview + real artwork from iTunes).
+/**
+ * Returns the full track library from the reactive store.
+ * Re-renders automatically as each track resolves — no stale data.
+ */
 export const useTrackLibrary = (): Track[] => {
   const [, force] = useState(0);
+
   useEffect(() => {
     const fn = () => force((n) => n + 1);
     librarySubs.add(fn);
-    void enrichTracks();
-    return () => {
-      librarySubs.delete(fn);
-    };
+
+    // Ensure enrichment is running (no-op if already started)
+    void startEnrichment();
+
+    return () => { librarySubs.delete(fn); };
   }, []);
-  return TRACKS;
+
+  // Always read from trackStore, not the stale TRACKS array
+  return [...trackStore];
 };

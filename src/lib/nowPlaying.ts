@@ -24,8 +24,6 @@ export interface Track {
   searchTerm?: string;
   /** true once resolved against iTunes with a real previewUrl + artwork */
   resolved?: boolean;
-  /** number of failed resolution attempts */
-  retries?: number;
 }
 
 export interface NowPlaying extends Track {
@@ -47,7 +45,6 @@ const seed = (
   searchTerm: searchTerm || `${title} ${artist}`,
   cover: cradlesCover,
   resolved: false,
-  retries: 0,
 });
 
 // Curated library — every entry is a well-known song that returns a result
@@ -202,12 +199,9 @@ const preloadImage = (src: string) =>
     img.src = src;
   });
 
-const searchITunes = async (
-  term: string,
-  originalTrack?: Track
-): Promise<Partial<Track> | null> => {
+const searchITunes = async (term: string): Promise<Partial<Track> | null> => {
   try {
-    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=10&term=${encodeURIComponent(term)}`;
+    const url = `https://itunes.apple.com/search?media=music&entity=song&limit=5&term=${encodeURIComponent(term)}`;
     const response = await fetch(url);
     if (!response.ok) return null;
 
@@ -215,34 +209,8 @@ const searchITunes = async (
     const results = json.results ?? [];
     if (!results.length) return null;
 
-    const normalize = (s: string) =>
-      s
-        .toLowerCase()
-        .replace(/[^\w\s]/g, '')
-        .replace(/\s+/g, ' ')
-        .trim();
-
-    const wantedTitle = normalize(originalTrack?.title ?? '');
-    const wantedArtist = normalize(originalTrack?.artist ?? '');
-
-    const scored = results
-      .filter((r: any) => r.previewUrl && r.artworkUrl100)
-      .map((r: any) => {
-        const trackName = normalize(r.trackName ?? '');
-        const artistName = normalize(r.artistName ?? '');
-
-        let score = 0;
-        if (wantedTitle && trackName === wantedTitle) score += 6;
-        if (wantedArtist && artistName === wantedArtist) score += 6;
-        if (wantedTitle && trackName.includes(wantedTitle)) score += 3;
-        if (wantedArtist && artistName.includes(wantedArtist)) score += 3;
-
-        return { r, score };
-      })
-      .sort((a, b) => b.score - a.score);
-
-    const best = scored[0]?.r || results.find((r: any) => r.previewUrl && r.artworkUrl100);
-    if (!best?.previewUrl) return null;
+    const best = results.find((r: any) => r.previewUrl && r.artworkUrl100) || results[0];
+    if (!best?.previewUrl || !best?.artworkUrl100) return null;
 
     const cover = (best.artworkUrl100 || '')
       .replace('100x100bb', '600x600bb')
@@ -259,61 +227,37 @@ const searchITunes = async (
   }
 };
 
-const MAX_RETRIES = 3;
-const inFlight = new Set<number>();
 let enrichmentStarted = false;
+const inFlight = new Set<number>();
 
 const resolveTrack = async (index: number): Promise<void> => {
   if (inFlight.has(index)) return;
 
   const track = TRACKS[index];
   if (!track || track.resolved) return;
-  if ((track.retries ?? 0) >= MAX_RETRIES) return;
 
   inFlight.add(index);
-
   try {
-    const result = await searchITunes(
-      track.searchTerm || `${track.title} ${track.artist}`,
-      track
-    );
+    const result = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
 
-    if (result?.previewUrl) {
-      if (result.cover) void preloadImage(result.cover);
+    if (!result?.previewUrl) return;
 
-      TRACKS[index] = {
-        ...TRACKS[index],
-        ...result,
-        resolved: true,
-        retries: 0,
-      };
-
-      notifyLibrary();
-
-      if (state.title === track.title && state.artist === track.artist) {
-        state = {
-          ...state,
-          ...TRACKS[index],
-        };
-        notify();
-      }
-
-      return;
-    }
+    if (result.cover) void preloadImage(result.cover);
 
     TRACKS[index] = {
       ...TRACKS[index],
-      retries: (track.retries ?? 0) + 1,
+      ...result,
+      resolved: true,
     };
 
     notifyLibrary();
 
-    const attempts = TRACKS[index].retries ?? 0;
-    if (attempts < MAX_RETRIES) {
-      const delay = 400 * Math.pow(2, attempts - 1);
-      setTimeout(() => {
-        void resolveTrack(index);
-      }, delay);
+    if (state.title === track.title && state.artist === track.artist) {
+      state = {
+        ...state,
+        ...TRACKS[index],
+      };
+      notify();
     }
   } finally {
     inFlight.delete(index);
@@ -324,16 +268,14 @@ const enrichTracks = async () => {
   if (enrichmentStarted || typeof window === 'undefined') return;
   enrichmentStarted = true;
 
-  const batchSize = 5;
+  const batchSize = 6;
 
   for (let i = 0; i < TRACKS.length; i += batchSize) {
-    const batchCount = Math.min(batchSize, TRACKS.length - i);
+    const count = Math.min(batchSize, TRACKS.length - i);
 
     await Promise.all(
-      Array.from({ length: batchCount }, (_, offset) => resolveTrack(i + offset))
+      Array.from({ length: count }, (_, offset) => resolveTrack(i + offset))
     );
-
-    await new Promise((r) => setTimeout(r, 250));
   }
 
   notifyLibrary();
@@ -364,20 +306,16 @@ export const playTrack = async (track: Track) => {
   let resolved: Track = track;
 
   if (!resolved.previewUrl || !resolved.resolved) {
-    const r = await searchITunes(
-      track.searchTerm || `${track.title} ${track.artist}`,
-      track
-    );
+    const r = await searchITunes(track.searchTerm || `${track.title} ${track.artist}`);
 
     if (r?.previewUrl) {
       resolved = {
         ...track,
         ...r,
+        resolved: true,
       };
 
-      if (r.cover) {
-        void preloadImage(r.cover);
-      }
+      if (r.cover) void preloadImage(r.cover);
 
       const idx = TRACKS.findIndex(
         (t) => t.title === track.title && t.artist === track.artist

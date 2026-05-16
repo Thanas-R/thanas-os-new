@@ -24,6 +24,8 @@ export interface Track {
   searchTerm?: string;
   /** true once resolved against iTunes with a real previewUrl + artwork */
   resolved?: boolean;
+  /** number of failed resolution attempts */
+  retries?: number;
 }
 
 export interface NowPlaying extends Track {
@@ -44,6 +46,8 @@ const seed = (
   category,
   searchTerm: searchTerm || `${title} ${artist}`,
   cover: cradlesCover,
+  resolved: false,
+  retries: 0,
 });
 
 // Curated library — every entry is a well-known song that returns a result
@@ -153,12 +157,14 @@ const getAudio = (): HTMLAudioElement | null => {
     audio.preload = 'metadata';
     audio.crossOrigin = 'anonymous';
     audio.volume = playerVolume;
+
     audio.addEventListener('loadedmetadata', () => {
       if (!audio) return;
       const dur = Number.isFinite(audio.duration) ? audio.duration : 30;
       state = { ...state, duration: dur };
       notify();
     });
+
     audio.addEventListener('timeupdate', () => {
       if (!audio) return;
       const dur = Number.isFinite(audio.duration) ? audio.duration : state.duration || 30;
@@ -170,13 +176,16 @@ const getAudio = (): HTMLAudioElement | null => {
       };
       notify();
     });
+
     audio.addEventListener('ended', () => {
       nextTrack();
     });
+
     audio.addEventListener('play', () => {
       state = { ...state, playing: true };
       notify();
     });
+
     audio.addEventListener('pause', () => {
       state = { ...state, playing: false };
       notify();
@@ -223,17 +232,16 @@ const searchITunes = async (
         const artistName = normalize(r.artistName ?? '');
 
         let score = 0;
-        if (wantedTitle && trackName.includes(wantedTitle)) score += 2;
-        if (wantedArtist && artistName.includes(wantedArtist)) score += 2;
-        if (wantedTitle && trackName === wantedTitle) score += 1;
-        if (wantedArtist && artistName === wantedArtist) score += 1;
+        if (wantedTitle && trackName === wantedTitle) score += 6;
+        if (wantedArtist && artistName === wantedArtist) score += 6;
+        if (wantedTitle && trackName.includes(wantedTitle)) score += 3;
+        if (wantedArtist && artistName.includes(wantedArtist)) score += 3;
 
         return { r, score };
       })
       .sort((a, b) => b.score - a.score);
 
     const best = scored[0]?.r || results.find((r: any) => r.previewUrl && r.artworkUrl100);
-
     if (!best?.previewUrl) return null;
 
     const cover = (best.artworkUrl100 || '')
@@ -251,38 +259,78 @@ const searchITunes = async (
   }
 };
 
-let enriched = false;
+const MAX_RETRIES = 3;
+const inFlight = new Set<number>();
+let enrichmentStarted = false;
+
+const resolveTrack = async (index: number): Promise<void> => {
+  if (inFlight.has(index)) return;
+
+  const track = TRACKS[index];
+  if (!track || track.resolved) return;
+  if ((track.retries ?? 0) >= MAX_RETRIES) return;
+
+  inFlight.add(index);
+
+  try {
+    const result = await searchITunes(
+      track.searchTerm || `${track.title} ${track.artist}`,
+      track
+    );
+
+    if (result?.previewUrl) {
+      if (result.cover) void preloadImage(result.cover);
+
+      TRACKS[index] = {
+        ...TRACKS[index],
+        ...result,
+        resolved: true,
+        retries: 0,
+      };
+
+      notifyLibrary();
+
+      if (state.title === track.title && state.artist === track.artist) {
+        state = {
+          ...state,
+          ...TRACKS[index],
+        };
+        notify();
+      }
+
+      return;
+    }
+
+    TRACKS[index] = {
+      ...TRACKS[index],
+      retries: (track.retries ?? 0) + 1,
+    };
+
+    notifyLibrary();
+
+    const attempts = TRACKS[index].retries ?? 0;
+    if (attempts < MAX_RETRIES) {
+      const delay = 400 * Math.pow(2, attempts - 1);
+      setTimeout(() => {
+        void resolveTrack(index);
+      }, delay);
+    }
+  } finally {
+    inFlight.delete(index);
+  }
+};
 
 const enrichTracks = async () => {
-  if (enriched || typeof window === 'undefined') return;
-  enriched = true;
+  if (enrichmentStarted || typeof window === 'undefined') return;
+  enrichmentStarted = true;
 
   const batchSize = 5;
 
   for (let i = 0; i < TRACKS.length; i += batchSize) {
-    const batch = TRACKS.slice(i, i + batchSize);
+    const batchCount = Math.min(batchSize, TRACKS.length - i);
 
     await Promise.all(
-      batch.map(async (track, idx) => {
-        const realIndex = i + idx;
-        if (TRACKS[realIndex].resolved) return;
-
-        const result = await searchITunes(
-          track.searchTerm || `${track.title} ${track.artist}`,
-          track
-        );
-
-        if (!result?.previewUrl) return;
-
-        if (result.cover) preloadImage(result.cover);
-
-        TRACKS[realIndex] = {
-          ...TRACKS[realIndex],
-          ...result,
-        };
-
-        notifyLibrary();
-      })
+      Array.from({ length: batchCount }, (_, offset) => resolveTrack(i + offset))
     );
 
     await new Promise((r) => setTimeout(r, 250));
@@ -328,7 +376,7 @@ export const playTrack = async (track: Track) => {
       };
 
       if (r.cover) {
-        preloadImage(r.cover);
+        void preloadImage(r.cover);
       }
 
       const idx = TRACKS.findIndex(
@@ -339,8 +387,17 @@ export const playTrack = async (track: Track) => {
         TRACKS[idx] = {
           ...TRACKS[idx],
           ...r,
+          resolved: true,
         };
         notifyLibrary();
+
+        if (state.title === track.title && state.artist === track.artist) {
+          state = {
+            ...state,
+            ...TRACKS[idx],
+          };
+          notify();
+        }
       }
     }
   }
@@ -383,10 +440,12 @@ export const playTrack = async (track: Track) => {
 export const togglePlay = async () => {
   const player = getAudio();
   if (!player) return;
+
   if (!player.src) {
     await playTrack(state);
     return;
   }
+
   if (player.paused) {
     try {
       await player.play();
@@ -401,6 +460,7 @@ export const togglePlay = async () => {
 export const seekTo = (fraction: number) => {
   const player = getAudio();
   if (!player) return;
+
   const dur = Number.isFinite(player.duration) ? player.duration : state.duration || 30;
   player.currentTime = Math.max(0, Math.min(dur, fraction * dur));
 };
